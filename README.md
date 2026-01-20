@@ -17,9 +17,13 @@ docker compose up --build
 ```
 
 ## URLs
-- Backend API: http://localhost:${API_PORT}
+- Backend API: http://localhost:3000/health
 - Directus Admin UI: http://localhost:8055
 - phpMyAdmin: http://localhost:8081
+
+Notes
+
+The API_PORT value is configured in .env. If you change it, update the port mapping in docker-compose.yml or use the correct URL accordingly.
 
 ## Academic context
 Final Year Project.
