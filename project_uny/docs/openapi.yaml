@@ -1,0 +1,22 @@
+openapi: 3.0.3
+info:
+  title: SmartWorkshop Management System API
+  version: 0.1.0
+  description: API scaffold for the SmartWorkshop Management System.
+servers:
+  - url: http://localhost:3000
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        "200":
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
