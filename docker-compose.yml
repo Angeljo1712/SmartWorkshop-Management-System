@@ -3,8 +3,9 @@ version: "3.9"
 services:
   db:
     image: mysql:8.0.36
-    container_name: smartworkshop_db
+    container_name: project_uny_db
     restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_USER}
@@ -15,14 +16,14 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u$$MYSQL_USER -p$$MYSQL_PASSWORD --silent"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
 
   directus:
     image: directus/directus:10.10.5
-    container_name: smartworkshop_directus
+    container_name: project_uny_directus
     restart: unless-stopped
     depends_on:
       db:
@@ -34,6 +35,7 @@ services:
       SECRET: ${DIRECTUS_SECRET}
       ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}
       ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD}
+      PUBLIC_URL: http://localhost:8055
       DB_CLIENT: mysql
       DB_HOST: db
       DB_PORT: 3306
@@ -41,6 +43,8 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       WEBSOCKETS_ENABLED: "true"
+      CORS_ENABLED: "true"
+      CORS_ORIGIN: "http://localhost:3000,http://localhost:8055"
     volumes:
       - directus_uploads:/directus/uploads
 
@@ -48,7 +52,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: smartworkshop_backend
+    container_name: project_uny_backend
     restart: unless-stopped
     depends_on:
       db:
@@ -66,7 +70,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
-    container_name: smartworkshop_phpmyadmin
+    container_name: project_uny_phpmyadmin
     restart: unless-stopped
     depends_on:
       db:
