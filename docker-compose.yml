@@ -22,7 +22,7 @@ services:
       retries: 10
 
   directus:
-    image: directus/directus:10.10.5
+    image: directus/directus:11.14.1
     container_name: project_uny_directus
     restart: unless-stopped
     depends_on:
