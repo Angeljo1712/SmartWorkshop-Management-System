@@ -18,6 +18,7 @@ docker compose up --build
 ```
 
 This starts:
+
 - MySQL on `localhost:3306`
 - Backend API on `localhost:3000`
 - phpMyAdmin on `localhost:8081`
@@ -37,29 +38,47 @@ The database schema is created automatically from `db/init/01_schema.sql`. Seed 
 - User: `DB_USER` in `.env`
 - Password: `DB_PASSWORD` in `.env`
 
+## Backend Access
+
+- Health check: `http://localhost:3000/health`
+- API base URL: `http://localhost:3000/api`
+
+Example login:
+
+```bash
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d "{\"email\":\"customer@smartworkshop.local\",\"password\":\"Customer123!\"}"
+```
+
 ## API Endpoints (Minimum Viable)
 
 Auth
+
 - `POST /api/auth/register`
 - `POST /api/auth/login`
 
 Service Requests
+
 - `POST /api/service-requests` (Customer)
 - `GET /api/service-requests/me` (Customer)
 - `GET /api/service-requests/:id` (Customer own or Admin)
 - `GET /api/service-requests/available` (Mechanic/Admin)
 
 Quotations
+
 - `POST /api/quotations` (Mechanic)
 - `GET /api/quotations/request/:requestId` (Customer owner/Mechanic/Admin)
 - `POST /api/quotations/:quotationId/accept` (Customer)
 
 Jobs
+
 - `GET /api/jobs/me` (Customer/Mechanic/Admin)
 - `PATCH /api/jobs/:jobId/status` (Mechanic/Admin)
 - `GET /api/jobs/:jobId/history` (Authorized)
 
 Admin (Workshops + Users)
+
 - `GET /api/admin/workshops`
 - `POST /api/admin/workshops`
 - `PATCH /api/admin/workshops/:workshopId`
@@ -101,3 +120,5 @@ Ensure MySQL is running and `.env` points to your DB.
 ```
 
 This removes containers/volumes and recreates the stack from scratch.
+
+Host - <http://localhost:3000/>
