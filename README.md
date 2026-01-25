@@ -1,36 +1,103 @@
-# SmartWorkshop Management System
+# SmartWorkshop / Smart Vehicle Service Marketplace
 
-## Requirements
+Working prototype built with Node.js + Express + MySQL + phpMyAdmin (Docker). No Directus.
 
-- Docker Desktop
+## Prerequisites
 
-## How to start
+- Windows 10/11
+- Docker Desktop (with Compose)
+- Node.js 18+ (only needed if running backend locally outside Docker)
 
-1. Copy `.env.example` to `.env` and adjust values.
+## Quick Start (Docker)
+
+1. Copy `.env.example` to `.env` and adjust values if needed.
 2. Run:
 
 ```bash
 docker compose up --build
 ```
 
-## How to reset the environment
+This starts:
+- MySQL on `localhost:3306`
+- Backend API on `localhost:3000`
+- phpMyAdmin on `localhost:8081`
+
+The database schema is created automatically from `db/init/01_schema.sql`. Seed data is inserted automatically when the backend starts.
+
+## Default Seed Accounts
+
+- Admin: `admin@smartworkshop.local` / `Admin123!`
+- Mechanic: `mechanic@smartworkshop.local` / `Mechanic123!`
+- Customer: `customer@smartworkshop.local` / `Customer123!`
+
+## phpMyAdmin
+
+- URL: `http://localhost:8081`
+- Server: `db` (inside Docker) or `localhost` (from host)
+- User: `DB_USER` in `.env`
+- Password: `DB_PASSWORD` in `.env`
+
+## API Endpoints (Minimum Viable)
+
+Auth
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+
+Service Requests
+- `POST /api/service-requests` (Customer)
+- `GET /api/service-requests/me` (Customer)
+- `GET /api/service-requests/:id` (Customer own or Admin)
+- `GET /api/service-requests/available` (Mechanic/Admin)
+
+Quotations
+- `POST /api/quotations` (Mechanic)
+- `GET /api/quotations/request/:requestId` (Customer owner/Mechanic/Admin)
+- `POST /api/quotations/:quotationId/accept` (Customer)
+
+Jobs
+- `GET /api/jobs/me` (Customer/Mechanic/Admin)
+- `PATCH /api/jobs/:jobId/status` (Mechanic/Admin)
+- `GET /api/jobs/:jobId/history` (Authorized)
+
+Admin (Workshops + Users)
+- `GET /api/admin/workshops`
+- `POST /api/admin/workshops`
+- `PATCH /api/admin/workshops/:workshopId`
+- `DELETE /api/admin/workshops/:workshopId`
+- `GET /api/admin/users`
+
+## Demo Script (PowerShell)
+
+A Windows-friendly demo script is provided:
+
+```powershell
+./scripts/demo.ps1
+```
+
+It logs in as the seeded customer/mechanic, creates a service request, submits a quotation, accepts it, and updates job status.
+
+## Running Backend Locally (optional)
+
+If you want to run the backend outside Docker:
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+Ensure MySQL is running and `.env` points to your DB.
+
+## Notes on Architecture
+
+- Directus is intentionally not used to keep the prototype lightweight and aligned with the requirement.
+- RBAC is enforced in middleware for Customer, Mechanic, and Admin roles.
+- Job creation is transactional and only occurs when a quotation is accepted.
+
+## Reset Environment
 
 ```bash
 ./scripts/reset.sh
 ```
 
-## URLs
-
-- Backend API: <http://localhost:3000/health>
-- Directus Admin UI: <http://localhost:8055>
-- phpMyAdmin: <http://localhost:8081>
-
-Notes
-
-The API_PORT value is configured in .env. If you change it, update the port mapping in docker-compose.yml or use the correct URL accordingly.
-
-## Academic context
-
-Final Year Project.
-Roles: Customer, Mechanic, Admin.
-Directus will be used for data management and RBAC.
+This removes containers/volumes and recreates the stack from scratch.
