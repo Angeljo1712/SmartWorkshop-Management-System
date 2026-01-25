@@ -1,0 +1,11 @@
+{
+  "folders": [
+    { "path": "infra", "name": "infra" },
+    { "path": "backend", "name": "backend" },
+    { "path": "frontend", "name": "frontend" },
+    { "path": "db", "name": "db" },
+    { "path": "scripts", "name": "scripts" },
+    { "path": "docs", "name": "docs" }
+  ]
+}
+
