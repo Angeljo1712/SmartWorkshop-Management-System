@@ -1,4 +1,5 @@
-const { pool } = require("../db/pool");
+const { pool } = require("../config/pool");
+const { AppError } = require("../utils/appError");
 
 const listWorkshops = async () => {
   const [rows] = await pool.query("SELECT * FROM workshops ORDER BY created_at DESC");

@@ -1,5 +1,5 @@
 const jobService = require("../services/jobService");
-const { pool } = require("../db/pool");
+const { pool } = require("../config/pool");
 const { AppError } = require("../utils/appError");
 const { getWorkshopIdForMechanic } = require("../services/quotationService");
 

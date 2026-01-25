@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { pool } = require("../db/pool");
+const { pool } = require("../config/pool");
 const { env } = require("../config/env");
 const { AppError } = require("../utils/appError");
 
