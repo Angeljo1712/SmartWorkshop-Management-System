@@ -1,7 +1,267 @@
 doctype html
-html
+html(lang="en")
   head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
     title= title
+    style.
+      :root {
+        color-scheme: light;
+        --primary: #0a66ff;
+        --primary-dark: #0a4ed1;
+        --primary-soft: #e6f0ff;
+        --text: #0b1a33;
+        --muted: #5f6c85;
+        --card-bg: #ffffff;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", "Inter", system-ui, -apple-system, sans-serif;
+      }
+      body {
+        background: radial-gradient(circle at top, #1f7aff 0%, #0a59ff 40%, #0640c2 100%);
+        color: white;
+        min-height: 100vh;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .page {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 28px 60px;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 700;
+        font-size: 20px;
+      }
+      .logo-mark {
+        width: 32px;
+        height: 32px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.15);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+      }
+      nav {
+        display: flex;
+        gap: 24px;
+        font-size: 14px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .nav-actions a:last-child {
+        padding: 10px 18px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        font-weight: 600;
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 36px;
+        padding: 40px 60px 80px;
+        align-items: center;
+      }
+      .hero h1 {
+        font-size: clamp(2.4rem, 4vw, 3.6rem);
+        line-height: 1.1;
+        margin-bottom: 16px;
+      }
+      .hero p.lead {
+        font-size: 18px;
+        color: rgba(255, 255, 255, 0.85);
+        margin-bottom: 28px;
+        max-width: 520px;
+      }
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.15);
+        font-size: 12px;
+        margin-bottom: 20px;
+      }
+      .hero-form {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        padding: 16px;
+        border-radius: 999px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .hero-form input {
+        flex: 1;
+        min-width: 180px;
+        border: none;
+        border-radius: 999px;
+        padding: 14px 16px;
+      }
+      .hero-form button {
+        border: none;
+        border-radius: 999px;
+        padding: 14px 24px;
+        font-weight: 700;
+        background: #0f172a;
+        color: white;
+        cursor: pointer;
+      }
+      .hero-form small {
+        width: 100%;
+        display: block;
+        margin-left: 8px;
+        margin-top: 8px;
+        color: rgba(255, 255, 255, 0.75);
+      }
+      .trust {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        margin-top: 30px;
+        flex-wrap: wrap;
+      }
+      .trust-card {
+        background: rgba(15, 23, 42, 0.65);
+        border-radius: 14px;
+        padding: 12px 16px;
+        font-size: 14px;
+      }
+      .hero-visual {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .hero-visual img {
+        width: min(360px, 80vw);
+        border-radius: 24px;
+        box-shadow: 0 24px 60px rgba(2, 8, 23, 0.35);
+      }
+      .service-chip {
+        position: absolute;
+        background: white;
+        color: var(--text);
+        padding: 12px 16px;
+        border-radius: 16px;
+        font-size: 12px;
+        font-weight: 600;
+        box-shadow: 0 12px 30px rgba(2, 8, 23, 0.25);
+      }
+      .chip-one { top: 12%; right: 12%; }
+      .chip-two { bottom: 20%; left: 4%; }
+      .chip-three { bottom: 6%; right: 18%; }
+      .features {
+        background: white;
+        color: var(--text);
+        padding: 48px 60px;
+      }
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+      }
+      .feature-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+      }
+      .feature-card h3 {
+        margin-bottom: 8px;
+      }
+      .feature-card p {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      @media (max-width: 768px) {
+        header {
+          flex-direction: column;
+          gap: 16px;
+        }
+        nav {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+        .nav-actions {
+          width: 100%;
+          justify-content: center;
+        }
+      }
   body
-    h1= title
-    p= message
+    .page
+      header
+        .logo
+          span.logo-mark SW
+          span SmartWorkshop
+        nav
+          a(href="#how-it-works") How it works
+          a(href="#services") Our services
+          a(href="#support") Support
+          a(href="#blog") Blog
+        .nav-actions
+          a(href="#signin") Sign in
+          a(href="#get-started") Get started
+
+      main
+        section.hero
+          .hero-copy
+            if message
+              span.status-pill
+                span ●
+                span= message
+            h1= title
+            p.lead Book trusted mechanics and manage repairs with next-day availability, transparent pricing, and instant updates.
+            form.hero-form
+              input(type="text" placeholder="Your car registration" aria-label="Your car registration")
+              input(type="text" placeholder="Your postcode" aria-label="Your postcode")
+              button(type="button") Get my instant price →
+              small I don't know my registration number
+            .trust
+              .trust-card
+                strong 4.8/5
+                span  · 19,200+ reviews
+              .trust-card
+                strong 98%
+                span  · on-time completion
+          .hero-visual
+            img(src="https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=800&q=80" alt="Friendly mechanic ready to help")
+            .service-chip.chip-one Diagnostics
+            .service-chip.chip-two Repairs
+            .service-chip.chip-three Maintenance
+
+        section.features#services
+          .feature-grid
+            .feature-card
+              h3 Transparent quotations
+              p Compare options from verified workshops in minutes.
+            .feature-card
+              h3 Live service tracking
+              p Follow every stage of the repair in your dashboard.
+            .feature-card
+              h3 Pickup & delivery
+              p Schedule collection slots that fit your routine.
+            .feature-card
+              h3 Certified mechanics
+              p Quality checks and compliance built into every job.
