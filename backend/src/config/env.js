@@ -6,6 +6,7 @@ const env = {
   apiPort: process.env.API_PORT || 3000,
   jwtSecret: process.env.JWT_SECRET || "dev_jwt_secret",
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "8h",
+  corsOrigin: process.env.CORS_ORIGIN || "http://localhost:5173",
   db: {
     host: process.env.DB_HOST || "localhost",
     port: Number(process.env.DB_PORT || 3306),

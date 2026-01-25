@@ -51,6 +51,22 @@ curl -X POST http://localhost:3000/api/auth/login \
   -d "{\"email\":\"customer@smartworkshop.local\",\"password\":\"Customer123!\"}"
 ```
 
+## Frontend (Separate)
+
+A standalone frontend lives in `frontend/` and runs independently from the API.
+
+```bash
+cd frontend
+node server.js
+```
+
+Open `http://localhost:5173`. The frontend calls the API at `http://localhost:3000`.
+
+If you change the frontend port, update `.env`:
+
+```Host cor - CORS_ORIGIN = 'http://localhost:5173'
+```
+
 ## API Endpoints (Minimum Viable)
 
 Auth

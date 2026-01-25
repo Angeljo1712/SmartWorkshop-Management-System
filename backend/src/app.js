@@ -7,11 +7,13 @@ const quotationRouter = require("./routes/quotations");
 const jobRouter = require("./routes/jobs");
 const adminRouter = require("./routes/admin");
 const { errorHandler } = require("./middleware/error");
+const { cors } = require("./middleware/cors");
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors);
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
