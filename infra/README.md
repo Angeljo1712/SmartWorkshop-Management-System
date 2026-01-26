@@ -10,11 +10,17 @@ Working prototype built with Node.js + Express + MySQL + phpMyAdmin (Docker). No
 
 ## Quick Start (Docker)
 
-1. Copy `.env.example` to `.env` and adjust values if needed.
-2. Run:
+1. Copy `.env.example` to `.env` in the repo root and adjust values if needed.
+2. Run from the repo root (recommended):
 
 ```bash
-docker compose up --build
+docker compose -f infra/docker-compose.yml up --build -d
+```
+
+If you run the command from inside `infra/`, pass the env file explicitly:
+
+```bash
+docker compose --env-file ../.env up --build -d
 ```
 
 This starts:
@@ -64,7 +70,7 @@ Open `http://localhost:5173`. The frontend calls the API at `http://localhost:30
 
 If you change the frontend port, update `.env`:
 
-```Host cor - CORS_ORIGIN = 'http://localhost:5173'
+```CORS_ORIGIN=http://localhost:5173
 ```
 
 ## API Endpoints (Minimum Viable)
@@ -132,7 +138,8 @@ Ensure MySQL is running and `.env` points to your DB.
 ## Reset Environment
 
 ```bash
-./scripts/reset.sh
+docker compose -f infra/docker-compose.yml down -v
+docker compose -f infra/docker-compose.yml up --build -d
 ```
 
 This removes containers/volumes and recreates the stack from scratch.

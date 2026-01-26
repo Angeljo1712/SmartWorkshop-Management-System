@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -e
 
-docker compose down -v
-docker compose up --build -d
+docker compose -f infra/docker-compose.yml down -v
+docker compose -f infra/docker-compose.yml up --build -d
