@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 const PORT = process.env.PORT || 5173;
-const ROOT = __dirname;
+const ROOT = path.join(__dirname, "src");
 
 const mime = {
   ".html": "text/html",
@@ -18,7 +18,7 @@ const mime = {
 };
 
 const server = http.createServer((req, res) => {
-  const urlPath = req.url === "/" ? "/index.html" : req.url;
+  const urlPath = req.url === "/" ? "/pages/Home/index.html" : req.url;
   const filePath = path.join(ROOT, urlPath);
 
   fs.readFile(filePath, (err, data) => {

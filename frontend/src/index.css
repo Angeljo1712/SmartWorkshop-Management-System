@@ -20,6 +20,24 @@ body {
   color: var(--ink);
 }
 
+.page-nav {
+  display: flex;
+  gap: 16px;
+  padding: 16px 48px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.page-nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.page-shell {
+  padding: 48px;
+}
+
 .site-header {
   display: flex;
   align-items: center;
