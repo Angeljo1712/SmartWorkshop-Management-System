@@ -1,6 +1,6 @@
 const express = require("express");
 const { authenticate, authorizeRoles } = require("../middleware/auth");
-const { asyncHandler } = require("../utils/asyncHandler");
+const { asyncHandler } = require("../frontend/src/utils/asyncHandler");
 const {
   listWorkshopsHandler,
   createWorkshopHandler,
@@ -18,3 +18,5 @@ router.delete("/workshops/:workshopId", authenticate, authorizeRoles("ADMIN"), a
 router.get("/users", authenticate, authorizeRoles("ADMIN"), asyncHandler(listUsersHandler));
 
 module.exports = router;
+
+

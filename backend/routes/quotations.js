@@ -1,6 +1,6 @@
 const express = require("express");
 const { authenticate, authorizeRoles } = require("../middleware/auth");
-const { asyncHandler } = require("../utils/asyncHandler");
+const { asyncHandler } = require("../frontend/src/utils/asyncHandler");
 const {
   createQuotationHandler,
   getQuotationsForRequestHandler,
@@ -14,3 +14,5 @@ router.get("/request/:requestId", authenticate, authorizeRoles("CUSTOMER", "MECH
 router.post("/:quotationId/accept", authenticate, authorizeRoles("CUSTOMER"), asyncHandler(acceptQuotationHandler));
 
 module.exports = router;
+
+

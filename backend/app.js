@@ -14,7 +14,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors);
-app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(__dirname, "../frontend/src/views"));
 app.set("view engine", "pug");
 
 app.get("/", (req, res) => {
@@ -34,3 +34,4 @@ app.use("/api/admin", adminRouter);
 app.use(errorHandler);
 
 module.exports = app;
+

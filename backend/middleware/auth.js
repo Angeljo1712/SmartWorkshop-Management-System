@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { env } = require("../config/env");
-const { AppError } = require("../utils/appError");
+const { AppError } = require("../frontend/src/utils/appError");
 
 const authenticate = (req, _res, next) => {
   const header = req.headers.authorization || "";
@@ -27,3 +27,5 @@ const authorizeRoles = (...roles) => (req, _res, next) => {
 };
 
 module.exports = { authenticate, authorizeRoles };
+
+

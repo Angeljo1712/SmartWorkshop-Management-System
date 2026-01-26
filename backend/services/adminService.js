@@ -1,5 +1,5 @@
 const { pool } = require("../config/pool");
-const { AppError } = require("../utils/appError");
+const { AppError } = require("../frontend/src/utils/appError");
 
 const listWorkshops = async () => {
   const [rows] = await pool.query("SELECT * FROM workshops ORDER BY created_at DESC");
@@ -51,3 +51,5 @@ const listUsers = async () => {
 };
 
 module.exports = { listWorkshops, createWorkshop, updateWorkshop, deleteWorkshop, listUsers };
+
+

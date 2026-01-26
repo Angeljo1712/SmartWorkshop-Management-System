@@ -1,5 +1,5 @@
 const serviceRequestService = require("../services/serviceRequestService");
-const { AppError } = require("../utils/appError");
+const { AppError } = require("../frontend/src/utils/appError");
 
 const createRequestHandler = async (req, res) => {
   const request = await serviceRequestService.createRequest(req.user.userId, req.body);
@@ -33,3 +33,5 @@ module.exports = {
   getRequestByIdHandler,
   getAvailableRequestsHandler
 };
+
+

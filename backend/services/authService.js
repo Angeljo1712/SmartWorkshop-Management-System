@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { pool } = require("../config/pool");
 const { env } = require("../config/env");
-const { AppError } = require("../utils/appError");
+const { AppError } = require("../frontend/src/utils/appError");
 
 const createToken = (user) =>
   jwt.sign({ userId: user.user_id, role: user.role_name }, env.jwtSecret, {
@@ -70,3 +70,5 @@ const login = async ({ email, password }) => {
 };
 
 module.exports = { register, login };
+
+
