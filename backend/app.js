@@ -6,6 +6,8 @@ const serviceRequestRouter = require("./routes/serviceRequests");
 const quotationRouter = require("./routes/quotations");
 const jobRouter = require("./routes/jobs");
 const adminRouter = require("./routes/admin");
+const vehicleEnquiryRouter = require("./routes/vehicleEnquiry");
+const workshopsRouter = require("./routes/workshops");
 const { errorHandler } = require("./middleware/error");
 const { cors } = require("./middleware/cors");
 
@@ -30,6 +32,8 @@ app.use("/api/service-requests", serviceRequestRouter);
 app.use("/api/quotations", quotationRouter);
 app.use("/api/jobs", jobRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/vehicle-enquiry", vehicleEnquiryRouter);
+app.use("/workshops", workshopsRouter);
 
 app.use(errorHandler);
 

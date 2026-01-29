@@ -1,5 +1,5 @@
 const { pool } = require("../config/pool");
-const { AppError } = require("../frontend/src/utils/appError");
+const { AppError } = require("../../frontend/src/utils/appError");
 const { getWorkshopIdForMechanic } = require("./quotationService");
 
 const getJobsForCustomer = async (customerId) => {
@@ -101,5 +101,6 @@ module.exports = {
   updateJobStatus,
   getJobHistory
 };
+
 
 

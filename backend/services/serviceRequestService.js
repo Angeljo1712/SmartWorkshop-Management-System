@@ -1,5 +1,5 @@
 const { pool } = require("../config/pool");
-const { AppError } = require("../frontend/src/utils/appError");
+const { AppError } = require("../../frontend/src/utils/appError");
 
 const createRequest = async (customerId, payload) => {
   const { vehicle_reg, vehicle_make, vehicle_model, issue_description, preferred_date } = payload;
@@ -39,5 +39,6 @@ const getAvailableRequests = async () => {
 };
 
 module.exports = { createRequest, getRequestsForCustomer, getRequestById, getAvailableRequests };
+
 
 

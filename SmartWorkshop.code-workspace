@@ -1,11 +1,29 @@
 {
   "folders": [
-    { "path": "infra", "name": "infra" },
-    { "path": "backend", "name": "backend" },
-    { "path": "frontend", "name": "frontend" },
-    { "path": "db", "name": "db" },
-    { "path": "scripts", "name": "scripts" },
-    { "path": "docs", "name": "docs" }
+    {
+      "name": "infra",
+      "path": "infra"
+    },
+    {
+      "name": "backend",
+      "path": "backend"
+    },
+    {
+      "name": "frontend",
+      "path": "frontend"
+    },
+    {
+      "name": "db",
+      "path": "db"
+    },
+    {
+      "name": "scripts",
+      "path": "scripts"
+    },
+    {
+      "name": "docs",
+      "path": "docs"
+    }
   ]
 }
 

@@ -1,4 +1,4 @@
-const { AppError } = require("../frontend/src/utils/appError");
+const { AppError } = require("../../frontend/src/utils/appError");
 
 const errorHandler = (err, _req, res, _next) => {
   if (err instanceof AppError) {
@@ -10,5 +10,6 @@ const errorHandler = (err, _req, res, _next) => {
 };
 
 module.exports = { errorHandler };
+
 
 

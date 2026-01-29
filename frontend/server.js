@@ -18,7 +18,8 @@ const mime = {
 };
 
 const server = http.createServer((req, res) => {
-  const urlPath = req.url === "/" ? "/pages/Home/index.html" : req.url;
+  const requestPath = req.url.split("?")[0];
+  const urlPath = requestPath === "/" ? "/pages/Home/index.html" : requestPath;
   const filePath = path.join(ROOT, urlPath);
 
   fs.readFile(filePath, (err, data) => {

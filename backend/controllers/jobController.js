@@ -1,6 +1,6 @@
 const jobService = require("../services/jobService");
 const { pool } = require("../config/pool");
-const { AppError } = require("../frontend/src/utils/appError");
+const { AppError } = require("../../frontend/src/utils/appError");
 const { getWorkshopIdForMechanic } = require("../services/quotationService");
 
 const getJobsMeHandler = async (req, res) => {
@@ -64,5 +64,6 @@ const getJobHistoryHandler = async (req, res) => {
 };
 
 module.exports = { getJobsMeHandler, updateJobStatusHandler, getJobHistoryHandler };
+
 
 

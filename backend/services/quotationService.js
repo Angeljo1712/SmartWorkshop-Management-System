@@ -1,5 +1,5 @@
 const { pool } = require("../config/pool");
-const { AppError } = require("../frontend/src/utils/appError");
+const { AppError } = require("../../frontend/src/utils/appError");
 
 const getWorkshopIdForMechanic = async (mechanicId) => {
   const [rows] = await pool.query(
@@ -137,5 +137,6 @@ module.exports = {
   acceptQuotation,
   getWorkshopIdForMechanic
 };
+
 
 

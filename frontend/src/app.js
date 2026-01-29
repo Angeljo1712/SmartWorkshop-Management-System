@@ -2,6 +2,9 @@ const output = document.getElementById("output");
 let token = null;
 
 const write = (data) => {
+  if (!output) {
+    return;
+  }
   output.textContent = JSON.stringify(data, null, 2);
 };
 
@@ -20,32 +23,139 @@ const api = (path, options = {}) =>
     return payload;
   });
 
-document.getElementById("loginCustomer").addEventListener("click", async () => {
-  try {
-    const result = await api("/api/auth/login", {
-      method: "POST",
-      body: JSON.stringify({
-        email: "customer@smartworkshop.local",
-        password: "Customer123!"
-      })
-    });
-    token = result.token;
-    write(result);
-  } catch (err) {
-    write(err);
-  }
-});
+const postcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
 
-document.getElementById("getRequests").addEventListener("click", async () => {
-  if (!token) {
-    return write({ error: "Login first to get a token." });
+const renderVehicleSummary = () => {
+  const container = document.getElementById("vehicleSummary");
+  const titleEl = document.getElementById("shopTitle");
+  const stored = sessionStorage.getItem("vehicleEnquiry");
+  let data = null;
+  if (stored) {
+    data = JSON.parse(stored);
+  } else {
+    const params = new URLSearchParams(window.location.search);
+    const reg = params.get("reg");
+    const postcode = params.get("postcode");
+    const make = params.get("make");
+    const model = params.get("model");
+    if (reg || postcode || make || model) {
+      data = { registrationNumber: reg, postcode, make, model };
+    }
   }
-  try {
-    const result = await api("/api/service-requests/me", {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    write(result);
-  } catch (err) {
-    write(err);
+
+  if (!data) {
+    if (container) {
+      container.textContent = "No vehicle details found. Please start from the home page.";
+    }
+    return;
   }
-});
+  if (titleEl) {
+    const make = data.make;
+    const model = data.model;
+    if (make && model) {
+      titleEl.textContent = `What does your ${make} ${model} need?`;
+    } else if (make) {
+      titleEl.textContent = `What does your ${make} need?`;
+    } else {
+      titleEl.textContent = "What does your vehicle need?";
+    }
+  }
+  if (container) {
+    container.innerHTML = `
+      <strong>Vehicle</strong>
+      <p>${data.registrationNumber || "Unknown"} · ${data.make || "Unknown"} ${data.model || ""}</p>
+      <p>${data.colour || "Unknown colour"} · ${data.fuelType || "Unknown fuel"} · ${data.yearOfManufacture || "Unknown year"}</p>
+      <p>Postcode: ${data.postcode || "Unknown"}</p>
+    `;
+  }
+};
+
+const vehicleForm = document.getElementById("vehicleLookupForm");
+if (vehicleForm) {
+  const regInput = document.getElementById("vehicleReg");
+  const postcodeInput = document.getElementById("postcode");
+  const errorEl = document.getElementById("vehicleLookupError");
+
+  vehicleForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const registrationNumber = regInput.value.trim().toUpperCase().replace(/\s+/g, "");
+    const postcode = postcodeInput.value.trim().toUpperCase();
+
+    if (!registrationNumber) {
+      errorEl.textContent = "Please enter your registration number.";
+      return;
+    }
+    if (!postcodeRegex.test(postcode)) {
+      errorEl.textContent = "Please enter a valid UK postcode.";
+      return;
+    }
+
+    errorEl.textContent = "";
+    try {
+      const result = await api("/api/vehicle-enquiry", {
+        method: "POST",
+        body: JSON.stringify({ registrationNumber })
+      });
+
+      const vehicleData = {
+        registrationNumber: result.registrationNumber || registrationNumber,
+        make: result.make,
+        model: result.model,
+        colour: result.colour,
+        fuelType: result.fuelType,
+        yearOfManufacture: result.yearOfManufacture,
+        postcode
+      };
+
+      sessionStorage.setItem("vehicleEnquiry", JSON.stringify(vehicleData));
+      const params = new URLSearchParams({
+        reg: vehicleData.registrationNumber,
+        postcode,
+        make: vehicleData.make || "",
+        model: vehicleData.model || ""
+      });
+      window.location.href = `/pages/Shop/index.html?${params.toString()}`;
+    } catch (err) {
+      const message = err?.error?.message || err?.message || "Unable to look up vehicle details.";
+      errorEl.textContent = message;
+    }
+  });
+}
+
+renderVehicleSummary();
+
+const loginButton = document.getElementById("loginCustomer");
+if (loginButton) {
+  loginButton.addEventListener("click", async () => {
+    try {
+      const result = await api("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({
+          email: "customer@smartworkshop.local",
+          password: "Customer123!"
+        })
+      });
+      token = result.token;
+      write(result);
+    } catch (err) {
+      write(err);
+    }
+  });
+}
+
+const requestsButton = document.getElementById("getRequests");
+if (requestsButton) {
+  requestsButton.addEventListener("click", async () => {
+    if (!token) {
+      return write({ error: "Login first to get a token." });
+    }
+    try {
+      const result = await api("/api/service-requests/me", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      write(result);
+    } catch (err) {
+      write(err);
+    }
+  });
+}
