@@ -16,8 +16,84 @@
     </nav>
     <main class="page-shell">
       <h1>Admin</h1>
-      <p>This page is a placeholder.</p>
+
+      <section class="admin-card">
+        <h2>Admin login</h2>
+        <form id="adminLoginForm" class="admin-form">
+          <label>
+            Email
+            <input id="adminEmail" type="email" placeholder="admin@smartworkshop.local" required />
+          </label>
+          <label>
+            Password
+            <input id="adminPassword" type="password" placeholder="••••••••" required />
+          </label>
+          <p class="form-error" id="adminLoginError" role="alert" aria-live="polite"></p>
+          <button type="submit" class="primary">Login</button>
+        </form>
+      </section>
+
+      <section class="admin-grid">
+        <div class="admin-card">
+          <h2>Create mechanic</h2>
+          <form id="createMechanicForm" class="admin-form">
+            <label>
+              Full name
+              <input id="mechanicName" type="text" placeholder="Jane Mechanic" required />
+            </label>
+            <label>
+              Email
+              <input id="mechanicEmail" type="email" placeholder="jane@shop.co.uk" required />
+            </label>
+            <label>
+              Password
+              <input id="mechanicPassword" type="password" placeholder="Temp password" required />
+            </label>
+            <p class="form-error" id="mechanicError" role="alert" aria-live="polite"></p>
+            <button type="submit" class="primary">Create mechanic</button>
+          </form>
+        </div>
+
+        <div class="admin-card">
+          <h2>Create workshop</h2>
+          <form id="createWorkshopForm" class="admin-form">
+            <label>
+              Name
+              <input id="workshopName" type="text" placeholder="AutoPro Garage" required />
+            </label>
+            <label>
+              Address
+              <input id="workshopAddress" type="text" placeholder="10 High Street" required />
+            </label>
+            <label>
+              Postcode
+              <input id="workshopPostcode" type="text" placeholder="SW1A 1AA" required />
+            </label>
+            <label>
+              Phone
+              <input id="workshopPhone" type="text" placeholder="020 0000 0000" required />
+            </label>
+            <label>
+              Description
+              <textarea id="workshopDescription" rows="3" placeholder="Specialist in MOT and servicing"></textarea>
+            </label>
+            <p class="form-error" id="workshopError" role="alert" aria-live="polite"></p>
+            <button type="submit" class="primary">Create workshop</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="admin-card">
+        <h2>Data</h2>
+        <div class="cta-row">
+          <button class="secondary" id="loadWorkshops">Load workshops</button>
+          <button class="secondary" id="loadUsers">Load users</button>
+        </div>
+        <pre id="adminOutput" aria-live="polite"></pre>
+      </section>
+
       <p><a href="/">Back to Home</a></p>
     </main>
+    <script src="/app.js"></script>
   </body>
 </html>

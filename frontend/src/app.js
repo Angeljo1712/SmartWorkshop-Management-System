@@ -23,6 +23,15 @@ const api = (path, options = {}) =>
     return payload;
   });
 
+const apiAuth = (path, token, options = {}) =>
+  api(path, {
+    ...options,
+    headers: {
+      ...(options.headers || {}),
+      Authorization: `Bearer ${token}`
+    }
+  });
+
 const postcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
 
 const renderVehicleSummary = () => {
@@ -123,6 +132,144 @@ if (vehicleForm) {
 }
 
 renderVehicleSummary();
+
+const adminOutput = document.getElementById("adminOutput");
+const writeAdmin = (data) => {
+  if (!adminOutput) {
+    return;
+  }
+  adminOutput.textContent = JSON.stringify(data, null, 2);
+};
+
+const adminLoginForm = document.getElementById("adminLoginForm");
+if (adminLoginForm) {
+  const adminEmail = document.getElementById("adminEmail");
+  const adminPassword = document.getElementById("adminPassword");
+  const adminLoginError = document.getElementById("adminLoginError");
+
+  adminLoginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    adminLoginError.textContent = "";
+    try {
+      const result = await api("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({
+          email: adminEmail.value.trim(),
+          password: adminPassword.value
+        })
+      });
+      sessionStorage.setItem("adminToken", result.token);
+      writeAdmin({ status: "logged_in", user: result.user });
+    } catch (err) {
+      adminLoginError.textContent = err?.error?.message || "Login failed";
+    }
+  });
+}
+
+const getAdminToken = () => sessionStorage.getItem("adminToken");
+
+const createMechanicForm = document.getElementById("createMechanicForm");
+if (createMechanicForm) {
+  const mechanicName = document.getElementById("mechanicName");
+  const mechanicEmail = document.getElementById("mechanicEmail");
+  const mechanicPassword = document.getElementById("mechanicPassword");
+  const mechanicError = document.getElementById("mechanicError");
+
+  createMechanicForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    mechanicError.textContent = "";
+    const token = getAdminToken();
+    if (!token) {
+      mechanicError.textContent = "Login as admin first.";
+      return;
+    }
+    try {
+      const result = await apiAuth("/api/admin/users", token, {
+        method: "POST",
+        body: JSON.stringify({
+          full_name: mechanicName.value.trim(),
+          email: mechanicEmail.value.trim(),
+          password: mechanicPassword.value,
+          role: "MECHANIC"
+        })
+      });
+      writeAdmin({ created: result });
+      createMechanicForm.reset();
+    } catch (err) {
+      mechanicError.textContent = err?.error?.message || "Unable to create mechanic.";
+    }
+  });
+}
+
+const createWorkshopForm = document.getElementById("createWorkshopForm");
+if (createWorkshopForm) {
+  const workshopName = document.getElementById("workshopName");
+  const workshopAddress = document.getElementById("workshopAddress");
+  const workshopPostcode = document.getElementById("workshopPostcode");
+  const workshopPhone = document.getElementById("workshopPhone");
+  const workshopDescription = document.getElementById("workshopDescription");
+  const workshopError = document.getElementById("workshopError");
+
+  createWorkshopForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    workshopError.textContent = "";
+    const token = getAdminToken();
+    if (!token) {
+      workshopError.textContent = "Login as admin first.";
+      return;
+    }
+    try {
+      const result = await apiAuth("/api/admin/workshops", token, {
+        method: "POST",
+        body: JSON.stringify({
+          name: workshopName.value.trim(),
+          address: workshopAddress.value.trim(),
+          postcode: workshopPostcode.value.trim(),
+          phone: workshopPhone.value.trim(),
+          description: workshopDescription.value.trim()
+        })
+      });
+      writeAdmin({ created: result });
+      createWorkshopForm.reset();
+    } catch (err) {
+      workshopError.textContent = err?.error?.message || "Unable to create workshop.";
+    }
+  });
+}
+
+const loadWorkshops = document.getElementById("loadWorkshops");
+if (loadWorkshops) {
+  loadWorkshops.addEventListener("click", async () => {
+    const token = getAdminToken();
+    if (!token) {
+      writeAdmin({ error: "Login as admin first." });
+      return;
+    }
+    try {
+      const result = await apiAuth("/api/admin/workshops", token);
+      writeAdmin(result);
+    } catch (err) {
+      writeAdmin(err);
+    }
+  });
+}
+
+const loadUsers = document.getElementById("loadUsers");
+if (loadUsers) {
+  loadUsers.addEventListener("click", async () => {
+    const token = getAdminToken();
+    if (!token) {
+      writeAdmin({ error: "Login as admin first." });
+      return;
+    }
+    try {
+      const result = await apiAuth("/api/admin/users", token);
+      writeAdmin(result);
+    } catch (err) {
+      writeAdmin(err);
+    }
+  });
+}
 
 const loginButton = document.getElementById("loginCustomer");
 if (loginButton) {

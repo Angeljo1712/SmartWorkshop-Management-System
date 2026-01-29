@@ -1,4 +1,5 @@
 const adminService = require("../services/adminService");
+const authService = require("../services/authService");
 
 const listWorkshopsHandler = async (_req, res) => {
   const workshops = await adminService.listWorkshops();
@@ -25,10 +26,16 @@ const listUsersHandler = async (_req, res) => {
   res.json(users);
 };
 
+const createUserHandler = async (req, res) => {
+  const { user } = await authService.register(req.body);
+  res.status(201).json(user);
+};
+
 module.exports = {
   listWorkshopsHandler,
   createWorkshopHandler,
   updateWorkshopHandler,
   deleteWorkshopHandler,
-  listUsersHandler
+  listUsersHandler,
+  createUserHandler
 };
