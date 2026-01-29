@@ -7,13 +7,6 @@
     <link rel="stylesheet" href="/index.css" />
   </head>
   <body>
-    <nav class="page-nav">
-      <a href="/">Home</a>
-      <a href="/pages/Admin/index.html">Admin</a>
-      <a href="/pages/Auth/index.html">Auth</a>
-      <a href="/pages/Shop/index.html">Shop</a>
-      <a href="/pages/User/index.html">User</a>
-    </nav>
     <header class="site-header">
       <div class="brand">
         <span class="logo">SW</span>
@@ -25,9 +18,8 @@
       <nav class="site-nav">
         <a href="#how">How it works</a>
         <a href="#services">Services</a>
-        <a href="#demo">API demo</a>
       </nav>
-      <button class="ghost">Sign in</button>
+      <a class="ghost ghost-link" href="/sign-in">Sign in</a>
     </header>
 
     <main>
@@ -42,20 +34,6 @@
           <div class="cta-row">
             <button class="primary">Get instant quotes</button>
             <button class="secondary">I am a workshop</button>
-          </div>
-          <div class="stats">
-            <div>
-              <strong>4.8?</strong>
-              <span>Average rating</span>
-            </div>
-            <div>
-              <strong>24h</strong>
-              <span>Average response</span>
-            </div>
-            <div>
-              <strong>98%</strong>
-              <span>On-time delivery</span>
-            </div>
           </div>
         </div>
         <div class="hero-card">
@@ -73,6 +51,23 @@
             <p class="form-error" id="vehicleLookupError" role="alert" aria-live="polite"></p>
             <button type="submit" class="primary">Get my instant price</button>
           </form>
+        </div>
+      </section>
+
+      <section class="mechanic-cta">
+        <div class="mechanic-copy">
+          <h2>Partner with SmartWorkshop</h2>
+          <p>
+            Join our network of trusted mechanics and workshops. Choose the jobs you want, set your
+            pricing, and grow your business with steady local demand.
+          </p>
+          <a class="primary ghost-link" href="/mechanic/home">Become a partner</a>
+        </div>
+        <div class="mechanic-visual">
+          <img
+            src="https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=900&q=80"
+            alt="Mechanic inspecting engine bay"
+          />
         </div>
       </section>
 
@@ -94,21 +89,6 @@
         </div>
       </section>
 
-      <section class="demo" id="demo">
-        <h2>API demo (frontend separated)</h2>
-        <p>Use the buttons below to call the backend API running at <code>http://localhost:3000</code>.</p>
-        <div class="demo-grid">
-          <div>
-            <h3>Login as customer</h3>
-            <button class="primary" id="loginCustomer">Login customer</button>
-          </div>
-          <div>
-            <h3>Get my requests</h3>
-            <button class="secondary" id="getRequests">Fetch requests</button>
-          </div>
-        </div>
-        <pre id="output" aria-live="polite"></pre>
-      </section>
     </main>
 
     <footer class="site-footer">

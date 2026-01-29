@@ -306,3 +306,35 @@ if (requestsButton) {
     }
   });
 }
+
+const signInForm = document.getElementById("signInForm");
+if (signInForm) {
+  const signInEmail = document.getElementById("signInEmail");
+  const signInPassword = document.getElementById("signInPassword");
+  const signInError = document.getElementById("signInError");
+
+  signInForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    signInError.textContent = "";
+
+    const email = signInEmail.value.trim();
+    const password = signInPassword.value;
+
+    if (!email || !password) {
+      signInError.textContent = "Please enter your email and password.";
+      return;
+    }
+
+    try {
+      const result = await api("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password })
+      });
+      sessionStorage.setItem("userToken", result.token);
+      sessionStorage.setItem("userProfile", JSON.stringify(result.user));
+      window.location.href = "/profile";
+    } catch (err) {
+      signInError.textContent = err?.error?.message || "Login failed. Check your credentials.";
+    }
+  });
+}

@@ -1,1 +1,1 @@
-& "C:\Users\LianGel1LPro\SmartWorkshop-Management-System\scripts\start-all.ps1" stop
+& "$PSScriptRoot\\scripts\\stack.ps1" stop

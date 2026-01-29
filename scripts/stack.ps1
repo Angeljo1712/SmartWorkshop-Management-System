@@ -12,6 +12,7 @@ $ComposeFile = Join-Path $Root "infra\docker-compose.yml"
 $PidFile     = Join-Path $PSScriptRoot ".frontend.pid"
 $FrontendDir = Join-Path $Root "frontend"
 $FrontendPort = 5173
+$BackendEnvFile = Join-Path $Root "backend\.env"
 
 # ---------- Output helpers ----------
 function Info($msg) { Write-Host "[INFO] $msg" }
@@ -78,11 +79,12 @@ function Start-Frontend {
   Assert-CommandExists "node" "Node.js"
   Assert-FileExists (Join-Path $FrontendDir "server.js") "Frontend entry (server.js)"
 
-  # Evita reventar si ya está ocupado
+  # Si el puerto está ocupado, intenta liberar
   $already = Get-NetTCPConnection -LocalPort $FrontendPort -State Listen -ErrorAction SilentlyContinue
   if ($already) {
-    Warn "Port $FrontendPort is already in use. Frontend is probably already running."
-    return
+    Warn "Port $FrontendPort is already in use. Attempting to stop the existing process."
+    Stop-ProcessByPort -Port $FrontendPort
+    Start-Sleep -Milliseconds 300
   }
 
   Info "Starting frontend..."
@@ -133,6 +135,9 @@ function Stop-FrontendHard {
 
 # ---------- Main ----------
 try {
+  if (-not (Test-Path $BackendEnvFile)) {
+    Warn "backend/.env not found. If running locally, copy .env.example to backend/.env."
+  }
   switch ($Action) {
     "stop" {
       Stop-Backend

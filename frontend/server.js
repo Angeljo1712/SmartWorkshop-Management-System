@@ -19,7 +19,16 @@ const mime = {
 
 const server = http.createServer((req, res) => {
   const requestPath = req.url.split("?")[0];
-  const urlPath = requestPath === "/" ? "/pages/Home/index.html" : requestPath;
+  let urlPath = requestPath === "/" ? "/pages/Home/index.html" : requestPath;
+  if (urlPath === "/sign-in") {
+    urlPath = "/pages/Auth/sign-in.html";
+  }
+  if (urlPath === "/profile") {
+    urlPath = "/pages/User/profile.html";
+  }
+  if (urlPath === "/mechanic/home" || urlPath === "/mechanic/home/") {
+    urlPath = "/pages/Mechanic/home.html";
+  }
   const filePath = path.join(ROOT, urlPath);
 
   fs.readFile(filePath, (err, data) => {
