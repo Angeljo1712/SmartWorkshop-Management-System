@@ -69,6 +69,10 @@
               <select id="adminStatusFilter">
                 <option value="all">All</option>
                 <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Pending">Pending</option>
+                <option value="Suspended">Suspended</option>
+                <option value="Banned">Banned</option>
               </select>
             </label>
             <label>
@@ -83,7 +87,7 @@
           </div>
           <div class="admin-actions">
             <button class="secondary" id="adminExportBtn" type="button">
-              <span class="btn-icon" aria-hidden="true">⬇</span>
+              <span class="btn-icon" aria-hidden="true">v</span>
               Export
             </button>
             <button class="primary" id="adminAddUserBtn" type="button">+ Add User</button>
@@ -155,6 +159,18 @@
             <div class="admin-empty is-hidden" id="adminEmptyState">
               <p>No users match your filters.</p>
             </div>
+          </div>
+          <div class="admin-table-footer">
+            <div class="rows-control">
+              <span>Rows per page</span>
+              <select id="adminRowsPerPage">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="20">20</option>
+              </select>
+              <span id="adminRowsMeta">0 of 0 rows</span>
+            </div>
+            <div class="pagination" id="adminPagination"></div>
           </div>
         </section>
       </section>

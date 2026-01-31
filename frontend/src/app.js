@@ -148,6 +148,9 @@ if (adminPage) {
   const adminUserRows = document.getElementById("adminUserRows");
   const adminEmptyState = document.getElementById("adminEmptyState");
   const adminUserCount = document.getElementById("adminUserCount");
+  const adminRowsPerPage = document.getElementById("adminRowsPerPage");
+  const adminRowsMeta = document.getElementById("adminRowsMeta");
+  const adminPagination = document.getElementById("adminPagination");
   const adminExportBtn = document.getElementById("adminExportBtn");
   const adminAddUserBtn = document.getElementById("adminAddUserBtn");
   const adminAddUserPanel = document.getElementById("adminAddUserPanel");
@@ -157,6 +160,9 @@ if (adminPage) {
   const adminRefreshBtn = document.getElementById("adminRefreshBtn");
 
   let adminUsers = [];
+  let filteredUsers = [];
+  let pageSize = Number(adminRowsPerPage?.value || 10);
+  let currentPage = 1;
 
   const getAdminToken = () => sessionStorage.getItem("userToken");
   const getAdminProfile = () => {
@@ -181,7 +187,14 @@ if (adminPage) {
     adminLogoutBtn.disabled = !loggedIn;
   };
 
-  const getStatus = () => "Active";
+  const statusCycle = ["Active", "Inactive", "Banned", "Pending", "Suspended"];
+  const getStatus = (user, index) => user.status || statusCycle[index % statusCycle.length];
+  const getLastActive = (index) => {
+    const options = ["1 minute ago", "4 hours ago", "2 days ago", "1 week ago", "1 month ago"];
+    return options[index % options.length];
+  };
+  const getAvatarUrl = (email) =>
+    email ? `https://i.pravatar.cc/80?u=${encodeURIComponent(email)}` : "";
 
   const formatDate = (value) => {
     if (!value) return "-";
@@ -212,9 +225,9 @@ if (adminPage) {
     const dateValue = adminDateFilter.value;
     const now = new Date();
 
-    const filtered = adminUsers.filter((user) => {
+    filteredUsers = adminUsers.filter((user, index) => {
       const role = user.role_name || "";
-      const status = getStatus(user);
+      const status = getStatus(user, index);
       const matchesTerm =
         !term ||
         user.full_name.toLowerCase().includes(term) ||
@@ -233,13 +246,14 @@ if (adminPage) {
       return matchesTerm && matchesRole && matchesStatus && matchesDate;
     });
 
-    renderUsers(filtered);
+    currentPage = 1;
+    renderPage();
   };
 
   const renderUsers = (users) => {
     adminUserRows.innerHTML = "";
     const total = adminUsers.length;
-    adminUserCount.textContent = `${users.length} of ${total}`;
+    adminUserCount.textContent = `${filteredUsers.length} of ${total} users total`;
 
     if (users.length === 0) {
       adminEmptyState.classList.remove("is-hidden");
@@ -248,16 +262,21 @@ if (adminPage) {
 
     adminEmptyState.classList.add("is-hidden");
 
-    users.forEach((user) => {
+    users.forEach((user, index) => {
       const row = document.createElement("tr");
-      const status = getStatus(user);
+      const status = getStatus(user, index);
+      const statusClass = status.toLowerCase();
+      const lastActive = getLastActive(index);
+      const avatarUrl = getAvatarUrl(user.email);
       row.innerHTML = `
         <td class="table-check">
           <input type="checkbox" aria-label="Select ${user.full_name}" disabled />
         </td>
         <td>
           <div class="user-cell">
-            <div class="avatar">${getInitials(user.full_name)}</div>
+            <div class="avatar">
+              ${avatarUrl ? `<img src="${avatarUrl}" alt="" />` : getInitials(user.full_name)}
+            </div>
             <div class="user-meta">
               <strong>${user.full_name}</strong>
               <span>ID ${user.user_id}</span>
@@ -266,10 +285,10 @@ if (adminPage) {
         </td>
         <td>${user.email}</td>
         <td>${getUsername(user.email)}</td>
-        <td><span class="pill active">${status}</span></td>
+        <td><span class="pill ${statusClass}">${status}</span></td>
         <td><span class="role-chip">${user.role_name}</span></td>
         <td>${formatDate(user.created_at)}</td>
-        <td>-</td>
+        <td>${lastActive}</td>
         <td class="table-actions">
           <div class="admin-actions-cell">
             <button class="icon-btn" type="button" title="Edit (coming soon)" disabled>
@@ -294,6 +313,51 @@ if (adminPage) {
     });
   };
 
+  const renderPagination = (totalPages) => {
+    adminPagination.innerHTML = "";
+    if (totalPages <= 1) return;
+
+    const addButton = (label, page, isActive = false, isDisabled = false) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.textContent = label;
+      btn.disabled = isDisabled;
+      btn.classList.toggle("active", isActive);
+      btn.addEventListener("click", () => {
+        currentPage = page;
+        renderPage();
+      });
+      adminPagination.appendChild(btn);
+    };
+
+    addButton("<", Math.max(1, currentPage - 1), false, currentPage === 1);
+
+    const start = Math.max(1, currentPage - 2);
+    const end = Math.min(totalPages, start + 4);
+    for (let page = start; page <= end; page += 1) {
+      addButton(String(page), page, page === currentPage);
+    }
+
+    addButton(">", Math.min(totalPages, currentPage + 1), false, currentPage === totalPages);
+  };
+
+  const renderPage = () => {
+    const total = filteredUsers.length;
+    if (total === 0) {
+      adminRowsMeta.textContent = "0 of 0 rows";
+      renderUsers([]);
+      adminPagination.innerHTML = "";
+      return;
+    }
+    const pages = Math.max(1, Math.ceil(total / pageSize));
+    if (currentPage > pages) currentPage = pages;
+    const start = (currentPage - 1) * pageSize;
+    const end = Math.min(start + pageSize, total);
+    adminRowsMeta.textContent = `${start + 1}-${end} of ${total} rows`;
+    renderUsers(filteredUsers.slice(start, end));
+    renderPagination(pages);
+  };
+
   const fetchUsers = async () => {
     const token = getAdminToken();
     if (!token) {
@@ -303,7 +367,10 @@ if (adminPage) {
 
     try {
       const result = await apiAuth("/api/admin/users", token);
-      adminUsers = result || [];
+      adminUsers = (result || []).map((user, index) => ({
+        ...user,
+        status: statusCycle[index % statusCycle.length]
+      }));
       applyFilters();
     } catch (err) {
       adminLoginError.textContent = "Access denied. Please sign in with an admin account.";
@@ -353,6 +420,11 @@ if (adminPage) {
   adminRoleFilter?.addEventListener("change", applyFilters);
   adminStatusFilter?.addEventListener("change", applyFilters);
   adminDateFilter?.addEventListener("change", applyFilters);
+  adminRowsPerPage?.addEventListener("change", () => {
+    pageSize = Number(adminRowsPerPage.value);
+    currentPage = 1;
+    renderPage();
+  });
 
   adminAddUserBtn?.addEventListener("click", () => {
     adminAddUserPanel.classList.toggle("is-hidden");
