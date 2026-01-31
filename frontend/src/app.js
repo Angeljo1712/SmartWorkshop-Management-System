@@ -133,142 +133,258 @@ if (vehicleForm) {
 
 renderVehicleSummary();
 
-const adminOutput = document.getElementById("adminOutput");
-const writeAdmin = (data) => {
-  if (!adminOutput) {
-    return;
-  }
-  adminOutput.textContent = JSON.stringify(data, null, 2);
-};
-
-const adminLoginForm = document.getElementById("adminLoginForm");
-if (adminLoginForm) {
-  const adminEmail = document.getElementById("adminEmail");
-  const adminPassword = document.getElementById("adminPassword");
+const adminPage = document.getElementById("adminPage");
+if (adminPage) {
+  const adminGate = document.getElementById("adminGate");
+  const adminApp = document.getElementById("adminApp");
+  const adminUserName = document.getElementById("adminUserName");
+  const adminUserRole = document.getElementById("adminUserRole");
+  const adminLogoutBtn = document.getElementById("adminLogoutBtn");
   const adminLoginError = document.getElementById("adminLoginError");
+  const adminSearch = document.getElementById("adminSearch");
+  const adminRoleFilter = document.getElementById("adminRoleFilter");
+  const adminStatusFilter = document.getElementById("adminStatusFilter");
+  const adminDateFilter = document.getElementById("adminDateFilter");
+  const adminUserRows = document.getElementById("adminUserRows");
+  const adminEmptyState = document.getElementById("adminEmptyState");
+  const adminUserCount = document.getElementById("adminUserCount");
+  const adminExportBtn = document.getElementById("adminExportBtn");
+  const adminAddUserBtn = document.getElementById("adminAddUserBtn");
+  const adminAddUserPanel = document.getElementById("adminAddUserPanel");
+  const adminAddUserClose = document.getElementById("adminAddUserClose");
+  const adminAddUserForm = document.getElementById("adminAddUserForm");
+  const adminAddUserError = document.getElementById("adminAddUserError");
+  const adminRefreshBtn = document.getElementById("adminRefreshBtn");
 
-  adminLoginForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    adminLoginError.textContent = "";
-    try {
-      const result = await api("/api/auth/login", {
-        method: "POST",
-        body: JSON.stringify({
-          email: adminEmail.value.trim(),
-          password: adminPassword.value
-        })
-      });
-      sessionStorage.setItem("adminToken", result.token);
-      writeAdmin({ status: "logged_in", user: result.user });
-    } catch (err) {
-      adminLoginError.textContent = err?.error?.message || "Login failed";
+  let adminUsers = [];
+
+  const getAdminToken = () => sessionStorage.getItem("userToken");
+  const getAdminProfile = () => {
+    const stored = sessionStorage.getItem("userProfile");
+    return stored ? JSON.parse(stored) : null;
+  };
+  const clearAdminSession = () => {
+    sessionStorage.removeItem("userToken");
+    sessionStorage.removeItem("userProfile");
+  };
+
+  const setAdminHeader = (user) => {
+    const displayName = user?.full_name || user?.email || "Admin";
+    const role = user?.role_name || "ADMIN";
+    adminUserName.textContent = displayName;
+    adminUserRole.textContent = role;
+  };
+
+  const setAdminVisibility = (loggedIn) => {
+    adminGate.classList.toggle("is-hidden", loggedIn);
+    adminApp.classList.toggle("is-hidden", !loggedIn);
+    adminLogoutBtn.disabled = !loggedIn;
+  };
+
+  const getStatus = () => "Active";
+
+  const formatDate = (value) => {
+    if (!value) return "-";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return "-";
     }
-  });
-}
+    return date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+  };
 
-const getAdminToken = () => sessionStorage.getItem("adminToken");
+  const getInitials = (name) => {
+    if (!name) return "NA";
+    const parts = name.trim().split(/\s+/);
+    const initials = parts.slice(0, 2).map((part) => part[0]).join("");
+    return initials.toUpperCase();
+  };
 
-const createMechanicForm = document.getElementById("createMechanicForm");
-if (createMechanicForm) {
-  const mechanicName = document.getElementById("mechanicName");
-  const mechanicEmail = document.getElementById("mechanicEmail");
-  const mechanicPassword = document.getElementById("mechanicPassword");
-  const mechanicError = document.getElementById("mechanicError");
+  const applyFilters = () => {
+    const term = adminSearch.value.trim().toLowerCase();
+    const roleValue = adminRoleFilter.value;
+    const statusValue = adminStatusFilter.value;
+    const dateValue = adminDateFilter.value;
+    const now = new Date();
 
-  createMechanicForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    mechanicError.textContent = "";
-    const token = getAdminToken();
-    if (!token) {
-      mechanicError.textContent = "Login as admin first.";
+    const filtered = adminUsers.filter((user) => {
+      const role = user.role_name || "";
+      const status = getStatus(user);
+      const matchesTerm =
+        !term ||
+        user.full_name.toLowerCase().includes(term) ||
+        user.email.toLowerCase().includes(term) ||
+        role.toLowerCase().includes(term);
+      const matchesRole = roleValue === "all" || role === roleValue;
+      const matchesStatus = statusValue === "all" || status === statusValue;
+      const matchesDate = (() => {
+        if (dateValue === "all") return true;
+        const created = new Date(user.created_at);
+        if (Number.isNaN(created.getTime())) return false;
+        const diffDays = (now - created) / (1000 * 60 * 60 * 24);
+        return diffDays <= Number(dateValue);
+      })();
+
+      return matchesTerm && matchesRole && matchesStatus && matchesDate;
+    });
+
+    renderUsers(filtered);
+  };
+
+  const renderUsers = (users) => {
+    adminUserRows.innerHTML = "";
+    const total = adminUsers.length;
+    adminUserCount.textContent = `${users.length} of ${total}`;
+
+    if (users.length === 0) {
+      adminEmptyState.classList.remove("is-hidden");
       return;
     }
-    try {
-      const result = await apiAuth("/api/admin/users", token, {
-        method: "POST",
-        body: JSON.stringify({
-          full_name: mechanicName.value.trim(),
-          email: mechanicEmail.value.trim(),
-          password: mechanicPassword.value,
-          role: "MECHANIC"
-        })
-      });
-      writeAdmin({ created: result });
-      createMechanicForm.reset();
-    } catch (err) {
-      mechanicError.textContent = err?.error?.message || "Unable to create mechanic.";
-    }
-  });
-}
 
-const createWorkshopForm = document.getElementById("createWorkshopForm");
-if (createWorkshopForm) {
-  const workshopName = document.getElementById("workshopName");
-  const workshopAddress = document.getElementById("workshopAddress");
-  const workshopPostcode = document.getElementById("workshopPostcode");
-  const workshopPhone = document.getElementById("workshopPhone");
-  const workshopDescription = document.getElementById("workshopDescription");
-  const workshopError = document.getElementById("workshopError");
+    adminEmptyState.classList.add("is-hidden");
 
-  createWorkshopForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    workshopError.textContent = "";
+    users.forEach((user) => {
+      const row = document.createElement("tr");
+      const status = getStatus(user);
+      row.innerHTML = `
+        <td>
+          <div class="user-cell">
+            <div class="avatar">${getInitials(user.full_name)}</div>
+            <div class="user-meta">
+              <strong>${user.full_name}</strong>
+              <span>ID ${user.user_id}</span>
+            </div>
+          </div>
+        </td>
+        <td>${user.email}</td>
+        <td><span class="role-chip">${user.role_name}</span></td>
+        <td><span class="pill active">${status}</span></td>
+        <td>${formatDate(user.created_at)}</td>
+        <td>-</td>
+        <td>
+          <div class="admin-actions-cell">
+            <button class="icon-btn" type="button" title="Edit (coming soon)" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 20h9"></path>
+                <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+              </svg>
+            </button>
+            <button class="icon-btn" type="button" title="Delete (coming soon)" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                <path d="M10 11v6"></path>
+                <path d="M14 11v6"></path>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+              </svg>
+            </button>
+          </div>
+        </td>
+      `;
+      adminUserRows.appendChild(row);
+    });
+  };
+
+  const fetchUsers = async () => {
     const token = getAdminToken();
     if (!token) {
-      workshopError.textContent = "Login as admin first.";
+      setAdminVisibility(false);
       return;
     }
-    try {
-      const result = await apiAuth("/api/admin/workshops", token, {
-        method: "POST",
-        body: JSON.stringify({
-          name: workshopName.value.trim(),
-          address: workshopAddress.value.trim(),
-          postcode: workshopPostcode.value.trim(),
-          phone: workshopPhone.value.trim(),
-          description: workshopDescription.value.trim()
-        })
-      });
-      writeAdmin({ created: result });
-      createWorkshopForm.reset();
-    } catch (err) {
-      workshopError.textContent = err?.error?.message || "Unable to create workshop.";
-    }
-  });
-}
 
-const loadWorkshops = document.getElementById("loadWorkshops");
-if (loadWorkshops) {
-  loadWorkshops.addEventListener("click", async () => {
-    const token = getAdminToken();
-    if (!token) {
-      writeAdmin({ error: "Login as admin first." });
-      return;
-    }
-    try {
-      const result = await apiAuth("/api/admin/workshops", token);
-      writeAdmin(result);
-    } catch (err) {
-      writeAdmin(err);
-    }
-  });
-}
-
-const loadUsers = document.getElementById("loadUsers");
-if (loadUsers) {
-  loadUsers.addEventListener("click", async () => {
-    const token = getAdminToken();
-    if (!token) {
-      writeAdmin({ error: "Login as admin first." });
-      return;
-    }
     try {
       const result = await apiAuth("/api/admin/users", token);
-      writeAdmin(result);
+      adminUsers = result || [];
+      applyFilters();
     } catch (err) {
-      writeAdmin(err);
+      adminLoginError.textContent = "Access denied. Please sign in with an admin account.";
+      setAdminVisibility(false);
+    }
+  };
+
+  const exportUsers = () => {
+    if (!adminUsers.length) return;
+    const rows = [
+      ["Full name", "Email", "Role", "Status", "Joined date"],
+      ...adminUsers.map((user) => [user.full_name, user.email, user.role_name, getStatus(user), formatDate(user.created_at)])
+    ];
+    const csv = rows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "smartworkshop-users.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  const ensureAdminProfile = () => {
+    const profile = getAdminProfile();
+    if (profile && profile.role_name === "ADMIN") {
+      setAdminHeader(profile);
+      setAdminVisibility(true);
+      return true;
+    }
+    setAdminHeader(null);
+    setAdminVisibility(false);
+    return false;
+  };
+
+  adminLogoutBtn?.addEventListener("click", () => {
+    clearAdminSession();
+    setAdminHeader(null);
+    setAdminVisibility(false);
+  });
+
+  adminExportBtn?.addEventListener("click", exportUsers);
+  adminRefreshBtn?.addEventListener("click", fetchUsers);
+  adminSearch?.addEventListener("input", applyFilters);
+  adminRoleFilter?.addEventListener("change", applyFilters);
+  adminStatusFilter?.addEventListener("change", applyFilters);
+  adminDateFilter?.addEventListener("change", applyFilters);
+
+  adminAddUserBtn?.addEventListener("click", () => {
+    adminAddUserPanel.classList.toggle("is-hidden");
+  });
+
+  adminAddUserClose?.addEventListener("click", () => {
+    adminAddUserPanel.classList.add("is-hidden");
+  });
+
+  adminAddUserForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    adminAddUserError.textContent = "";
+    const token = getAdminToken();
+    if (!token) {
+      adminAddUserError.textContent = "Sign in as admin first.";
+      return;
+    }
+    try {
+      const payload = {
+        full_name: document.getElementById("adminNewName").value.trim(),
+        email: document.getElementById("adminNewEmail").value.trim(),
+        password: document.getElementById("adminNewPassword").value,
+        role: document.getElementById("adminNewRole").value
+      };
+      await apiAuth("/api/admin/users", token, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      adminAddUserForm.reset();
+      adminAddUserPanel.classList.add("is-hidden");
+      fetchUsers();
+    } catch (err) {
+      adminAddUserError.textContent = err?.error?.message || "Unable to create user.";
     }
   });
+
+  const hasProfile = ensureAdminProfile();
+  if (hasProfile) {
+    fetchUsers();
+  } else {
+    adminLoginError.textContent = "Admins only. Please sign in first.";
+  }
 }
 
 const loginButton = document.getElementById("loginCustomer");
@@ -332,7 +448,11 @@ if (signInForm) {
       });
       sessionStorage.setItem("userToken", result.token);
       sessionStorage.setItem("userProfile", JSON.stringify(result.user));
-      window.location.href = "/profile";
+      if (result.user.role_name === "ADMIN") {
+        window.location.href = "/pages/Admin/index.html";
+        return;
+      }
+      window.location.href = "/pages/User/index.html";
     } catch (err) {
       signInError.textContent = err?.error?.message || "Login failed. Check your credentials.";
     }

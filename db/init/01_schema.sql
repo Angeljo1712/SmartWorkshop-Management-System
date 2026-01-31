@@ -24,7 +24,6 @@ CREATE TABLE IF NOT EXISTS workshops (
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
-CREATE SPATIAL INDEX idx_workshops_location ON workshops (location);
 
 CREATE TABLE IF NOT EXISTS workshop_members (
   workshop_member_id INT AUTO_INCREMENT PRIMARY KEY,

@@ -14,85 +14,143 @@
       <a href="/pages/Shop/index.html">Shop</a>
       <a href="/pages/User/index.html">User</a>
     </nav>
-    <main class="page-shell">
-      <h1>Admin</h1>
+    <main class="admin-shell" id="adminPage">
+      <header class="admin-hero">
+        <span class="admin-kicker">Admin Console</span>
+        <h1>User Management</h1>
+        <p>Manage access, assign roles, and keep your SmartWorkshop platform secure and organised.</p>
+        <div class="admin-meta">
+          <div>
+            <span class="label">Signed in as</span>
+            <strong id="adminUserName">Not signed in</strong>
+          </div>
+          <div>
+            <span class="label">Role</span>
+            <strong id="adminUserRole">-</strong>
+          </div>
+          <button class="ghost" id="adminLogoutBtn" type="button">Sign out</button>
+        </div>
+      </header>
 
-      <section class="admin-card">
-        <h2>Admin login</h2>
-        <form id="adminLoginForm" class="admin-form">
-          <label>
-            Email
-            <input id="adminEmail" type="email" placeholder="admin@smartworkshop.local" required />
-          </label>
-          <label>
-            Password
-            <input id="adminPassword" type="password" placeholder="••••••••" required />
-          </label>
+      <section class="admin-gate" id="adminGate">
+        <div class="admin-gate-card">
+          <h2>Admins only</h2>
+          <p>Sign in with an administrator account to access user management.</p>
           <p class="form-error" id="adminLoginError" role="alert" aria-live="polite"></p>
-          <button type="submit" class="primary">Login</button>
-        </form>
+          <a class="ghost-link" href="/pages/Auth/index.html">
+            <button type="button" class="primary">Go to Sign in</button>
+          </a>
+        </div>
       </section>
 
-      <section class="admin-grid">
-        <div class="admin-card">
-          <h2>Create mechanic</h2>
-          <form id="createMechanicForm" class="admin-form">
+      <section class="admin-app is-hidden" id="adminApp">
+        <div class="admin-toolbar">
+          <div class="admin-search">
+            <span class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="presentation">
+                <circle cx="11" cy="11" r="7"></circle>
+                <line x1="16.65" y1="16.65" x2="21" y2="21"></line>
+              </svg>
+            </span>
+            <input id="adminSearch" type="search" placeholder="Search users, emails, roles..." />
+          </div>
+          <div class="admin-filters">
             <label>
-              Full name
-              <input id="mechanicName" type="text" placeholder="Jane Mechanic" required />
+              Role
+              <select id="adminRoleFilter">
+                <option value="all">All</option>
+                <option value="ADMIN">Admin</option>
+                <option value="MECHANIC">Mechanic</option>
+                <option value="CUSTOMER">Customer</option>
+              </select>
             </label>
             <label>
-              Email
-              <input id="mechanicEmail" type="email" placeholder="jane@shop.co.uk" required />
+              Status
+              <select id="adminStatusFilter">
+                <option value="all">All</option>
+                <option value="Active">Active</option>
+              </select>
             </label>
             <label>
-              Password
-              <input id="mechanicPassword" type="password" placeholder="Temp password" required />
+              Date
+              <select id="adminDateFilter">
+                <option value="all">All time</option>
+                <option value="30">Last 30 days</option>
+                <option value="90">Last 90 days</option>
+                <option value="365">Last year</option>
+              </select>
             </label>
-            <p class="form-error" id="mechanicError" role="alert" aria-live="polite"></p>
-            <button type="submit" class="primary">Create mechanic</button>
+          </div>
+          <div class="admin-actions">
+            <button class="secondary" id="adminExportBtn" type="button">Export</button>
+            <button class="primary" id="adminAddUserBtn" type="button">+ Add User</button>
+          </div>
+        </div>
+
+        <section class="admin-panel is-hidden" id="adminAddUserPanel">
+          <div class="admin-panel-head">
+            <h3>New user</h3>
+            <button class="ghost" id="adminAddUserClose" type="button">Close</button>
+          </div>
+          <form id="adminAddUserForm" class="admin-form">
+            <div class="admin-form-row">
+              <label>
+                Full name
+                <input id="adminNewName" type="text" placeholder="Jane Mechanic" required />
+              </label>
+              <label>
+                Email
+                <input id="adminNewEmail" type="email" placeholder="jane@shop.co.uk" required />
+              </label>
+            </div>
+            <div class="admin-form-row">
+              <label>
+                Role
+                <select id="adminNewRole">
+                  <option value="ADMIN">Admin</option>
+                  <option value="MECHANIC">Mechanic</option>
+                  <option value="CUSTOMER">Customer</option>
+                </select>
+              </label>
+              <label>
+                Temporary password
+                <input id="adminNewPassword" type="password" placeholder="Temp password" required />
+              </label>
+            </div>
+            <p class="form-error" id="adminAddUserError" role="alert" aria-live="polite"></p>
+            <button type="submit" class="primary">Create user</button>
           </form>
-        </div>
+        </section>
 
-        <div class="admin-card">
-          <h2>Create workshop</h2>
-          <form id="createWorkshopForm" class="admin-form">
-            <label>
-              Name
-              <input id="workshopName" type="text" placeholder="AutoPro Garage" required />
-            </label>
-            <label>
-              Address
-              <input id="workshopAddress" type="text" placeholder="10 High Street" required />
-            </label>
-            <label>
-              Postcode
-              <input id="workshopPostcode" type="text" placeholder="SW1A 1AA" required />
-            </label>
-            <label>
-              Phone
-              <input id="workshopPhone" type="text" placeholder="020 0000 0000" required />
-            </label>
-            <label>
-              Description
-              <textarea id="workshopDescription" rows="3" placeholder="Specialist in MOT and servicing"></textarea>
-            </label>
-            <p class="form-error" id="workshopError" role="alert" aria-live="polite"></p>
-            <button type="submit" class="primary">Create workshop</button>
-          </form>
-        </div>
+        <section class="admin-table-card">
+          <div class="admin-table-head">
+            <div>
+              <h3>All users</h3>
+              <p><span id="adminUserCount">0</span> users total</p>
+            </div>
+            <button class="ghost" id="adminRefreshBtn" type="button">Refresh</button>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table" aria-label="User management table">
+              <thead>
+                <tr>
+                  <th>Full name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                  <th>Joined date</th>
+                  <th>Last active</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminUserRows"></tbody>
+            </table>
+            <div class="admin-empty is-hidden" id="adminEmptyState">
+              <p>No users match your filters.</p>
+            </div>
+          </div>
+        </section>
       </section>
-
-      <section class="admin-card">
-        <h2>Data</h2>
-        <div class="cta-row">
-          <button class="secondary" id="loadWorkshops">Load workshops</button>
-          <button class="secondary" id="loadUsers">Load users</button>
-        </div>
-        <pre id="adminOutput" aria-live="polite"></pre>
-      </section>
-
-      <p><a href="/">Back to Home</a></p>
     </main>
     <script src="/app.js"></script>
   </body>
