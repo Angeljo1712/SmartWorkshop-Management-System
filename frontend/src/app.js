@@ -137,8 +137,6 @@ const adminPage = document.getElementById("adminPage");
 if (adminPage) {
   const adminGate = document.getElementById("adminGate");
   const adminApp = document.getElementById("adminApp");
-  const adminUserName = document.getElementById("adminUserName");
-  const adminUserRole = document.getElementById("adminUserRole");
   const adminLogoutBtn = document.getElementById("adminLogoutBtn");
   const adminLoginError = document.getElementById("adminLoginError");
   const adminSearch = document.getElementById("adminSearch");
@@ -189,8 +187,6 @@ if (adminPage) {
   const setAdminHeader = (user) => {
     const displayName = user?.full_name || user?.email || "Admin";
     const role = user?.role_name || "ADMIN";
-    adminUserName.textContent = displayName;
-    adminUserRole.textContent = role;
     const initials = getInitials(displayName);
     adminProfileAvatar.textContent = initials;
     adminProfileName.textContent = displayName;

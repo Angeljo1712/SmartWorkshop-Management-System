@@ -7,30 +7,16 @@
     <link rel="stylesheet" href="/index.css" />
   </head>
   <body>
-    <nav class="page-nav">
-      <a href="/">Home</a>
-      <a href="/pages/Admin/index.html">Admin</a>
-      <a href="/pages/Auth/index.html">Auth</a>
-      <a href="/pages/Shop/index.html">Shop</a>
-      <a href="/pages/User/index.html">User</a>
-    </nav>
-    <main class="admin-shell" id="adminPage">
-      <header class="admin-hero">
-        <span class="admin-kicker">Admin Console</span>
-        <h1>User Management</h1>
-        <p>Manage access, assign roles, and keep your SmartWorkshop platform secure and organised.</p>
-        <div class="admin-meta">
-          <div>
-            <span class="label">Signed in as</span>
-            <strong id="adminUserName">Not signed in</strong>
-          </div>
-          <div>
-            <span class="label">Role</span>
-            <strong id="adminUserRole">-</strong>
-          </div>
-          <button class="ghost" id="adminLogoutBtn" type="button">Sign out</button>
+    <header class="site-header admin-header">
+      <div class="brand">
+        <span class="logo">SW</span>
+        <div>
+          <strong>SmartWorkshop</strong>
+          <span>Vehicle Service Marketplace</span>
         </div>
-      </header>
+      </div>
+    </header>
+    <main class="admin-shell" id="adminPage">
 
       <section class="admin-gate" id="adminGate">
         <div class="admin-gate-card">
@@ -52,6 +38,61 @@
               <span id="adminProfileRole">Administrator</span>
             </div>
             <button class="ghost admin-profile-menu" type="button" aria-label="Profile menu">⋯</button>
+          </div>
+          <button class="admin-signout" id="adminLogoutBtn" type="button">Sign out</button>
+          <div class="admin-menu">
+            <div class="admin-menu-section">
+              <button class="admin-menu-item" type="button">
+                <span class="admin-menu-icon">🏠</span>
+                Dashboard
+              </button>
+              <button class="admin-menu-item" type="button">
+                <span class="admin-menu-icon">👥</span>
+                Customers
+              </button>
+              <button class="admin-menu-item" type="button">
+                <span class="admin-menu-icon">📦</span>
+                Products
+              </button>
+              <button class="admin-menu-item" type="button">
+                <span class="admin-menu-icon">🏢</span>
+                Companies
+              </button>
+              <button class="admin-menu-item" type="button">
+                <span class="admin-menu-icon">🕒</span>
+                History
+              </button>
+            </div>
+            <div class="admin-menu-divider"></div>
+            <div class="admin-menu-section">
+              <button class="admin-menu-item" type="button">
+                <span class="admin-menu-icon">🚚</span>
+                Shipments
+              </button>
+              <button class="admin-menu-item" type="button">
+                <span class="admin-menu-icon">💰</span>
+                Finance
+              </button>
+              <button class="admin-menu-item" type="button">
+                <span class="admin-menu-icon">📄</span>
+                Documents
+              </button>
+              <button class="admin-menu-item" type="button">
+                <span class="admin-menu-icon">🧩</span>
+                Application
+              </button>
+            </div>
+            <div class="admin-menu-divider"></div>
+            <div class="admin-menu-section admin-menu-dots">
+              <div class="admin-menu-dot">
+                <span class="dot dot-orange"></span>
+                List of sales
+              </div>
+              <div class="admin-menu-dot">
+                <span class="dot dot-green"></span>
+                Saved items
+              </div>
+            </div>
           </div>
           <nav class="admin-nav">
             <button class="admin-nav-link active" type="button" data-view="profile">Profile</button>
@@ -120,17 +161,17 @@
             <input id="adminSearch" type="search" placeholder="Search users, emails, roles..." />
           </div>
           <div class="admin-filters">
-            <label>
-              Role
+            <div class="admin-pill">
+              <span class="pill-label">Role</span>
               <select id="adminRoleFilter">
                 <option value="all">All</option>
                 <option value="ADMIN">Admin</option>
                 <option value="MECHANIC">Mechanic</option>
                 <option value="CUSTOMER">Customer</option>
               </select>
-            </label>
-            <label>
-              Status
+            </div>
+            <div class="admin-pill">
+              <span class="pill-label">Status</span>
               <select id="adminStatusFilter">
                 <option value="all">All</option>
                 <option value="Active">Active</option>
@@ -139,16 +180,16 @@
                 <option value="Suspended">Suspended</option>
                 <option value="Banned">Banned</option>
               </select>
-            </label>
-            <label>
-              Date
+            </div>
+            <div class="admin-pill">
+              <span class="pill-label">Date</span>
               <select id="adminDateFilter">
                 <option value="all">All time</option>
                 <option value="30">Last 30 days</option>
                 <option value="90">Last 90 days</option>
                 <option value="365">Last year</option>
               </select>
-            </label>
+            </div>
           </div>
           <div class="admin-actions">
             <button class="secondary" id="adminExportBtn" type="button">
