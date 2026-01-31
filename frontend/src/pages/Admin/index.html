@@ -44,7 +44,72 @@
       </section>
 
       <section class="admin-app is-hidden" id="adminApp">
-        <div class="admin-toolbar">
+        <aside class="admin-sidebar">
+          <div class="admin-profile-card">
+            <div class="admin-profile-avatar" id="adminProfileAvatar">AU</div>
+            <div>
+              <strong id="adminProfileName">Admin User</strong>
+              <span id="adminProfileRole">Administrator</span>
+            </div>
+            <button class="ghost admin-profile-menu" type="button" aria-label="Profile menu">⋯</button>
+          </div>
+          <nav class="admin-nav">
+            <button class="admin-nav-link active" type="button" data-view="profile">Profile</button>
+            <button class="admin-nav-link" type="button" data-view="users">User Management</button>
+          </nav>
+        </aside>
+
+        <div class="admin-content">
+          <section class="admin-view" id="adminProfileView">
+            <div class="settings-header">
+              <div>
+                <h2>Settings</h2>
+                <p>Manage your profile and preferences.</p>
+              </div>
+              <div class="settings-actions">
+                <button class="ghost" type="button">Upload</button>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-profile">
+                <div class="settings-avatar" id="adminSettingsAvatar">AU</div>
+                <div class="settings-meta">
+                  <h3 id="adminSettingsName">Admin User</h3>
+                  <p id="adminSettingsEmail">admin@smartworkshop.local</p>
+                </div>
+                <button class="secondary" type="button">Edit</button>
+              </div>
+
+              <div class="settings-row">
+                <div>
+                  <h4>Contacts</h4>
+                  <p id="adminSettingsPhone">Phone: -</p>
+                  <p id="adminSettingsEmailDetail">Email: admin@smartworkshop.local</p>
+                </div>
+                <button class="secondary" type="button">Edit</button>
+              </div>
+
+              <div class="settings-row">
+                <div>
+                  <h4>Role</h4>
+                  <p id="adminSettingsRole">Administrator</p>
+                </div>
+                <button class="secondary" type="button">Edit</button>
+              </div>
+
+              <div class="settings-row">
+                <div>
+                  <h4>Theme</h4>
+                  <p>Light mode</p>
+                </div>
+                <button class="secondary" type="button">Light mode</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="admin-view is-hidden" id="adminUsersView">
+            <div class="admin-toolbar">
           <div class="admin-search">
             <span class="icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" role="presentation">
@@ -92,7 +157,7 @@
             </button>
             <button class="primary" id="adminAddUserBtn" type="button">+ Add User</button>
           </div>
-        </div>
+            </div>
 
         <section class="admin-panel is-hidden" id="adminAddUserPanel">
           <div class="admin-panel-head">
@@ -173,6 +238,8 @@
             <div class="pagination" id="adminPagination"></div>
           </div>
         </section>
+          </section>
+        </div>
       </section>
     </main>
     <script src="/app.js"></script>

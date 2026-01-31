@@ -158,6 +158,18 @@ if (adminPage) {
   const adminAddUserForm = document.getElementById("adminAddUserForm");
   const adminAddUserError = document.getElementById("adminAddUserError");
   const adminRefreshBtn = document.getElementById("adminRefreshBtn");
+  const adminNavLinks = document.querySelectorAll(".admin-nav-link");
+  const adminProfileView = document.getElementById("adminProfileView");
+  const adminUsersView = document.getElementById("adminUsersView");
+  const adminProfileAvatar = document.getElementById("adminProfileAvatar");
+  const adminProfileName = document.getElementById("adminProfileName");
+  const adminProfileRole = document.getElementById("adminProfileRole");
+  const adminSettingsAvatar = document.getElementById("adminSettingsAvatar");
+  const adminSettingsName = document.getElementById("adminSettingsName");
+  const adminSettingsEmail = document.getElementById("adminSettingsEmail");
+  const adminSettingsEmailDetail = document.getElementById("adminSettingsEmailDetail");
+  const adminSettingsRole = document.getElementById("adminSettingsRole");
+  const adminSettingsPhone = document.getElementById("adminSettingsPhone");
 
   let adminUsers = [];
   let filteredUsers = [];
@@ -179,6 +191,16 @@ if (adminPage) {
     const role = user?.role_name || "ADMIN";
     adminUserName.textContent = displayName;
     adminUserRole.textContent = role;
+    const initials = getInitials(displayName);
+    adminProfileAvatar.textContent = initials;
+    adminProfileName.textContent = displayName;
+    adminProfileRole.textContent = role;
+    adminSettingsAvatar.textContent = initials;
+    adminSettingsName.textContent = displayName;
+    adminSettingsEmail.textContent = user?.email || "admin@smartworkshop.local";
+    adminSettingsEmailDetail.textContent = `Email: ${user?.email || "admin@smartworkshop.local"}`;
+    adminSettingsRole.textContent = role;
+    adminSettingsPhone.textContent = "Phone: -";
   };
 
   const setAdminVisibility = (loggedIn) => {
@@ -418,6 +440,15 @@ if (adminPage) {
     clearAdminSession();
     setAdminHeader(null);
     setAdminVisibility(false);
+  });
+
+  adminNavLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      const view = link.dataset.view;
+      adminNavLinks.forEach((btn) => btn.classList.toggle("active", btn === link));
+      adminProfileView.classList.toggle("is-hidden", view !== "profile");
+      adminUsersView.classList.toggle("is-hidden", view !== "users");
+    });
   });
 
   adminExportBtn?.addEventListener("click", exportUsers);
