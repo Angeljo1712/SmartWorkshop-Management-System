@@ -166,6 +166,10 @@ body {
   gap: 16px;
   grid-template-columns: minmax(260px, 1.2fr) 1.5fr auto;
   align-items: center;
+  background: linear-gradient(120deg, rgba(245, 247, 255, 0.9), rgba(233, 239, 255, 0.4));
+  padding: 16px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 .admin-search {
@@ -219,6 +223,11 @@ body {
   display: flex;
   gap: 12px;
   align-items: center;
+}
+
+.btn-icon {
+  margin-right: 6px;
+  font-size: 13px;
 }
 
 .admin-panel {
@@ -277,7 +286,7 @@ body {
 }
 
 .admin-table thead {
-  background: #0f172a;
+  background: #0b1220;
   color: #f8fafc;
 }
 
@@ -287,6 +296,21 @@ body {
   padding: 12px 20px;
   border-bottom: 1px solid rgba(15, 23, 42, 0.06);
   white-space: nowrap;
+}
+
+.admin-table th.table-actions,
+.admin-table td.table-actions {
+  text-align: right;
+}
+
+.table-check {
+  width: 44px;
+}
+
+.table-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: #0b5fff;
 }
 
 .admin-table tbody tr:hover {
@@ -303,8 +327,8 @@ body {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #dbe7ff;
-  color: #1f3fbf;
+  background: linear-gradient(135deg, #dbeafe, #eef2ff);
+  color: #1e3a8a;
   display: grid;
   place-items: center;
   font-weight: 700;
@@ -363,6 +387,10 @@ body {
   stroke: #1f2937;
   stroke-width: 2;
   fill: none;
+}
+
+.icon-btn.danger svg {
+  stroke: #dc2626;
 }
 
 .admin-empty {

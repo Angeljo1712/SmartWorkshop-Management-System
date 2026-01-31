@@ -199,6 +199,12 @@ if (adminPage) {
     return initials.toUpperCase();
   };
 
+  const getUsername = (email) => {
+    if (!email) return "-";
+    const [local] = email.split("@");
+    return local || "-";
+  };
+
   const applyFilters = () => {
     const term = adminSearch.value.trim().toLowerCase();
     const roleValue = adminRoleFilter.value;
@@ -246,6 +252,9 @@ if (adminPage) {
       const row = document.createElement("tr");
       const status = getStatus(user);
       row.innerHTML = `
+        <td class="table-check">
+          <input type="checkbox" aria-label="Select ${user.full_name}" disabled />
+        </td>
         <td>
           <div class="user-cell">
             <div class="avatar">${getInitials(user.full_name)}</div>
@@ -256,11 +265,12 @@ if (adminPage) {
           </div>
         </td>
         <td>${user.email}</td>
-        <td><span class="role-chip">${user.role_name}</span></td>
+        <td>${getUsername(user.email)}</td>
         <td><span class="pill active">${status}</span></td>
+        <td><span class="role-chip">${user.role_name}</span></td>
         <td>${formatDate(user.created_at)}</td>
         <td>-</td>
-        <td>
+        <td class="table-actions">
           <div class="admin-actions-cell">
             <button class="icon-btn" type="button" title="Edit (coming soon)" disabled>
               <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -268,7 +278,7 @@ if (adminPage) {
                 <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
               </svg>
             </button>
-            <button class="icon-btn" type="button" title="Delete (coming soon)" disabled>
+            <button class="icon-btn danger" type="button" title="Delete (coming soon)" disabled>
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <polyline points="3 6 5 6 21 6"></polyline>
                 <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
