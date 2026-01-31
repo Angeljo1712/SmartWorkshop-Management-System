@@ -2,6 +2,12 @@
 
 This frontend runs separately from the backend API and communicates over HTTP using CORS.
 
+## Structure
+
+- `src/index.css` and `src/app.js` are the static assets.
+- `src/pages/Home/index.html` is the main page served at `/`.
+- `src/utils` and `src/views` are used by the backend.
+
 ## Run (no dependencies)
 
 ```bash

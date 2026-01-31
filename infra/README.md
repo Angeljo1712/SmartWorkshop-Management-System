@@ -144,4 +144,13 @@ docker compose -f infra/docker-compose.yml up --build -d
 
 This removes containers/volumes and recreates the stack from scratch.
 
+## Start/Stop Stack (PowerShell)
+
+```powershell
+./scripts/stack.ps1 start
+./scripts/stack.ps1 build
+./scripts/stack.ps1 stop
+./scripts/stack.ps1 stop-hard
+```
+
 Host - <http://localhost:3000/>

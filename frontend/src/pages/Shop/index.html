@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SmartWorkshop - Shop</title>
+    <link rel="stylesheet" href="/index.css" />
+  </head>
+  <body>
+    <nav class="page-nav">
+      <a href="/">Home</a>
+      <a href="/pages/Admin/index.html">Admin</a>
+      <a href="/pages/Auth/index.html">Auth</a>
+      <a href="/pages/Shop/index.html">Shop</a>
+      <a href="/pages/User/index.html">User</a>
+    </nav>
+    <main class="page-shell shop-shell">
+      <div class="shop-hero">
+        <div class="stepper" aria-label="Booking steps">
+          <div class="step is-complete">
+            <span class="step-dot">1</span>
+            <span class="step-label">Car</span>
+          </div>
+          <div class="step is-active">
+            <span class="step-dot">2</span>
+            <span class="step-label">Select work</span>
+          </div>
+          <div class="step">
+            <span class="step-dot">3</span>
+            <span class="step-label">Details</span>
+          </div>
+          <div class="step">
+            <span class="step-dot">4</span>
+            <span class="step-label">Book</span>
+          </div>
+        </div>
+
+        <div class="shop-headline">
+          <h1 id="shopTitle">What does your vehicle need?</h1>
+          <p id="shopSubtitle">You're just seconds away from getting a fixed price quote for your car.</p>
+        </div>
+      </div>
+
+      <section class="shop-grid" aria-label="Service categories">
+        <article class="shop-card">
+          <div class="shop-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path d="M7 8l2-2 2 2-2 2-2-2zm8 8l2-2 2 2-2 2-2-2zM4 20l5-5 3 3-5 5H4v-3zm10-10l3-3 3 3-3 3-3-3z" />
+            </svg>
+          </div>
+          <h3>Repairs</h3>
+          <p>Know what's wrong? Book in the repair you need.</p>
+        </article>
+        <article class="shop-card">
+          <div class="shop-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path d="M4 6h16v10H4V6zm2 2v6h12V8H6zm-2 10h16v2H4v-2z" />
+            </svg>
+          </div>
+          <h3>Diagnostics</h3>
+          <p>Unsure what's wrong? Have a mechanic identify the problem.</p>
+        </article>
+        <article class="shop-card">
+          <div class="shop-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path d="M8 3h8l1 4H7l1-4zm-2 6h12v12H6V9zm2 2v8h8v-8H8z" />
+            </svg>
+          </div>
+          <h3>Servicing &amp; MOT</h3>
+          <p>Keep your vehicle safe and in top condition.</p>
+        </article>
+        <article class="shop-card">
+          <div class="shop-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 3l2 4h4l-3 3 1 4-4-2-4 2 1-4-3-3h4l2-4z" />
+            </svg>
+          </div>
+          <h3>Tyres</h3>
+          <p>Need a tyre replacement? Book with us online.</p>
+        </article>
+        <article class="shop-card">
+          <div class="shop-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" role="img">
+              <path d="M6 7h12l2 5v7H4v-7l2-5zm2 2l-1 3v5h10v-5l-1-3H8zm2 6h4v2h-4v-2z" />
+            </svg>
+          </div>
+          <h3>Pre-purchase inspections</h3>
+          <p>Buying a used car? Have a mechanic check it for you.</p>
+        </article>
+      </section>
+
+      <p><a href="/">Back to Home</a></p>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>
