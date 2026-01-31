@@ -27,8 +27,8 @@ const register = async ({ full_name, email, password, role }) => {
 
   const passwordHash = await bcrypt.hash(password, 10);
   const [result] = await pool.query(
-    "INSERT INTO users (full_name, email, password_hash, role_id) VALUES (?, ?, ?, ?)",
-    [full_name, email, passwordHash, roleRows[0].role_id]
+    "INSERT INTO users (full_name, email, username, password_hash, role_id) VALUES (?, ?, ?, ?, ?)",
+    [full_name, email, String(email).split("@")[0], passwordHash, roleRows[0].role_id]
   );
 
   const user = {
@@ -48,7 +48,7 @@ const login = async ({ email, password }) => {
   }
 
   const [rows] = await pool.query(
-    `SELECT u.user_id, u.full_name, u.email, u.password_hash, r.role_name
+    `SELECT u.user_id, u.full_name, u.email, u.username, u.password_hash, u.status, u.last_active, r.role_name
      FROM users u
      JOIN roles r ON u.role_id = r.role_id
      WHERE u.email = ?`,
@@ -65,8 +65,20 @@ const login = async ({ email, password }) => {
     throw new AppError("AUTH_FAILED", "Invalid credentials", 401);
   }
 
+  await pool.query("UPDATE users SET last_active = NOW() WHERE user_id = ?", [user.user_id]);
   const token = createToken(user);
-  return { user: { user_id: user.user_id, full_name: user.full_name, email: user.email, role_name: user.role_name }, token };
+  return {
+    user: {
+      user_id: user.user_id,
+      full_name: user.full_name,
+      email: user.email,
+      username: user.username,
+      role_name: user.role_name,
+      status: user.status,
+      last_active: user.last_active
+    },
+    token
+  };
 };
 
 module.exports = { register, login };

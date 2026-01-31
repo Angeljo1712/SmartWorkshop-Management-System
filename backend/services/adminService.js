@@ -42,7 +42,7 @@ const deleteWorkshop = async (workshopId) => {
 
 const listUsers = async () => {
   const [rows] = await pool.query(
-    `SELECT u.user_id, u.full_name, u.email, r.role_name, u.created_at
+    `SELECT u.user_id, u.full_name, u.email, u.username, u.status, u.last_active, r.role_name, u.created_at
      FROM users u
      JOIN roles r ON u.role_id = r.role_id
      ORDER BY u.created_at DESC`

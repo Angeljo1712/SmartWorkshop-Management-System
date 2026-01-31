@@ -189,7 +189,13 @@ if (adminPage) {
 
   const statusCycle = ["Active", "Inactive", "Banned", "Pending", "Suspended"];
   const getStatus = (user, index) => user.status || statusCycle[index % statusCycle.length];
-  const getLastActive = (index) => {
+  const getLastActive = (user, index) => {
+    if (user.last_active) {
+      const date = new Date(user.last_active);
+      if (!Number.isNaN(date.getTime())) {
+        return date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+      }
+    }
     const options = ["1 minute ago", "4 hours ago", "2 days ago", "1 week ago", "1 month ago"];
     return options[index % options.length];
   };
@@ -266,7 +272,7 @@ if (adminPage) {
       const row = document.createElement("tr");
       const status = getStatus(user, index);
       const statusClass = status.toLowerCase();
-      const lastActive = getLastActive(index);
+      const lastActive = getLastActive(user, index);
       const avatarUrl = getAvatarUrl(user.email);
       row.innerHTML = `
         <td class="table-check">
@@ -284,7 +290,7 @@ if (adminPage) {
           </div>
         </td>
         <td>${user.email}</td>
-        <td>${getUsername(user.email)}</td>
+        <td>${user.username || getUsername(user.email)}</td>
         <td><span class="pill ${statusClass}">${status}</span></td>
         <td><span class="role-chip">${user.role_name}</span></td>
         <td>${formatDate(user.created_at)}</td>

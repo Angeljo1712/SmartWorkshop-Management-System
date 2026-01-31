@@ -7,9 +7,12 @@ CREATE TABLE IF NOT EXISTS users (
   user_id INT AUTO_INCREMENT PRIMARY KEY,
   full_name VARCHAR(120) NOT NULL,
   email VARCHAR(190) NOT NULL UNIQUE,
+  username VARCHAR(80) UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
   role_id INT NOT NULL,
+  status ENUM('Active','Inactive','Pending','Suspended','Banned') NOT NULL DEFAULT 'Active',
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  last_active DATETIME NULL,
   CONSTRAINT fk_users_role FOREIGN KEY (role_id) REFERENCES roles(role_id)
 ) ENGINE=InnoDB;
 
