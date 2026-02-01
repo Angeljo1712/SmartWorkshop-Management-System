@@ -573,3 +573,110 @@ if (signInForm) {
     }
   });
 }
+
+const userPage = document.getElementById("userPage");
+if (userPage) {
+  const userLogoutBtn = document.getElementById("userLogoutBtn");
+  const userProfileAvatar = document.getElementById("userProfileAvatar");
+  const userProfileName = document.getElementById("userProfileName");
+  const userProfileRole = document.getElementById("userProfileRole");
+  const userSettingsAvatar = document.getElementById("userSettingsAvatar");
+  const userSettingsName = document.getElementById("userSettingsName");
+  const userSettingsEmail = document.getElementById("userSettingsEmail");
+  const userSettingsEmailDetail = document.getElementById("userSettingsEmailDetail");
+  const userSettingsRole = document.getElementById("userSettingsRole");
+  const userSettingsPhone = document.getElementById("userSettingsPhone");
+  const userSettingsAvatarSettings = document.getElementById("userSettingsAvatarSettings");
+  const userSettingsNameSettings = document.getElementById("userSettingsNameSettings");
+  const userSettingsEmailDetailSettings = document.getElementById("userSettingsEmailDetailSettings");
+  const userSettingsRoleSettings = document.getElementById("userSettingsRoleSettings");
+  const userSettingsPhoneSettings = document.getElementById("userSettingsPhoneSettings");
+  const settingsSubnavLinks = document.querySelectorAll(".settings-subnav-link");
+  const userSettingsGeneral = document.getElementById("userSettingsGeneral");
+  const userSettingsNotifications = document.getElementById("userSettingsNotifications");
+  const userSettingsSecurity = document.getElementById("userSettingsSecurity");
+  const userNavLinks = document.querySelectorAll(".user-nav-link");
+  const userAccountView = document.getElementById("userAccountView");
+  const userBookingsView = document.getElementById("userBookingsView");
+  const userMotView = document.getElementById("userMotView");
+  const userSettingsView = document.getElementById("userSettingsView");
+
+  const getInitials = (name) => {
+    if (!name) return "NA";
+    const parts = name.trim().split(/\s+/);
+    const initials = parts.slice(0, 2).map((part) => part[0]).join("");
+    return initials.toUpperCase();
+  };
+
+  const getUserProfile = () => {
+    const stored = sessionStorage.getItem("userProfile");
+    return stored ? JSON.parse(stored) : null;
+  };
+
+  const clearUserSession = () => {
+    sessionStorage.removeItem("userToken");
+    sessionStorage.removeItem("userProfile");
+  };
+
+  const setUserHeader = (user) => {
+    const displayName = user?.full_name || user?.email || "User";
+    const role = user?.role_name || "CUSTOMER";
+    const initials = getInitials(displayName);
+    userProfileAvatar.textContent = initials;
+    userProfileName.textContent = displayName;
+    userProfileRole.textContent = role;
+    userSettingsAvatar.textContent = initials;
+    userSettingsName.textContent = displayName;
+    userSettingsEmail.textContent = user?.email || "-";
+    userSettingsEmailDetail.textContent = `Email: ${user?.email || "-"}`;
+    userSettingsRole.textContent = role;
+    userSettingsPhone.textContent = "Phone: -";
+    if (userSettingsAvatarSettings) userSettingsAvatarSettings.textContent = initials;
+    if (userSettingsNameSettings) userSettingsNameSettings.textContent = displayName;
+    if (userSettingsEmailDetailSettings)
+      userSettingsEmailDetailSettings.textContent = `Email: ${user?.email || "-"}`;
+    if (userSettingsRoleSettings) userSettingsRoleSettings.textContent = role;
+    if (userSettingsPhoneSettings) userSettingsPhoneSettings.textContent = "Phone: -";
+  };
+
+  const profile = getUserProfile();
+  if (profile) {
+    setUserHeader(profile);
+  } else {
+    window.location.href = "/pages/Auth/index.html";
+  }
+
+  const setUserView = (view) => {
+    userAccountView.classList.toggle("is-hidden", view !== "account");
+    userBookingsView.classList.toggle("is-hidden", view !== "bookings");
+    userMotView.classList.toggle("is-hidden", view !== "mot");
+    userSettingsView.classList.toggle("is-hidden", view !== "settings");
+  };
+
+  const setSettingsSubview = (view) => {
+    userSettingsGeneral.classList.toggle("is-hidden", view !== "general");
+    userSettingsNotifications.classList.toggle("is-hidden", view !== "notifications");
+    userSettingsSecurity.classList.toggle("is-hidden", view !== "security");
+  };
+
+  userNavLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      const view = link.dataset.view;
+      userNavLinks.forEach((btn) => btn.classList.toggle("active", btn === link));
+      setUserView(view);
+    });
+  });
+
+  settingsSubnavLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      const view = link.dataset.subview;
+      settingsSubnavLinks.forEach((btn) => btn.classList.toggle("active", btn === link));
+      setSettingsSubview(view);
+    });
+  });
+
+  userLogoutBtn?.addEventListener("click", () => {
+    clearUserSession();
+    window.location.href = "/pages/Auth/index.html";
+  });
+}

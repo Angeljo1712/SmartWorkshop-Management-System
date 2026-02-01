@@ -270,11 +270,9 @@ body {
 
 .settings-profile {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 1fr auto;
   gap: 16px;
   align-items: center;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--border);
 }
 
 .settings-avatar {
@@ -286,6 +284,12 @@ body {
   place-items: center;
   font-weight: 700;
   color: #7c2d12;
+}
+
+.settings-avatar-lg {
+  width: 120px;
+  height: 120px;
+  border-radius: 32px;
 }
 
 .settings-meta h3 {
@@ -312,6 +316,78 @@ body {
 
 .settings-row h4 {
   margin-bottom: 6px;
+}
+
+.settings-photo-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.settings-divider {
+  height: 1px;
+  background: var(--border);
+}
+
+.settings-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 18px;
+}
+
+.settings-subnav {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+}
+
+.settings-subnav-link {
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.settings-subnav-link.active {
+  background: #e0e7ff;
+  color: #1e40af;
+}
+
+.settings-panel {
+  display: grid;
+  gap: 22px;
+}
+
+.settings-panel .settings-subview {
+  display: grid;
+  gap: 18px;
+}
+
+.settings-panel .settings-divider {
+  margin: 6px 0;
+}
+
+.settings-panel .settings-row {
+  padding: 6px 0;
+}
+
+@media (max-width: 900px) {
+  .settings-layout {
+    grid-template-columns: 1fr;
+  }
+  .settings-subnav {
+    grid-auto-flow: column;
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+  .settings-subnav-link {
+    white-space: nowrap;
+  }
 }
 
 .admin-gate {
@@ -876,6 +952,11 @@ button.secondary {
 button.ghost {
   background: transparent;
   border: 1px solid var(--border);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .auth-body {

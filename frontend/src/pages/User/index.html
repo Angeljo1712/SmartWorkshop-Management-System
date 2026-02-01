@@ -7,17 +7,205 @@
     <link rel="stylesheet" href="/index.css" />
   </head>
   <body>
-    <nav class="page-nav">
-      <a href="/">Home</a>
-      <a href="/pages/Admin/index.html">Admin</a>
-      <a href="/pages/Auth/index.html">Auth</a>
-      <a href="/pages/Shop/index.html">Shop</a>
-      <a href="/pages/User/index.html">User</a>
-    </nav>
-    <main class="page-shell">
-      <h1>User</h1>
-      <p>This page is a placeholder.</p>
-      <p><a href="/">Back to Home</a></p>
+    <header class="site-header admin-header">
+      <div class="brand">
+        <span class="logo">SW</span>
+        <div>
+          <strong>SmartWorkshop</strong>
+          <span>Vehicle Service Marketplace</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-shell" id="userPage">
+      <section class="admin-app">
+        <aside class="admin-sidebar">
+          <div class="admin-profile-card">
+            <div class="admin-profile-avatar" id="userProfileAvatar">AG</div>
+            <div>
+              <strong id="userProfileName">Angel Gomes</strong>
+              <span id="userProfileRole">ADMIN</span>
+            </div>
+            <button class="ghost admin-profile-menu" type="button" aria-label="Profile menu">...</button>
+          </div>
+          <nav class="admin-nav">
+            <button class="admin-nav-link user-nav-link active" type="button" data-view="account">Account Details</button>
+            <button class="admin-nav-link user-nav-link" type="button" data-view="bookings">Bookings</button>
+            <button class="admin-nav-link user-nav-link" type="button" data-view="mot">MOT Reminders</button>
+            <button class="admin-nav-link user-nav-link" type="button" data-view="settings">Settings</button>
+          </nav>
+
+          <button class="admin-signout" id="userLogoutBtn" type="button">Sign out</button>
+        </aside>
+
+        <div class="admin-content">
+          <section class="admin-view" id="userAccountView">
+            <div class="settings-card">
+              <div class="settings-header">
+                <div>
+                  <h2>Account Details</h2>
+                  <p>Review your profile information.</p>
+                </div>
+              </div>
+
+              <div class="settings-divider"></div>
+
+              <div class="settings-photo-row">
+                <div class="settings-avatar settings-avatar-lg" id="userSettingsAvatar">AG</div>
+              </div>
+
+              <div class="settings-divider"></div>
+
+              <div class="settings-profile">
+                <div class="settings-meta">
+                  <h3 id="userSettingsName">Angel Gomes</h3>
+                  <p id="userSettingsEmail">admin@smartworkshop.local</p>
+                </div>
+              </div>
+
+              <div class="settings-divider"></div>
+
+              <div class="settings-row">
+                <div>
+                  <h4>Contacts</h4>
+                  <p id="userSettingsPhone">Phone: -</p>
+                  <p id="userSettingsEmailDetail">Email: admin@smartworkshop.local</p>
+                </div>
+              </div>
+
+              <div class="settings-row">
+                <div>
+                  <h4>Role</h4>
+                  <p id="userSettingsRole">ADMIN</p>
+                </div>
+              </div>
+
+              <div class="settings-row">
+                <div>
+                  <h4>Theme</h4>
+                  <p>Light mode</p>
+                </div>
+              </div>
+
+              <div class="settings-row">
+                <div>
+                  <h4>Integration</h4>
+                  <p>No integrations connected</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="admin-view is-hidden" id="userBookingsView">
+            <div class="settings-card">
+              <div class="settings-header">
+                <div>
+                  <h2>Bookings</h2>
+                  <p>See your upcoming and past bookings.</p>
+                </div>
+              </div>
+              <p class="form-error">No bookings to show yet.</p>
+            </div>
+          </section>
+
+          <section class="admin-view is-hidden" id="userMotView">
+            <div class="settings-card">
+              <div class="settings-header">
+                <div>
+                  <h2>MOT Reminders</h2>
+                  <p>Track MOT due dates and reminders.</p>
+                </div>
+              </div>
+              <p class="form-error">No MOT reminders set.</p>
+            </div>
+          </section>
+
+          <section class="admin-view is-hidden" id="userSettingsView">
+            <div class="settings-card">
+              <div class="settings-header">
+                <div>
+                  <h2>Settings</h2>
+                  <p>Manage your profile and preferences.</p>
+                </div>
+              </div>
+
+              <div class="settings-divider"></div>
+
+              <div class="settings-layout">
+                <nav class="settings-subnav">
+                  <button class="settings-subnav-link active" type="button" data-subview="general">General</button>
+                  <button class="settings-subnav-link" type="button" data-subview="notifications">Notifications</button>
+                  <button class="settings-subnav-link" type="button" data-subview="security">Login & security</button>
+                </nav>
+
+                <div class="settings-panel">
+                  <section class="settings-subview" id="userSettingsGeneral">
+                    <div class="settings-photo-row">
+                      <div class="settings-avatar settings-avatar-lg" id="userSettingsAvatarSettings">AG</div>
+                      <button class="ghost" type="button">Upload</button>
+                    </div>
+
+                    <div class="settings-divider"></div>
+
+                    <div class="settings-profile">
+                      <div class="settings-meta">
+                        <h4>Full name</h4>
+                        <p id="userSettingsNameSettings">Angel Gomes</p>
+                      </div>
+                      <button class="secondary" type="button">Edit</button>
+                    </div>
+
+                    <div class="settings-divider"></div>
+
+                    <div class="settings-row">
+                      <div>
+                        <h4>Contacts</h4>
+                        <p id="userSettingsPhoneSettings">Phone: -</p>
+                        <p id="userSettingsEmailDetailSettings">Email: admin@smartworkshop.local</p>
+                      </div>
+                      <button class="secondary" type="button">Edit</button>
+                    </div>
+
+                    <div class="settings-row">
+                      <div>
+                        <h4>Role</h4>
+                        <p id="userSettingsRoleSettings">ADMIN</p>
+                      </div>
+                      <button class="secondary" type="button">Edit</button>
+                    </div>
+
+                    <div class="settings-row">
+                      <div>
+                        <h4>Theme</h4>
+                        <p>Light mode</p>
+                      </div>
+                      <button class="secondary" type="button">Light mode</button>
+                    </div>
+
+                    <div class="settings-row">
+                      <div>
+                        <h4>Integration</h4>
+                        <p>No integrations connected</p>
+                      </div>
+                      <button class="secondary" type="button">Connect</button>
+                    </div>
+                  </section>
+
+                  <section class="settings-subview is-hidden" id="userSettingsNotifications">
+                    <p class="form-error">No notification preferences configured.</p>
+                  </section>
+
+                  <section class="settings-subview is-hidden" id="userSettingsSecurity">
+                    <p class="form-error">Security options will appear here.</p>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
     </main>
+
+    <script src="/app.js"></script>
   </body>
 </html>
