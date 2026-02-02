@@ -1,5 +1,5 @@
 param(
-  [ValidateSet("start", "build", "stop", "stop-hard")]
+  [ValidateSet("start", "build", "build-only", "recreate", "stop", "stop-hard")]
   [string]$Action = "start"
 )
 
@@ -63,6 +63,24 @@ function Start-Backend([switch]$Build) {
     docker compose -f $ComposeFile up -d | Out-Host
   }
   Ok "Backend stack started."
+}
+
+function Build-Backend {
+  Assert-FileExists $ComposeFile "docker-compose file"
+  Assert-CommandExists "docker" "Docker"
+
+  Info "Building backend stack..."
+  docker compose -f $ComposeFile build | Out-Host
+  Ok "Backend stack built."
+}
+
+function Recreate-Backend {
+  Assert-FileExists $ComposeFile "docker-compose file"
+  Assert-CommandExists "docker" "Docker"
+
+  Info "Recreating backend stack..."
+  docker compose -f $ComposeFile up -d --force-recreate | Out-Host
+  Ok "Backend stack recreated."
 }
 
 function Stop-Backend {
@@ -154,6 +172,16 @@ try {
     "build" {
       Start-Backend -Build
       Start-Frontend
+      Ok "Done."
+    }
+
+    "build-only" {
+      Build-Backend
+      Ok "Done."
+    }
+
+    "recreate" {
+      Recreate-Backend
       Ok "Done."
     }
 

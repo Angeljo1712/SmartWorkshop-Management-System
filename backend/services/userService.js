@@ -4,7 +4,7 @@ const crypto = require("crypto");
 
 const getUserById = async (userId) => {
   const [rows] = await pool.query(
-    `SELECT u.user_id, u.full_name, u.email, u.username, u.phone, u.avatar_url, r.role_name
+    `SELECT u.user_id, u.full_name, u.email, u.username, u.phone, u.address, u.avatar_url, r.role_name
      FROM users u
      JOIN roles r ON u.role_id = r.role_id
      WHERE u.user_id = ?`,
@@ -13,7 +13,7 @@ const getUserById = async (userId) => {
   return rows[0];
 };
 
-const updateUserProfile = async (userId, { full_name, phone }) => {
+const updateUserProfile = async (userId, { full_name, phone, address }) => {
   const updates = [];
   const params = [];
 
@@ -24,6 +24,10 @@ const updateUserProfile = async (userId, { full_name, phone }) => {
   if (phone !== undefined) {
     updates.push("phone = ?");
     params.push(phone);
+  }
+  if (address !== undefined) {
+    updates.push("address = ?");
+    params.push(address);
   }
 
   if (!updates.length) {

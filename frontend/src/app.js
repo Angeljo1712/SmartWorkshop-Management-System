@@ -574,6 +574,87 @@ if (signInForm) {
   });
 }
 
+const forgotPasswordForm = document.getElementById("forgotPasswordForm");
+if (forgotPasswordForm) {
+  const emailInput = document.getElementById("forgotPasswordEmail");
+  const errorEl = document.getElementById("forgotPasswordError");
+
+  forgotPasswordForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    errorEl.textContent = "";
+    const email = emailInput.value.trim();
+    if (!email) {
+      errorEl.textContent = "Please enter your email address.";
+      return;
+    }
+    try {
+      const response = await fetch("http://localhost:3000/api/auth/password-reset-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        throw payload;
+      }
+      errorEl.textContent = "Check your email for the reset link.";
+    } catch (err) {
+      errorEl.textContent = err?.error?.message || err?.message || "Unable to send reset link.";
+    }
+  });
+}
+
+const resetPasswordForm = document.getElementById("resetPasswordForm");
+if (resetPasswordForm) {
+  const passwordInput = document.getElementById("resetPasswordValue");
+  const confirmInput = document.getElementById("resetPasswordConfirm");
+  const errorEl = document.getElementById("resetPasswordError");
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get("token");
+
+  resetPasswordForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    errorEl.textContent = "";
+    const password = passwordInput.value;
+    const confirm = confirmInput.value;
+    const passwordRules = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{10,}$/;
+    if (!token) {
+      errorEl.textContent = "Missing reset token.";
+      return;
+    }
+    if (!password || !confirm) {
+      errorEl.textContent = "Please enter and confirm your new password.";
+      return;
+    }
+    if (password !== confirm) {
+      errorEl.textContent = "Passwords do not match.";
+      return;
+    }
+    if (!passwordRules.test(password)) {
+      errorEl.textContent = "Password must be 10+ chars with 1 uppercase, 1 number, 1 symbol.";
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:3000/api/auth/password-reset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, password })
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        throw payload;
+      }
+      errorEl.textContent = "Password updated. Redirecting to sign in...";
+      setTimeout(() => {
+        window.location.href = "/pages/Auth/sign-in.html";
+      }, 1200);
+    } catch (err) {
+      errorEl.textContent = err?.error?.message || err?.message || "Unable to reset password.";
+    }
+  });
+}
+
 const userPage = document.getElementById("userPage");
 if (userPage) {
   const userLogoutBtn = document.getElementById("userLogoutBtn");
@@ -586,6 +667,7 @@ if (userPage) {
   const userSettingsEmailDetail = document.getElementById("userSettingsEmailDetail");
   const userSettingsRole = document.getElementById("userSettingsRole");
   const userSettingsPhone = document.getElementById("userSettingsPhone");
+  const userSettingsAddress = document.getElementById("userSettingsAddress");
   const userSettingsAvatarSettings = document.getElementById("userSettingsAvatarSettings");
   const userSettingsNameSettings = document.getElementById("userSettingsNameSettings");
   const userSettingsEmailDetailSettings = document.getElementById("userSettingsEmailDetailSettings");
@@ -594,6 +676,7 @@ if (userPage) {
   const userSettingsPhotoInput = document.getElementById("userSettingsPhotoInput");
   const userSettingsPhoneInput = document.getElementById("userSettingsPhoneInput");
   const userSettingsEmailInput = document.getElementById("userSettingsEmailInput");
+  const userSettingsAddressInput = document.getElementById("userSettingsAddressInput");
   const userSettingsContactSave = document.getElementById("userSettingsContactSave");
   const userSettingsContactMessage = document.getElementById("userSettingsContactMessage");
   const settingsSubnavLinks = document.querySelectorAll(".settings-subnav-link");
@@ -650,6 +733,7 @@ if (userPage) {
     userSettingsEmailDetail.textContent = `Email: ${user?.email || "-"}`;
     userSettingsRole.textContent = role;
     userSettingsPhone.textContent = `Phone: ${user?.phone || "-"}`;
+    if (userSettingsAddress) userSettingsAddress.textContent = `Address: ${user?.address || "-"}`;
     if (userSettingsAvatarSettings) setAvatar(userSettingsAvatarSettings, initials, user?.avatar_url);
     if (userSettingsNameSettings) userSettingsNameSettings.textContent = displayName;
     if (userSettingsEmailDetailSettings)
@@ -660,6 +744,7 @@ if (userPage) {
 
     if (userSettingsPhoneInput) userSettingsPhoneInput.value = user?.phone || "";
     if (userSettingsEmailInput) userSettingsEmailInput.value = user?.email || "";
+    if (userSettingsAddressInput) userSettingsAddressInput.value = user?.address || "";
   };
 
   const profile = getUserProfile();
@@ -699,24 +784,25 @@ if (userPage) {
   });
 
   userSettingsContactSave?.addEventListener("click", async () => {
-    if (!userSettingsPhoneInput || !userSettingsEmailInput) return;
+    if (!userSettingsPhoneInput || !userSettingsEmailInput || !userSettingsAddressInput) return;
     const token = sessionStorage.getItem("userToken");
     if (!token) return;
 
     const phone = userSettingsPhoneInput.value.trim();
     const email = userSettingsEmailInput.value.trim();
+    const address = userSettingsAddressInput.value.trim();
 
     userSettingsContactMessage.textContent = "";
     try {
       const profile = getUserProfile() || {};
-      if (phone !== (profile.phone || "")) {
+      if (phone !== (profile.phone || "") || address !== (profile.address || "")) {
         const response = await fetch("http://localhost:3000/api/users/me", {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`
           },
-          body: JSON.stringify({ phone })
+          body: JSON.stringify({ phone, address })
         });
         const payload = await response.json();
         if (!response.ok) throw payload;
