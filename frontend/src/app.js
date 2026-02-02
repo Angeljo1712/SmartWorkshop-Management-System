@@ -591,6 +591,11 @@ if (userPage) {
   const userSettingsEmailDetailSettings = document.getElementById("userSettingsEmailDetailSettings");
   const userSettingsRoleSettings = document.getElementById("userSettingsRoleSettings");
   const userSettingsPhoneSettings = document.getElementById("userSettingsPhoneSettings");
+  const userSettingsPhotoInput = document.getElementById("userSettingsPhotoInput");
+  const userSettingsPhoneInput = document.getElementById("userSettingsPhoneInput");
+  const userSettingsEmailInput = document.getElementById("userSettingsEmailInput");
+  const userSettingsContactSave = document.getElementById("userSettingsContactSave");
+  const userSettingsContactMessage = document.getElementById("userSettingsContactMessage");
   const settingsSubnavLinks = document.querySelectorAll(".settings-subnav-link");
   const userSettingsGeneral = document.getElementById("userSettingsGeneral");
   const userSettingsNotifications = document.getElementById("userSettingsNotifications");
@@ -618,25 +623,43 @@ if (userPage) {
     sessionStorage.removeItem("userProfile");
   };
 
+  const setAvatar = (el, initials, url) => {
+    if (!el) return;
+    el.innerHTML = "";
+    if (url) {
+      const resolvedUrl = url.startsWith("/uploads") ? `http://localhost:3000${url}` : url;
+      const img = document.createElement("img");
+      img.src = resolvedUrl;
+      img.alt = "";
+      el.appendChild(img);
+      return;
+    }
+    el.textContent = initials;
+  };
+
   const setUserHeader = (user) => {
     const displayName = user?.full_name || user?.email || "User";
     const role = user?.role_name || "CUSTOMER";
     const initials = getInitials(displayName);
-    userProfileAvatar.textContent = initials;
+    setAvatar(userProfileAvatar, initials, user?.avatar_url);
     userProfileName.textContent = displayName;
     userProfileRole.textContent = role;
-    userSettingsAvatar.textContent = initials;
+    setAvatar(userSettingsAvatar, initials, user?.avatar_url);
     userSettingsName.textContent = displayName;
-    userSettingsEmail.textContent = user?.email || "-";
+    if (userSettingsEmail) userSettingsEmail.textContent = user?.email || "-";
     userSettingsEmailDetail.textContent = `Email: ${user?.email || "-"}`;
     userSettingsRole.textContent = role;
-    userSettingsPhone.textContent = "Phone: -";
-    if (userSettingsAvatarSettings) userSettingsAvatarSettings.textContent = initials;
+    userSettingsPhone.textContent = `Phone: ${user?.phone || "-"}`;
+    if (userSettingsAvatarSettings) setAvatar(userSettingsAvatarSettings, initials, user?.avatar_url);
     if (userSettingsNameSettings) userSettingsNameSettings.textContent = displayName;
     if (userSettingsEmailDetailSettings)
       userSettingsEmailDetailSettings.textContent = `Email: ${user?.email || "-"}`;
     if (userSettingsRoleSettings) userSettingsRoleSettings.textContent = role;
-    if (userSettingsPhoneSettings) userSettingsPhoneSettings.textContent = "Phone: -";
+    if (userSettingsPhoneSettings)
+      userSettingsPhoneSettings.textContent = `Phone: ${user?.phone || "-"}`;
+
+    if (userSettingsPhoneInput) userSettingsPhoneInput.value = user?.phone || "";
+    if (userSettingsEmailInput) userSettingsEmailInput.value = user?.email || "";
   };
 
   const profile = getUserProfile();
@@ -675,8 +698,115 @@ if (userPage) {
     });
   });
 
+  userSettingsContactSave?.addEventListener("click", async () => {
+    if (!userSettingsPhoneInput || !userSettingsEmailInput) return;
+    const token = sessionStorage.getItem("userToken");
+    if (!token) return;
+
+    const phone = userSettingsPhoneInput.value.trim();
+    const email = userSettingsEmailInput.value.trim();
+
+    userSettingsContactMessage.textContent = "";
+    try {
+      const profile = getUserProfile() || {};
+      if (phone !== (profile.phone || "")) {
+        const response = await fetch("http://localhost:3000/api/users/me", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ phone })
+        });
+        const payload = await response.json();
+        if (!response.ok) throw payload;
+        sessionStorage.setItem("userProfile", JSON.stringify(payload));
+        setUserHeader(payload);
+      }
+
+      if (email && email !== (profile.email || "")) {
+        const response = await fetch("http://localhost:3000/api/users/me/email-change", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ email })
+        });
+        const payload = await response.json();
+        if (!response.ok) throw payload;
+        userSettingsContactMessage.textContent = "Check your email to confirm the change.";
+      } else if (!email) {
+        userSettingsContactMessage.textContent = "Email is required.";
+      }
+    } catch (err) {
+      userSettingsContactMessage.textContent =
+        err?.error?.message || err?.message || "Unable to update contact details.";
+    }
+  });
+
+  userSettingsPhotoInput?.addEventListener("change", async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const token = sessionStorage.getItem("userToken");
+    if (!token) return;
+
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    try {
+      const response = await fetch("http://localhost:3000/api/users/me/avatar", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      });
+      const payload = await response.json();
+      if (!response.ok) {
+        throw payload;
+      }
+      sessionStorage.setItem("userProfile", JSON.stringify(payload));
+      setUserHeader(payload);
+    } catch (err) {
+      console.error("Upload failed", err);
+    } finally {
+      event.target.value = "";
+    }
+  });
+
   userLogoutBtn?.addEventListener("click", () => {
     clearUserSession();
     window.location.href = "/pages/Auth/index.html";
   });
+}
+
+const confirmEmailPage = document.getElementById("confirmEmailPage");
+if (confirmEmailPage) {
+  const statusEl = document.getElementById("confirmEmailStatus");
+  const detailsEl = document.getElementById("confirmEmailDetails");
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get("token");
+
+  const setStatus = (text, isError = false) => {
+    if (statusEl) statusEl.textContent = text;
+    if (detailsEl) detailsEl.textContent = isError ? "Please request a new email change." : "";
+  };
+
+  if (!token) {
+    setStatus("Missing confirmation token.", true);
+  } else {
+    fetch(`http://localhost:3000/api/users/confirm-email?token=${encodeURIComponent(token)}`)
+      .then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok) {
+          throw payload;
+        }
+        if (payload.user) {
+          sessionStorage.setItem("userProfile", JSON.stringify(payload.user));
+        }
+        setStatus("Email confirmed. You can sign in with the new email.");
+      })
+      .catch((err) => {
+        setStatus(err?.error?.message || err?.message || "Unable to confirm email.", true);
+      });
+  }
 }

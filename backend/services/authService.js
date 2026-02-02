@@ -48,7 +48,7 @@ const login = async ({ email, password }) => {
   }
 
   const [rows] = await pool.query(
-    `SELECT u.user_id, u.full_name, u.email, u.username, u.password_hash, u.status, u.last_active, r.role_name
+    `SELECT u.user_id, u.full_name, u.email, u.username, u.password_hash, u.status, u.last_active, u.phone, u.avatar_url, r.role_name
      FROM users u
      JOIN roles r ON u.role_id = r.role_id
      WHERE u.email = ?`,
@@ -73,6 +73,8 @@ const login = async ({ email, password }) => {
       full_name: user.full_name,
       email: user.email,
       username: user.username,
+      phone: user.phone,
+      avatar_url: user.avatar_url,
       role_name: user.role_name,
       status: user.status,
       last_active: user.last_active

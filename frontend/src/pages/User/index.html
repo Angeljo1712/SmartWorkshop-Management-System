@@ -58,8 +58,8 @@
 
               <div class="settings-profile">
                 <div class="settings-meta">
-                  <h3 id="userSettingsName">Angel Gomes</h3>
-                  <p id="userSettingsEmail">admin@smartworkshop.local</p>
+                  <h4>Name</h4>
+                  <p id="userSettingsName">Angel Gomes</p>
                 </div>
               </div>
 
@@ -124,7 +124,7 @@
             <div class="settings-card">
               <div class="settings-header">
                 <div>
-                  <h2>Settings</h2>
+                  <h2>Account settings</h2>
                   <p>Manage your profile and preferences.</p>
                 </div>
               </div>
@@ -142,7 +142,8 @@
                   <section class="settings-subview" id="userSettingsGeneral">
                     <div class="settings-photo-row">
                       <div class="settings-avatar settings-avatar-lg" id="userSettingsAvatarSettings">AG</div>
-                      <button class="ghost" type="button">Upload</button>
+                      <label class="ghost" for="userSettingsPhotoInput">Upload</label>
+                      <input class="file-input" id="userSettingsPhotoInput" type="file" accept="image/*" />
                     </div>
 
                     <div class="settings-divider"></div>
@@ -160,10 +161,17 @@
                     <div class="settings-row">
                       <div>
                         <h4>Contacts</h4>
-                        <p id="userSettingsPhoneSettings">Phone: -</p>
-                        <p id="userSettingsEmailDetailSettings">Email: admin@smartworkshop.local</p>
+                        <label class="settings-field">
+                          Phone
+                          <input id="userSettingsPhoneInput" type="text" placeholder="Add phone" />
+                        </label>
+                        <label class="settings-field">
+                          Email
+                          <input id="userSettingsEmailInput" type="email" placeholder="Add email" />
+                        </label>
+                        <p class="form-error" id="userSettingsContactMessage" role="alert" aria-live="polite"></p>
                       </div>
-                      <button class="secondary" type="button">Edit</button>
+                      <button class="secondary" id="userSettingsContactSave" type="button">Save</button>
                     </div>
 
                     <div class="settings-row">

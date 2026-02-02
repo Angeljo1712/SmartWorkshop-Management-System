@@ -286,6 +286,15 @@ body {
   color: #7c2d12;
 }
 
+.settings-avatar img,
+.admin-profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  display: block;
+}
+
 .settings-avatar-lg {
   width: 120px;
   height: 120px;
@@ -374,6 +383,23 @@ body {
 
 .settings-panel .settings-row {
   padding: 6px 0;
+}
+
+.settings-field {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.settings-field input {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--ink);
 }
 
 @media (max-width: 900px) {
@@ -952,6 +978,10 @@ button.secondary {
 button.ghost {
   background: transparent;
   border: 1px solid var(--border);
+}
+
+.file-input {
+  display: none;
 }
 
 button:disabled {
