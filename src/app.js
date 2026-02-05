@@ -70,16 +70,23 @@ app.get("/bookings", (_req, res) => {
   res.redirect(301, "/bookings/work");
 });
 
-app.get("/bookings/work", (req, res) => {
+const renderBookingsWork = (req, res) => {
   const { type } = req.query;
-  if (type === "repair") {
-    return res.render("pages/bookings/work", { type: "repair" });
+  if (type) {
+    return res.render("pages/bookings/work", { type: String(type) });
   }
   return res.render("pages/bookings/index");
-});
+};
+
+app.get("/bookings/work", renderBookingsWork);
+app.get("/bookings/work/", renderBookingsWork);
 
 app.get("/bookings/work/type", (req, res) => {
   res.redirect(302, "/bookings/work?type=repair");
+});
+
+app.get("/bookings/details", (req, res) => {
+  res.render("pages/bookings/details");
 });
 
 app.get("/mechanic/home", (req, res) => {
