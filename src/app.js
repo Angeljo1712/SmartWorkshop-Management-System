@@ -9,6 +9,7 @@ const adminRouter = require("./routes/admin");
 const usersRouter = require("./routes/users");
 const vehicleEnquiryRouter = require("./routes/vehicleEnquiry");
 const workshopsRouter = require("./routes/workshops");
+const bookingsRouter = require("./routes/bookings");
 const { errorHandler } = require("./middlewares/error");
 const { cors } = require("./middlewares/cors");
 
@@ -101,6 +102,7 @@ app.use("/api/jobs", jobRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/vehicle-enquiry", vehicleEnquiryRouter);
+app.use("/api/bookings", bookingsRouter);
 app.use("/workshops", workshopsRouter);
 
 app.use(errorHandler);

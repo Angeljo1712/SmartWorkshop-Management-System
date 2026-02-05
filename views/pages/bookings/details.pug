@@ -35,74 +35,76 @@ block content
             a(href="#") More info
       section.details-content
         h1 Booking details
-        .details-card
-          h3 Your details
-          .field-grid
+        form#bookingDetailsForm
+          .details-card
+            h3 Your details
+            .field-grid
+              label
+                | First name
+                input#detailsFirstName(type="text" placeholder="First name" required)
+              label
+                | Last name
+                input#detailsLastName(type="text" placeholder="Last name" required)
             label
-              | First name
-              input(type="text" placeholder="First name")
+              | Email
+              input#detailsEmail(type="email" placeholder="Email" required)
+            label.checkbox
+              input#detailsOptIn(type="checkbox")
+              span Opt in to receive MOT reminders and monthly promotions.
+          .details-card
+            h3 Booking address & phone
+            .field-grid
+              label
+                | Street address 1
+                input#detailsAddress1(type="text" placeholder="Street address" required)
+              label
+                | Street address 2 (optional)
+                input#detailsAddress2(type="text" placeholder="Street address")
+            .field-grid
+              label
+                | City
+                input#detailsCity(type="text" placeholder="City" required)
+              label
+                | Postcode
+                input#detailsPostcode(type="text" placeholder="KT10 0QR" required)
             label
-              | Last name
-              input(type="text" placeholder="Last name")
-          label
-            | Email
-            input(type="email" placeholder="Email")
-          label.checkbox
-            input(type="checkbox")
-            span Opt in to receive MOT reminders and monthly promotions.
-        .details-card
-          h3 Booking address & phone
-          .field-grid
-            label
-              | Street address 1
-              input(type="text" placeholder="Street address")
-            label
-              | Street address 2 (optional)
-              input(type="text" placeholder="Street address")
-          .field-grid
-            label
-              | City
-              input(type="text" placeholder="City")
-            label
-              | Postcode
-              input(type="text" placeholder="KT10 0QR")
-          label
-            | Phone number
-            input(type="text" placeholder="Phone number")
-          p.help-text We'll use this phone number to send you updates about your booking.
-        .details-card
-          h3 When is the vehicle available?
-          p.help-text Select all the times when you are available. A mechanic will confirm a 2-hour window.
-          .date-strip
-            button.ghost(type="button") &lt;
-            span 6 Feb 2026
-            button.ghost(type="button") &gt;
-          .availability-grid
-            .availability-day
-              strong 6th
-              span Friday
-              button.slot(type="button") All day
-              button.slot(type="button") 8-10 AM
-              button.slot(type="button") 10-12 AM
-              button.slot(type="button") 12-2 PM
-              button.slot(type="button") 2-4 PM
-              button.slot(type="button") 4-6 PM
-            .availability-day
-              strong 7th
-              span Saturday
-              button.slot(type="button") All day
-              button.slot(type="button") 8-10 AM
-              button.slot(type="button") 10-12 AM
-              button.slot(type="button") 12-2 PM
-              button.slot(type="button") 2-4 PM
-              button.slot(type="button") 4-6 PM
-            .availability-day
-              strong 8th
-              span Sunday
-              button.slot(type="button") All day
-              button.slot(type="button") 8-10 AM
-              button.slot(type="button") 10-12 AM
-              button.slot(type="button") 12-2 PM
-              button.slot(type="button") 2-4 PM
-              button.slot(type="button") 4-6 PM
-        button.primary.details-submit(type="button") Confirm booking
+              | Phone number
+              input#detailsPhone(type="text" placeholder="Phone number" required)
+            p.help-text We'll use this phone number to send you updates about your booking.
+          .details-card
+            h3 When is the vehicle available?
+            p.help-text Select all the times when you are available. A mechanic will confirm a 2-hour window.
+            .date-strip
+              button.ghost(type="button") &lt;
+              span 6 Feb 2026
+              button.ghost(type="button") &gt;
+            .availability-grid
+              .availability-day
+                strong 6th
+                span Friday
+                button.slot(type="button") All day
+                button.slot(type="button") 8-10 AM
+                button.slot(type="button") 10-12 AM
+                button.slot(type="button") 12-2 PM
+                button.slot(type="button") 2-4 PM
+                button.slot(type="button") 4-6 PM
+              .availability-day
+                strong 7th
+                span Saturday
+                button.slot(type="button") All day
+                button.slot(type="button") 8-10 AM
+                button.slot(type="button") 10-12 AM
+                button.slot(type="button") 12-2 PM
+                button.slot(type="button") 2-4 PM
+                button.slot(type="button") 4-6 PM
+              .availability-day
+                strong 8th
+                span Sunday
+                button.slot(type="button") All day
+                button.slot(type="button") 8-10 AM
+                button.slot(type="button") 10-12 AM
+                button.slot(type="button") 12-2 PM
+                button.slot(type="button") 2-4 PM
+                button.slot(type="button") 4-6 PM
+          p.form-error#bookingDetailsError(role="alert" aria-live="polite")
+          button.primary.details-submit(type="submit") Confirm booking

@@ -140,6 +140,39 @@ if (getInstantQuotes) {
 
 renderVehicleSummary();
 
+const bookingDetailsForm = document.getElementById("bookingDetailsForm");
+if (bookingDetailsForm) {
+  const errorEl = document.getElementById("bookingDetailsError");
+
+  bookingDetailsForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (errorEl) errorEl.textContent = "";
+
+    const payload = {
+      first_name: document.getElementById("detailsFirstName").value.trim(),
+      last_name: document.getElementById("detailsLastName").value.trim(),
+      email: document.getElementById("detailsEmail").value.trim(),
+      address1: document.getElementById("detailsAddress1").value.trim(),
+      address2: document.getElementById("detailsAddress2").value.trim(),
+      city: document.getElementById("detailsCity").value.trim(),
+      postcode: document.getElementById("detailsPostcode").value.trim(),
+      phone: document.getElementById("detailsPhone").value.trim()
+    };
+
+    try {
+      await api("/api/bookings/details", {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      if (errorEl) errorEl.textContent = "Booking details saved.";
+    } catch (err) {
+      if (errorEl) {
+        errorEl.textContent = err?.error?.message || err?.message || "Unable to save booking details.";
+      }
+    }
+  });
+}
+
 const adminPage = document.getElementById("adminPage");
 if (adminPage) {
   const adminGate = document.getElementById("adminGate");
