@@ -123,11 +123,18 @@ if (vehicleForm) {
         make: vehicleData.make || "",
         model: vehicleData.model || ""
       });
-      window.location.href = `/bookings/work?${params.toString()}`;
+      window.location.href = "/bookings/work/";
     } catch (err) {
       const message = err?.error?.message || err?.message || "Unable to look up vehicle details.";
       errorEl.textContent = message;
     }
+  });
+}
+
+const getInstantQuotes = document.getElementById("getInstantQuotes");
+if (getInstantQuotes) {
+  getInstantQuotes.addEventListener("click", () => {
+    window.location.href = "/bookings/work/";
   });
 }
 

@@ -71,7 +71,15 @@ app.get("/bookings", (_req, res) => {
 });
 
 app.get("/bookings/work", (req, res) => {
-  res.render("pages/bookings/index");
+  const { type } = req.query;
+  if (type === "repair") {
+    return res.render("pages/bookings/work", { type: "repair" });
+  }
+  return res.render("pages/bookings/index");
+});
+
+app.get("/bookings/work/type", (req, res) => {
+  res.redirect(302, "/bookings/work?type=repair");
 });
 
 app.get("/mechanic/home", (req, res) => {

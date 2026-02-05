@@ -1,0 +1,107 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Bookings"
+  - var bodyClass = ""
+
+block content
+  include ../../partials/navbar
+  main.page-shell.bookings-shell
+    section.bookings-work
+      h2 Search for your repair
+      .work-search
+        input(type="text" placeholder="Search available repairs" aria-label="Search available repairs")
+      h3 Choose from popular repairs
+      ul.work-list
+        li.work-row
+          .work-main
+            strong Clutch replacement
+            span Vehicles with a manual gearbox only
+          .work-actions
+            a(href="#" aria-label="More info about clutch replacement") More info
+            button.ghost(type="button") Remove
+        li.work-row
+          .work-main
+            strong Brake discs and pads replacement - front (both)
+          .work-actions
+            a(href="#" aria-label="More info about brake discs and pads replacement - front") More info
+            button.primary(type="button") Add
+        li.work-row
+          .work-main
+            strong Timing chain replacement
+          .work-actions
+            a(href="#" aria-label="More info about timing chain replacement") More info
+            button.primary(type="button") Add
+        li.work-row
+          .work-main
+            strong Brake discs and pads replacement - rear (both)
+          .work-actions
+            a(href="#" aria-label="More info about brake discs and pads replacement - rear") More info
+            button.primary(type="button") Add
+        li.work-row
+          .work-main
+            strong Diagnostic inspection
+          .work-actions
+            a(href="#" aria-label="More info about diagnostic inspection") More info
+            button.primary(type="button") Add
+        li.work-row
+          .work-main
+            strong Brake pads replacement - front (all)
+          .work-actions
+            a(href="#" aria-label="More info about brake pads replacement - front") More info
+            button.primary(type="button") Add
+        li.work-row
+          .work-main
+            strong Engine oil & filter replacement
+          .work-actions
+            a(href="#" aria-label="More info about engine oil and filter replacement") More info
+            button.primary(type="button") Add
+        li.work-row
+          .work-main
+            strong MOT with collection & delivery
+          .work-actions
+            a(href="#" aria-label="More info about MOT with collection and delivery") More info
+            button.primary(type="button") Add
+        li.work-row
+          .work-main
+            strong Brake pads replacement - rear (all)
+          .work-actions
+            a(href="#" aria-label="More info about brake pads replacement - rear") More info
+            button.primary(type="button") Add
+        li.work-row
+          .work-main
+            strong Water pump replacement
+          .work-actions
+            a(href="#" aria-label="More info about water pump replacement") More info
+            button.primary(type="button") Add
+        li.work-row
+          .work-main
+            strong Alternator replacement
+          .work-actions
+            a(href="#" aria-label="More info about alternator replacement") More info
+            button.primary(type="button") Add
+        li.work-row
+          .work-main
+            strong Auxiliary drive belt replacement
+          .work-actions
+            a(href="#" aria-label="More info about auxiliary drive belt replacement") More info
+            button.primary(type="button") Add
+        li.work-row
+          .work-main
+            strong Shock absorbers replacement - front (pair)
+          .work-actions
+            a(href="#" aria-label="More info about shock absorbers replacement - front") More info
+            button.primary(type="button") Add
+        li.work-row
+          .work-main
+            strong Coil spring replacement - front (both)
+            span Also known as Road spring replacement - front (both)
+          .work-actions
+            a(href="#" aria-label="More info about coil spring replacement - front") More info
+            button.primary(type="button") Add
+        li.work-row
+          .work-main
+            strong Starter motor replacement
+          .work-actions
+            a(href="#" aria-label="More info about starter motor replacement") More info
+            button.primary(type="button") Add
