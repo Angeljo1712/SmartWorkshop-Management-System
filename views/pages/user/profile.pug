@@ -1,0 +1,52 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Profile"
+  - var bodyClass = "profile-body"
+
+block content
+  .profile-layout
+    aside.profile-sidebar
+      .profile-brand SW
+      nav.profile-nav
+        a.active(href="/profile") Home
+        a(href="#") Vehicles
+        a(href="#") Find
+        a(href="#") Settings
+
+    main.profile-main
+      header.profile-header
+        p Welcome ??
+        h1 Your Cars
+        p.muted Save up to 100 vehicles in your account
+
+      section.vehicle-card
+        .vehicle-title
+          span.badge KLOSUC
+          h2 COROLLA COLOUR COL-N VVTI
+        .vehicle-meta
+          span Petrol
+          span 21 years old
+          span 39,580 miles
+        .vehicle-status
+          div
+            strong Your MOT is valid
+            p Due in 34 weeks
+          div
+            strong Taxed
+            p Due in 30 weeks
+
+      section.add-vehicle
+        h2 Add another vehicle
+        .add-vehicle-row
+          input(type="text" placeholder="Enter Car Reg")
+          button.primary(type="button") Add Vehicle
+
+      section.bookings
+        h2 Your Bookings
+        .booking-card
+          .booking-icon ?
+          div
+            h3 Verify your account
+            p Please verify your email address to view your booking history.
+            button.secondary(type="button") Go to Settings

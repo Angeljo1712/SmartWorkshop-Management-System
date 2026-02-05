@@ -1,0 +1,66 @@
+extends ../layouts/main
+
+block vars
+  - var title = "SmartWorkshop"
+  - var bodyClass = ""
+
+block content
+  header.site-header
+    .brand
+      span.logo SW
+      div
+        strong SmartWorkshop
+        span Vehicle Service Marketplace
+    nav.site-nav
+      a(href="#how") How it works
+      a(href="#services") Services
+    a.ghost.ghost-link(href="/auth/login") Sign in
+
+  main
+    section.hero#how
+      .hero-copy
+        p.eyebrow Trusted mechanics. Transparent pricing.
+        h1 Book verified workshops and track every repair in real time.
+        p.lead
+          | SmartWorkshop connects customers with qualified mechanics, lets you compare quotations, and
+          | keeps everyone aligned on status and completion.
+        .cta-row
+          button.primary(type="button") Get instant quotes
+          button.secondary(type="button") I am a workshop
+      .hero-card
+        h2 Fast check-in
+        p Start a new service request in under a minute.
+        form.hero-form#vehicleLookupForm
+          label
+            | Vehicle registration
+            input#vehicleReg(name="vehicleReg" type="text" placeholder="AB12CDE" autocomplete="off")
+          label
+            | Postcode
+            input#postcode(name="postcode" type="text" placeholder="SW1A 1AA" autocomplete="postal-code")
+          p.form-error#vehicleLookupError(role="alert" aria-live="polite")
+          button.primary(type="submit") Get my instant price
+
+    section.mechanic-cta
+      .mechanic-copy
+        h2 Partner with SmartWorkshop
+        p
+          | Join our network of trusted mechanics and workshops. Choose the jobs you want, set your
+          | pricing, and grow your business with steady local demand.
+        a.primary.ghost-link(href="/mechanic/home") Become a partner
+      .mechanic-visual
+        img(src="https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=900&q=80" alt="Mechanic inspecting engine bay")
+
+    section.features#services
+      h2 Everything you need to manage repairs
+      .feature-grid
+        article
+          h3 Transparent quotations
+          p Compare detailed labor and parts breakdowns before you accept.
+        article
+          h3 Live job tracking
+          p Mechanics update the job status so customers always know what is happening.
+        article
+          h3 Workshop tools
+          p Manage requests, submit quotes, and update jobs from a single dashboard.
+
+  include ../partials/footer

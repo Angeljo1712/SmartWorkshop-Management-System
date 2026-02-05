@@ -1,49 +1,143 @@
-# SmartWorkshop Management System
-**Smart Vehicle Service Marketplace – Final Year Project**
+# SmartWorkshop / Smart Vehicle Service Marketplace
 
-## 📌 Overview
-The **SmartWorkshop Management System** is a role-based digital marketplace designed to improve transparency and coordination between **customers** and **independent automotive workshops** in the UK.
+Working prototype built with Node.js + Express + MySQL + phpMyAdmin (Docker). No Directus.
 
-Developed as a **BSc Computer Science Final Year Project**, the system demonstrates the feasibility of a secure, workflow-oriented service platform using modern backend practices.
+## Prerequisites
 
----
+- Windows 10/11
+- Docker Desktop (with Compose)
+- Node.js 18+ (only needed if running the app locally outside Docker)
 
-## 🎯 Key Features
-- Secure authentication (JWT + bcrypt)
-- Role-Based Access Control (Customer, Mechanic, Admin)
-- Structured workflows:
-  - Service Requests
-  - Quotations
-  - Job creation and tracking
-- Relational database design aligned with ERD
-- Dockerised MySQL with phpMyAdmin
-- End-to-end “happy path” fully implemented
+## Quick Start (Docker)
 
----
+1. Copy `.env.example` to `.env` in the repo root and adjust values if needed.
+2. Run from the repo root (recommended):
 
-## 🏗️ Architecture
-- **Backend:** Node.js + Express
-- **Database:** MySQL 8 (Docker)
-- **Infrastructure:** Docker Compose, phpMyAdmin
-- **Design:** Three-tier architecture (Presentation, Application, Data)
+```bash
+docker compose -f docker-compose.yml up --build -d
+```
 
-> Directus was intentionally **not used** due to time and scope constraints. All functionality is implemented via a custom backend to ensure clarity and evaluability.
+If you run the command from a subfolder, pass the env file explicitly:
 
----
+```bash
+docker compose --env-file ../.env -f ../docker-compose.yml up --build -d
+```
 
-## 🔐 Roles
-- **Customer:** Create service requests, review quotations, track jobs
-- **Mechanic:** Submit quotations, update job status
-- **Admin:** Platform oversight
+This starts:
 
----
+- MySQL on `localhost:3306`
+- App (API + UI) on `localhost:3000`
+- phpMyAdmin on `localhost:8081`
 
-## 🔁 Core Workflow
-1. Customer logs in and creates a service request  
-2. Mechanic submits a quotation  
-3. Customer accepts a quotation  
-4. System creates a job automatically  
-5. Mechanic updates job status  
-6. Customer views progress and completion  
+The database schema is created automatically from `database/schema.sql`. Seed data is inserted automatically when the app starts.
 
----
+## Default Seed Accounts
+
+- Admin: `admin@smartworkshop.local` / `Admin123!`
+- Mechanic: `mechanic@smartworkshop.local` / `Mechanic123!`
+- Customer: `customer@smartworkshop.local` / `Customer123!`
+
+## phpMyAdmin
+
+- URL: `http://localhost:8081`
+- Server: `db` (inside Docker) or `localhost` (from host)
+- User: `DB_USER` in `.env`
+- Password: `DB_PASSWORD` in `.env`
+
+## App Access
+
+- Health check: `http://localhost:3000/health`
+- API base URL: `http://localhost:3000/api`
+
+Example login:
+
+```bash
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d "{\"email\":\"customer@smartworkshop.local\",\"password\":\"Customer123!\"}"
+```
+
+## UI (Pug)
+
+The UI is served directly by Express at `http://localhost:3000/` (no separate frontend server).
+
+## API Endpoints (Minimum Viable)
+
+Auth
+
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+
+Service Requests
+
+- `POST /api/service-requests` (Customer)
+- `GET /api/service-requests/me` (Customer)
+- `GET /api/service-requests/:id` (Customer own or Admin)
+- `GET /api/service-requests/available` (Mechanic/Admin)
+
+Quotations
+
+- `POST /api/quotations` (Mechanic)
+- `GET /api/quotations/request/:requestId` (Customer owner/Mechanic/Admin)
+- `POST /api/quotations/:quotationId/accept` (Customer)
+
+Jobs
+
+- `GET /api/jobs/me` (Customer/Mechanic/Admin)
+- `PATCH /api/jobs/:jobId/status` (Mechanic/Admin)
+- `GET /api/jobs/:jobId/history` (Authorized)
+
+Admin (Workshops + Users)
+
+- `GET /api/admin/workshops`
+- `POST /api/admin/workshops`
+- `PATCH /api/admin/workshops/:workshopId`
+- `DELETE /api/admin/workshops/:workshopId`
+- `GET /api/admin/users`
+
+## Demo Script (PowerShell)
+
+A Windows-friendly demo script is provided:
+
+```powershell
+./scripts/demo.ps1
+```
+
+It logs in as the seeded customer/mechanic, creates a service request, submits a quotation, accepts it, and updates job status.
+
+## Running Locally (optional)
+
+If you want to run the app outside Docker:
+
+```bash
+cd server
+npm install
+npm run dev
+```
+
+Ensure MySQL is running and `.env` points to your DB.
+
+## Notes on Architecture
+
+- Directus is intentionally not used to keep the prototype lightweight and aligned with the requirement.
+- RBAC is enforced in middleware for Customer, Mechanic, and Admin roles.
+- Job creation is transactional and only occurs when a quotation is accepted.
+
+## Reset Environment
+
+```bash
+docker compose -f docker-compose.yml down -v
+docker compose -f docker-compose.yml up --build -d
+```
+
+This removes containers/volumes and recreates the stack from scratch.
+
+## Start/Stop Stack (PowerShell)
+
+```powershell
+./scripts/stack.ps1 start
+./scripts/stack.ps1 build
+./scripts/stack.ps1 stop
+```
+
+Host - <http://localhost:3000/>

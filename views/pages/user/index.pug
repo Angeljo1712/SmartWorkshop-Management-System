@@ -1,0 +1,161 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - User"
+  - var bodyClass = ""
+
+block content
+  header.site-header.admin-header
+    .brand
+      span.logo SW
+      div
+        strong SmartWorkshop
+        span Vehicle Service Marketplace
+
+  main.admin-shell#userPage
+    section.admin-app
+      aside.admin-sidebar
+        .admin-profile-card
+          .admin-profile-avatar#userProfileAvatar AG
+          div
+            strong#userProfileName Angel Gomes
+            span#userProfileRole ADMIN
+          button.ghost.admin-profile-menu(type="button" aria-label="Profile menu") ...
+        nav.admin-nav
+          button.admin-nav-link.user-nav-link.active(type="button" data-view="account") Account Details
+          button.admin-nav-link.user-nav-link(type="button" data-view="bookings") Bookings
+          button.admin-nav-link.user-nav-link(type="button" data-view="mot") MOT Reminders
+          button.admin-nav-link.user-nav-link(type="button" data-view="settings") Settings
+
+        button.admin-signout#userLogoutBtn(type="button") Sign out
+
+      .admin-content
+        section.admin-view#userAccountView
+          .settings-card
+            .settings-header
+              div
+                h2 Account Details
+                p Review your profile information.
+
+            .settings-divider
+
+            .settings-photo-row
+              .settings-avatar.settings-avatar-lg#userSettingsAvatar AG
+
+            .settings-divider
+
+            .settings-profile
+              .settings-meta
+                h4 Name
+                p#userSettingsName Angel Gomes
+
+            .settings-divider
+
+            .settings-row
+              div
+                h4 Contacts
+                p#userSettingsPhone Phone: -
+                p#userSettingsEmailDetail Email: admin@smartworkshop.local
+                p#userSettingsAddress Address: -
+
+            .settings-row
+              div
+                h4 Role
+                p#userSettingsRole ADMIN
+
+            .settings-row
+              div
+                h4 Theme
+                p Light mode
+
+            .settings-row
+              div
+                h4 Integration
+                p No integrations connected
+
+        section.admin-view.is-hidden#userBookingsView
+          .settings-card
+            .settings-header
+              div
+                h2 Bookings
+                p See your upcoming and past bookings.
+            p.form-error No bookings to show yet.
+
+        section.admin-view.is-hidden#userMotView
+          .settings-card
+            .settings-header
+              div
+                h2 MOT Reminders
+                p Track MOT due dates and reminders.
+            p.form-error No MOT reminders set.
+
+        section.admin-view.is-hidden#userSettingsView
+          .settings-card
+            .settings-header
+              div
+                h2 Account settings
+                p Manage your profile and preferences.
+
+            .settings-divider
+
+            .settings-layout
+              nav.settings-subnav
+                button.settings-subnav-link.active(type="button" data-subview="general") General
+                button.settings-subnav-link(type="button" data-subview="notifications") Notifications
+                button.settings-subnav-link(type="button" data-subview="security") Login & security
+
+              .settings-panel
+                section.settings-subview#userSettingsGeneral
+                  .settings-photo-row
+                    .settings-avatar.settings-avatar-lg#userSettingsAvatarSettings AG
+                    label.ghost(for="userSettingsPhotoInput") Upload
+                    input.file-input#userSettingsPhotoInput(type="file" accept="image/*")
+
+                  .settings-divider
+
+                  .settings-profile
+                    .settings-meta
+                      h4 Full name
+                      p#userSettingsNameSettings Angel Gomes
+                    button.secondary(type="button") Edit
+
+                  .settings-divider
+
+                  .settings-row
+                    div
+                      h4 Contacts
+                      label.settings-field
+                        | Phone
+                        input#userSettingsPhoneInput(type="text" placeholder="Add phone")
+                      label.settings-field
+                        | Email
+                        input#userSettingsEmailInput(type="email" placeholder="Add email")
+                      label.settings-field
+                        | Address
+                        input#userSettingsAddressInput(type="text" placeholder="Add address")
+                      p.form-error#userSettingsContactMessage(role="alert" aria-live="polite")
+                    button.secondary#userSettingsContactSave(type="button") Save
+
+                  .settings-row
+                    div
+                      h4 Role
+                      p#userSettingsRoleSettings ADMIN
+                    button.secondary(type="button") Edit
+
+                  .settings-row
+                    div
+                      h4 Theme
+                      p Light mode
+                    button.secondary(type="button") Light mode
+
+                  .settings-row
+                    div
+                      h4 Integration
+                      p No integrations connected
+                    button.secondary(type="button") Connect
+
+                section.settings-subview.is-hidden#userSettingsNotifications
+                  p.form-error No notification preferences configured.
+
+                section.settings-subview.is-hidden#userSettingsSecurity
+                  p.form-error Security options will appear here.

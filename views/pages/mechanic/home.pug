@@ -1,0 +1,34 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Mechanic Partner"
+  - var bodyClass = "mechanic-body"
+
+block content
+  header.mechanic-topbar
+    .brand
+      span.logo SW
+      strong SmartWorkshop
+    nav.mechanic-links
+      a(href="#how") How it works
+      a(href="#support") Support
+      a(href="#apply") Get started
+    .mechanic-user Angel ?
+
+  main.mechanic-hero#apply
+    .mechanic-overlay
+    .mechanic-content
+      .mechanic-copy
+        h1 Earn more with flexible mechanic work
+        ul
+          li Free to join & no monthly fees
+          li Great for new and established workshops
+          li Ideal for mobile mechanics and MOT testers
+      form.mechanic-form
+        .row
+          input(type="text" placeholder="First name")
+          input(type="text" placeholder="Last name")
+        input(type="email" placeholder="Email")
+        input(type="text" placeholder="Mobile number")
+        input(type="text" placeholder="Postcode")
+        button.primary(type="button") Join free

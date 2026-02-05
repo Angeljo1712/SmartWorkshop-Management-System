@@ -1,0 +1,208 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Admin"
+  - var bodyClass = ""
+
+block content
+  header.site-header.admin-header
+    .brand
+      span.logo SW
+      div
+        strong SmartWorkshop
+        span Vehicle Service Marketplace
+
+  main.admin-shell#adminPage
+    section.admin-gate#adminGate
+      .admin-gate-card
+        h2 Admins only
+        p Sign in with an administrator account to access user management.
+        p.form-error#adminLoginError(role="alert" aria-live="polite")
+        a.ghost-link(href="/auth/login")
+          button.primary(type="button") Go to Sign in
+
+    section.admin-app.is-hidden#adminApp
+      aside.admin-sidebar
+        .admin-profile-card
+          .admin-profile-avatar#adminProfileAvatar AU
+          div
+            strong#adminProfileName Admin User
+            span#adminProfileRole Administrator
+          button.ghost.admin-profile-menu(type="button" aria-label="Profile menu") ⋯
+        button.admin-signout#adminLogoutBtn(type="button") Sign out
+        .admin-menu
+          .admin-menu-section
+            button.admin-menu-item(type="button")
+              span.admin-menu-icon 🏠
+              | Dashboard
+            button.admin-menu-item(type="button")
+              span.admin-menu-icon 👥
+              | Customers
+            button.admin-menu-item(type="button")
+              span.admin-menu-icon 📦
+              | Products
+            button.admin-menu-item(type="button")
+              span.admin-menu-icon 🏢
+              | Companies
+            button.admin-menu-item(type="button")
+              span.admin-menu-icon 🕒
+              | History
+          .admin-menu-divider
+          .admin-menu-section
+            button.admin-menu-item(type="button")
+              span.admin-menu-icon 🚚
+              | Shipments
+            button.admin-menu-item(type="button")
+              span.admin-menu-icon 💰
+              | Finance
+            button.admin-menu-item(type="button")
+              span.admin-menu-icon 📄
+              | Documents
+            button.admin-menu-item(type="button")
+              span.admin-menu-icon 🧩
+              | Application
+          .admin-menu-divider
+          .admin-menu-section.admin-menu-dots
+            .admin-menu-dot
+              span.dot.dot-orange
+              | List of sales
+            .admin-menu-dot
+              span.dot.dot-green
+              | Saved items
+        nav.admin-nav
+          button.admin-nav-link.active(type="button" data-view="profile") Profile
+          button.admin-nav-link(type="button" data-view="users") User Management
+
+      .admin-content
+        section.admin-view#adminProfileView
+          .settings-header
+            div
+              h2 Settings
+              p Manage your profile and preferences.
+            .settings-actions
+              button.ghost(type="button") Upload
+
+          .settings-card
+            .settings-profile
+              .settings-avatar#adminSettingsAvatar AU
+              .settings-meta
+                h3#adminSettingsName Admin User
+                p#adminSettingsEmail admin@smartworkshop.local
+              button.secondary(type="button") Edit
+
+            .settings-row
+              div
+                h4 Contacts
+                p#adminSettingsPhone Phone: -
+                p#adminSettingsEmailDetail Email: admin@smartworkshop.local
+              button.secondary(type="button") Edit
+
+            .settings-row
+              div
+                h4 Role
+                p#adminSettingsRole Administrator
+              button.secondary(type="button") Edit
+
+            .settings-row
+              div
+                h4 Theme
+                p Light mode
+              button.secondary(type="button") Light mode
+
+        section.admin-view.is-hidden#adminUsersView
+          .admin-toolbar
+            .admin-search
+              span.icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24" role="presentation")
+                  circle(cx="11" cy="11" r="7")
+                  line(x1="16.65" y1="16.65" x2="21" y2="21")
+              input#adminSearch(type="search" placeholder="Search users, emails, roles...")
+            .admin-filters
+              .admin-pill
+                span.pill-label Role
+                select#adminRoleFilter
+                  option(value="all") All
+                  option(value="ADMIN") Admin
+                  option(value="MECHANIC") Mechanic
+                  option(value="CUSTOMER") Customer
+              .admin-pill
+                span.pill-label Status
+                select#adminStatusFilter
+                  option(value="all") All
+                  option(value="Active") Active
+                  option(value="Inactive") Inactive
+                  option(value="Pending") Pending
+                  option(value="Suspended") Suspended
+                  option(value="Banned") Banned
+              .admin-pill
+                span.pill-label Date
+                select#adminDateFilter
+                  option(value="all") All time
+                  option(value="30") Last 30 days
+                  option(value="90") Last 90 days
+                  option(value="365") Last year
+            .admin-actions
+              button.secondary#adminExportBtn(type="button")
+                span.btn-icon(aria-hidden="true") v
+                | Export
+              button.primary#adminAddUserBtn(type="button") + Add User
+
+          section.admin-panel.is-hidden#adminAddUserPanel
+            .admin-panel-head
+              h3 New user
+              button.ghost#adminAddUserClose(type="button") Close
+            form.admin-form#adminAddUserForm
+              .admin-form-row
+                label
+                  | Full name
+                  input#adminNewName(type="text" placeholder="Jane Mechanic" required)
+                label
+                  | Email
+                  input#adminNewEmail(type="email" placeholder="jane@shop.co.uk" required)
+              .admin-form-row
+                label
+                  | Role
+                  select#adminNewRole
+                    option(value="ADMIN") Admin
+                    option(value="MECHANIC") Mechanic
+                    option(value="CUSTOMER") Customer
+                label
+                  | Temporary password
+                  input#adminNewPassword(type="password" placeholder="Temp password" required)
+              p.form-error#adminAddUserError(role="alert" aria-live="polite")
+              button.primary(type="submit") Create user
+
+          section.admin-table-card
+            .admin-table-head
+              div
+                h3 All users
+                p
+                  span#adminUserCount 0
+                  |  users total
+              button.ghost#adminRefreshBtn(type="button") Refresh
+            .admin-table-wrap
+              table.admin-table(aria-label="User management table")
+                thead
+                  tr
+                    th.table-check
+                      input(type="checkbox" aria-label="Select all users" disabled)
+                    th Full name
+                    th Email
+                    th Username
+                    th Status
+                    th Role
+                    th Joined Date
+                    th Last Active
+                    th.table-actions Actions
+                tbody#adminUserRows
+              .admin-empty.is-hidden#adminEmptyState
+                p No users match your filters.
+            .admin-table-footer
+              .rows-control
+                span Rows per page
+                select#adminRowsPerPage
+                  option(value="5") 5
+                  option(value="10" selected) 10
+                  option(value="20") 20
+                span#adminRowsMeta 0 of 0 rows
+              .pagination#adminPagination

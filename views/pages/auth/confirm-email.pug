@@ -1,0 +1,14 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Confirm Email"
+  - var bodyClass = ""
+
+block content
+  include ../../partials/navbar
+  main.page-shell#confirmEmailPage
+    h1 Confirming your email
+    p.muted#confirmEmailStatus Please wait...
+    p#confirmEmailDetails
+    p
+      a(href="/auth/login") Go to sign in

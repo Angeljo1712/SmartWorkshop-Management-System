@@ -1,5 +1,5 @@
 param(
-  [ValidateSet("start", "build", "build-only", "recreate", "stop", "stop-hard")]
+  [ValidateSet("start", "build", "build-only", "recreate", "stop")]
   [string]$Action = "start"
 )
 
@@ -8,11 +8,8 @@ $ErrorActionPreference = "Stop"
 
 # ---------- Paths ----------
 $Root        = Split-Path -Parent $PSScriptRoot
-$ComposeFile = Join-Path $Root "infra\docker-compose.yml"
-$PidFile     = Join-Path $PSScriptRoot ".frontend.pid"
-$FrontendDir = Join-Path $Root "frontend"
-$FrontendPort = 5173
-$BackendEnvFile = Join-Path $Root "backend\.env"
+$ComposeFile = Join-Path $Root "docker-compose.yml"
+$EnvFile     = Join-Path $Root ".env"
 
 # ---------- Output helpers ----------
 function Info($msg) { Write-Host "[INFO] $msg" }
@@ -30,182 +27,90 @@ function Assert-CommandExists([string]$Command, [string]$Label) {
   }
 }
 
-function Stop-ProcessByPort([int]$Port) {
-  # Requires Windows PowerShell 5+ / PowerShell 7 on Windows
-  $listeners = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue
-
-  if (-not $listeners) {
-    Warn "No process listening on port $Port."
-    return
-  }
-
-  # Sometimes multiple listeners can exist (rare), so handle all unique PIDs
-  $pids = $listeners | Select-Object -ExpandProperty OwningProcess -Unique
-  foreach ($p in $pids) {
-    try {
-      Stop-Process -Id $p -Force -ErrorAction Stop
-      Ok "Stopped process listening on port $Port (PID $p)."
-    } catch {
-      Warn "Could not stop process on port $Port (PID $p)."
-    }
-  }
-}
-
-# ---------- Backend ----------
-function Start-Backend([switch]$Build) {
+# ---------- Stack ----------
+function Start-Stack([switch]$Build) {
   Assert-FileExists $ComposeFile "docker-compose file"
   Assert-CommandExists "docker" "Docker"
 
-  Info "Starting backend stack..."
+  Info "Starting stack..."
   if ($Build) {
     docker compose -f $ComposeFile up --build -d | Out-Host
   } else {
     docker compose -f $ComposeFile up -d | Out-Host
   }
-  Ok "Backend stack started."
+  Ok "Stack started."
 }
 
-function Build-Backend {
+function Build-Stack {
   Assert-FileExists $ComposeFile "docker-compose file"
   Assert-CommandExists "docker" "Docker"
 
-  Info "Building backend stack..."
+  Info "Building stack..."
   docker compose -f $ComposeFile build | Out-Host
-  Ok "Backend stack built."
+  Ok "Stack built."
 }
 
-function Recreate-Backend {
+function Recreate-Stack {
   Assert-FileExists $ComposeFile "docker-compose file"
   Assert-CommandExists "docker" "Docker"
 
-  Info "Recreating backend stack..."
+  Info "Recreating stack..."
   docker compose -f $ComposeFile up -d --force-recreate | Out-Host
-  Ok "Backend stack recreated."
+  Ok "Stack recreated."
 }
 
-function Stop-Backend {
+function Stop-Stack {
   Assert-FileExists $ComposeFile "docker-compose file"
   Assert-CommandExists "docker" "Docker"
 
-  Info "Stopping backend stack (without removing containers)..."
+  Info "Stopping stack (without removing containers)..."
   docker compose -f $ComposeFile stop | Out-Host
-  Ok "Backend stack stopped."
-}
-
-# ---------- Frontend ----------
-function Start-Frontend {
-  Assert-CommandExists "node" "Node.js"
-  Assert-FileExists (Join-Path $FrontendDir "server.js") "Frontend entry (server.js)"
-
-  # Si el puerto está ocupado, intenta liberar
-  $already = Get-NetTCPConnection -LocalPort $FrontendPort -State Listen -ErrorAction SilentlyContinue
-  if ($already) {
-    Warn "Port $FrontendPort is already in use. Attempting to stop the existing process."
-    Stop-ProcessByPort -Port $FrontendPort
-    Start-Sleep -Milliseconds 300
-  }
-
-  Info "Starting frontend..."
-  $proc = Start-Process `
-    -NoNewWindow `
-    -FilePath "node" `
-    -ArgumentList "server.js" `
-    -WorkingDirectory $FrontendDir `
-    -PassThru
-
-  $proc.Id | Set-Content -Encoding ASCII $PidFile
-  Ok "Frontend started (PID $($proc.Id))."
-}
-
-function Stop-FrontendNormal {
-  if (-not (Test-Path $PidFile)) {
-    Warn "No frontend PID file found."
-    return
-  }
-
-  $frontendPid = (Get-Content $PidFile | Select-Object -First 1)
-  if (-not $frontendPid) {
-    Warn "Frontend PID file is empty."
-    Remove-Item -Force $PidFile
-    return
-  }
-
-  Info "Stopping frontend (PID $frontendPid)..."
-  try {
-    Stop-Process -Id $frontendPid -ErrorAction Stop
-    Ok "Frontend stopped."
-  } catch {
-    Warn "Frontend process not running (PID $frontendPid)."
-  } finally {
-    Remove-Item -Force $PidFile -ErrorAction SilentlyContinue
-  }
-}
-
-function Stop-FrontendHard {
-  Info "Hard-stopping frontend (by port $FrontendPort)..."
-  Stop-ProcessByPort -Port $FrontendPort
-
-  # Limpia el PID file aunque esté viejo
-  if (Test-Path $PidFile) {
-    Remove-Item -Force $PidFile -ErrorAction SilentlyContinue
-  }
+  Ok "Stack stopped."
 }
 
 # ---------- Main ----------
 try {
-  if (-not (Test-Path $BackendEnvFile)) {
-    Warn "backend/.env not found. If running locally, copy .env.example to backend/.env."
+  if (-not (Test-Path $EnvFile)) {
+    Warn ".env not found. If running locally, copy .env.example to .env."
   }
   switch ($Action) {
     "stop" {
-      Stop-Backend
-      Stop-FrontendNormal
-      Ok "Done."
-    }
-
-    "stop-hard" {
-      Stop-Backend
-      Stop-FrontendHard
+      Stop-Stack
       Ok "Done."
     }
 
     "build" {
-      Start-Backend -Build
-      Start-Frontend
+      Start-Stack -Build
       Ok "Done."
     }
 
     "build-only" {
-      Build-Backend
+      Build-Stack
       Ok "Done."
     }
 
     "recreate" {
-      Recreate-Backend
+      Recreate-Stack
       Ok "Done."
     }
 
     default { # "start"
-      Start-Backend
-      Start-Frontend
+      Start-Stack
       Ok "Done."
     }
   }
 
   Write-Host ""
-  Write-Host "Frontend:   http://localhost:5173"
-  Write-Host "Backend:    http://localhost:3000"
+  Write-Host "App:       http://localhost:3000"
   Write-Host "phpMyAdmin: http://localhost:8081"
   Write-Host ""
   Write-Host "Usage:"
   Write-Host "  .\stack.ps1 start"
   Write-Host "  .\stack.ps1 build"
   Write-Host "  .\stack.ps1 stop"
-  Write-Host "  .\stack.ps1 stop-hard"
 }
 catch {
   Write-Host ""
   Write-Host "[ERROR] $($_.Exception.Message)"
   exit 1
 }
-
