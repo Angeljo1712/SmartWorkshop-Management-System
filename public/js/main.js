@@ -36,7 +36,7 @@ const postcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
 
 const renderVehicleSummary = () => {
   const container = document.getElementById("vehicleSummary");
-  const titleEl = document.getElementById("shopTitle");
+  const titleEl = document.getElementById("bookingsTitle");
   const stored = sessionStorage.getItem("vehicleEnquiry");
   let data = null;
   if (stored) {
@@ -123,7 +123,7 @@ if (vehicleForm) {
         make: vehicleData.make || "",
         model: vehicleData.model || ""
       });
-      window.location.href = `/shop?${params.toString()}`;
+      window.location.href = `/bookings/work?${params.toString()}`;
     } catch (err) {
       const message = err?.error?.message || err?.message || "Unable to look up vehicle details.";
       errorEl.textContent = message;

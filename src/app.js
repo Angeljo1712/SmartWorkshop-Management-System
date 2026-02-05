@@ -62,8 +62,16 @@ app.get("/profile", (req, res) => {
   res.render("pages/user/profile");
 });
 
-app.get("/shop", (req, res) => {
-  res.render("pages/shop/index");
+app.get("/shop", (_req, res) => {
+  res.redirect(301, "/bookings/work");
+});
+
+app.get("/bookings", (_req, res) => {
+  res.redirect(301, "/bookings/work");
+});
+
+app.get("/bookings/work", (req, res) => {
+  res.render("pages/bookings/index");
 });
 
 app.get("/mechanic/home", (req, res) => {

@@ -769,12 +769,12 @@ body {
   color: var(--muted);
 }
 
-.shop-shell {
+.bookings-shell {
   max-width: 1200px;
   margin: 0 auto;
 }
 
-.shop-hero {
+.bookings-hero {
   display: grid;
   gap: 32px;
   justify-items: center;
@@ -821,17 +821,17 @@ body {
   color: #1f8f47;
 }
 
-.shop-headline h1 {
+.bookings-headline h1 {
   font-size: clamp(2rem, 3.8vw, 2.9rem);
   margin-bottom: 12px;
 }
 
-.shop-headline p {
+.bookings-headline p {
   color: var(--muted);
   font-size: 18px;
 }
 
-.shop-grid {
+.bookings-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   border-radius: 18px;
@@ -841,27 +841,33 @@ body {
   box-shadow: var(--shadow);
 }
 
-.shop-card {
+.bookings-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.bookings-card {
   padding: 28px 22px;
   text-align: center;
   border-right: 1px solid var(--border);
 }
 
-.shop-card:last-child {
+.bookings-card:last-child {
   border-right: none;
 }
 
-.shop-card h3 {
+.bookings-card h3 {
   margin: 16px 0 8px;
   font-size: 18px;
 }
 
-.shop-card p {
+.bookings-card p {
   color: var(--muted);
   line-height: 1.5;
 }
 
-.shop-icon {
+.bookings-icon {
   width: 62px;
   height: 62px;
   border-radius: 18px;
@@ -871,7 +877,7 @@ body {
   place-items: center;
 }
 
-.shop-icon svg {
+.bookings-icon svg {
   width: 32px;
   height: 32px;
   fill: none;
@@ -883,11 +889,11 @@ body {
   .stepper {
     grid-auto-flow: row;
   }
-  .shop-card {
+  .bookings-card {
     border-right: none;
     border-bottom: 1px solid var(--border);
   }
-  .shop-card:last-child {
+  .bookings-card:last-child {
     border-bottom: none;
   }
   .admin-toolbar {

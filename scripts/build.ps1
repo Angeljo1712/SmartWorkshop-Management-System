@@ -1,1 +1,1 @@
-& "$PSScriptRoot\stack.ps1" build-only
+& "$PSScriptRoot\stack.ps1" build
