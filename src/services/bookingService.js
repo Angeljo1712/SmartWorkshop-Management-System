@@ -5,6 +5,22 @@ const { AppError } = require("../utils/appError");
 
 const normalizeName = (value) => String(value || "").trim();
 
+const geocodePostcode = async (postcode) => {
+  const encoded = encodeURIComponent(postcode);
+  const url = `https://api.postcodes.io/postcodes/${encoded}`;
+  try {
+    const response = await fetch(url, { method: "GET" });
+    if (!response.ok) return null;
+    const payload = await response.json();
+    if (!payload?.result) return null;
+    const { longitude, latitude } = payload.result;
+    if (typeof longitude !== "number" || typeof latitude !== "number") return null;
+    return { longitude, latitude };
+  } catch (_err) {
+    return null;
+  }
+};
+
 const saveBookingDetails = async (payload) => {
   const firstName = normalizeName(payload.first_name);
   const lastName = normalizeName(payload.last_name);
@@ -54,10 +70,13 @@ const saveBookingDetails = async (payload) => {
     ]);
   }
 
+  const geo = await geocodePostcode(postcode);
+  const pointWkt = geo ? `POINT(${geo.longitude} ${geo.latitude})` : "POINT(0 0)";
+
   await pool.query(
     `INSERT INTO addresses (uuid_public, user_id, label, line1, line2, city, postal_code, country, location)
-     VALUES (UUID_TO_BIN(UUID()), ?, ?, ?, ?, ?, ?, ?, ST_GeomFromText('POINT(0 0)', 4326))`,
-    [userId, "Primary", address1, address2 || null, city, postcode, "GB"]
+     VALUES (UUID_TO_BIN(UUID()), ?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?, 4326))`,
+    [userId, "Primary", address1, address2 || null, city, postcode, "GB", pointWkt]
   );
 
   await pool.query(
