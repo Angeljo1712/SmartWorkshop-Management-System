@@ -103,6 +103,10 @@ app.get("/mechanic/home", (req, res) => {
   res.render("pages/mechanic/home");
 });
 
+app.get("/application/join", (req, res) => {
+  res.render("pages/application/join");
+});
+
 app.use("/health", healthRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/service-requests", serviceRequestRouter);

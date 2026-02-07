@@ -140,6 +140,48 @@ if (getInstantQuotes) {
 
 renderVehicleSummary();
 
+const applicationJoin = document.getElementById("applicationJoin");
+if (applicationJoin) {
+  const formWrap = document.getElementById("applicationForm");
+  const hero = document.querySelector(".application-hero");
+  const headingEl = document.getElementById("applicationHeading");
+  const stored = sessionStorage.getItem("mechanicLead");
+  if (stored) {
+    try {
+      const lead = JSON.parse(stored);
+      if (lead?.first_name && headingEl) {
+        headingEl.textContent = `Congratulations ${lead.first_name}!`;
+        formWrap?.classList.remove("is-hidden");
+        hero?.classList.add("is-hidden");
+      }
+    } catch {}
+  }
+  const links = applicationJoin.querySelectorAll(".application-link");
+  links.forEach((link) => {
+    link.addEventListener("click", () => {
+      formWrap?.classList.remove("is-hidden");
+      hero?.classList.add("is-hidden");
+      formWrap?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+}
+
+const mechanicLeadForm = document.querySelector(".mechanic-form");
+if (mechanicLeadForm) {
+  mechanicLeadForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const payload = {
+      first_name: mechanicLeadForm.querySelector("input[name='first_name']")?.value?.trim(),
+      last_name: mechanicLeadForm.querySelector("input[name='last_name']")?.value?.trim(),
+      email: mechanicLeadForm.querySelector("input[name='email']")?.value?.trim(),
+      phone: mechanicLeadForm.querySelector("input[name='phone']")?.value?.trim(),
+      postcode: mechanicLeadForm.querySelector("input[name='postcode']")?.value?.trim()
+    };
+    sessionStorage.setItem("mechanicLead", JSON.stringify(payload));
+    window.location.href = "/application/join";
+  });
+}
+
 const getSessionId = () => {
   const key = "bookingSessionId";
   let value = sessionStorage.getItem(key);

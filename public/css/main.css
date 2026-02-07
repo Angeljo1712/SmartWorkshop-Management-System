@@ -1883,6 +1883,200 @@ pre {
     justify-content: center;
   }
 }
+.application-body {
+  background: #ffffff;
+  color: var(--ink);
+}
+
+.application-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 40px;
+  background: #0b5fff;
+  color: #ffffff;
+}
+
+.application-topbar .brand {
+  color: #ffffff;
+}
+
+.application-topbar .logo {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.application-links {
+  display: flex;
+  gap: 20px;
+}
+
+.application-links a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.application-hero {
+  padding: 60px 40px 80px;
+  display: grid;
+  gap: 32px;
+  justify-items: center;
+  text-align: center;
+}
+
+.application-hero h1 {
+  font-size: clamp(2rem, 3.6vw, 2.8rem);
+  color: #0b1220;
+}
+
+.application-grid {
+  width: min(980px, 100%);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.application-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px 20px 28px;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  display: grid;
+  gap: 12px;
+  text-align: center;
+}
+
+.application-link {
+  text-decoration: none;
+  color: inherit;
+  display: grid;
+  gap: 12px;
+}
+
+.application-card h3 {
+  font-size: 18px;
+  color: #0f172a;
+}
+
+.application-card p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.application-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  background: #f5f7ff;
+  display: grid;
+  place-items: center;
+  margin: 0 auto;
+}
+
+.application-icon svg {
+  width: 36px;
+  height: 36px;
+  fill: none;
+  stroke: #3b82f6;
+  stroke-width: 2;
+}
+
+.application-form-wrap {
+  width: min(760px, 92vw);
+  margin: 0 auto 80px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px 28px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+  display: grid;
+  gap: 18px;
+}
+
+.application-form-wrap h2 {
+  font-size: 22px;
+}
+
+.application-form {
+  display: grid;
+  gap: 20px;
+}
+
+.form-section {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.form-section h3 {
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #0b5fff;
+}
+
+.form-section h4 {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.form-section label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.form-section input,
+.form-section select {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  align-items: center;
+}
+
+label.checkbox,
+label.radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.subtle {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .application-topbar {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+  .application-links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .application-hero {
+    padding: 48px 20px 60px;
+  }
+}
 .profile-body {
   background: #f4f7ff;
 }

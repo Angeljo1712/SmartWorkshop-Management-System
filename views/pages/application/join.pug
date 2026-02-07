@@ -1,0 +1,171 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Join as a Mechanic"
+  - var bodyClass = "application-body"
+
+block content
+  header.application-topbar
+    .brand
+      span.logo SW
+      strong SmartWorkshop
+    nav.application-links
+      a(href="/mechanic/home#how") How it works
+      a(href="/mechanic/home#support") Support
+      a(href="/mechanic/home#apply") Resume quote
+
+  main.application-hero#applicationJoin
+    h1 What type of mechanic are you?
+    .application-grid
+      article.application-card
+        a.application-link(href="#applicationForm" data-mechanic-type="business_owner")
+          .application-icon
+            svg(viewBox="0 0 48 48" aria-hidden="true")
+              rect(x="9" y="8" width="30" height="32" rx="4")
+              path(d="M16 16h16M16 24h16M16 32h10")
+          h3 Business Owner
+          p I own or represent an independent garage or mobile mechanic business with full equipment and insurance.
+      article.application-card
+        a.application-link(href="#applicationForm" data-mechanic-type="employed_mechanic")
+          .application-icon
+            svg(viewBox="0 0 48 48" aria-hidden="true")
+              path(d="M14 10h8l2 10-6 6-6-6 2-10z")
+              path(d="M30 14h8l-2 12-6 6-6-6 6-12z")
+          h3 Employed Mechanic
+          p I work as a mechanic for another business but am interested in starting my own mobile business or garage.
+      article.application-card
+        a.application-link(href="#applicationForm" data-mechanic-type="other")
+          .application-icon
+            svg(viewBox="0 0 48 48" aria-hidden="true")
+              circle(cx="24" cy="24" r="16")
+              path(d="M24 16v8l6 6")
+          h3 Other
+          p I don't fit into either of the other two categories.
+
+  section.application-form-wrap#applicationForm(class="is-hidden")
+    h2#applicationHeading Congratulations!
+    p.subtle You are only a minute away from getting signed up.
+    form.application-form
+      .form-section
+        h3 Your experience
+        .form-row
+          label.checkbox
+            input(type="checkbox" name="work_history" value="independent_garage")
+            | Independent garage
+          label.checkbox
+            input(type="checkbox" name="work_history" value="dealership")
+            | Dealership
+          label.checkbox
+            input(type="checkbox" name="work_history" value="fast_fit")
+            | Fast fit centre
+          label.checkbox
+            input(type="checkbox" name="work_history" value="mobile_mechanic")
+            | Mobile mechanic
+        label
+          span Years as a mechanic
+          input(type="number" name="years_experience" min="0" placeholder="0")
+        h4 Certifications
+        .form-row
+          label.checkbox
+            input(type="checkbox" name="certifications" value="iml_level_1")
+            | IMI Level 1
+          label.checkbox
+            input(type="checkbox" name="certifications" value="iml_level_2")
+            | IMI Level 2
+          label.checkbox
+            input(type="checkbox" name="certifications" value="iml_level_3")
+            | IMI Level 3
+          label.checkbox
+            input(type="checkbox" name="certifications" value="city_guilds")
+            | City & Guilds
+        h4 Memberships
+        .form-row
+          label.checkbox
+            input(type="checkbox" name="memberships" value="imI")
+            | IMI
+          label.checkbox
+            input(type="checkbox" name="memberships" value="aa")
+            | AA Approved
+          label.checkbox
+            input(type="checkbox" name="memberships" value="rac")
+            | RAC Approved
+
+      .form-section
+        h3 Your business
+        label
+          span Website address
+          input(type="url" name="website" placeholder="Company website, YouTube, etc.")
+        label.checkbox
+          input(type="checkbox" name="no_website")
+          | I don't have a website
+        .form-row
+          span Do you hold trade insurance?
+          label.radio
+            input(type="radio" name="trade_insurance" value="yes")
+            | Yes
+          label.radio
+            input(type="radio" name="trade_insurance" value="no")
+            | No
+        .form-row
+          span Do you hold public liability insurance?
+          label.radio
+            input(type="radio" name="public_liability" value="yes")
+            | Yes
+          label.radio
+            input(type="radio" name="public_liability" value="no")
+            | No
+        .form-row
+          span Are you VAT registered?
+          label.radio
+            input(type="radio" name="vat_registered" value="yes")
+            | Yes
+          label.radio
+            input(type="radio" name="vat_registered" value="no")
+            | No
+        h4 What kind of service do you offer?
+        .form-row
+          label.checkbox
+            input(type="checkbox" name="services" value="mobile_service")
+            | Mobile mechanic service
+          label.checkbox
+            input(type="checkbox" name="services" value="customer_drop")
+            | Customer drop off
+          label.checkbox
+            input(type="checkbox" name="services" value="collection_delivery")
+            | Collection & delivery
+        h4 How would you best describe your business? (choose one)
+        .form-row
+          label.radio
+            input(type="radio" name="business_type" value="generalist")
+            | Generalist mechanic
+          label.radio
+            input(type="radio" name="business_type" value="tyre_centre")
+            | Tyre centre
+          label.radio
+            input(type="radio" name="business_type" value="auto_electrician")
+            | Auto electrician
+          label.radio
+            input(type="radio" name="business_type" value="aircon_specialist")
+            | Air conditioning specialist
+        label
+          span How far are you willing to travel around KT10 0QR?
+          input(type="number" name="travel_radius" min="0" placeholder="0")
+        label
+          span What is your availability for taking on bookings?
+          select(name="availability")
+            option(value="") Please select one
+            option(value="low") Low (1-2 per week)
+            option(value="medium") Medium (3-5 per week)
+            option(value="high") High (6+ per week)
+        p.subtle Note: this helps us send you the right volume of work.
+
+      .form-section
+        h3 How did you hear about us?
+        label
+          select(name="referral")
+            option(value="") Please select one
+            option(value="search") Search engine
+            option(value="friend") Friend or colleague
+            option(value="social") Social media
+            option(value="other") Other
+      button.primary(type="button") Apply

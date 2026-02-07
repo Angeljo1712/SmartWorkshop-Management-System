@@ -24,11 +24,11 @@ block content
           li Free to join & no monthly fees
           li Great for new and established workshops
           li Ideal for mobile mechanics and MOT testers
-      form.mechanic-form
+      form.mechanic-form(method="get" action="/application/join")
         .row
-          input(type="text" placeholder="First name")
-          input(type="text" placeholder="Last name")
-        input(type="email" placeholder="Email")
-        input(type="text" placeholder="Mobile number")
-        input(type="text" placeholder="Postcode")
-        button.primary(type="button") Join free
+          input(type="text" name="first_name" placeholder="First name")
+          input(type="text" name="last_name" placeholder="Last name")
+        input(type="email" name="email" placeholder="Email")
+        input(type="text" name="phone" placeholder="Mobile number")
+        input(type="text" name="postcode" placeholder="Postcode")
+        button.primary(type="submit") Join free
