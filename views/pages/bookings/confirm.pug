@@ -1,0 +1,35 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Booking Confirmed"
+  - var bodyClass = ""
+
+block content
+  include ../../partials/navbar
+  main.page-shell.bookings-shell#bookingConfirmPage
+    .details-layout
+      aside.details-summary
+        .price-card
+          .price-head
+            span Total price
+            span.save-badge Paid
+          .price-main
+            span.price-value#confirmTotal £0.00
+            span.price-note Payment completed
+        .summary-section
+          h3 Selected work
+          p.form-error.is-hidden#confirmEmpty No items selected yet.
+          #confirmItems
+      section.details-content
+        h1 Booking confirmed
+        .details-card
+          h3 Customer details
+          p#confirmCustomerName -
+          p#confirmCustomerEmail -
+          p#confirmCustomerPhone -
+        .details-card
+          h3 Address
+          p#confirmAddress -
+        .details-card
+          h3 Vehicle availability
+          p#confirmAvailability -

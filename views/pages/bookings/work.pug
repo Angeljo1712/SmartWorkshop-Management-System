@@ -13,92 +13,20 @@ block content
       a.work-tab(class=(type === "service" ? "is-active" : "") href="/bookings/work?type=service") Servicing & MOT
       a.work-tab(class=(type === "tyres" ? "is-active" : "") href="/bookings/work?type=tyres") Tyres
       a.work-tab(class=(type === "inspection" ? "is-active" : "") href="/bookings/work?type=inspection") Pre-purchase inspections
-    .work-layout
+    .work-layout(data-service-category=type)
       section.bookings-work
         if type === "diagnostics"
           h2 In-person diagnostic
           p Get a mechanic to diagnose the issue and give you a no-obligation quote for any required repairs.
-          ul.work-list
-            li.work-row
-              .work-main
-                strong Diagnostic inspection
-                .work-price £66.39
-                .work-rating
-                  span.rating-stars ★★★★★
-                  span 17424 reviews
-              .work-actions
-                a(href="#" aria-label="More info about diagnostic inspection") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong Car won't start inspection
-                .work-price £66.39
-                .work-rating
-                  span.rating-stars ★★★★★
-                  span 7277 reviews
-              .work-actions
-                a(href="#" aria-label="More info about car won't start inspection") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong Plug-in diagnostic inspection
-                .work-price £66.39
-                .work-rating
-                  span.rating-stars ★★★★★
-                  span 4113 reviews
-              .work-actions
-                a(href="#" aria-label="More info about plug-in diagnostic inspection") More info
-                button.primary(type="button") Add
+          ul.work-list#serviceList
+          p.form-error#serviceListEmpty No services found.
           p.work-hint
             | Unsure what's wrong with your car?
             a(href="#" aria-label="Use our free diagnostics tool") Use our free diagnostics tool.
         else if type === "service"
           h2 Servicing & MOT
-          ul.work-list
-            li.work-row
-              .work-main
-                strong Major service
-                .work-price £208.25
-                span Dealer price: £379.16
-                .work-rating
-                  span.rating-stars ★★★★★
-                  span 7357 reviews
-              .work-actions
-                a(href="#" aria-label="More info about major service") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong Full service
-                .work-price £152.86
-                span Dealer price: £279.69
-                .work-rating
-                  span.rating-stars ★★★★★
-                  span 10880 reviews
-              .work-actions
-                a(href="#" aria-label="More info about full service") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong Interim service
-                .work-price £123.45
-                span Dealer price: £204.93
-                .work-rating
-                  span.rating-stars ★★★★★
-                  span 5486 reviews
-              .work-actions
-                a(href="#" aria-label="More info about interim service") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong Vehicle health check
-                .work-price £50.00
-                span.work-tag Only £30 when booked with other work
-                .work-rating
-                  span.rating-stars ★★★★★
-                  span 3365 reviews
-              .work-actions
-                a(href="#" aria-label="More info about vehicle health check") More info
-                button.primary(type="button") Add
+          ul.work-list#serviceList
+          p.form-error#serviceListEmpty No services found.
           .compare-table
             .compare-header
               span Compare
@@ -197,39 +125,8 @@ block content
               button.primary(type="button") Add
         else if type === "inspection"
           h2 Pre-purchase inspections
-          ul.work-list
-            li.work-row
-              .work-main
-                strong Premium pre-purchase inspection
-                .work-price £163.95
-                span RAC price: £239.00
-                .work-rating
-                  span.rating-stars ★★★★★
-                  span 8923 reviews
-              .work-actions
-                a(href="#" aria-label="More info about premium pre-purchase inspection") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong Standard pre-purchase inspection
-                .work-price £114.29
-                span RAC price: £189.00
-                .work-rating
-                  span.rating-stars ★★★★★
-                  span 5945 reviews
-              .work-actions
-                a(href="#" aria-label="More info about standard pre-purchase inspection") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong Basic pre-purchase inspection
-                .work-price £94.87
-                .work-rating
-                  span.rating-stars ★★★★★
-                  span 1023 reviews
-              .work-actions
-                a(href="#" aria-label="More info about basic pre-purchase inspection") More info
-                button.primary(type="button") Add
+          ul.work-list#serviceList
+          p.form-error#serviceListEmpty No services found.
           .compare-table
             .compare-header
               span Compare
@@ -281,110 +178,23 @@ block content
           .work-search
             input(type="text" placeholder="Search available repairs" aria-label="Search available repairs")
           h3 Choose from popular repairs
-          ul.work-list
-            li.work-row
-              .work-main
-                strong Clutch replacement
-                span Vehicles with a manual gearbox only
-              .work-actions
-                a(href="#" aria-label="More info about clutch replacement") More info
-                button.ghost(type="button") Remove
-            li.work-row
-              .work-main
-                strong Brake discs and pads replacement - front (both)
-              .work-actions
-                a(href="#" aria-label="More info about brake discs and pads replacement - front") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong Timing chain replacement
-              .work-actions
-                a(href="#" aria-label="More info about timing chain replacement") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong Brake discs and pads replacement - rear (both)
-              .work-actions
-                a(href="#" aria-label="More info about brake discs and pads replacement - rear") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong Diagnostic inspection
-              .work-actions
-                a(href="#" aria-label="More info about diagnostic inspection") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong Brake pads replacement - front (all)
-              .work-actions
-                a(href="#" aria-label="More info about brake pads replacement - front") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong Engine oil & filter replacement
-              .work-actions
-                a(href="#" aria-label="More info about engine oil and filter replacement") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong MOT with collection & delivery
-              .work-actions
-                a(href="#" aria-label="More info about MOT with collection and delivery") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong Brake pads replacement - rear (all)
-              .work-actions
-                a(href="#" aria-label="More info about brake pads replacement - rear") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong Water pump replacement
-              .work-actions
-                a(href="#" aria-label="More info about water pump replacement") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong Alternator replacement
-              .work-actions
-                a(href="#" aria-label="More info about alternator replacement") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong Auxiliary drive belt replacement
-              .work-actions
-                a(href="#" aria-label="More info about auxiliary drive belt replacement") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong Shock absorbers replacement - front (pair)
-              .work-actions
-                a(href="#" aria-label="More info about shock absorbers replacement - front") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong Coil spring replacement - front (both)
-                span Also known as Road spring replacement - front (both)
-              .work-actions
-                a(href="#" aria-label="More info about coil spring replacement - front") More info
-                button.primary(type="button") Add
-            li.work-row
-              .work-main
-                strong Starter motor replacement
-              .work-actions
-                a(href="#" aria-label="More info about starter motor replacement") More info
-                button.primary(type="button") Add
+          ul.work-list#serviceList
+          p.form-error#serviceListEmpty No services found.
       aside.work-summary
         .price-card
           .price-head
             span Total price
             span.save-badge You save 51%
           .price-main
-            span.price-value £442.96
+            span.price-value#summaryTotalWork £0.00
             span.price-note Quote includes VAT where applicable
           .price-compare
             span Dealer price: £912.48
           .price-vehicle
             span Toyota Corolla 1.4L Petrol 2005 · KT10 0QR
             a(href="#") Edit
+        .summary-section
+          h3 Selected work
+          p.form-error.is-hidden#selectedWorkEmptyWork No items selected yet.
+          #selectedWorkListWork
         a.next-step(href="/bookings/details") Next step

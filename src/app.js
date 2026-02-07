@@ -10,6 +10,7 @@ const usersRouter = require("./routes/users");
 const vehicleEnquiryRouter = require("./routes/vehicleEnquiry");
 const workshopsRouter = require("./routes/workshops");
 const bookingsRouter = require("./routes/bookings");
+const catalogRouter = require("./routes/catalog");
 const { errorHandler } = require("./middlewares/error");
 const { cors } = require("./middlewares/cors");
 
@@ -90,6 +91,14 @@ app.get("/bookings/details", (req, res) => {
   res.render("pages/bookings/details");
 });
 
+app.get("/bookings/payment", (req, res) => {
+  res.render("pages/bookings/payment");
+});
+
+app.get("/bookings/confirm", (req, res) => {
+  res.render("pages/bookings/confirm");
+});
+
 app.get("/mechanic/home", (req, res) => {
   res.render("pages/mechanic/home");
 });
@@ -103,6 +112,7 @@ app.use("/api/admin", adminRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/vehicle-enquiry", vehicleEnquiryRouter);
 app.use("/api/bookings", bookingsRouter);
+app.use("/api/catalog", catalogRouter);
 app.use("/workshops", workshopsRouter);
 
 app.use(errorHandler);

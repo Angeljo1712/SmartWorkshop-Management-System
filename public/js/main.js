@@ -140,14 +140,347 @@ if (getInstantQuotes) {
 
 renderVehicleSummary();
 
+const getSessionId = () => {
+  const key = "bookingSessionId";
+  let value = sessionStorage.getItem(key);
+  if (!value) {
+    value = (crypto?.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2)) + Date.now();
+    sessionStorage.setItem(key, value);
+  }
+  return value;
+};
+
+const addServiceToDraft = async (serviceId) => {
+  const sessionId = getSessionId();
+  const draft = await api("/api/bookings/draft/items", {
+    method: "POST",
+    body: JSON.stringify({ session_id: sessionId, service_id: Number(serviceId) })
+  });
+  renderWorkSummary(draft);
+  renderDraftSummary(draft);
+};
+
+const removeServiceFromDraft = async (serviceId) => {
+  const sessionId = getSessionId();
+  const draft = await api(`/api/bookings/draft/items/${serviceId}?session_id=${encodeURIComponent(sessionId)}`, {
+    method: "DELETE"
+  });
+  renderWorkSummary(draft);
+  renderDraftSummary(draft);
+};
+
+document.addEventListener("click", (event) => {
+  const addBtn = event.target.closest("button.service-add");
+  if (addBtn && addBtn.dataset.serviceId) {
+    addServiceToDraft(addBtn.dataset.serviceId).catch(() => {});
+    return;
+  }
+  const removeBtn = event.target.closest("button.service-remove");
+  if (removeBtn && removeBtn.dataset.serviceId) {
+    removeServiceFromDraft(removeBtn.dataset.serviceId).catch(() => {});
+  }
+});
+
+const renderServices = (category, services) => {
+  const list = document.getElementById("serviceList");
+  const empty = document.getElementById("serviceListEmpty");
+  if (!list) return;
+
+  list.innerHTML = "";
+  if (!services || services.length === 0) {
+    if (empty) empty.classList.remove("is-hidden");
+    return;
+  }
+  if (empty) empty.classList.add("is-hidden");
+
+  services.forEach((service) => {
+    const li = document.createElement("li");
+    li.className = "work-row";
+
+    const main = document.createElement("div");
+    main.className = "work-main";
+
+    const title = document.createElement("strong");
+    title.textContent = service.name;
+    main.appendChild(title);
+
+    if (service.description) {
+      const desc = document.createElement("span");
+      desc.textContent = service.description;
+      main.appendChild(desc);
+    }
+
+    if (service.price !== null && service.price !== undefined) {
+      const price = document.createElement("div");
+      price.className = "work-price";
+      price.textContent = `£${Number(service.price).toFixed(2)}`;
+      main.appendChild(price);
+    }
+
+    const actions = document.createElement("div");
+    actions.className = "work-actions";
+
+    const more = document.createElement("a");
+    more.href = "#";
+    more.textContent = "More info";
+    actions.appendChild(more);
+
+    const add = document.createElement("button");
+    add.type = "button";
+    add.className = "primary service-add";
+    add.textContent = "Add";
+    add.dataset.serviceId = service.id;
+    actions.appendChild(add);
+
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "ghost service-remove";
+    remove.textContent = "Remove";
+    remove.dataset.serviceId = service.id;
+    actions.appendChild(remove);
+
+    li.appendChild(main);
+    li.appendChild(actions);
+    list.appendChild(li);
+  });
+};
+
+const workLayout = document.querySelector(".work-layout");
+if (workLayout) {
+  const category = workLayout.dataset.serviceCategory;
+  if (category) {
+    fetch(`/api/catalog/services?category=${encodeURIComponent(category)}&region=UK-default`)
+      .then((res) => res.json())
+      .then((services) => renderServices(category, services))
+      .catch(() => renderServices(category, []));
+  }
+}
+
+const renderDraftSummary = (draft) => {
+  const list = document.getElementById("selectedWorkList");
+  const empty = document.getElementById("selectedWorkEmpty");
+  const subtotalEl = document.getElementById("summarySubtotal");
+  const vatEl = document.getElementById("summaryVat");
+  const totalEl = document.getElementById("summaryTotal");
+  const notesEl = document.getElementById("summaryNotes");
+  const drivableEl = document.getElementById("summaryDrivable");
+  const availabilityEl = document.getElementById("summaryAvailability");
+
+  if (!list) return;
+  list.innerHTML = "";
+
+  if (!draft.items || draft.items.length === 0) {
+    if (empty) empty.classList.remove("is-hidden");
+  } else if (empty) {
+    empty.classList.add("is-hidden");
+    draft.items.forEach((item) => {
+      const row = document.createElement("div");
+      row.className = "summary-item";
+      row.innerHTML = `
+        <div>
+          <strong>${item.name}</strong>
+          ${item.description ? `<span>${item.description}</span>` : ""}
+        </div>
+        <span>£${Number(item.line_total_eur).toFixed(2)}</span>
+      `;
+      list.appendChild(row);
+    });
+  }
+
+  if (subtotalEl) subtotalEl.textContent = `£${Number(draft.subtotal || 0).toFixed(2)}`;
+  if (vatEl) vatEl.textContent = `£${Number(draft.vat || 0).toFixed(2)}`;
+  if (totalEl) totalEl.textContent = `£${Number(draft.total || 0).toFixed(2)}`;
+  if (notesEl) notesEl.textContent = draft.notes ? `Notes: ${draft.notes}` : "No notes yet.";
+  if (drivableEl)
+    drivableEl.textContent = `Vehicle drivable: ${draft.vehicle_drivable ? draft.vehicle_drivable : "-"}`;
+  if (availabilityEl) {
+    const slots = (draft.availability || [])
+      .filter((day) => day.slots && day.slots.length)
+      .map((day) => `${day.day} (${day.weekday}): ${day.slots.join(", ")}`);
+    availabilityEl.textContent = slots.length ? slots.join(" | ") : "No availability selected yet.";
+  }
+};
+
+const renderWorkSummary = (draft) => {
+  const list = document.getElementById("selectedWorkListWork");
+  const empty = document.getElementById("selectedWorkEmptyWork");
+  const totalEl = document.getElementById("summaryTotalWork");
+  if (!list) return;
+
+  list.innerHTML = "";
+  if (!draft.items || draft.items.length === 0) {
+    if (empty) empty.classList.remove("is-hidden");
+  } else if (empty) {
+    empty.classList.add("is-hidden");
+    draft.items.forEach((item) => {
+      const row = document.createElement("div");
+      row.className = "summary-item";
+      row.innerHTML = `
+        <div>
+          <strong>${item.name}</strong>
+        </div>
+        <span>£${Number(item.line_total_eur).toFixed(2)}</span>
+      `;
+      list.appendChild(row);
+    });
+  }
+  if (totalEl) totalEl.textContent = `£${Number(draft.total || 0).toFixed(2)}`;
+};
+
+const detailsPage = document.getElementById("bookingDetailsPage");
+if (detailsPage) {
+  const sessionId = getSessionId();
+  fetch(`/api/bookings/draft?session_id=${encodeURIComponent(sessionId)}`)
+    .then((res) => res.json())
+    .then((draft) => renderDraftSummary(draft))
+    .catch(() => renderDraftSummary({ items: [], subtotal: 0, vat: 0, total: 0 }));
+}
+
+const workSummary = document.getElementById("summaryTotalWork");
+if (workSummary) {
+  const sessionId = getSessionId();
+  fetch(`/api/bookings/draft?session_id=${encodeURIComponent(sessionId)}`)
+    .then((res) => res.json())
+    .then((draft) => renderWorkSummary(draft))
+    .catch(() => renderWorkSummary({ items: [], subtotal: 0, vat: 0, total: 0 }));
+}
+
+  const paymentPage = document.getElementById("bookingPaymentPage");
+  if (paymentPage) {
+  const sessionId = getSessionId();
+  fetch(`/api/bookings/draft?session_id=${encodeURIComponent(sessionId)}`)
+    .then((res) => res.json())
+    .then((draft) => {
+      const items = document.getElementById("paymentItems");
+      const empty = document.getElementById("paymentEmpty");
+      const totalEl = document.getElementById("paymentTotal");
+      if (items) items.innerHTML = "";
+      if (!draft.items || draft.items.length === 0) {
+        if (empty) empty.classList.remove("is-hidden");
+      } else if (empty) {
+        empty.classList.add("is-hidden");
+        draft.items.forEach((item) => {
+          const row = document.createElement("div");
+          row.className = "summary-item";
+          row.innerHTML = `
+            <div>
+              <strong>${item.name}</strong>
+              ${item.description ? `<span>${item.description}</span>` : ""}
+            </div>
+            <span>£${Number(item.line_total_eur).toFixed(2)}</span>
+          `;
+          items.appendChild(row);
+        });
+      }
+      if (totalEl) totalEl.textContent = `£${Number(draft.total || 0).toFixed(2)}`;
+    })
+    .catch(() => {});
+
+  const completeBtn = paymentPage.querySelector(".details-submit");
+  completeBtn?.addEventListener("click", async () => {
+    try {
+      await api("/api/bookings/draft/pay", {
+        method: "POST",
+        body: JSON.stringify({ session_id: getSessionId(), provider: "mock", currency: "GBP" })
+      });
+      window.location.href = "/bookings/confirm";
+    } catch (err) {
+      alert(err?.error?.message || err?.message || "Payment failed.");
+    }
+  });
+}
+
+const confirmPage = document.getElementById("bookingConfirmPage");
+if (confirmPage) {
+  const sessionId = getSessionId();
+  fetch(`/api/bookings/draft?session_id=${encodeURIComponent(sessionId)}`)
+    .then((res) => res.json())
+    .then((draft) => {
+      const items = document.getElementById("confirmItems");
+      const empty = document.getElementById("confirmEmpty");
+      const totalEl = document.getElementById("confirmTotal");
+      if (items) items.innerHTML = "";
+      if (!draft.items || draft.items.length === 0) {
+        if (empty) empty.classList.remove("is-hidden");
+      } else if (empty) {
+        empty.classList.add("is-hidden");
+        draft.items.forEach((item) => {
+          const row = document.createElement("div");
+          row.className = "summary-item";
+          row.innerHTML = `
+            <div>
+              <strong>${item.name}</strong>
+              ${item.description ? `<span>${item.description}</span>` : ""}
+            </div>
+            <span>£${Number(item.line_total_eur).toFixed(2)}</span>
+          `;
+          items.appendChild(row);
+        });
+      }
+      if (totalEl) totalEl.textContent = `£${Number(draft.total || 0).toFixed(2)}`;
+
+      const nameEl = document.getElementById("confirmCustomerName");
+      const emailEl = document.getElementById("confirmCustomerEmail");
+      const phoneEl = document.getElementById("confirmCustomerPhone");
+      if (draft.user) {
+        const fullName = [draft.user.name, draft.user.lastname].filter(Boolean).join(" ");
+        if (nameEl) nameEl.textContent = fullName || "-";
+        if (emailEl) emailEl.textContent = draft.user.email || "-";
+        if (phoneEl) phoneEl.textContent = draft.user.phone || "-";
+      }
+
+      const addressEl = document.getElementById("confirmAddress");
+      if (draft.address) {
+        const addr = [draft.address.line1, draft.address.line2, draft.address.city, draft.address.postal_code, draft.address.country]
+          .filter(Boolean)
+          .join(", ");
+        if (addressEl) addressEl.textContent = addr || "-";
+      }
+
+      const availabilityEl = document.getElementById("confirmAvailability");
+      if (availabilityEl) {
+        const slots = (draft.availability || [])
+          .filter((day) => day.slots && day.slots.length)
+          .map((day) => `${day.day} (${day.weekday}): ${day.slots.join(", ")}`);
+        availabilityEl.textContent = slots.length ? slots.join(" | ") : "-";
+      }
+    })
+    .catch(() => {});
+}
+
 const bookingDetailsForm = document.getElementById("bookingDetailsForm");
 if (bookingDetailsForm) {
   const errorEl = document.getElementById("bookingDetailsError");
+  const toggleButtons = bookingDetailsForm.querySelectorAll(".toggle");
+  const slotButtons = bookingDetailsForm.querySelectorAll(".slot");
+
+  toggleButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      toggleButtons.forEach((b) => b.classList.remove("is-active"));
+      btn.classList.add("is-active");
+    });
+  });
+
+  slotButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      btn.classList.toggle("is-active");
+    });
+  });
 
   bookingDetailsForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (errorEl) errorEl.textContent = "";
 
+    const isDrivable = bookingDetailsForm.querySelector(".toggle.is-active")?.textContent?.trim() === "Yes";
+    const availability = Array.from(document.querySelectorAll(".availability-day")).map((day) => {
+      const dayLabel = day.dataset.day;
+      const weekday = day.dataset.weekday;
+      const slots = Array.from(day.querySelectorAll(".slot.is-active")).map((slot) => slot.dataset.time);
+      return { day: dayLabel, weekday, slots };
+    });
+
+    const storedVehicle = sessionStorage.getItem("vehicleEnquiry");
+    const vehicle = storedVehicle ? JSON.parse(storedVehicle) : null;
     const payload = {
       first_name: document.getElementById("detailsFirstName").value.trim(),
       last_name: document.getElementById("detailsLastName").value.trim(),
@@ -156,7 +489,12 @@ if (bookingDetailsForm) {
       address2: document.getElementById("detailsAddress2").value.trim(),
       city: document.getElementById("detailsCity").value.trim(),
       postcode: document.getElementById("detailsPostcode").value.trim(),
-      phone: document.getElementById("detailsPhone").value.trim()
+      phone: document.getElementById("detailsPhone").value.trim(),
+      notes: document.getElementById("detailsNotes")?.value?.trim() || "",
+      vehicle_drivable: isDrivable ? "yes" : "no",
+      session_id: getSessionId(),
+      availability,
+      vehicle
     };
 
     try {
@@ -164,7 +502,7 @@ if (bookingDetailsForm) {
         method: "POST",
         body: JSON.stringify(payload)
       });
-      if (errorEl) errorEl.textContent = "Booking details saved.";
+      window.location.href = "/bookings/payment";
     } catch (err) {
       if (errorEl) {
         errorEl.textContent = err?.error?.message || err?.message || "Unable to save booking details.";

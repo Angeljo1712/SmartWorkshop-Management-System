@@ -1,101 +1,357 @@
-CREATE TABLE IF NOT EXISTS roles (
-  role_id INT AUTO_INCREMENT PRIMARY KEY,
-  role_name VARCHAR(20) NOT NULL UNIQUE
-) ENGINE=InnoDB;
+-- smartworkshop_schema_int.sql
+-- MySQL 8.0, InnoDB, INT/BIGINT AUTO_INCREMENT PKs, no triggers/seeds
 
+USE smartworkshop;
+
+-- ================================
+-- Core tables (IDs as BIGINT AUTO_INCREMENT)
+-- ================================
 CREATE TABLE IF NOT EXISTS users (
-  user_id INT AUTO_INCREMENT PRIMARY KEY,
-  full_name VARCHAR(120) NOT NULL,
-  email VARCHAR(190) NOT NULL UNIQUE,
-  username VARCHAR(80) UNIQUE,
-  password_hash VARCHAR(255) NOT NULL,
-  role_id INT NOT NULL,
-  status ENUM('Active','Inactive','Pending','Suspended','Banned') NOT NULL DEFAULT 'Active',
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  last_active DATETIME NULL,
-  CONSTRAINT fk_users_role FOREIGN KEY (role_id) REFERENCES roles(role_id)
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  uuid_public BINARY(16) UNIQUE, -- opcional si quieres exponer UUID públicamente
+  email VARCHAR(320) NOT NULL UNIQUE,
+  phone VARCHAR(32),
+  password_hash TEXT NOT NULL,
+  role ENUM('user','mechanic','admin') NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  last_login_at TIMESTAMP NULL,
+  KEY idx_users_phone (phone)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS user_profiles (
+  user_id BIGINT UNSIGNED PRIMARY KEY,
+  name VARCHAR(120) NOT NULL,
+  lastname VARCHAR(120) NOT NULL,
+  avatar_url TEXT,
+  CONSTRAINT fk_up_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS workshops (
-  workshop_id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(150) NOT NULL,
-  address VARCHAR(255) NOT NULL,
-  postcode VARCHAR(20) NOT NULL,
-  phone VARCHAR(40) NOT NULL,
-  description TEXT,
-  location POINT SRID 4326 NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
-
-
-CREATE TABLE IF NOT EXISTS workshop_members (
-  workshop_member_id INT AUTO_INCREMENT PRIMARY KEY,
-  workshop_id INT NOT NULL,
-  user_id INT NOT NULL,
-  member_role VARCHAR(40) NOT NULL,
-  joined_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE KEY uq_workshop_member (workshop_id, user_id),
-  CONSTRAINT fk_workshop_members_workshop FOREIGN KEY (workshop_id) REFERENCES workshops(workshop_id),
-  CONSTRAINT fk_workshop_members_user FOREIGN KEY (user_id) REFERENCES users(user_id)
-) ENGINE=InnoDB;
-
-CREATE TABLE IF NOT EXISTS service_requests (
-  request_id INT AUTO_INCREMENT PRIMARY KEY,
-  customer_id INT NOT NULL,
-  vehicle_reg VARCHAR(50) NOT NULL,
-  vehicle_make VARCHAR(80) NOT NULL,
-  vehicle_model VARCHAR(80) NOT NULL,
-  issue_description TEXT NOT NULL,
-  preferred_date DATE,
-  status ENUM('Submitted','Quoted','Accepted','Closed') NOT NULL DEFAULT 'Submitted',
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_service_requests_customer FOREIGN KEY (customer_id) REFERENCES users(user_id)
-) ENGINE=InnoDB;
-
-CREATE TABLE IF NOT EXISTS quotations (
-  quotation_id INT AUTO_INCREMENT PRIMARY KEY,
-  request_id INT NOT NULL,
-  workshop_id INT NOT NULL,
-  mechanic_id INT NOT NULL,
-  labour_cost DECIMAL(10,2) NOT NULL,
-  parts_cost DECIMAL(10,2) NOT NULL,
-  total_cost DECIMAL(10,2) NOT NULL,
-  estimated_days INT NOT NULL,
+-- ================================
+-- Booking drafts (pre-checkout)
+-- ================================
+CREATE TABLE IF NOT EXISTS booking_drafts (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  session_id VARCHAR(64) NOT NULL UNIQUE,
+  user_id BIGINT UNSIGNED NULL,
+  vehicle_json JSON NULL,
   notes TEXT,
-  status ENUM('Submitted','Withdrawn','Accepted','Rejected') NOT NULL DEFAULT 'Submitted',
+  vehicle_drivable ENUM('yes','no') NULL,
+  availability_json JSON NULL,
+  payment_status ENUM('pending','authorized','paid','failed') NOT NULL DEFAULT 'pending',
+  payment_provider VARCHAR(64) NULL,
+  payment_amount_eur DECIMAL(10,2) NULL,
+  payment_currency CHAR(3) NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_quotations_request FOREIGN KEY (request_id) REFERENCES service_requests(request_id),
-  CONSTRAINT fk_quotations_workshop FOREIGN KEY (workshop_id) REFERENCES workshops(workshop_id),
-  CONSTRAINT fk_quotations_mechanic FOREIGN KEY (mechanic_id) REFERENCES users(user_id),
-  CONSTRAINT chk_quotation_total CHECK (total_cost = labour_cost + parts_cost)
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  KEY idx_draft_user (user_id),
+  CONSTRAINT fk_draft_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS jobs (
-  job_id INT AUTO_INCREMENT PRIMARY KEY,
-  request_id INT NOT NULL,
-  quotation_id INT NOT NULL,
-  workshop_id INT NOT NULL,
-  assigned_mechanic_id INT NOT NULL,
-  status ENUM('Accepted','InProgress','Completed') NOT NULL DEFAULT 'Accepted',
-  started_at DATETIME NULL,
-  completed_at DATETIME NULL,
-  CONSTRAINT fk_jobs_request FOREIGN KEY (request_id) REFERENCES service_requests(request_id),
-  CONSTRAINT fk_jobs_quotation FOREIGN KEY (quotation_id) REFERENCES quotations(quotation_id),
-  CONSTRAINT fk_jobs_workshop FOREIGN KEY (workshop_id) REFERENCES workshops(workshop_id),
-  CONSTRAINT fk_jobs_mechanic FOREIGN KEY (assigned_mechanic_id) REFERENCES users(user_id)
+CREATE TABLE IF NOT EXISTS booking_draft_items (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  draft_id BIGINT UNSIGNED NOT NULL,
+  service_id BIGINT UNSIGNED NOT NULL,
+  qty INT NOT NULL DEFAULT 1,
+  line_total_eur DECIMAL(10,2) NOT NULL,
+  UNIQUE KEY uq_draft_service (draft_id, service_id),
+  KEY idx_bdi_draft (draft_id),
+  CONSTRAINT fk_bdi_draft FOREIGN KEY (draft_id) REFERENCES booking_drafts(id) ON DELETE CASCADE,
+  CONSTRAINT fk_bdi_service FOREIGN KEY (service_id) REFERENCES service_catalog(id)
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS job_status_history (
-  status_id INT AUTO_INCREMENT PRIMARY KEY,
-  job_id INT NOT NULL,
-  status VARCHAR(40) NOT NULL,
-  updated_by INT NOT NULL,
-  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE IF NOT EXISTS password_reset_requests (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT UNSIGNED NOT NULL,
+  token CHAR(64) NOT NULL UNIQUE,
+  expires_at DATETIME NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY idx_pr_user (user_id),
+  CONSTRAINT fk_prr_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS email_change_requests (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT UNSIGNED NOT NULL,
+  new_email VARCHAR(320) NOT NULL,
+  token CHAR(64) NOT NULL UNIQUE,
+  expires_at DATETIME NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY idx_ecr_user (user_id),
+  CONSTRAINT fk_ecr_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS mechanic_profiles (
+  user_id BIGINT UNSIGNED PRIMARY KEY,
+  display_name VARCHAR(120) NOT NULL,
+  legal_name VARCHAR(160) NOT NULL,
+  vat_id VARCHAR(32),
+  is_mobile TINYINT(1) NOT NULL DEFAULT 1,
+  rating_avg DECIMAL(3,2) NOT NULL DEFAULT 0.00,
+  jobs_done INT NOT NULL DEFAULT 0,
+  about TEXT,
+  CONSTRAINT fk_mp_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS addresses (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  uuid_public BINARY(16) UNIQUE,
+  user_id BIGINT UNSIGNED NOT NULL,
+  label VARCHAR(64),
+  line1 VARCHAR(160) NOT NULL,
+  line2 VARCHAR(160),
+  city VARCHAR(100) NOT NULL,
+  postal_code VARCHAR(16) NOT NULL,
+  country CHAR(2) NOT NULL,
+  location POINT NOT NULL SRID 4326,
+  SPATIAL INDEX spx_addresses_location (location),
+  KEY idx_addr_user (user_id),
+  CONSTRAINT fk_addr_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS vehicles (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  uuid_public BINARY(16) UNIQUE,
+  user_id BIGINT UNSIGNED NOT NULL,
+  license_plate VARCHAR(20) NOT NULL,
+  make VARCHAR(64) NOT NULL,
+  model VARCHAR(64) NOT NULL,
+  year SMALLINT,
+  vin VARCHAR(32),
+  UNIQUE KEY uq_veh_plate_user (user_id, license_plate),
+  KEY idx_veh_user (user_id),
+  CONSTRAINT fk_vehicle_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ================================
+-- Catalog & pricing
+-- ================================
+CREATE TABLE IF NOT EXISTS service_catalog (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  code VARCHAR(64) NOT NULL UNIQUE,
+  name VARCHAR(120) NOT NULL,
+  category VARCHAR(64) NOT NULL,
+  description TEXT,
+  base_labour_minutes INT NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS service_pricing (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  service_id BIGINT UNSIGNED NOT NULL,
+  region VARCHAR(32) NOT NULL DEFAULT 'ES-default',
+  labour_rate_eur DECIMAL(10,2) NOT NULL,
+  parts_markup_pct DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+  travel_fee_eur DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  vat_pct DECIMAL(5,2) NOT NULL DEFAULT 21.00,
+  UNIQUE KEY uq_service_region (service_id, region),
+  CONSTRAINT fk_sp_service FOREIGN KEY (service_id) REFERENCES service_catalog(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS mechanic_services (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  mechanic_id BIGINT UNSIGNED NOT NULL,
+  service_id BIGINT UNSIGNED NOT NULL,
+  custom_labour_rate_eur DECIMAL(10,2) NULL,
+  enabled TINYINT(1) NOT NULL DEFAULT 1,
+  UNIQUE KEY uq_mech_service (mechanic_id, service_id),
+  KEY idx_ms_service (service_id),
+  CONSTRAINT fk_ms_mech FOREIGN KEY (mechanic_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_ms_service FOREIGN KEY (service_id) REFERENCES service_catalog(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ================================
+-- Availability & bookings
+-- ================================
+CREATE TABLE IF NOT EXISTS availability_slots (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  mechanic_id BIGINT UNSIGNED NOT NULL,
+  start_at DATETIME NOT NULL,
+  end_at DATETIME NOT NULL,
+  status ENUM('free','held','booked') NOT NULL DEFAULT 'free',
+  KEY idx_slot_mech_time (mechanic_id, start_at),
+  CONSTRAINT chk_slot_time CHECK (start_at < end_at),
+  CONSTRAINT fk_slot_mech FOREIGN KEY (mechanic_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS bookings (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  uuid_public BINARY(16) UNIQUE,
+  customer_id BIGINT UNSIGNED NOT NULL,
+  mechanic_id BIGINT UNSIGNED NULL,
+  address_id BIGINT UNSIGNED NOT NULL,
+  vehicle_id BIGINT UNSIGNED NOT NULL,
+  slot_id BIGINT UNSIGNED NULL,
+  status ENUM('requested','accepted','in_progress','completed','disputed','refunded','cancelled') NOT NULL,
+  subtotal_eur DECIMAL(10,2) NOT NULL,
+  vat_eur DECIMAL(10,2) NOT NULL,
+  total_eur DECIMAL(10,2) NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  notes TEXT,
+  KEY idx_booking_customer (customer_id),
+  KEY idx_booking_mechanic (mechanic_id),
+  KEY idx_booking_status (status),
+  KEY idx_booking_created (created_at),
+  CONSTRAINT fk_bk_customer FOREIGN KEY (customer_id) REFERENCES users(id),
+  CONSTRAINT fk_bk_mechanic FOREIGN KEY (mechanic_id) REFERENCES users(id),
+  CONSTRAINT fk_bk_address FOREIGN KEY (address_id) REFERENCES addresses(id),
+  CONSTRAINT fk_bk_vehicle FOREIGN KEY (vehicle_id) REFERENCES vehicles(id),
+  CONSTRAINT fk_bk_slot FOREIGN KEY (slot_id) REFERENCES availability_slots(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS booking_items (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  booking_id BIGINT UNSIGNED NOT NULL,
+  service_id BIGINT UNSIGNED NOT NULL,
+  labour_minutes INT NOT NULL,
+  parts_json JSON NULL,
+  line_total_eur DECIMAL(10,2) NOT NULL,
+  KEY idx_bi_booking (booking_id),
+  KEY idx_bi_service (service_id),
+  CONSTRAINT fk_bi_booking FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE,
+  CONSTRAINT fk_bi_service FOREIGN KEY (service_id) REFERENCES service_catalog(id)
+) ENGINE=InnoDB;
+
+-- ================================
+-- Payments, invoices, reviews, messaging
+-- ================================
+CREATE TABLE IF NOT EXISTS payments (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  booking_id BIGINT UNSIGNED NOT NULL,
+  provider VARCHAR(64) NOT NULL,
+  status ENUM('authorized','auth_captured','refunded','failed') NOT NULL,
+  amount_eur DECIMAL(10,2) NOT NULL,
+  currency CHAR(3) NOT NULL DEFAULT 'EUR',
+  provider_ref VARCHAR(128) NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_provider_ref (provider, provider_ref),
+  CONSTRAINT fk_pay_booking FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS invoices (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  booking_id BIGINT UNSIGNED NOT NULL,
+  issuer_mechanic_id BIGINT UNSIGNED NOT NULL,
+  buyer_user_id BIGINT UNSIGNED NOT NULL,
+  number VARCHAR(64) NOT NULL,
+  issued_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  totals_json JSON NOT NULL,
+  pdf_url TEXT,
+  UNIQUE KEY uq_invoice_booking (booking_id),
+  UNIQUE KEY uq_invoice_number (number),
+  CONSTRAINT fk_inv_booking FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE,
+  CONSTRAINT fk_inv_issuer FOREIGN KEY (issuer_mechanic_id) REFERENCES users(id),
+  CONSTRAINT fk_inv_buyer FOREIGN KEY (buyer_user_id) REFERENCES users(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS reviews (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  booking_id BIGINT UNSIGNED NOT NULL,
+  customer_id BIGINT UNSIGNED NOT NULL,
+  mechanic_id BIGINT UNSIGNED NOT NULL,
+  rating TINYINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
   comment TEXT,
-  CONSTRAINT fk_job_status_history_job FOREIGN KEY (job_id) REFERENCES jobs(job_id),
-  CONSTRAINT fk_job_status_history_user FOREIGN KEY (updated_by) REFERENCES users(user_id)
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_review_booking (booking_id),
+  KEY idx_review_mechanic (mechanic_id),
+  CONSTRAINT fk_rev_booking FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE,
+  CONSTRAINT fk_rev_customer FOREIGN KEY (customer_id) REFERENCES users(id),
+  CONSTRAINT fk_rev_mechanic FOREIGN KEY (mechanic_id) REFERENCES users(id)
 ) ENGINE=InnoDB;
 
-CREATE INDEX idx_service_requests_status ON service_requests(status);
-CREATE INDEX idx_quotations_request ON quotations(request_id);
-CREATE INDEX idx_jobs_workshop ON jobs(workshop_id);
+CREATE TABLE IF NOT EXISTS messages (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  booking_id BIGINT UNSIGNED NOT NULL,
+  sender_id BIGINT UNSIGNED NOT NULL,
+  body TEXT NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY idx_msg_booking (booking_id, created_at),
+  CONSTRAINT fk_msg_booking FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE,
+  CONSTRAINT fk_msg_sender FOREIGN KEY (sender_id) REFERENCES users(id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS attachments (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  message_id BIGINT UNSIGNED NOT NULL,
+  file_url TEXT NOT NULL,
+  type VARCHAR(32) NOT NULL,
+  KEY idx_att_msg (message_id),
+  CONSTRAINT fk_att_msg FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ================================
+-- Wallet & payouts
+-- ================================
+CREATE TABLE IF NOT EXISTS wallets (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  mechanic_id BIGINT UNSIGNED NOT NULL UNIQUE,
+  available_eur DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  pending_eur DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  CONSTRAINT fk_wallet_mech FOREIGN KEY (mechanic_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS payouts (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  wallet_id BIGINT UNSIGNED NOT NULL,
+  amount_eur DECIMAL(10,2) NOT NULL,
+  status ENUM('requested','processing','paid','failed') NOT NULL DEFAULT 'requested',
+  provider_ref VARCHAR(128),
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY idx_payout_wallet (wallet_id, created_at),
+  CONSTRAINT fk_payout_wallet FOREIGN KEY (wallet_id) REFERENCES wallets(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ================================
+-- Promotions
+-- ================================
+CREATE TABLE IF NOT EXISTS promo_codes (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  code VARCHAR(32) NOT NULL UNIQUE,
+  type ENUM('percent','fixed') NOT NULL,
+  value DECIMAL(10,2) NOT NULL,
+  max_redemptions INT,
+  valid_from DATETIME NOT NULL,
+  valid_to DATETIME NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS promo_redemptions (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  code_id BIGINT UNSIGNED NOT NULL,
+  user_id BIGINT UNSIGNED NOT NULL,
+  booking_id BIGINT UNSIGNED NOT NULL,
+  amount_eur DECIMAL(10,2) NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY idx_pr_user (user_id),
+  KEY idx_pr_booking (booking_id),
+  CONSTRAINT fk_pr_code FOREIGN KEY (code_id) REFERENCES promo_codes(id) ON DELETE RESTRICT,
+  CONSTRAINT fk_pr_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_pr_booking FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ================================
+-- Optional audit log
+-- ================================
+CREATE TABLE IF NOT EXISTS audit_logs (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  entity VARCHAR(64) NOT NULL,
+  entity_id VARBINARY(64) NOT NULL,
+  action VARCHAR(32) NOT NULL,
+  by_user BIGINT UNSIGNED,
+  at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  diff_json JSON,
+  KEY idx_audit_entity (entity, at),
+  KEY idx_audit_user (by_user)
+) ENGINE=InnoDB;
+
+-- ================================
+-- UUID helpers (BINARY(16))
+-- ================================
+-- Backfill UUIDs for existing rows (run once if you already have data)
+-- UPDATE users SET uuid_public = UUID_TO_BIN(UUID()) WHERE uuid_public IS NULL;
+-- UPDATE addresses SET uuid_public = UUID_TO_BIN(UUID()) WHERE uuid_public IS NULL;
+-- UPDATE vehicles SET uuid_public = UUID_TO_BIN(UUID()) WHERE uuid_public IS NULL;
+-- UPDATE bookings SET uuid_public = UUID_TO_BIN(UUID()) WHERE uuid_public IS NULL;
+
+-- Read UUIDs as text in queries
+-- SELECT BIN_TO_UUID(uuid_public) AS uuid_public FROM users;
+-- SELECT BIN_TO_UUID(uuid_public) AS uuid_public FROM addresses;
+-- SELECT BIN_TO_UUID(uuid_public) AS uuid_public FROM vehicles;
+-- SELECT BIN_TO_UUID(uuid_public) AS uuid_public FROM bookings;

@@ -6,37 +6,52 @@ const { AppError } = require("../utils/appError");
 const crypto = require("crypto");
 
 const createToken = (user) =>
-  jwt.sign({ userId: user.user_id, role: user.role_name }, env.jwtSecret, {
+  jwt.sign({ userId: user.id, role: user.role }, env.jwtSecret, {
     expiresIn: env.jwtExpiresIn
   });
 
-const register = async ({ full_name, email, password, role }) => {
-  if (!full_name || !email || !password || !role) {
-    throw new AppError("VALIDATION_ERROR", "full_name, email, password, role are required", 400);
+const splitFullName = (value) => {
+  const parts = String(value || "").trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return { name: "", lastname: "" };
+  const name = parts.shift();
+  const lastname = parts.join(" ");
+  return { name, lastname: lastname || "-" };
+};
+
+const register = async ({ full_name, name, lastname, email, password, role }) => {
+  const resolvedName = name || splitFullName(full_name).name;
+  const resolvedLastname = lastname || splitFullName(full_name).lastname;
+  if (!resolvedName || !resolvedLastname || !email || !password || !role) {
+    throw new AppError("VALIDATION_ERROR", "name, lastname, email, password, role are required", 400);
   }
 
   const normalizedRole = String(role).toUpperCase();
-  const [roleRows] = await pool.query("SELECT role_id, role_name FROM roles WHERE role_name = ?", [normalizedRole]);
-  if (!roleRows[0]) {
+  const allowedRoles = ["USER", "MECHANIC", "ADMIN"];
+  if (!allowedRoles.includes(normalizedRole)) {
     throw new AppError("ROLE_INVALID", "Role not supported", 400);
   }
 
-  const [existing] = await pool.query("SELECT user_id FROM users WHERE email = ?", [email]);
+  const [existing] = await pool.query("SELECT id FROM users WHERE email = ?", [email]);
   if (existing[0]) {
     throw new AppError("EMAIL_IN_USE", "Email already registered", 409);
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
   const [result] = await pool.query(
-    "INSERT INTO users (full_name, email, username, password_hash, role_id) VALUES (?, ?, ?, ?, ?)",
-    [full_name, email, String(email).split("@")[0], passwordHash, roleRows[0].role_id]
+    "INSERT INTO users (uuid_public, email, password_hash, role) VALUES (UUID_TO_BIN(UUID()), ?, ?, ?)",
+    [email, passwordHash, normalizedRole.toLowerCase()]
+  );
+  await pool.query(
+    "INSERT INTO user_profiles (user_id, name, lastname) VALUES (?, ?, ?)",
+    [result.insertId, resolvedName, resolvedLastname]
   );
 
   const user = {
-    user_id: result.insertId,
-    full_name,
+    id: result.insertId,
+    name: resolvedName,
+    lastname: resolvedLastname,
     email,
-    role_name: roleRows[0].role_name
+    role: normalizedRole.toLowerCase()
   };
 
   const token = createToken(user);
@@ -49,9 +64,10 @@ const login = async ({ email, password }) => {
   }
 
   const [rows] = await pool.query(
-    `SELECT u.user_id, u.full_name, u.email, u.username, u.password_hash, u.status, u.last_active, u.phone, u.address, u.avatar_url, r.role_name
+    `SELECT u.id, BIN_TO_UUID(u.uuid_public) AS uuid_public, u.email, u.phone, u.password_hash, u.role, u.last_login_at,
+            p.name, p.lastname, p.avatar_url
      FROM users u
-     JOIN roles r ON u.role_id = r.role_id
+     LEFT JOIN user_profiles p ON p.user_id = u.id
      WHERE u.email = ?`,
     [email]
   );
@@ -66,20 +82,19 @@ const login = async ({ email, password }) => {
     throw new AppError("AUTH_FAILED", "Invalid credentials", 401);
   }
 
-  await pool.query("UPDATE users SET last_active = NOW() WHERE user_id = ?", [user.user_id]);
+  await pool.query("UPDATE users SET last_login_at = NOW() WHERE id = ?", [user.id]);
   const token = createToken(user);
   return {
     user: {
-      user_id: user.user_id,
-      full_name: user.full_name,
+      id: user.id,
+      uuid_public: user.uuid_public,
+      name: user.name,
+      lastname: user.lastname,
       email: user.email,
-      username: user.username,
       phone: user.phone,
-      address: user.address,
       avatar_url: user.avatar_url,
-      role_name: user.role_name,
-      status: user.status,
-      last_active: user.last_active
+      role: user.role,
+      last_login_at: user.last_login_at
     },
     token
   };
@@ -90,7 +105,7 @@ const requestPasswordReset = async (email) => {
     throw new AppError("VALIDATION_ERROR", "email is required", 400);
   }
 
-  const [rows] = await pool.query("SELECT user_id, email FROM users WHERE email = ?", [email]);
+  const [rows] = await pool.query("SELECT id, email FROM users WHERE email = ?", [email]);
   const user = rows[0];
   if (!user) {
     throw new AppError("NOT_FOUND", "User not found", 404);
@@ -101,7 +116,7 @@ const requestPasswordReset = async (email) => {
 
   await pool.query(
     "INSERT INTO password_reset_requests (user_id, token, expires_at) VALUES (?, ?, ?)",
-    [user.user_id, token, expiresAt]
+    [user.id, token, expiresAt]
   );
 
   return { token, email: user.email, expiresAt };
@@ -140,7 +155,7 @@ const resetPassword = async ({ token, password }) => {
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
-  await pool.query("UPDATE users SET password_hash = ? WHERE user_id = ?", [passwordHash, request.user_id]);
+  await pool.query("UPDATE users SET password_hash = ? WHERE id = ?", [passwordHash, request.user_id]);
   await pool.query("DELETE FROM password_reset_requests WHERE request_id = ?", [request.request_id]);
 };
 

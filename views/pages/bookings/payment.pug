@@ -1,0 +1,50 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Payment"
+  - var bodyClass = ""
+
+block content
+  include ../../partials/navbar
+  main.page-shell.bookings-shell#bookingPaymentPage
+    .details-layout
+      aside.details-summary
+        .price-card
+          .price-head
+            span Total price
+            span.save-badge You save 51%
+          .price-main
+            span.price-value#paymentTotal £0.00
+            span.price-note Quote includes VAT where applicable
+          .price-vehicle
+            span#paymentVehicle Toyota Corolla 1.4L Petrol 2005 · KT10 0QR
+            a(href="#") Edit
+        .summary-section
+          h3 Selected work
+          p.form-error.is-hidden#paymentEmpty No items selected yet.
+          #paymentItems
+      section.details-content
+        h1 Payment
+        .details-card
+          h3 Why provide your card details now?
+          ul.payment-benefits
+            li We won't charge you until the work is complete.
+            li Extra protection if anything goes wrong after booking.
+            li Free cancellation up to 24 hours before the booking.
+        .details-card
+          h3 Payment details
+          p.help-text Enter your card details now and be charged when the work is completed.
+          label
+            | Name on card
+            input(type="text" placeholder="e.g. Mr John Smith")
+          label
+            | Card number
+            input(type="text" placeholder="e.g. 1234 1234 1234 1234")
+          .field-grid
+            label
+              | Expiry date
+              input(type="text" placeholder="MM / YY")
+            label
+              | Security code
+              input(type="text" placeholder="CVC")
+          button.primary.details-submit(type="button") Complete booking

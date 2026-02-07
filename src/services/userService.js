@@ -4,43 +4,65 @@ const crypto = require("crypto");
 
 const getUserById = async (userId) => {
   const [rows] = await pool.query(
-    `SELECT u.user_id, u.full_name, u.email, u.username, u.phone, u.address, u.avatar_url, r.role_name
+    `SELECT u.id, BIN_TO_UUID(u.uuid_public) AS uuid_public, u.email, u.phone, u.role, u.created_at, u.last_login_at,
+            p.name, p.lastname, p.avatar_url
      FROM users u
-     JOIN roles r ON u.role_id = r.role_id
-     WHERE u.user_id = ?`,
+     LEFT JOIN user_profiles p ON p.user_id = u.id
+     WHERE u.id = ?`,
     [userId]
   );
   return rows[0];
 };
 
-const updateUserProfile = async (userId, { full_name, phone, address }) => {
+const resolveNames = (payload) => {
+  if (payload.name && payload.lastname) {
+    return { name: payload.name.trim(), lastname: payload.lastname.trim() };
+  }
+  if (payload.full_name) {
+    const parts = String(payload.full_name).trim().split(/\s+/);
+    const name = parts.shift() || "";
+    const lastname = parts.join(" ") || "-";
+    return { name, lastname };
+  }
+  return { name: null, lastname: null };
+};
+
+const updateUserProfile = async (userId, { name, lastname, full_name, phone }) => {
   const updates = [];
   const params = [];
 
-  if (full_name !== undefined) {
-    updates.push("full_name = ?");
-    params.push(full_name);
-  }
   if (phone !== undefined) {
     updates.push("phone = ?");
     params.push(phone);
   }
-  if (address !== undefined) {
-    updates.push("address = ?");
-    params.push(address);
+
+  if (updates.length) {
+    params.push(userId);
+    await pool.query(`UPDATE users SET ${updates.join(", ")} WHERE id = ?`, params);
   }
 
-  if (!updates.length) {
+  const resolved = resolveNames({ name, lastname, full_name });
+  if (resolved.name && resolved.lastname) {
+    await pool.query(
+      `INSERT INTO user_profiles (user_id, name, lastname)
+       VALUES (?, ?, ?)
+       ON DUPLICATE KEY UPDATE name = VALUES(name), lastname = VALUES(lastname)`,
+      [userId, resolved.name, resolved.lastname]
+    );
+  } else if (!updates.length) {
     throw new AppError("VALIDATION_ERROR", "No profile fields provided", 400);
   }
 
-  params.push(userId);
-  await pool.query(`UPDATE users SET ${updates.join(", ")} WHERE user_id = ?`, params);
   return getUserById(userId);
 };
 
 const updateUserAvatar = async (userId, avatarUrl) => {
-  await pool.query("UPDATE users SET avatar_url = ? WHERE user_id = ?", [avatarUrl, userId]);
+  await pool.query(
+    `INSERT INTO user_profiles (user_id, name, lastname, avatar_url)
+     VALUES (?, '-', '-', ?)
+     ON DUPLICATE KEY UPDATE avatar_url = VALUES(avatar_url)`,
+    [userId, avatarUrl]
+  );
   return getUserById(userId);
 };
 
@@ -48,7 +70,7 @@ const requestEmailChange = async (userId, newEmail) => {
   if (!newEmail) {
     throw new AppError("VALIDATION_ERROR", "email is required", 400);
   }
-  const [existing] = await pool.query("SELECT user_id FROM users WHERE email = ?", [newEmail]);
+  const [existing] = await pool.query("SELECT id FROM users WHERE email = ?", [newEmail]);
   if (existing[0]) {
     throw new AppError("EMAIL_IN_USE", "Email already registered", 409);
   }
@@ -84,12 +106,7 @@ const confirmEmailChange = async (token) => {
     throw new AppError("INVALID_TOKEN", "Token expired", 400);
   }
 
-  const username = String(request.new_email).split("@")[0];
-  await pool.query("UPDATE users SET email = ?, username = ? WHERE user_id = ?", [
-    request.new_email,
-    username,
-    request.user_id
-  ]);
+  await pool.query("UPDATE users SET email = ? WHERE id = ?", [request.new_email, request.user_id]);
   await pool.query("DELETE FROM email_change_requests WHERE request_id = ?", [request.request_id]);
   return getUserById(request.user_id);
 };

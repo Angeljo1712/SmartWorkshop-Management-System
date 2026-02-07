@@ -104,33 +104,7 @@ const ensureSampleRequest = async (connection, customerId) => {
 };
 
 const seedDatabase = async () => {
-  const connection = await pool.getConnection();
-  try {
-    await connection.beginTransaction();
-
-    const roleIds = {};
-    for (const roleName of SEED.roles) {
-      roleIds[roleName] = await ensureRole(connection, roleName);
-    }
-
-    const adminId = await ensureUser(connection, SEED.users.admin, roleIds.ADMIN);
-    const mechanicId = await ensureUser(connection, SEED.users.mechanic, roleIds.MECHANIC);
-    const customerId = await ensureUser(connection, SEED.users.customer, roleIds.CUSTOMER);
-
-    const workshopId = await ensureWorkshop(connection);
-    await ensureWorkshopMember(connection, workshopId, mechanicId, "Mechanic");
-    await ensureWorkshopMember(connection, workshopId, adminId, "Owner");
-
-    await ensureSampleRequest(connection, customerId);
-
-    await connection.commit();
-    console.log("Seed data ensured.");
-  } catch (err) {
-    await connection.rollback();
-    console.error("Seed failed", err);
-  } finally {
-    connection.release();
-  }
+  console.log("Seed skipped: schema has been migrated and seed data is not configured for the new model.");
 };
 
 module.exports = { seedDatabase };

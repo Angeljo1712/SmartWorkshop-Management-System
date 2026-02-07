@@ -6,7 +6,7 @@ block vars
 
 block content
   include ../../partials/navbar
-  main.page-shell.bookings-shell
+  main.page-shell.bookings-shell#bookingDetailsPage
     .details-layout
       aside.details-summary
         .price-card
@@ -14,25 +14,25 @@ block content
             span Total price
             span.save-badge You save 51%
           .price-main
-            span.price-value £442.96
+            span.price-value#summaryTotal £0.00
             span.price-note Quote includes VAT where applicable
-          .price-compare
-            span Dealer price: £912.48
-          .price-vehicle
-            span Toyota Corolla 1.4L Petrol 2005 · KT10 0QR
-            a(href="#") Edit
         .summary-section
           h3 Confirmed work
+          p.form-error.is-hidden#selectedWorkEmpty No items selected yet.
+          #selectedWorkList
           .summary-item
-            div
-              strong Vehicle health check
-              span £30.00 (normally £50.00)
-            button.primary(type="button") Add
+            strong Subtotal
+            span#summarySubtotal £0.00
           .summary-item
-            div
-              strong Clutch replacement
-              span £412.96
-            a(href="#") More info
+            strong VAT
+            span#summaryVat £0.00
+        .summary-section
+          h3 Work details
+          p#summaryNotes No notes yet.
+          p#summaryDrivable Vehicle drivable: -
+        .summary-section
+          h3 Availability
+          p#summaryAvailability No availability selected yet.
       section.details-content
         h1 Booking details
         form#bookingDetailsForm
@@ -48,6 +48,7 @@ block content
             label
               | Email
               input#detailsEmail(type="email" placeholder="Email" required)
+            a.details-signin(href="/auth/login") Sign in with an existing account
             label.checkbox
               input#detailsOptIn(type="checkbox")
               span Opt in to receive MOT reminders and monthly promotions.
@@ -79,32 +80,52 @@ block content
               span 6 Feb 2026
               button.ghost(type="button") &gt;
             .availability-grid
-              .availability-day
+              .availability-day(data-day="6th" data-weekday="Friday")
                 strong 6th
                 span Friday
-                button.slot(type="button") All day
-                button.slot(type="button") 8-10 AM
-                button.slot(type="button") 10-12 AM
-                button.slot(type="button") 12-2 PM
-                button.slot(type="button") 2-4 PM
-                button.slot(type="button") 4-6 PM
-              .availability-day
+                button.slot(type="button" data-time="All day") All day
+                button.slot(type="button" data-time="8-10 AM") 8-10 AM
+                button.slot(type="button" data-time="10-12 AM") 10-12 AM
+                button.slot(type="button" data-time="12-2 PM") 12-2 PM
+                button.slot(type="button" data-time="2-4 PM") 2-4 PM
+                button.slot(type="button" data-time="4-6 PM") 4-6 PM
+              .availability-day(data-day="7th" data-weekday="Saturday")
                 strong 7th
                 span Saturday
-                button.slot(type="button") All day
-                button.slot(type="button") 8-10 AM
-                button.slot(type="button") 10-12 AM
-                button.slot(type="button") 12-2 PM
-                button.slot(type="button") 2-4 PM
-                button.slot(type="button") 4-6 PM
-              .availability-day
+                button.slot(type="button" data-time="All day") All day
+                button.slot(type="button" data-time="8-10 AM") 8-10 AM
+                button.slot(type="button" data-time="10-12 AM") 10-12 AM
+                button.slot(type="button" data-time="12-2 PM") 12-2 PM
+                button.slot(type="button" data-time="2-4 PM") 2-4 PM
+                button.slot(type="button" data-time="4-6 PM") 4-6 PM
+              .availability-day(data-day="8th" data-weekday="Sunday")
                 strong 8th
                 span Sunday
-                button.slot(type="button") All day
-                button.slot(type="button") 8-10 AM
-                button.slot(type="button") 10-12 AM
-                button.slot(type="button") 12-2 PM
-                button.slot(type="button") 2-4 PM
-                button.slot(type="button") 4-6 PM
+                button.slot(type="button" data-time="All day") All day
+                button.slot(type="button" data-time="8-10 AM") 8-10 AM
+                button.slot(type="button" data-time="10-12 AM") 10-12 AM
+                button.slot(type="button" data-time="12-2 PM") 12-2 PM
+                button.slot(type="button" data-time="2-4 PM") 2-4 PM
+                button.slot(type="button" data-time="4-6 PM") 4-6 PM
+          .details-card
+            h3 Work details
+            .notice-box
+              p Describe the problem in as much detail as possible. Try to include the symptoms and details of any other diagnostics you've had done.
+            label
+              | Diagnostic inspection notes:
+              textarea#detailsNotes(placeholder="Describe the issue" rows="4")
+            .notice-box
+              p Please note, this is an inspection service only.
+              a(href="#") More info
+          .details-card
+            h3 Your vehicle
+            p.help-text
+              | We'll offer your booking to mobile mechanics & workshops who provide collection & delivery.
+              a(href="#") Learn more
+            .toggle-row
+              span Is your vehicle drivable if collected?
+              .toggle-options
+                button.toggle.is-active(type="button") Yes
+                button.toggle(type="button") No
           p.form-error#bookingDetailsError(role="alert" aria-live="polite")
-          button.primary.details-submit(type="submit") Confirm booking
+          button.primary.details-submit(type="submit") Continue to payment
