@@ -1,0 +1,33 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Mechanic Dashboard"
+  - var bodyClass = "mechanic-dashboard"
+
+block content
+  header.site-header.admin-header
+    .brand
+      span.logo SW
+      div
+        strong SmartWorkshop
+        span Vehicle Service Marketplace
+
+  main.mechanic-shell
+    aside.mechanic-panel
+      h3 Finish your profile now!
+      a.primary.ghost-link#mechanicEditProfile(href="/mechanic/0/profile") Edit profile
+      a.secondary.ghost-link#mechanicViewProfile(href="/mechanic/0/view") View profile
+
+    section.mechanic-main
+      h1 Welcome back
+        span#mechanicWelcomeName Angel G
+        | !
+      p.mechanic-id
+        | Mechanic ID:
+        span#mechanicId AG687
+      p.mechanic-note There's not too much to see here yet, but this will be the home for all of your bookings. Please take time to explore the links at the top of the page and read through the information provided.
+
+      .mechanic-card
+        h3 Your bookings
+        .mechanic-card-body
+          p You have not had any bookings yet.

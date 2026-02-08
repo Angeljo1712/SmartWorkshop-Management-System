@@ -31,11 +31,19 @@ const createUserHandler = async (req, res) => {
   res.status(201).json(user);
 };
 
+const setUserRoleHandler = async (req, res) => {
+  const userId = Number(req.params.userId);
+  const { role, action } = req.body || {};
+  const result = await adminService.setUserRole({ userId, role, action });
+  res.json(result);
+};
+
 module.exports = {
   listWorkshopsHandler,
   createWorkshopHandler,
   updateWorkshopHandler,
   deleteWorkshopHandler,
   listUsersHandler,
-  createUserHandler
+  createUserHandler,
+  setUserRoleHandler
 };

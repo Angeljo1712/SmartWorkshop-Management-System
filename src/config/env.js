@@ -33,7 +33,7 @@ const env = {
     pass: process.env.SMTP_PASS || "",
     from: process.env.SMTP_FROM || ""
   },
-  appBaseUrl: process.env.APP_BASE_URL || "http://localhost:5173",
+  appBaseUrl: process.env.APP_BASE_URL || "http://localhost:3000",
   seedOnStart: process.env.SEED_ON_START === "true"
 };
 

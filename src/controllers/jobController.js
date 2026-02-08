@@ -4,12 +4,13 @@ const { AppError } = require("../utils/appError");
 const { getWorkshopIdForMechanic } = require("../services/quotationService");
 
 const getJobsMeHandler = async (req, res) => {
-  if (req.user.role === "CUSTOMER") {
+  const roles = Array.isArray(req.user.roles) ? req.user.roles : [req.user.role];
+  if (roles.includes("CUSTOMER")) {
     const jobs = await jobService.getJobsForCustomer(req.user.userId);
     return res.json(jobs);
   }
 
-  if (req.user.role === "MECHANIC") {
+  if (roles.includes("MECHANIC")) {
     const workshopId = await getWorkshopIdForMechanic(req.user.userId);
     if (!workshopId) {
       throw new AppError("WORKSHOP_REQUIRED", "Mechanic must belong to a workshop", 403);
@@ -24,10 +25,12 @@ const getJobsMeHandler = async (req, res) => {
 
 const updateJobStatusHandler = async (req, res) => {
   const { status, comment } = req.body;
+  const roles = Array.isArray(req.user.roles) ? req.user.roles : [req.user.role];
+  const primaryRole = roles.includes("MECHANIC") ? "MECHANIC" : req.user.role;
   const updated = await jobService.updateJobStatus({
     jobId: Number(req.params.jobId),
     userId: req.user.userId,
-    role: req.user.role,
+    role: primaryRole,
     status,
     comment
   });
@@ -48,11 +51,12 @@ const getJobHistoryHandler = async (req, res) => {
     throw new AppError("JOB_NOT_FOUND", "Job not found", 404);
   }
 
-  if (req.user.role === "CUSTOMER" && job.customer_id !== req.user.userId) {
+  const roles = Array.isArray(req.user.roles) ? req.user.roles : [req.user.role];
+  if (roles.includes("CUSTOMER") && job.customer_id !== req.user.userId) {
     throw new AppError("FORBIDDEN", "Access denied", 403);
   }
 
-  if (req.user.role === "MECHANIC") {
+  if (roles.includes("MECHANIC")) {
     const workshopId = await getWorkshopIdForMechanic(req.user.userId);
     if (!workshopId || workshopId !== job.workshop_id) {
       throw new AppError("FORBIDDEN", "Access denied", 403);

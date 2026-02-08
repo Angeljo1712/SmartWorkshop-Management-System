@@ -14,13 +14,14 @@ const getQuotationsForRequestHandler = async (req, res) => {
     throw new AppError("REQUEST_NOT_FOUND", "Service request not found", 404);
   }
 
-  if (req.user.role === "CUSTOMER" && request.customer_id !== req.user.userId) {
+  const roles = Array.isArray(req.user.roles) ? req.user.roles : [req.user.role];
+  if (roles.includes("CUSTOMER") && request.customer_id !== req.user.userId) {
     throw new AppError("FORBIDDEN", "Access denied", 403);
   }
 
   const quotations = await quotationService.getQuotationsForRequest(requestId);
 
-  if (req.user.role === "MECHANIC") {
+  if (roles.includes("MECHANIC")) {
     const workshopId = await quotationService.getWorkshopIdForMechanic(req.user.userId);
     if (!workshopId) {
       throw new AppError("FORBIDDEN", "Mechanic must belong to a workshop", 403);

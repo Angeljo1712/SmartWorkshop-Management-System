@@ -13,6 +13,7 @@ const bookingsRouter = require("./routes/bookings");
 const catalogRouter = require("./routes/catalog");
 const { errorHandler } = require("./middlewares/error");
 const { cors } = require("./middlewares/cors");
+const mechanicService = require("./services/mechanicService");
 
 const app = express();
 
@@ -56,7 +57,11 @@ app.get("/admin", (req, res) => {
   res.render("pages/admin/dashboard");
 });
 
-app.get("/user", (req, res) => {
+app.get("/user", (_req, res) => {
+  res.redirect(302, "/user/dashboard");
+});
+
+app.get("/user/dashboard", (req, res) => {
   res.render("pages/user/index");
 });
 
@@ -101,6 +106,67 @@ app.get("/bookings/confirm", (req, res) => {
 
 app.get("/mechanic/home", (req, res) => {
   res.render("pages/mechanic/home");
+});
+
+app.get("/mechanic", (req, res) => {
+  res.redirect(302, "/mechanic/dashboard");
+});
+
+app.get("/mechanic/dashboard", (req, res) => {
+  res.render("pages/mechanic/dashboard");
+});
+
+app.get("/mechanic/:id/profile", (req, res) => {
+  res.render("pages/mechanic/profile", { mechanicId: req.params.id });
+});
+
+app.get("/mechanic/:id/picture", (req, res) => {
+  res.render("pages/mechanic/picture", { mechanicId: req.params.id });
+});
+
+app.get("/mechanic/:id/certifications", (req, res) => {
+  mechanicService
+    .getProfile(Number(req.params.id))
+    .then((profile) => res.render("pages/mechanic/certifications", { mechanicId: req.params.id, profile }))
+    .catch((err) => {
+      console.error(err);
+      res.render("pages/mechanic/certifications", { mechanicId: req.params.id, profile: null });
+    });
+});
+
+app.post("/mechanic/:id/certifications", (req, res, next) => {
+  const mechanicId = Number(req.params.id);
+  const { qualification } = req.body || {};
+  mechanicService
+    .addQualification({ userId: mechanicId, name: qualification })
+    .then(() => res.redirect(302, `/mechanic/${mechanicId}/certifications`))
+    .catch(next);
+});
+
+app.get("/mechanic/:id/tax", (req, res) => {
+  res.render("pages/mechanic/tax", { mechanicId: req.params.id });
+});
+
+app.get("/mechanic/:id/preferences", (req, res) => {
+  res.render("pages/mechanic/preferences", { mechanicId: req.params.id });
+});
+
+app.get("/mechanic/documents", (req, res) => {
+  res.render("pages/mechanic/documents", { mechanicId: null });
+});
+
+app.get("/mechanic/:id/types", (req, res) => {
+  res.render("pages/mechanic/types", { mechanicId: req.params.id });
+});
+
+app.get("/mechanic/:id", async (req, res, next) => {
+  try {
+    const mechanicId = Number(req.params.id);
+    const profile = await mechanicService.getProfile(mechanicId);
+    res.render("pages/mechanic/view", { mechanicId: req.params.id, profile });
+  } catch (err) {
+    next(err);
+  }
 });
 
 app.get("/application/join", (req, res) => {

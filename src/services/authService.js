@@ -5,10 +5,42 @@ const { env } = require("../config/env");
 const { AppError } = require("../utils/appError");
 const crypto = require("crypto");
 
-const createToken = (user) =>
-  jwt.sign({ userId: user.id, role: user.role }, env.jwtSecret, {
-    expiresIn: env.jwtExpiresIn
-  });
+const roleToLabel = (role) => {
+  const normalized = String(role || "").toLowerCase();
+  if (normalized === "user") return "CUSTOMER";
+  if (normalized === "mechanic") return "MECHANIC";
+  if (normalized === "admin") return "ADMIN";
+  return String(role || "").toUpperCase();
+};
+
+const normalizeRole = (role) => String(role || "").trim().toLowerCase();
+
+const createToken = (payload) =>
+  jwt.sign(
+    {
+      userId: payload.id,
+      role: payload.role,
+      roles: payload.roles
+    },
+    env.jwtSecret,
+    {
+      expiresIn: env.jwtExpiresIn
+    }
+  );
+
+const getUserRoles = async (userId, fallbackRole) => {
+  const [rows] = await pool.query("SELECT role FROM user_roles WHERE user_id = ?", [userId]);
+  const roles = rows.map((row) => row.role);
+  if (roles.length) return roles;
+  if (fallbackRole) return [normalizeRole(fallbackRole)];
+  return [];
+};
+
+const sortRoles = (roles) => {
+  const priority = ["ADMIN", "MECHANIC", "CUSTOMER"];
+  const unique = Array.from(new Set(roles));
+  return unique.sort((a, b) => priority.indexOf(a) - priority.indexOf(b));
+};
 
 const splitFullName = (value) => {
   const parts = String(value || "").trim().split(/\s+/).filter(Boolean);
@@ -21,12 +53,12 @@ const splitFullName = (value) => {
 const register = async ({ full_name, name, lastname, email, password, role }) => {
   const resolvedName = name || splitFullName(full_name).name;
   const resolvedLastname = lastname || splitFullName(full_name).lastname;
-  if (!resolvedName || !resolvedLastname || !email || !password || !role) {
-    throw new AppError("VALIDATION_ERROR", "name, lastname, email, password, role are required", 400);
+  if (!resolvedName || !resolvedLastname || !email || !password) {
+    throw new AppError("VALIDATION_ERROR", "name, lastname, email, password are required", 400);
   }
 
-  const normalizedRole = String(role).toUpperCase();
-  const allowedRoles = ["USER", "MECHANIC", "ADMIN"];
+  const normalizedRole = normalizeRole(role || "user");
+  const allowedRoles = ["user", "mechanic", "admin"];
   if (!allowedRoles.includes(normalizedRole)) {
     throw new AppError("ROLE_INVALID", "Role not supported", 400);
   }
@@ -39,22 +71,30 @@ const register = async ({ full_name, name, lastname, email, password, role }) =>
   const passwordHash = await bcrypt.hash(password, 10);
   const [result] = await pool.query(
     "INSERT INTO users (uuid_public, email, password_hash, role) VALUES (UUID_TO_BIN(UUID()), ?, ?, ?)",
-    [email, passwordHash, normalizedRole.toLowerCase()]
+    [email, passwordHash, normalizedRole]
   );
+  await pool.query("INSERT INTO user_roles (user_id, role) VALUES (?, ?) ON DUPLICATE KEY UPDATE role = role", [
+    result.insertId,
+    normalizedRole
+  ]);
   await pool.query(
     "INSERT INTO user_profiles (user_id, name, lastname) VALUES (?, ?, ?)",
     [result.insertId, resolvedName, resolvedLastname]
   );
 
+  const roleLabel = roleToLabel(normalizedRole);
+  const roles = [roleLabel];
   const user = {
     id: result.insertId,
     name: resolvedName,
     lastname: resolvedLastname,
     email,
-    role: normalizedRole.toLowerCase()
+    role: normalizedRole,
+    role_name: roleLabel,
+    roles
   };
 
-  const token = createToken(user);
+  const token = createToken({ id: user.id, role: roleLabel, roles });
   return { user, token };
 };
 
@@ -83,7 +123,10 @@ const login = async ({ email, password }) => {
   }
 
   await pool.query("UPDATE users SET last_login_at = NOW() WHERE id = ?", [user.id]);
-  const token = createToken(user);
+  const roles = await getUserRoles(user.id, user.role);
+  const roleLabels = sortRoles(roles.map(roleToLabel));
+  const primaryRole = roleLabels[0] || roleToLabel(user.role);
+  const token = createToken({ id: user.id, role: primaryRole, roles: roleLabels });
   return {
     user: {
       id: user.id,
@@ -94,6 +137,8 @@ const login = async ({ email, password }) => {
       phone: user.phone,
       avatar_url: user.avatar_url,
       role: user.role,
+      role_name: primaryRole,
+      roles: roleLabels,
       last_login_at: user.last_login_at
     },
     token
@@ -140,7 +185,7 @@ const resetPassword = async ({ token, password }) => {
   }
 
   const [rows] = await pool.query(
-    `SELECT request_id, user_id, expires_at
+    `SELECT id, user_id, expires_at
      FROM password_reset_requests
      WHERE token = ?`,
     [token]
@@ -150,13 +195,13 @@ const resetPassword = async ({ token, password }) => {
     throw new AppError("INVALID_TOKEN", "Invalid or expired token", 400);
   }
   if (new Date(request.expires_at).getTime() < Date.now()) {
-    await pool.query("DELETE FROM password_reset_requests WHERE request_id = ?", [request.request_id]);
+    await pool.query("DELETE FROM password_reset_requests WHERE id = ?", [request.id]);
     throw new AppError("INVALID_TOKEN", "Token expired", 400);
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
   await pool.query("UPDATE users SET password_hash = ? WHERE id = ?", [passwordHash, request.user_id]);
-  await pool.query("DELETE FROM password_reset_requests WHERE request_id = ?", [request.request_id]);
+  await pool.query("DELETE FROM password_reset_requests WHERE id = ?", [request.id]);
 };
 
 module.exports = { register, login, requestPasswordReset, resetPassword };

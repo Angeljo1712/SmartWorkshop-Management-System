@@ -20,7 +20,16 @@ const authenticate = (req, _res, next) => {
 };
 
 const authorizeRoles = (...roles) => (req, _res, next) => {
-  if (!req.user || !roles.includes(req.user.role)) {
+  if (!req.user) {
+    return next(new AppError("FORBIDDEN", "Insufficient permissions", 403));
+  }
+  const userRoles = Array.isArray(req.user.roles)
+    ? req.user.roles
+    : req.user.role
+      ? [req.user.role]
+      : [];
+  const allowed = roles.some((role) => userRoles.includes(role));
+  if (!allowed) {
     return next(new AppError("FORBIDDEN", "Insufficient permissions", 403));
   }
   return next();

@@ -26,6 +26,18 @@ CREATE TABLE IF NOT EXISTS user_profiles (
   CONSTRAINT fk_up_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS user_roles (
+  user_id BIGINT UNSIGNED NOT NULL,
+  role ENUM('user','mechanic','admin') NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, role),
+  CONSTRAINT fk_ur_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Backfill roles for existing users (run once if needed)
+-- INSERT IGNORE INTO user_roles (user_id, role)
+-- SELECT id, role FROM users;
+
 -- ================================
 -- Booking drafts (pre-checkout)
 -- ================================
@@ -90,6 +102,15 @@ CREATE TABLE IF NOT EXISTS mechanic_profiles (
   jobs_done INT NOT NULL DEFAULT 0,
   about TEXT,
   CONSTRAINT fk_mp_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS mechanic_qualifications (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT UNSIGNED NOT NULL,
+  name VARCHAR(160) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY idx_mq_user (user_id),
+  CONSTRAINT fk_mq_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS addresses (

@@ -987,7 +987,7 @@ if (signInForm) {
         window.location.href = "/admin";
         return;
       }
-      window.location.href = "/user";
+      window.location.href = "/user/dashboard";
     } catch (err) {
       signInError.textContent = err?.error?.message || "Login failed. Check your credentials.";
     }
@@ -1093,6 +1093,7 @@ if (userPage) {
   const userSettingsEmailDetailSettings = document.getElementById("userSettingsEmailDetailSettings");
   const userSettingsRoleSettings = document.getElementById("userSettingsRoleSettings");
   const userSettingsPhoneSettings = document.getElementById("userSettingsPhoneSettings");
+  const userRoleSwitcher = document.getElementById("userRoleSwitcher");
   const userSettingsPhotoInput = document.getElementById("userSettingsPhotoInput");
   const userSettingsPhoneInput = document.getElementById("userSettingsPhoneInput");
   const userSettingsEmailInput = document.getElementById("userSettingsEmailInput");
@@ -1140,35 +1141,66 @@ if (userPage) {
     el.textContent = initials;
   };
 
+  const resolveActiveRole = (roles) => {
+    const stored = sessionStorage.getItem("activeRole");
+    if (stored && roles.includes(stored)) return stored;
+    if (roles.includes("CUSTOMER")) return "CUSTOMER";
+    return roles[0] || "CUSTOMER";
+  };
+
   const setUserHeader = (user) => {
     const displayName = user?.full_name || user?.email || "User";
-    const role = user?.role_name || "CUSTOMER";
+    const roles = Array.isArray(user?.roles) && user.roles.length ? user.roles : [user?.role_name || "CUSTOMER"];
+    const activeRole = resolveActiveRole(roles);
     const initials = getInitials(displayName);
     setAvatar(userProfileAvatar, initials, user?.avatar_url);
     userProfileName.textContent = displayName;
-    userProfileRole.textContent = role;
+    userProfileRole.textContent = activeRole;
     setAvatar(userSettingsAvatar, initials, user?.avatar_url);
     userSettingsName.textContent = displayName;
     if (userSettingsEmail) userSettingsEmail.textContent = user?.email || "-";
     userSettingsEmailDetail.textContent = `Email: ${user?.email || "-"}`;
-    userSettingsRole.textContent = role;
+    userSettingsRole.textContent = activeRole;
     userSettingsPhone.textContent = `Phone: ${user?.phone || "-"}`;
     if (userSettingsAddress) userSettingsAddress.textContent = `Address: ${user?.address || "-"}`;
     if (userSettingsAvatarSettings) setAvatar(userSettingsAvatarSettings, initials, user?.avatar_url);
     if (userSettingsNameSettings) userSettingsNameSettings.textContent = displayName;
     if (userSettingsEmailDetailSettings)
       userSettingsEmailDetailSettings.textContent = `Email: ${user?.email || "-"}`;
-    if (userSettingsRoleSettings) userSettingsRoleSettings.textContent = role;
+    if (userSettingsRoleSettings) userSettingsRoleSettings.textContent = activeRole;
     if (userSettingsPhoneSettings)
       userSettingsPhoneSettings.textContent = `Phone: ${user?.phone || "-"}`;
 
     if (userSettingsPhoneInput) userSettingsPhoneInput.value = user?.phone || "";
     if (userSettingsEmailInput) userSettingsEmailInput.value = user?.email || "";
     if (userSettingsAddressInput) userSettingsAddressInput.value = user?.address || "";
+
+    if (userRoleSwitcher) {
+      userRoleSwitcher.innerHTML = "";
+      roles.forEach((role) => {
+        const option = document.createElement("option");
+        option.value = role;
+        option.textContent = role;
+        if (role === activeRole) option.selected = true;
+        userRoleSwitcher.appendChild(option);
+      });
+      userRoleSwitcher.classList.toggle("is-hidden", roles.length <= 1);
+      userRoleSwitcher.onchange = () => {
+        sessionStorage.setItem("activeRole", userRoleSwitcher.value);
+        const selectedRole = userRoleSwitcher.value;
+        setUserHeader({ ...user, roles });
+        if (selectedRole === "MECHANIC") {
+          window.location.href = "/mechanic/dashboard";
+        } else if (selectedRole === "CUSTOMER") {
+          window.location.href = "/user/dashboard";
+        }
+      };
+    }
   };
 
   const profile = getUserProfile();
   if (profile) {
+    sessionStorage.setItem("activeRole", "CUSTOMER");
     setUserHeader(profile);
   } else {
     window.location.href = "/auth";
@@ -1283,6 +1315,51 @@ if (userPage) {
     clearUserSession();
     window.location.href = "/auth";
   });
+}
+
+const mechanicDashboard = document.querySelector(".mechanic-shell");
+if (mechanicDashboard) {
+  const nameEl = document.getElementById("mechanicWelcomeName");
+  const idEl = document.getElementById("mechanicId");
+  const editLink = document.getElementById("mechanicEditProfile");
+  const viewLink = document.getElementById("mechanicViewProfile");
+  const profile = sessionStorage.getItem("userProfile");
+  if (profile) {
+    try {
+      const user = JSON.parse(profile);
+      const name = [user.name, user.lastname].filter(Boolean).join(" ") || user.email || "Mechanic";
+      if (nameEl) nameEl.textContent = name;
+      if (idEl) {
+        const base = (user.uuid_public || user.id || "0000").toString().slice(-4).toUpperCase();
+        idEl.textContent = `AG${base}`;
+      }
+      if (editLink) {
+        const userId = user.id || "0";
+        editLink.href = `/mechanic/${userId}/profile`;
+      }
+      if (viewLink) {
+        const userId = user.id || "0";
+        viewLink.href = `/mechanic/${userId}`;
+      }
+    } catch {}
+  }
+}
+
+const mechanicEditNav = document.querySelector(".mechanic-edit-nav");
+if (mechanicEditNav) {
+  const profile = sessionStorage.getItem("userProfile");
+  if (profile) {
+    try {
+      const user = JSON.parse(profile);
+      const userId = user.id || "0";
+      mechanicEditNav.querySelectorAll("a").forEach((link) => {
+        if (link.href.includes("/mechanic/0/") || link.href.includes("/mechanic/null/")) {
+          link.href = link.href.replace("/mechanic/0/", `/mechanic/${userId}/`);
+          link.href = link.href.replace("/mechanic/null/", `/mechanic/${userId}/`);
+        }
+      });
+    } catch {}
+  }
 }
 
 const confirmEmailPage = document.getElementById("confirmEmailPage");

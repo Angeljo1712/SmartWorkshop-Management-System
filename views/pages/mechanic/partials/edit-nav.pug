@@ -1,0 +1,12 @@
+aside.mechanic-edit-sidebar
+  - var safeId = mechanicId || 0
+  h2 Edit profile
+  nav.mechanic-edit-nav
+    a(class=activePage === "profile" ? "active" : "" href=`/mechanic/${safeId}/profile`) Profile
+    a(class=activePage === "picture" ? "active" : "" href=`/mechanic/${safeId}/picture`) Profile Picture
+    a(class=activePage === "certifications" ? "active" : "" href=`/mechanic/${safeId}/certifications`) Certifications
+    a(class=activePage === "tax" ? "active" : "" href=`/mechanic/${safeId}/tax`) Tax Information
+    a(class=activePage === "documents" ? "active" : "" href=`/mechanic/documents`) Documents
+    a(class=activePage === "preferences" ? "active" : "" href=`/mechanic/${safeId}/preferences`) Preferences
+    a(class=activePage === "types" ? "active" : "" href=`/mechanic/${safeId}/types`) Types of work covered
+    a(class=activePage === "view" ? "active" : "" href=`/mechanic/${safeId}`) View Profile

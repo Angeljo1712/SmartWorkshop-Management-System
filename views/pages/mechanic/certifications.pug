@@ -1,0 +1,50 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Certifications"
+  - var bodyClass = "mechanic-edit-body"
+  - var activePage = "certifications"
+  - var qualifications = profile && profile.qualifications ? profile.qualifications : []
+
+block content
+  header.site-header.admin-header
+    .brand
+      span.logo SW
+      div
+        strong SmartWorkshop
+        span Vehicle Service Marketplace
+
+  main.mechanic-edit-shell
+    include ./partials/edit-nav.pug
+
+    section.mechanic-edit-main
+      .edit-card
+        h3 Qualifications
+        p.subtle Qualifications show that you're a trained, professional automotive technician.
+        form(method="post" action=`/mechanic/${mechanicId}/certifications`)
+          label
+            span Qualification
+            select(name="qualification")
+              option NVQ Level 1
+              option NVQ Level 2
+              option NVQ Level 3
+              option City & Guilds Level 1
+              option City & Guilds Level 2
+              option City & Guilds Level 3
+              option Other Qualification
+              option EV/HEV Qualification/Training
+              option Institute of the Motor Industry
+          button.primary(type="submit") Add qualification
+        if qualifications.length
+          ul.simple-list
+            each q in qualifications
+              li= q
+      .edit-card
+        h3 Accreditations
+        p.subtle You haven't added any accreditations yet.
+        a.link-button(href="#") Add one now
+      .edit-card
+        h3 Memberships
+        p.subtle You haven't added any active memberships.
+        a.link-button(href="#") Add one now
+        button.primary(type="button") Save

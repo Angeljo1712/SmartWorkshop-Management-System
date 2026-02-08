@@ -56,6 +56,10 @@ const saveBookingDetails = async (payload) => {
        ON DUPLICATE KEY UPDATE name = VALUES(name), lastname = VALUES(lastname)`,
       [userId, firstName, lastName]
     );
+    await pool.query(
+      "INSERT INTO user_roles (user_id, role) VALUES (?, ?) ON DUPLICATE KEY UPDATE role = role",
+      [userId, "user"]
+    );
   } else {
     const passwordHash = await bcrypt.hash(crypto.randomBytes(18).toString("hex"), 10);
     const [result] = await pool.query(
@@ -68,6 +72,7 @@ const saveBookingDetails = async (payload) => {
       firstName,
       lastName
     ]);
+    await pool.query("INSERT INTO user_roles (user_id, role) VALUES (?, ?)", [userId, "user"]);
   }
 
   const geo = await geocodePostcode(postcode);

@@ -40,17 +40,65 @@ const deleteWorkshop = async (workshopId) => {
   return { deleted: true };
 };
 
-const listUsers = async () => {
-  const [rows] = await pool.query(
-    `SELECT u.user_id, u.full_name, u.email, u.username, u.status, u.last_active, r.role_name, u.created_at
-     FROM users u
-     JOIN roles r ON u.role_id = r.role_id
-     ORDER BY u.created_at DESC`
-  );
-  return rows;
+const roleLabel = (role) => {
+  const normalized = String(role || "").toLowerCase();
+  if (normalized === "user") return "CUSTOMER";
+  if (normalized === "mechanic") return "MECHANIC";
+  if (normalized === "admin") return "ADMIN";
+  return String(role || "").toUpperCase();
 };
 
-module.exports = { listWorkshops, createWorkshop, updateWorkshop, deleteWorkshop, listUsers };
+const listUsers = async () => {
+  const [rows] = await pool.query(
+    `SELECT u.id, u.email, u.phone, u.created_at,
+            p.name, p.lastname, p.avatar_url,
+            GROUP_CONCAT(ur.role) AS roles
+     FROM users u
+     LEFT JOIN user_profiles p ON p.user_id = u.id
+     LEFT JOIN user_roles ur ON ur.user_id = u.id
+     GROUP BY u.id
+     ORDER BY u.created_at DESC`
+  );
+  return rows.map((row) => {
+    const roles = (row.roles ? String(row.roles).split(",") : [row.role]).map(roleLabel);
+    const primaryRole = roles.includes("ADMIN")
+      ? "ADMIN"
+      : roles.includes("MECHANIC")
+        ? "MECHANIC"
+        : "CUSTOMER";
+    return {
+      user_id: row.id,
+      full_name: [row.name, row.lastname].filter(Boolean).join(" ") || "-",
+      email: row.email,
+      username: null,
+      status: "active",
+      last_active: row.created_at,
+      role_name: primaryRole,
+      roles,
+      created_at: row.created_at,
+      avatar_url: row.avatar_url,
+      phone: row.phone
+    };
+  });
+};
+
+const setUserRole = async ({ userId, role, action }) => {
+  const normalizedRole = String(role || "").trim().toLowerCase();
+  if (!["user", "mechanic", "admin"].includes(normalizedRole)) {
+    throw new AppError("ROLE_INVALID", "Role not supported", 400);
+  }
+  if (action === "remove") {
+    await pool.query("DELETE FROM user_roles WHERE user_id = ? AND role = ?", [userId, normalizedRole]);
+    return { user_id: userId, role: normalizedRole, action: "removed" };
+  }
+  await pool.query(
+    "INSERT INTO user_roles (user_id, role) VALUES (?, ?) ON DUPLICATE KEY UPDATE role = role",
+    [userId, normalizedRole]
+  );
+  return { user_id: userId, role: normalizedRole, action: "added" };
+};
+
+module.exports = { listWorkshops, createWorkshop, updateWorkshop, deleteWorkshop, listUsers, setUserRole };
 
 
 

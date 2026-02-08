@@ -16,7 +16,8 @@ const getRequestByIdHandler = async (req, res) => {
   if (!request) {
     throw new AppError("REQUEST_NOT_FOUND", "Service request not found", 404);
   }
-  if (req.user.role !== "ADMIN" && request.customer_id !== req.user.userId) {
+  const roles = Array.isArray(req.user.roles) ? req.user.roles : [req.user.role];
+  if (!roles.includes("ADMIN") && request.customer_id !== req.user.userId) {
     throw new AppError("FORBIDDEN", "Access denied", 403);
   }
   res.json(request);

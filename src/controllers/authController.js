@@ -15,9 +15,23 @@ const loginHandler = async (req, res) => {
 const requestPasswordResetHandler = async (req, res) => {
   const { email } = req.body || {};
   const result = await requestPasswordReset(String(email || "").trim());
-  const resetUrl = `${env.appBaseUrl}/pages/Auth/reset-password.html?token=${result.token}`;
-  await sendPasswordResetEmail({ to: result.email, resetUrl });
-  res.json({ message: "Password reset email sent." });
+  const resetUrl = `${env.appBaseUrl}/auth/reset-password?token=${result.token}`;
+  if (!env.smtp.host || !env.smtp.user || !env.smtp.pass) {
+    return res.json({
+      message: "SMTP not configured. Use the reset link directly.",
+      resetUrl
+    });
+  }
+  try {
+    await sendPasswordResetEmail({ to: result.email, resetUrl });
+    return res.json({ message: "Password reset email sent." });
+  } catch (err) {
+    console.error("Password reset email failed:", err);
+    return res.json({
+      message: "Email failed to send. Use the reset link directly.",
+      resetUrl
+    });
+  }
 };
 
 const resetPasswordHandler = async (req, res) => {

@@ -2,16 +2,39 @@ const { pool } = require("../config/pool");
 const { AppError } = require("../utils/appError");
 const crypto = require("crypto");
 
+const toRoleLabel = (role) => {
+  const normalized = String(role || "").toLowerCase();
+  if (normalized === "user") return "CUSTOMER";
+  if (normalized === "mechanic") return "MECHANIC";
+  if (normalized === "admin") return "ADMIN";
+  return String(role || "").toUpperCase();
+};
+
 const getUserById = async (userId) => {
   const [rows] = await pool.query(
     `SELECT u.id, BIN_TO_UUID(u.uuid_public) AS uuid_public, u.email, u.phone, u.role, u.created_at, u.last_login_at,
-            p.name, p.lastname, p.avatar_url
+            p.name, p.lastname, p.avatar_url,
+            GROUP_CONCAT(ur.role) AS roles
      FROM users u
      LEFT JOIN user_profiles p ON p.user_id = u.id
-     WHERE u.id = ?`,
+     LEFT JOIN user_roles ur ON ur.user_id = u.id
+     WHERE u.id = ?
+     GROUP BY u.id`,
     [userId]
   );
-  return rows[0];
+  const user = rows[0];
+  if (!user) return null;
+  const roles = (user.roles ? String(user.roles).split(",") : [user.role]).map(toRoleLabel);
+  const primaryRole = roles.includes("ADMIN")
+    ? "ADMIN"
+    : roles.includes("MECHANIC")
+      ? "MECHANIC"
+      : "CUSTOMER";
+  return {
+    ...user,
+    role_name: primaryRole,
+    roles
+  };
 };
 
 const resolveNames = (payload) => {
@@ -92,7 +115,7 @@ const confirmEmailChange = async (token) => {
   }
 
   const [rows] = await pool.query(
-    `SELECT request_id, user_id, new_email, expires_at
+    `SELECT id, user_id, new_email, expires_at
      FROM email_change_requests
      WHERE token = ?`,
     [token]
@@ -102,12 +125,12 @@ const confirmEmailChange = async (token) => {
     throw new AppError("INVALID_TOKEN", "Invalid or expired token", 400);
   }
   if (new Date(request.expires_at).getTime() < Date.now()) {
-    await pool.query("DELETE FROM email_change_requests WHERE request_id = ?", [request.request_id]);
+    await pool.query("DELETE FROM email_change_requests WHERE id = ?", [request.id]);
     throw new AppError("INVALID_TOKEN", "Token expired", 400);
   }
 
   await pool.query("UPDATE users SET email = ? WHERE id = ?", [request.new_email, request.user_id]);
-  await pool.query("DELETE FROM email_change_requests WHERE request_id = ?", [request.request_id]);
+  await pool.query("DELETE FROM email_change_requests WHERE id = ?", [request.id]);
   return getUserById(request.user_id);
 };
 

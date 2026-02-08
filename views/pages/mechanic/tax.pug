@@ -1,0 +1,23 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Tax Information"
+  - var bodyClass = "mechanic-edit-body"
+  - var activePage = "tax"
+
+block content
+  header.site-header.admin-header
+    .brand
+      span.logo SW
+      div
+        strong SmartWorkshop
+        span Vehicle Service Marketplace
+
+  main.mechanic-edit-shell
+    include ./partials/edit-nav.pug
+
+    section.mechanic-edit-main
+      .edit-card
+        h3 Tax Information
+        p.subtle Provide your tax details for invoicing.
+        button.primary(type="button") Save

@@ -1,0 +1,67 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Edit Profile"
+  - var bodyClass = "mechanic-edit-body"
+  - var activePage = "profile"
+
+block content
+  header.site-header.admin-header
+    .brand
+      span.logo SW
+      div
+        strong SmartWorkshop
+        span Vehicle Service Marketplace
+
+  main.mechanic-edit-shell
+    include ./partials/edit-nav.pug
+
+    section.mechanic-edit-main
+      .edit-card
+        h3 ClickMechanic tip
+        p.subtle
+          | Adding a link to your ClickMechanic profile on your website helps customers find you faster.
+      .edit-card
+        h3 Technical skills
+        label
+          span Years as a mechanic
+          input(type="number" min="0" placeholder="0")
+        label
+          span Work history
+          textarea(rows="4" placeholder="Tell us about your work history.")
+
+      .edit-card
+        h3 Address and coverage
+        p.section-label Contact address
+        label
+          span Address line 1
+          input(type="text")
+        label
+          span Address line 2
+          input(type="text")
+        label
+          span City
+          input(type="text")
+        label
+          span Postcode
+          input(type="text")
+        p.section-label Premises address
+        label.checkbox
+          input(type="checkbox")
+          | Same as contact address
+        label
+          span Travel radius (miles)
+          input(type="number" min="0" value="5")
+
+      .edit-card
+        h3 What kind of service do you offer? (tick all that apply)
+        label.checkbox
+          input(type="checkbox")
+          | Mobile mechanic service
+        label.checkbox
+          input(type="checkbox")
+          | Customer drop off
+        label.checkbox
+          input(type="checkbox")
+          | Collection and delivery
+        button.primary(type="button") Save

@@ -1,0 +1,25 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Documents"
+  - var bodyClass = "mechanic-edit-body"
+  - var activePage = "documents"
+
+block content
+  header.site-header.admin-header
+    .brand
+      span.logo SW
+      div
+        strong SmartWorkshop
+        span Vehicle Service Marketplace
+
+  main.mechanic-edit-shell
+    include ./partials/edit-nav.pug
+
+    section.mechanic-edit-main
+      .edit-card
+        h3 Documents
+        p.subtle Upload documents required for approval.
+        .upload-row
+          input(type="file")
+          button.primary(type="button") Upload

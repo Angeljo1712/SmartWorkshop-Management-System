@@ -1,0 +1,26 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Profile Picture"
+  - var bodyClass = "mechanic-edit-body"
+  - var activePage = "picture"
+
+block content
+  header.site-header.admin-header
+    .brand
+      span.logo SW
+      div
+        strong SmartWorkshop
+        span Vehicle Service Marketplace
+
+  main.mechanic-edit-shell
+    include ./partials/edit-nav.pug
+
+    section.mechanic-edit-main
+      .edit-card
+        h3 Upload a profile picture
+        p.subtle
+          | A picture clearly showing your face is an important part of your profile and helps customers trust you.
+        .upload-row
+          input(type="file" accept="image/*")
+          button.primary(type="button") Upload

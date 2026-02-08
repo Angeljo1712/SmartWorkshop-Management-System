@@ -1,0 +1,49 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Mechanic Profile"
+  - var bodyClass = "mechanic-view-body"
+  - var activePage = "view"
+
+block content
+  header.site-header.admin-header
+    .brand
+      span.logo SW
+      div
+        strong SmartWorkshop
+        span Vehicle Service Marketplace
+
+  - var profileName = profile && profile.name ? profile.name : "Mechanic"
+  - var profileLocation = profile && profile.location ? profile.location : "Surrey"
+  - var activeSince = profile && profile.created_at ? new Date(profile.created_at).toLocaleString("en-GB", { month: "long", year: "numeric" }) : "February 2026"
+  - var qualifications = profile && profile.qualifications ? profile.qualifications : ["NVQ Level 3 Qualified"]
+
+  main.mechanic-view-shell
+    .mechanic-view-alert
+      p Your location and coverage information is incomplete. Update your profile now.
+
+    .mechanic-view-layout
+      aside.mechanic-view-sidebar
+        .mechanic-view-avatar
+          if profile && profile.avatar_url
+            img(src=profile.avatar_url alt="Profile photo")
+          else
+            span 🔧
+        button.primary(type="button") Get a quote
+        .mechanic-view-card
+          span (0 ratings)
+          ul
+            li 5 years professional experience
+            li Active since #{activeSince}
+        .mechanic-view-card
+          h4 Qualifications
+          ul
+            each q in qualifications
+              li= q
+
+      section.mechanic-view-main
+        h1 #{profileName}, #{profileLocation} | ClickMechanic
+        .mechanic-view-tabs
+          button.active(type="button") Area Covered
+        .mechanic-view-map
+          .map-placeholder Map area preview

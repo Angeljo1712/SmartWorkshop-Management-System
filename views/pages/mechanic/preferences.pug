@@ -1,0 +1,58 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Preferences"
+  - var bodyClass = "mechanic-edit-body"
+  - var activePage = "preferences"
+
+block content
+  header.site-header.admin-header
+    .brand
+      span.logo SW
+      div
+        strong SmartWorkshop
+        span Vehicle Service Marketplace
+
+  main.mechanic-edit-shell
+    include ./partials/edit-nav.pug
+
+    section.mechanic-edit-main
+      .edit-card
+        h3 Availability
+        p.subtle
+          | Specify a period of leave to let us know when you are away and not accepting new bookings.
+        p.subtle Current status: Available
+        .form-row
+          label
+            span From
+            input(type="date")
+          label
+            span To
+            input(type="date")
+        button.primary(type="button") Schedule leave
+      .edit-card
+        h3 Notifications
+        p.subtle How would you like to be notified about available bookings?
+        .notice-table
+          .notice-row
+            strong Batched
+            span Delivered at regular intervals through the day (up to 4 times a day)
+          .notice-row
+            strong Per booking
+            span Be notified of every booking as soon as it becomes available
+        label.checkbox
+          input(type="radio" name="email_notify")
+          | Batched emails
+        label.checkbox
+          input(type="radio" name="email_notify")
+          | Per booking emails
+        label.checkbox
+          input(type="radio" name="email_notify")
+          | No emails
+        label.checkbox
+          input(type="radio" name="sms_notify")
+          | Batched SMS
+        label.checkbox
+          input(type="radio" name="sms_notify")
+          | No SMS
+        button.primary(type="button") Update notification preferences

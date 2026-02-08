@@ -7,7 +7,8 @@ const {
   updateWorkshopHandler,
   deleteWorkshopHandler,
   listUsersHandler,
-  createUserHandler
+  createUserHandler,
+  setUserRoleHandler
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -18,6 +19,7 @@ router.patch("/workshops/:workshopId", authenticate, authorizeRoles("ADMIN"), as
 router.delete("/workshops/:workshopId", authenticate, authorizeRoles("ADMIN"), asyncHandler(deleteWorkshopHandler));
 router.get("/users", authenticate, authorizeRoles("ADMIN"), asyncHandler(listUsersHandler));
 router.post("/users", authenticate, authorizeRoles("ADMIN"), asyncHandler(createUserHandler));
+router.patch("/users/:userId/roles", authenticate, authorizeRoles("ADMIN"), asyncHandler(setUserRoleHandler));
 
 module.exports = router;
 
