@@ -168,4 +168,4 @@ block content
             option(value="friend") Friend or colleague
             option(value="social") Social media
             option(value="other") Other
-      button.primary(type="button") Apply
+      button.primary(type="button" onclick="sessionStorage.setItem('fromApplication','1'); window.location.href='/mechanic/documents'") Apply

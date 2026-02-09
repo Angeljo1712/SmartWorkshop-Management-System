@@ -4,6 +4,9 @@ block vars
   - var title = "SmartWorkshop - Edit Profile"
   - var bodyClass = "mechanic-edit-body"
   - var activePage = "profile"
+  - var years = profile && profile.years_experience ? profile.years_experience : ""
+  - var history = profile && profile.work_history ? profile.work_history : ""
+  - var memberships = profile && profile.memberships ? profile.memberships : []
 
 block content
   header.site-header.admin-header
@@ -21,47 +24,59 @@ block content
         h3 ClickMechanic tip
         p.subtle
           | Adding a link to your ClickMechanic profile on your website helps customers find you faster.
-      .edit-card
-        h3 Technical skills
-        label
-          span Years as a mechanic
-          input(type="number" min="0" placeholder="0")
-        label
-          span Work history
-          textarea(rows="4" placeholder="Tell us about your work history.")
+      form(method="post" action=`/mechanic/${mechanicId}/profile`)
+        .edit-card
+          h3 Technical skills
+          label
+            span Years as a mechanic
+            input(type="number" name="years_experience" min="0" placeholder="0" value=years)
+          label
+            span Work history
+            textarea(name="work_history" rows="4" placeholder="Tell us about your work history.")= history
 
-      .edit-card
-        h3 Address and coverage
-        p.section-label Contact address
-        label
-          span Address line 1
-          input(type="text")
-        label
-          span Address line 2
-          input(type="text")
-        label
-          span City
-          input(type="text")
-        label
-          span Postcode
-          input(type="text")
-        p.section-label Premises address
-        label.checkbox
-          input(type="checkbox")
-          | Same as contact address
-        label
-          span Travel radius (miles)
-          input(type="number" min="0" value="5")
+        .edit-card
+          h3 Address and coverage
+          p.section-label Contact address
+          label
+            span Address line 1
+            input(type="text")
+          label
+            span Address line 2
+            input(type="text")
+          label
+            span City
+            input(type="text")
+          label
+            span Postcode
+            input(type="text")
+          p.section-label Premises address
+          label.checkbox
+            input(type="checkbox")
+            | Same as contact address
+          label
+            span Travel radius (miles)
+            input(type="number" min="0" value="5")
 
-      .edit-card
-        h3 What kind of service do you offer? (tick all that apply)
-        label.checkbox
-          input(type="checkbox")
-          | Mobile mechanic service
-        label.checkbox
-          input(type="checkbox")
-          | Customer drop off
-        label.checkbox
-          input(type="checkbox")
-          | Collection and delivery
-        button.primary(type="button") Save
+        .edit-card
+          h3 What kind of service do you offer? (tick all that apply)
+          label.checkbox
+            input(type="checkbox")
+            | Mobile mechanic service
+          label.checkbox
+            input(type="checkbox")
+            | Customer drop off
+          label.checkbox
+            input(type="checkbox")
+            | Collection and delivery
+          h3 Memberships
+          .form-row
+            label.checkbox
+              input(type="checkbox" name="memberships" value="IMI" checked=memberships.includes("IMI"))
+              | IMI
+            label.checkbox
+              input(type="checkbox" name="memberships" value="AA Approved" checked=memberships.includes("AA Approved"))
+              | AA Approved
+            label.checkbox
+              input(type="checkbox" name="memberships" value="RAC Approved" checked=memberships.includes("RAC Approved"))
+              | RAC Approved
+          button.primary(type="submit") Save

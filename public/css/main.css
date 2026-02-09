@@ -2091,6 +2091,10 @@ pre {
   gap: 28px;
 }
 
+.mechanic-edit-shell.is-single {
+  grid-template-columns: 1fr;
+}
+
 .mechanic-edit-sidebar {
   background: #ffffff;
   border: 1px solid var(--border);

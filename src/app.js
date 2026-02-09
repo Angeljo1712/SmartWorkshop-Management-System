@@ -117,7 +117,22 @@ app.get("/mechanic/dashboard", (req, res) => {
 });
 
 app.get("/mechanic/:id/profile", (req, res) => {
-  res.render("pages/mechanic/profile", { mechanicId: req.params.id });
+  mechanicService
+    .getProfile(Number(req.params.id))
+    .then((profile) => res.render("pages/mechanic/profile", { mechanicId: req.params.id, profile }))
+    .catch((err) => {
+      console.error(err);
+      res.render("pages/mechanic/profile", { mechanicId: req.params.id, profile: null });
+    });
+});
+
+app.post("/mechanic/:id/profile", (req, res, next) => {
+  const mechanicId = Number(req.params.id);
+  const { years_experience, work_history, memberships } = req.body || {};
+  mechanicService
+    .updateProfile({ userId: mechanicId, years_experience, work_history, memberships })
+    .then(() => res.redirect(302, `/mechanic/${mechanicId}/profile`))
+    .catch(next);
 });
 
 app.get("/mechanic/:id/picture", (req, res) => {

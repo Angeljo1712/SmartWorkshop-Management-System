@@ -96,6 +96,8 @@ CREATE TABLE IF NOT EXISTS mechanic_profiles (
   user_id BIGINT UNSIGNED PRIMARY KEY,
   display_name VARCHAR(120) NOT NULL,
   legal_name VARCHAR(160) NOT NULL,
+  years_experience INT,
+  work_history TEXT,
   vat_id VARCHAR(32),
   is_mobile TINYINT(1) NOT NULL DEFAULT 1,
   rating_avg DECIMAL(3,2) NOT NULL DEFAULT 0.00,
@@ -111,6 +113,15 @@ CREATE TABLE IF NOT EXISTS mechanic_qualifications (
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   KEY idx_mq_user (user_id),
   CONSTRAINT fk_mq_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS mechanic_memberships (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT UNSIGNED NOT NULL,
+  name VARCHAR(160) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY idx_mm_user (user_id),
+  CONSTRAINT fk_mm_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS addresses (

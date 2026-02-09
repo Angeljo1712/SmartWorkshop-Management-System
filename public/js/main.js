@@ -145,20 +145,21 @@ if (applicationJoin) {
   const formWrap = document.getElementById("applicationForm");
   const hero = document.querySelector(".application-hero");
   const headingEl = document.getElementById("applicationHeading");
-  const stored = sessionStorage.getItem("mechanicLead");
-  if (stored) {
-    try {
-      const lead = JSON.parse(stored);
-      if (lead?.first_name && headingEl) {
-        headingEl.textContent = `Congratulations ${lead.first_name}!`;
-        formWrap?.classList.remove("is-hidden");
-        hero?.classList.add("is-hidden");
-      }
-    } catch {}
-  }
+  if (formWrap) formWrap.classList.add("is-hidden");
+  if (hero) hero.classList.remove("is-hidden");
   const links = applicationJoin.querySelectorAll(".application-link");
   links.forEach((link) => {
-    link.addEventListener("click", () => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      const stored = sessionStorage.getItem("mechanicLead");
+      if (stored && headingEl) {
+        try {
+          const lead = JSON.parse(stored);
+          if (lead?.first_name) {
+            headingEl.textContent = `Congratulations ${lead.first_name}!`;
+          }
+        } catch {}
+      }
       formWrap?.classList.remove("is-hidden");
       hero?.classList.add("is-hidden");
       formWrap?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1359,6 +1360,17 @@ if (mechanicEditNav) {
         }
       });
     } catch {}
+  }
+}
+
+const documentsShell = document.getElementById("mechanicDocumentsShell");
+if (documentsShell) {
+  const fromApply = sessionStorage.getItem("fromApplication") === "1";
+  if (fromApply) {
+    const nav = document.getElementById("mechanicEditNav");
+    if (nav) nav.classList.add("is-hidden");
+    documentsShell.classList.add("is-single");
+    sessionStorage.removeItem("fromApplication");
   }
 }
 
