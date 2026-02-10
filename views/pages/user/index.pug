@@ -57,6 +57,7 @@ block content
                 h4 Contacts
                 p#userSettingsPhone Phone: -
                 p#userSettingsEmailDetail Email: admin@smartworkshop.local
+                p#userSettingsUsername Username: -
                 p#userSettingsAddress Address: -
 
             .settings-row
@@ -128,6 +129,9 @@ block content
                       label.settings-field
                         | Phone
                         input#userSettingsPhoneInput(type="text" placeholder="Add phone")
+                      label.settings-field
+                        | Username
+                        input#userSettingsUsernameInput(type="text" placeholder="Add username")
                       label.settings-field
                         | Email
                         input#userSettingsEmailInput(type="email" placeholder="Add email")

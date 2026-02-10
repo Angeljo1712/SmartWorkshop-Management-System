@@ -12,7 +12,7 @@ const toRoleLabel = (role) => {
 
 const getUserById = async (userId) => {
   const [rows] = await pool.query(
-    `SELECT u.id, BIN_TO_UUID(u.uuid_public) AS uuid_public, u.email, u.phone, u.role, u.created_at, u.last_login_at,
+    `SELECT u.id, BIN_TO_UUID(u.uuid_public) AS uuid_public, u.email, u.username, u.phone, u.role, u.status, u.created_at, u.last_login_at,
             p.name, p.lastname, p.avatar_url,
             GROUP_CONCAT(ur.role) AS roles
      FROM users u
@@ -50,13 +50,36 @@ const resolveNames = (payload) => {
   return { name: null, lastname: null };
 };
 
-const updateUserProfile = async (userId, { name, lastname, full_name, phone }) => {
+const updateUserProfile = async (userId, { name, lastname, full_name, phone, username }) => {
   const updates = [];
   const params = [];
 
   if (phone !== undefined) {
     updates.push("phone = ?");
     params.push(phone);
+  }
+
+  if (username !== undefined) {
+    const normalized = String(username || "").trim().toLowerCase();
+    if (!normalized) {
+      throw new AppError("VALIDATION_ERROR", "username is required", 400);
+    }
+    if (!/^[a-z0-9._-]{3,64}$/.test(normalized)) {
+      throw new AppError(
+        "VALIDATION_ERROR",
+        "username must be 3-64 chars and contain only letters, numbers, dot, underscore or hyphen",
+        400
+      );
+    }
+    const [existing] = await pool.query("SELECT id FROM users WHERE username = ? AND id <> ?", [
+      normalized,
+      userId
+    ]);
+    if (existing[0]) {
+      throw new AppError("USERNAME_IN_USE", "Username already in use", 409);
+    }
+    updates.push("username = ?");
+    params.push(normalized);
   }
 
   if (updates.length) {

@@ -10,9 +10,11 @@ CREATE TABLE IF NOT EXISTS users (
   id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
   uuid_public BINARY(16) UNIQUE, -- opcional si quieres exponer UUID públicamente
   email VARCHAR(320) NOT NULL UNIQUE,
+  username VARCHAR(320) NOT NULL UNIQUE,
   phone VARCHAR(32),
   password_hash TEXT NOT NULL,
   role ENUM('user','mechanic','admin') NOT NULL,
+  status ENUM('pending','active','suspended','banned') NOT NULL DEFAULT 'active',
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   last_login_at TIMESTAMP NULL,
   KEY idx_users_phone (phone)

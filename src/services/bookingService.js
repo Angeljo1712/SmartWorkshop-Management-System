@@ -62,9 +62,10 @@ const saveBookingDetails = async (payload) => {
     );
   } else {
     const passwordHash = await bcrypt.hash(crypto.randomBytes(18).toString("hex"), 10);
+    const username = String(email || "").trim().toLowerCase();
     const [result] = await pool.query(
-      "INSERT INTO users (uuid_public, email, password_hash, role, phone) VALUES (UUID_TO_BIN(UUID()), ?, ?, ?, ?)",
-      [email, passwordHash, "user", phone]
+      "INSERT INTO users (uuid_public, email, username, password_hash, role, status, phone) VALUES (UUID_TO_BIN(UUID()), ?, ?, ?, ?, ?, ?)",
+      [email, username, passwordHash, "user", "active", phone]
     );
     userId = result.insertId;
     await pool.query("INSERT INTO user_profiles (user_id, name, lastname) VALUES (?, ?, ?)", [

@@ -12,8 +12,8 @@ const getMeHandler = async (req, res) => {
 };
 
 const updateMeHandler = async (req, res) => {
-  const { name, lastname, full_name, phone } = req.body || {};
-  const user = await userService.updateUserProfile(req.user.userId, { name, lastname, full_name, phone });
+  const { name, lastname, full_name, phone, username } = req.body || {};
+  const user = await userService.updateUserProfile(req.user.userId, { name, lastname, full_name, phone, username });
   res.json(user);
 };
 

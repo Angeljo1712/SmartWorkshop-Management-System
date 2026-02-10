@@ -665,7 +665,12 @@ if (adminPage) {
   };
 
   const statusCycle = ["Active", "Inactive", "Banned", "Pending", "Suspended"];
-  const getStatus = (user, index) => user.status || statusCycle[index % statusCycle.length];
+  const toStatusLabel = (value) => {
+    if (!value) return null;
+    const lower = String(value).toLowerCase();
+    return lower.charAt(0).toUpperCase() + lower.slice(1);
+  };
+  const getStatus = (user, index) => toStatusLabel(user.status) || statusCycle[index % statusCycle.length];
   const getLastActive = (user, index) => {
     if (user.last_active) {
       const date = new Date(user.last_active);
@@ -715,6 +720,7 @@ if (adminPage) {
         !term ||
         user.full_name.toLowerCase().includes(term) ||
         user.email.toLowerCase().includes(term) ||
+        (user.username || "").toLowerCase().includes(term) ||
         role.toLowerCase().includes(term);
       const matchesRole = roleValue === "all" || role === roleValue;
       const matchesStatus = statusValue === "all" || status === statusValue;
@@ -850,10 +856,7 @@ if (adminPage) {
 
     try {
       const result = await apiAuth("/api/admin/users", token);
-      adminUsers = (result || []).map((user, index) => ({
-        ...user,
-        status: statusCycle[index % statusCycle.length]
-      }));
+      adminUsers = (result || []).map((user) => ({ ...user }));
       applyFilters();
     } catch (err) {
       adminLoginError.textContent = "Access denied. Please sign in with an admin account.";
@@ -864,8 +867,15 @@ if (adminPage) {
   const exportUsers = () => {
     if (!adminUsers.length) return;
     const rows = [
-      ["Full name", "Email", "Role", "Status", "Joined date"],
-      ...adminUsers.map((user) => [user.full_name, user.email, user.role_name, getStatus(user), formatDate(user.created_at)])
+      ["Full name", "Email", "Username", "Role", "Status", "Joined date"],
+      ...adminUsers.map((user) => [
+        user.full_name,
+        user.email,
+        user.username || "",
+        user.role_name,
+        getStatus(user),
+        formatDate(user.created_at)
+      ])
     ];
     const csv = rows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
@@ -1007,18 +1017,18 @@ if (signInForm) {
     event.preventDefault();
     signInError.textContent = "";
 
-    const email = signInEmail.value.trim();
+    const identifier = signInEmail.value.trim();
     const password = signInPassword.value;
 
-    if (!email || !password) {
-      signInError.textContent = "Please enter your email and password.";
+    if (!identifier || !password) {
+      signInError.textContent = "Please enter your email or username and password.";
       return;
     }
 
     try {
       const result = await api("/api/auth/login", {
         method: "POST",
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ identifier, password })
       });
       sessionStorage.setItem("userToken", result.token);
       sessionStorage.setItem("userProfile", JSON.stringify(result.user));
@@ -1124,6 +1134,7 @@ if (userPage) {
   const userSettingsName = document.getElementById("userSettingsName");
   const userSettingsEmail = document.getElementById("userSettingsEmail");
   const userSettingsEmailDetail = document.getElementById("userSettingsEmailDetail");
+  const userSettingsUsername = document.getElementById("userSettingsUsername");
   const userSettingsRole = document.getElementById("userSettingsRole");
   const userSettingsPhone = document.getElementById("userSettingsPhone");
   const userSettingsAddress = document.getElementById("userSettingsAddress");
@@ -1135,6 +1146,7 @@ if (userPage) {
   const userRoleSwitcher = document.getElementById("userRoleSwitcher");
   const userSettingsPhotoInput = document.getElementById("userSettingsPhotoInput");
   const userSettingsPhoneInput = document.getElementById("userSettingsPhoneInput");
+  const userSettingsUsernameInput = document.getElementById("userSettingsUsernameInput");
   const userSettingsEmailInput = document.getElementById("userSettingsEmailInput");
   const userSettingsAddressInput = document.getElementById("userSettingsAddressInput");
   const userSettingsContactSave = document.getElementById("userSettingsContactSave");
@@ -1199,6 +1211,7 @@ if (userPage) {
     userSettingsName.textContent = displayName;
     if (userSettingsEmail) userSettingsEmail.textContent = user?.email || "-";
     userSettingsEmailDetail.textContent = `Email: ${user?.email || "-"}`;
+    if (userSettingsUsername) userSettingsUsername.textContent = `Username: ${user?.username || "-"}`;
     userSettingsRole.textContent = activeRole;
     userSettingsPhone.textContent = `Phone: ${user?.phone || "-"}`;
     if (userSettingsAddress) userSettingsAddress.textContent = `Address: ${user?.address || "-"}`;
@@ -1211,6 +1224,7 @@ if (userPage) {
       userSettingsPhoneSettings.textContent = `Phone: ${user?.phone || "-"}`;
 
     if (userSettingsPhoneInput) userSettingsPhoneInput.value = user?.phone || "";
+    if (userSettingsUsernameInput) userSettingsUsernameInput.value = user?.username || "";
     if (userSettingsEmailInput) userSettingsEmailInput.value = user?.email || "";
     if (userSettingsAddressInput) userSettingsAddressInput.value = user?.address || "";
 
@@ -1280,20 +1294,21 @@ if (userPage) {
     if (!token) return;
 
     const phone = userSettingsPhoneInput.value.trim();
+    const username = userSettingsUsernameInput?.value?.trim() || "";
     const email = userSettingsEmailInput.value.trim();
     const address = userSettingsAddressInput.value.trim();
 
     userSettingsContactMessage.textContent = "";
     try {
       const profile = getUserProfile() || {};
-      if (phone !== (profile.phone || "") || address !== (profile.address || "")) {
+      if (phone !== (profile.phone || "") || address !== (profile.address || "") || username !== (profile.username || "")) {
         const response = await fetch("http://localhost:3000/api/users/me", {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`
           },
-          body: JSON.stringify({ phone, address })
+          body: JSON.stringify({ phone, address, username })
         });
         const payload = await response.json();
         if (!response.ok) throw payload;

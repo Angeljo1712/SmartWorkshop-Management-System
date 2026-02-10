@@ -69,9 +69,11 @@ const register = async ({ full_name, name, lastname, email, password, role }) =>
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
+  const status = normalizedRole === "mechanic" ? "pending" : "active";
+  const username = String(email || "").trim().toLowerCase();
   const [result] = await pool.query(
-    "INSERT INTO users (uuid_public, email, password_hash, role) VALUES (UUID_TO_BIN(UUID()), ?, ?, ?)",
-    [email, passwordHash, normalizedRole]
+    "INSERT INTO users (uuid_public, email, username, password_hash, role, status) VALUES (UUID_TO_BIN(UUID()), ?, ?, ?, ?, ?)",
+    [email, username, passwordHash, normalizedRole, status]
   );
   await pool.query("INSERT INTO user_roles (user_id, role) VALUES (?, ?) ON DUPLICATE KEY UPDATE role = role", [
     result.insertId,
@@ -89,7 +91,9 @@ const register = async ({ full_name, name, lastname, email, password, role }) =>
     name: resolvedName,
     lastname: resolvedLastname,
     email,
+    username,
     role: normalizedRole,
+    status,
     role_name: roleLabel,
     roles
   };
@@ -98,18 +102,19 @@ const register = async ({ full_name, name, lastname, email, password, role }) =>
   return { user, token };
 };
 
-const login = async ({ email, password }) => {
-  if (!email || !password) {
-    throw new AppError("VALIDATION_ERROR", "email and password are required", 400);
+const login = async ({ email, username, identifier, password }) => {
+  const loginId = String(identifier || email || username || "").trim().toLowerCase();
+  if (!loginId || !password) {
+    throw new AppError("VALIDATION_ERROR", "email or username and password are required", 400);
   }
 
   const [rows] = await pool.query(
-    `SELECT u.id, BIN_TO_UUID(u.uuid_public) AS uuid_public, u.email, u.phone, u.password_hash, u.role, u.last_login_at,
+    `SELECT u.id, BIN_TO_UUID(u.uuid_public) AS uuid_public, u.email, u.username, u.phone, u.password_hash, u.role, u.status, u.last_login_at,
             p.name, p.lastname, p.avatar_url
      FROM users u
      LEFT JOIN user_profiles p ON p.user_id = u.id
-     WHERE u.email = ?`,
-    [email]
+     WHERE u.email = ? OR u.username = ?`,
+    [loginId, loginId]
   );
 
   const user = rows[0];
@@ -134,9 +139,11 @@ const login = async ({ email, password }) => {
       name: user.name,
       lastname: user.lastname,
       email: user.email,
+      username: user.username,
       phone: user.phone,
       avatar_url: user.avatar_url,
       role: user.role,
+      status: user.status,
       role_name: primaryRole,
       roles: roleLabels,
       last_login_at: user.last_login_at

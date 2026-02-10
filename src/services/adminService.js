@@ -50,7 +50,7 @@ const roleLabel = (role) => {
 
 const listUsers = async () => {
   const [rows] = await pool.query(
-    `SELECT u.id, u.email, u.phone, u.created_at,
+    `SELECT u.id, u.email, u.username, u.phone, u.created_at, u.role, u.status,
             p.name, p.lastname, p.avatar_url,
             GROUP_CONCAT(ur.role) AS roles
      FROM users u
@@ -70,8 +70,8 @@ const listUsers = async () => {
       user_id: row.id,
       full_name: [row.name, row.lastname].filter(Boolean).join(" ") || "-",
       email: row.email,
-      username: null,
-      status: "active",
+      username: row.username,
+      status: row.status || "active",
       last_active: row.created_at,
       role_name: primaryRole,
       roles,
@@ -98,7 +98,17 @@ const setUserRole = async ({ userId, role, action }) => {
   return { user_id: userId, role: normalizedRole, action: "added" };
 };
 
-module.exports = { listWorkshops, createWorkshop, updateWorkshop, deleteWorkshop, listUsers, setUserRole };
+const setUserStatus = async ({ userId, status }) => {
+  const normalizedStatus = String(status || "").trim().toLowerCase();
+  const allowed = ["pending", "active", "suspended", "banned"];
+  if (!allowed.includes(normalizedStatus)) {
+    throw new AppError("STATUS_INVALID", "Status not supported", 400);
+  }
+  await pool.query("UPDATE users SET status = ? WHERE id = ?", [normalizedStatus, userId]);
+  return { user_id: userId, status: normalizedStatus };
+};
+
+module.exports = { listWorkshops, createWorkshop, updateWorkshop, deleteWorkshop, listUsers, setUserRole, setUserStatus };
 
 
 
