@@ -23,3 +23,6 @@ block content
         .upload-row
           input(type="file")
           button.primary(type="button") Upload
+      form(method="post" action="/mechanic/documents/complete")
+        input(type="hidden" name="email" id="docsEmail")
+        button.primary(type="submit") Next step

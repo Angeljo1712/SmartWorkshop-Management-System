@@ -171,6 +171,8 @@ const mechanicLeadForm = document.querySelector(".mechanic-form");
 if (mechanicLeadForm) {
   mechanicLeadForm.addEventListener("submit", (event) => {
     event.preventDefault();
+    const errorEl = document.getElementById("mechanicLeadError");
+    if (errorEl) errorEl.textContent = "";
     const payload = {
       first_name: mechanicLeadForm.querySelector("input[name='first_name']")?.value?.trim(),
       last_name: mechanicLeadForm.querySelector("input[name='last_name']")?.value?.trim(),
@@ -178,8 +180,44 @@ if (mechanicLeadForm) {
       phone: mechanicLeadForm.querySelector("input[name='phone']")?.value?.trim(),
       postcode: mechanicLeadForm.querySelector("input[name='postcode']")?.value?.trim()
     };
-    sessionStorage.setItem("mechanicLead", JSON.stringify(payload));
-    window.location.href = "/application/join";
+    if (!payload.email) {
+      if (errorEl) errorEl.textContent = "Please enter an email.";
+      return;
+    }
+    fetch(`/api/auth/check-email?email=${encodeURIComponent(payload.email)}`)
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.exists) {
+          if (errorEl) errorEl.textContent = "User with this email is already registered.";
+          return;
+        }
+        sessionStorage.setItem("mechanicLead", JSON.stringify(payload));
+        window.location.href = "/application/join";
+      })
+      .catch(() => {
+        if (errorEl) errorEl.textContent = "Unable to verify email right now.";
+      });
+  });
+}
+
+const applicationForm = document.querySelector(".application-form");
+if (applicationForm) {
+  applicationForm.addEventListener("submit", () => {
+    sessionStorage.setItem("fromApplication", "1");
+    const stored = sessionStorage.getItem("mechanicLead");
+    if (stored) {
+      try {
+        const lead = JSON.parse(stored);
+        const first = document.getElementById("applyFirstName");
+        const last = document.getElementById("applyLastName");
+        const email = document.getElementById("applyEmail");
+        const phoneVisible = document.getElementById("applyPhoneVisible");
+        if (first) first.value = lead.first_name || "";
+        if (last) last.value = lead.last_name || "";
+        if (email) email.value = lead.email || "";
+        if (phoneVisible) phoneVisible.value = lead.phone || "";
+      } catch {}
+    }
   });
 }
 
@@ -1324,6 +1362,10 @@ if (mechanicDashboard) {
   const idEl = document.getElementById("mechanicId");
   const editLink = document.getElementById("mechanicEditProfile");
   const viewLink = document.getElementById("mechanicViewProfile");
+  const passwordCard = document.getElementById("mechanicSetPasswordCard");
+  const passwordForm = document.getElementById("setMechanicPasswordForm");
+  const passwordEmail = document.getElementById("mechanicPasswordEmail");
+  const passwordError = document.getElementById("mechanicPasswordError");
   const profile = sessionStorage.getItem("userProfile");
   if (profile) {
     try {
@@ -1343,6 +1385,40 @@ if (mechanicDashboard) {
         viewLink.href = `/mechanic/${userId}`;
       }
     } catch {}
+  }
+
+  const lead = sessionStorage.getItem("mechanicLead");
+  if (lead) {
+    try {
+      const leadData = JSON.parse(lead);
+      if (passwordEmail) passwordEmail.value = leadData.email || "";
+      if (passwordCard) passwordCard.classList.remove("is-hidden");
+    } catch {}
+  }
+
+  if (passwordForm) {
+    passwordForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (passwordError) passwordError.textContent = "";
+      const payload = {
+        email: passwordEmail?.value || "",
+        password: document.getElementById("mechanicPasswordValue")?.value || "",
+        confirm: document.getElementById("mechanicPasswordConfirm")?.value || ""
+      };
+      try {
+        await api("/mechanic/set-password", {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        if (passwordError) passwordError.textContent = "Password saved.";
+        sessionStorage.removeItem("mechanicLead");
+        if (passwordCard) passwordCard.classList.add("is-hidden");
+      } catch (err) {
+        if (passwordError) {
+          passwordError.textContent = err?.error?.message || err?.message || "Unable to set password.";
+        }
+      }
+    });
   }
 }
 
@@ -1371,6 +1447,14 @@ if (documentsShell) {
     if (nav) nav.classList.add("is-hidden");
     documentsShell.classList.add("is-single");
     sessionStorage.removeItem("fromApplication");
+  }
+  const stored = sessionStorage.getItem("mechanicLead");
+  if (stored) {
+    try {
+      const lead = JSON.parse(stored);
+      const emailInput = document.getElementById("docsEmail");
+      if (emailInput) emailInput.value = lead.email || "";
+    } catch {}
   }
 }
 

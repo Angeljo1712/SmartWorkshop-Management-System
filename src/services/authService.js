@@ -145,6 +145,15 @@ const login = async ({ email, password }) => {
   };
 };
 
+const checkEmailExists = async (email) => {
+  const normalized = String(email || "").trim().toLowerCase();
+  if (!normalized) {
+    throw new AppError("VALIDATION_ERROR", "email is required", 400);
+  }
+  const [rows] = await pool.query("SELECT id FROM users WHERE email = ?", [normalized]);
+  return { exists: Boolean(rows[0]) };
+};
+
 const requestPasswordReset = async (email) => {
   if (!email) {
     throw new AppError("VALIDATION_ERROR", "email is required", 400);
@@ -204,7 +213,7 @@ const resetPassword = async ({ token, password }) => {
   await pool.query("DELETE FROM password_reset_requests WHERE id = ?", [request.id]);
 };
 
-module.exports = { register, login, requestPasswordReset, resetPassword };
+module.exports = { register, login, requestPasswordReset, resetPassword, checkEmailExists };
 
 
 

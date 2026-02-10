@@ -1,4 +1,5 @@
 const { register, login, requestPasswordReset, resetPassword } = require("../services/authService");
+const { checkEmailExists } = require("../services/authService");
 const { sendPasswordResetEmail } = require("../services/emailService");
 const { env } = require("../config/env");
 
@@ -40,4 +41,16 @@ const resetPasswordHandler = async (req, res) => {
   res.json({ message: "Password updated." });
 };
 
-module.exports = { registerHandler, loginHandler, requestPasswordResetHandler, resetPasswordHandler };
+const checkEmailHandler = async (req, res) => {
+  const email = req.query.email || "";
+  const result = await checkEmailExists(email);
+  res.json(result);
+};
+
+module.exports = {
+  registerHandler,
+  loginHandler,
+  requestPasswordResetHandler,
+  resetPasswordHandler,
+  checkEmailHandler
+};

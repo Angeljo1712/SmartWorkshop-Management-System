@@ -27,6 +27,22 @@ block content
         span#mechanicId AG687
       p.mechanic-note There's not too much to see here yet, but this will be the home for all of your bookings. Please take time to explore the links at the top of the page and read through the information provided.
 
+      .mechanic-card.is-hidden#mechanicSetPasswordCard
+        h3 Set your password
+        .mechanic-card-body
+          p.subtle Finish creating your mechanic account by setting a password.
+          form#setMechanicPasswordForm
+            input(type="hidden" name="email" id="mechanicPasswordEmail")
+            .field-grid
+              label
+                span New password
+                input(type="password" name="password" id="mechanicPasswordValue" placeholder="••••••••")
+              label
+                span Confirm password
+                input(type="password" name="confirm" id="mechanicPasswordConfirm" placeholder="••••••••")
+            p.form-error#mechanicPasswordError(role="alert" aria-live="polite")
+            button.primary(type="submit") Save password
+
       .mechanic-card
         h3 Your bookings
         .mechanic-card-body

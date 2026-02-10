@@ -45,9 +45,15 @@ block content
   section.application-form-wrap#applicationForm(class="is-hidden")
     h2#applicationHeading Congratulations!
     p.subtle You are only a minute away from getting signed up.
-    form.application-form
+    form.application-form(method="post" action="/application/join")
+      input(type="hidden" name="first_name" id="applyFirstName")
+      input(type="hidden" name="last_name" id="applyLastName")
+      input(type="hidden" name="email" id="applyEmail")
       .form-section
         h3 Your experience
+        label
+          span Mobile number
+          input(type="text" name="phone" id="applyPhoneVisible" placeholder="Mobile number")
         .form-row
           label.checkbox
             input(type="checkbox" name="work_history" value="independent_garage")
@@ -168,4 +174,4 @@ block content
             option(value="friend") Friend or colleague
             option(value="social") Social media
             option(value="other") Other
-      button.primary(type="button" onclick="sessionStorage.setItem('fromApplication','1'); window.location.href='/mechanic/documents'") Apply
+      button.primary(type="submit") Apply

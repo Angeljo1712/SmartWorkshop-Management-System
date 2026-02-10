@@ -1,0 +1,24 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Welcome"
+  - var bodyClass = "mechanic-view-body"
+
+block content
+  header.site-header.admin-header
+    .brand
+      span.logo SW
+      div
+        strong SmartWorkshop
+        span Vehicle Service Marketplace
+
+  main.mechanic-view-shell
+    section.mechanic-view-main
+      h1 Application Accepted
+      p.subtle
+        | Good news! Based on the answers you provided on the previous page, it looks like you're a great match for the network.
+      p.subtle
+        | To get you approved and able to accept your first booking, you'll need to finish setting up your account and provide proof of insurance as part of the vetting process.
+      p.subtle
+        | The first step is to set a password to finish creating your account.
+      a.primary.ghost-link(href="/mechanic/dashboard") Get started

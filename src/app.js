@@ -170,6 +170,33 @@ app.get("/mechanic/documents", (req, res) => {
   res.render("pages/mechanic/documents", { mechanicId: null });
 });
 
+app.post("/mechanic/documents/complete", (req, res, next) => {
+  const { email } = req.body || {};
+  mechanicService
+    .completeApplication({ email })
+    .then(({ userId }) => res.redirect(302, `/mechanic/welcome/${userId}`))
+    .catch(next);
+});
+
+app.get("/mechanic/welcome/:id", (req, res, next) => {
+  const mechanicId = Number(req.params.id);
+  mechanicService
+    .getProfile(mechanicId)
+    .then((profile) => res.render("pages/mechanic/welcome", { profile }))
+    .catch(next);
+});
+
+app.post("/mechanic/set-password", (req, res, next) => {
+  const { email, password, confirm } = req.body || {};
+  if (password !== confirm) {
+    return res.status(400).json({ error: { code: "VALIDATION_ERROR", message: "Passwords do not match." } });
+  }
+  mechanicService
+    .setPasswordByEmail({ email, password })
+    .then(() => res.json({ message: "Password updated." }))
+    .catch(next);
+});
+
 app.get("/mechanic/:id/types", (req, res) => {
   res.render("pages/mechanic/types", { mechanicId: req.params.id });
 });
@@ -186,6 +213,13 @@ app.get("/mechanic/:id", async (req, res, next) => {
 
 app.get("/application/join", (req, res) => {
   res.render("pages/application/join");
+});
+
+app.post("/application/join", (req, res, next) => {
+  mechanicService
+    .saveApplication(req.body)
+    .then(() => res.redirect(302, "/mechanic/documents"))
+    .catch(next);
 });
 
 app.use("/health", healthRouter);
