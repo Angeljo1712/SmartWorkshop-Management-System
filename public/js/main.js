@@ -34,6 +34,67 @@ const apiAuth = (path, token, options = {}) =>
 
 const postcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
 
+const heroBackdrop = document.querySelector(".home-hero .hero-backdrop");
+if (heroBackdrop) {
+  const layers = heroBackdrop.querySelectorAll(".hero-backdrop-layer");
+  const heroImages = [
+    { src: "/images/hero-1.jpg", brightness: 1.5 },
+    { src: "/images/hero-2.jpg", brightness: 1.5 },
+    { src: "/images/hero-3.jpg", brightness: 1.5 },
+    { src: "/images/hero-4.jpg", brightness: 1.5 },
+    { src: "/images/hero-5.jpg", brightness: 1.5 }
+  ];
+  let heroIndex = 0;
+  let activeIndex = 0;
+
+  const setLayerImage = (layer, image) => {
+    layer.style.backgroundImage = `url("${image.src}")`;
+    layer.style.filter = `saturate(0.85) contrast(1.05) brightness(${image.brightness || 1})`;
+  };
+
+  if (layers.length >= 2) {
+    const jumpToImage = (imageIndex) => {
+      const current = layers[activeIndex];
+      const nextIndex = activeIndex === 0 ? 1 : 0;
+      const next = layers[nextIndex];
+      next.classList.remove("is-exiting");
+      current.classList.remove("is-exiting");
+      setLayerImage(next, heroImages[imageIndex]);
+      next.classList.add("is-active");
+      current.classList.remove("is-active");
+      activeIndex = nextIndex;
+      heroIndex = (imageIndex + 1) % heroImages.length;
+    };
+
+    setLayerImage(layers[activeIndex], heroImages[heroIndex]);
+    heroIndex = (heroIndex + 1) % heroImages.length;
+    const homeLink = document.querySelector('.home-nav a[href="#home"]');
+    homeLink?.addEventListener("click", () => {
+      // Show hero-2 (index 1) when clicking Home.
+      jumpToImage(1);
+    });
+    setInterval(() => {
+      const nextIndex = activeIndex === 0 ? 1 : 0;
+      const current = layers[activeIndex];
+      const next = layers[nextIndex];
+
+      next.classList.remove("is-exiting");
+      setLayerImage(next, heroImages[heroIndex]);
+      heroIndex = (heroIndex + 1) % heroImages.length;
+
+      next.classList.add("is-active");
+      current.classList.add("is-exiting");
+      current.classList.remove("is-active");
+
+      setTimeout(() => {
+        current.classList.remove("is-exiting");
+      }, 900);
+
+      activeIndex = nextIndex;
+    }, 5000);
+  }
+}
+
 const renderVehicleSummary = () => {
   const container = document.getElementById("vehicleSummary");
   const titleEl = document.getElementById("bookingsTitle");

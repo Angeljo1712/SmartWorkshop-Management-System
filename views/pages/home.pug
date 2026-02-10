@@ -2,65 +2,104 @@ extends ../layouts/main
 
 block vars
   - var title = "SmartWorkshop"
-  - var bodyClass = ""
+  - var bodyClass = "home-body"
 
 block content
-  header.site-header
+  header.site-header.home-header
     .brand
       span.logo SW
       div
         strong SmartWorkshop
         span Vehicle Service Marketplace
-    nav.site-nav
-      a(href="#how") How it works
-      a(href="#services") Services
-    a.ghost.ghost-link(href="/auth/login") Sign in
+    nav.home-nav
+      a.home-pill(href="/") Home
+      a.home-pill(href="#services") Services
+      a.home-pill(href="#product") Products
+      a.home-pill(href="#review") Review
+      a.home-pill(href="#partner") Partner
+      a.home-pill(href="#about") How it works
+      a.home-pill(href="#contact") Contact
+    a.primary.ghost-link.home-cta(href="/auth/login") Sign in
 
-  main
-    section.hero#how
-      .hero-copy
-        p.eyebrow Trusted mechanics. Transparent pricing.
-        h1 Book verified workshops and track every repair in real time.
-        p.lead
-          | SmartWorkshop connects customers with qualified mechanics, lets you compare quotations, and
-          | keeps everyone aligned on status and completion.
-        .cta-row
-          button.primary#getInstantQuotes(type="button") Get instant quotes
-          button.secondary(type="button") I am a workshop
-      .hero-card
-        h2 Fast check-in
-        p Start a new service request in under a minute.
-        form.hero-form#vehicleLookupForm
-          label
-            | Vehicle registration
-            input#vehicleReg(name="vehicleReg" type="text" placeholder="AB12CDE" autocomplete="off")
-          label
-            | Postcode
-            input#postcode(name="postcode" type="text" placeholder="SW1A 1AA" autocomplete="postal-code")
-          p.form-error#vehicleLookupError(role="alert" aria-live="polite")
-          button.primary(type="submit") Get my instant price
+  main.home-main
+    section.home-hero#home
+      .hero-backdrop
+        .hero-backdrop-layer.is-active
+        .hero-backdrop-layer
+      .hero-content
+        .hero-left
+          p.eyebrow Trusted mechanics. Transparent pricing.
+          h1 Book verified workshops and track every repair in real time.
+          p.lead
+            | SmartWorkshop connects customers with qualified mechanics, lets you compare quotations, and
+            | keeps everyone aligned on status and completion.
+          .hero-sub
+        .hero-right
+          .hero-card
+            h2 Fast check-in
+            p Start a new service request in under a minute.
+            form.hero-form#vehicleLookupForm
+              label
+                | Vehicle registration
+                input#vehicleReg(name="vehicleReg" type="text" placeholder="AB12CDE" autocomplete="off")
+              label
+                | Postcode
+                input#postcode(name="postcode" type="text" placeholder="SW1A 1AA" autocomplete="postal-code")
+              p.form-error#vehicleLookupError(role="alert" aria-live="polite")
+              button.primary(type="submit") Get my instant price
 
-    section.mechanic-cta
-      .mechanic-copy
-        h2 Partner with SmartWorkshop
-        p
-          | Join our network of trusted mechanics and workshops. Choose the jobs you want, set your
-          | pricing, and grow your business with steady local demand.
-        a.primary.ghost-link(href="/mechanic/home") Become a partner
-      .mechanic-visual
-        img(src="https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=900&q=80" alt="Mechanic inspecting engine bay")
-
-    section.features#services
-      h2 Everything you need to manage repairs
-      .feature-grid
-        article
-          h3 Transparent quotations
-          p Compare detailed labor and parts breakdowns before you accept.
-        article
-          h3 Live job tracking
-          p Mechanics update the job status so customers always know what is happening.
-        article
-          h3 Workshop tools
-          p Manage requests, submit quotes, and update jobs from a single dashboard.
+    section.home-services#services
+      .services-header
+        span.services-kicker Our Services
+        h2 All the ways we can help
+        p.services-subtitle Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      .services-grid
+        .service-card
+          .service-icon
+            svg(viewBox="0 0 64 64" aria-hidden="true")
+              path(d="M26 10h12l3 8H23l3-8Z" fill="none" stroke="currentColor" stroke-width="3")
+              rect(x="20" y="18" width="24" height="36" rx="6" fill="none" stroke="currentColor" stroke-width="3")
+              circle(cx="32" cy="44" r="5" fill="none" stroke="currentColor" stroke-width="3")
+          h3 Oil changes
+          p Curabitur at arcu sed ex venenatis laoreet. Ut lobortis.
+        .service-card
+          .service-icon
+            svg(viewBox="0 0 64 64" aria-hidden="true")
+              circle(cx="32" cy="32" r="18" fill="none" stroke="currentColor" stroke-width="3")
+              path(d="M32 16v8M32 40v8M16 32h8M40 32h8" fill="none" stroke="currentColor" stroke-width="3")
+              circle(cx="32" cy="32" r="4" fill="none" stroke="currentColor" stroke-width="3")
+          h3 ABS brakes
+          p Curabitur at arcu sed ex venenatis laoreet. Ut lobortis.
+        .service-card
+          .service-icon
+            svg(viewBox="0 0 64 64" aria-hidden="true")
+              path(d="M18 14v36M46 14v36M18 24h28M18 40h28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
+              circle(cx="18" cy="24" r="3" fill="currentColor")
+          h3 Transmission service
+          p Curabitur at arcu sed ex venenatis laoreet. Ut lobortis.
+        .service-card
+          .service-icon
+            svg(viewBox="0 0 64 64" aria-hidden="true")
+              path(d="M20 12h10l-2 12h8l2-12h6l-3 22H23l-3-22Z" fill="none" stroke="currentColor" stroke-width="3")
+              path(d="M24 34v14M40 34v14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
+          h3 Tires & wheels
+          p Curabitur at arcu sed ex venenatis laoreet. Ut lobortis.
+        .service-card
+          .service-icon
+            svg(viewBox="0 0 64 64" aria-hidden="true")
+              rect(x="14" y="12" width="36" height="32" rx="6" fill="none" stroke="currentColor" stroke-width="3")
+              path(d="M20 28h24M20 36h18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
+              path(d="M20 48h24" fill="none" stroke="currentColor" stroke-width="3")
+          h3 Wash and clean
+          p Curabitur at arcu sed ex venenatis laoreet. Ut lobortis.
+        .service-card
+          .service-icon
+            svg(viewBox="0 0 64 64" aria-hidden="true")
+              path(d="M20 20h24l4 8v12H16V28l4-8Z" fill="none" stroke="currentColor" stroke-width="3")
+              path(d="M24 40h16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
+              circle(cx="24" cy="46" r="4" fill="none" stroke="currentColor" stroke-width="3")
+              circle(cx="40" cy="46" r="4" fill="none" stroke="currentColor" stroke-width="3")
+          h3 Engine performance
+          p Curabitur at arcu sed ex venenatis laoreet. Ut lobortis.
 
   include ../partials/footer
