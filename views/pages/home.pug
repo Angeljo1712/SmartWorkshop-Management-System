@@ -14,7 +14,6 @@ block content
     nav.home-nav
       a.home-pill(href="/") Home
       a.home-pill(href="#services") Services
-      a.home-pill(href="#product") Products
       a.home-pill(href="#review") Review
       a.home-pill(href="#partner") Partner
       a.home-pill(href="#about") How it works
@@ -36,7 +35,7 @@ block content
           .hero-sub
         .hero-right
           .hero-card
-            h2 Fast check-in
+            h2 Let’s go!
             p Start a new service request in under a minute.
             form.hero-form#vehicleLookupForm
               label
@@ -47,6 +46,38 @@ block content
                 input#postcode(name="postcode" type="text" placeholder="SW1A 1AA" autocomplete="postal-code")
               p.form-error#vehicleLookupError(role="alert" aria-live="polite")
               button.primary(type="submit") Get my instant price
+
+    section.home-how#about
+      .how-header
+        span.how-kicker How it works
+        h2 Book a trusted mechanic in just a few clicks
+      .how-grid
+        .how-card
+          .how-icon
+            svg(viewBox="0 0 64 64" aria-hidden="true")
+              rect(x="18" y="8" width="28" height="48" rx="6" fill="none" stroke="currentColor" stroke-width="3")
+              path(d="M26 18h12M26 26h12M26 34h12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
+              rect(x="46" y="24" width="12" height="18" rx="4" fill="none" stroke="currentColor" stroke-width="3")
+          h3 Get an instant price quote
+          p Select your car and location, tell us what's wrong, and we'll give you an instant fixed price.
+        .how-card
+          .how-icon
+            svg(viewBox="0 0 64 64" aria-hidden="true")
+              rect(x="14" y="12" width="36" height="30" rx="6" fill="none" stroke="currentColor" stroke-width="3")
+              path(d="M14 22h36" fill="none" stroke="currentColor" stroke-width="3")
+              circle(cx="44" cy="42" r="8" fill="none" stroke="currentColor" stroke-width="3")
+              path(d="M44 38v4l3 3" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
+          h3 Pick a date, time & location
+          p Your mechanic will come to whichever address suits you best, at the date and time of your choice.
+        .how-card
+          .how-icon
+            svg(viewBox="0 0 64 64" aria-hidden="true")
+              rect(x="10" y="14" width="30" height="24" rx="4" fill="none" stroke="currentColor" stroke-width="3")
+              rect(x="40" y="20" width="14" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="3")
+              path(d="M18 46h28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
+          h3 Mechanic comes to you
+          p No need to go to the garage. Once booked, just sit back and relax while the mechanic comes to you.
+      a.how-cta(href="/auth/login") Find out more ↓
 
     section.home-services#services
       .services-header
