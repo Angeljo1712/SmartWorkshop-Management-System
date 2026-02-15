@@ -31,24 +31,18 @@ block content
           | No account? 
           a(href="/") Get my instant price.
       .auth-content.auth-content--create
-        h1 Create Account
-        .auth-social-row
-          button.auth-social-icon(type="button" aria-label="Sign up with Facebook") f
-          button.auth-social-icon(type="button" aria-label="Sign up with Google") G
-          button.auth-social-icon(type="button" aria-label="Sign up with LinkedIn") in
-        p.auth-sub or use your email for registration
-        form.auth-form#signUpForm
-          label
-            | Name
-            input#signUpName(type="text" placeholder="Your name" autocomplete="name")
-          label
-            | Email
-            input#signUpEmail(type="email" placeholder="Email" autocomplete="email")
-          label
-            | Password
-            input#signUpPassword(type="password" placeholder="••••••••" autocomplete="new-password")
-          p.form-error#signUpError(role="alert" aria-live="polite")
-          button.primary.auth-submit(type="submit") Sign up
+        .auth-vehicle-card
+          h2 Let’s go!
+          p Start a new service request in under a minute.
+          form.auth-vehicle-form#authVehicleForm
+            label
+              | Vehicle registration
+              input#authVehicleReg(type="text" placeholder="AB12CDE" autocomplete="off")
+            label
+              | Postcode
+              input#authVehiclePostcode(type="text" placeholder="SW1A 1AA" autocomplete="postal-code")
+            p.form-error#authVehicleError(role="alert" aria-live="polite")
+            button.primary.auth-vehicle-cta(type="submit") Get my instant price
       .auth-aside
         .auth-aside-copy.auth-aside--sign-in
           h2 Hello, Friend!

@@ -249,6 +249,58 @@ if (vehicleForm) {
   });
 }
 
+const authVehicleForm = document.getElementById("authVehicleForm");
+if (authVehicleForm) {
+  const regInput = document.getElementById("authVehicleReg");
+  const postcodeInput = document.getElementById("authVehiclePostcode");
+  const errorEl = document.getElementById("authVehicleError");
+
+  authVehicleForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const registrationNumber = regInput.value.trim().toUpperCase().replace(/\s+/g, "");
+    const postcode = postcodeInput.value.trim().toUpperCase();
+
+    if (!registrationNumber) {
+      errorEl.textContent = "Please enter your registration number.";
+      return;
+    }
+    if (!postcodeRegex.test(postcode)) {
+      errorEl.textContent = "Please enter a valid UK postcode.";
+      return;
+    }
+
+    errorEl.textContent = "";
+    try {
+      const result = await api("/api/vehicle-enquiry", {
+        method: "POST",
+        body: JSON.stringify({ registrationNumber })
+      });
+
+      const vehicleData = {
+        registrationNumber: result.registrationNumber || registrationNumber,
+        make: result.make,
+        model: result.model,
+        colour: result.colour,
+        fuelType: result.fuelType,
+        yearOfManufacture: result.yearOfManufacture,
+        postcode
+      };
+
+      sessionStorage.setItem("vehicleEnquiry", JSON.stringify(vehicleData));
+      const params = new URLSearchParams({
+        reg: vehicleData.registrationNumber,
+        postcode,
+        make: vehicleData.make || "",
+        model: vehicleData.model || ""
+      });
+      window.location.href = "/bookings/work/";
+    } catch (err) {
+      const message = err?.error?.message || err?.message || "Unable to look up vehicle details.";
+      errorEl.textContent = message;
+    }
+  });
+}
+
 const getInstantQuotes = document.getElementById("getInstantQuotes");
 if (getInstantQuotes) {
   getInstantQuotes.addEventListener("click", () => {
