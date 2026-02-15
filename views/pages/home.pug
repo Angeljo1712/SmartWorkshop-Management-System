@@ -5,20 +5,20 @@ block vars
   - var bodyClass = "home-body"
 
 block content
-  header.site-header.home-header
-    .brand
+  header.site-header.home-header#top
+    a.brand(href="/")
       span.logo SW
       div
         strong SmartWorkshop
         span Vehicle Service Marketplace
     nav.home-nav
-      a.home-pill(href="/") Home
-      a.home-pill(href="#services") Services
-      a.home-pill(href="#review") Review
-      a.home-pill(href="#partner") Partner
+      a.home-pill(href="#top") Home
       a.home-pill(href="#about") How it works
+      a.home-pill(href="#services") Services
+      a.home-pill(href="#partner") Partner
+      a.home-pill(href="#review") Review
       a.home-pill(href="#contact") Contact
-    a.primary.ghost-link.home-cta(href="/auth/login") Sign in
+    a.home-signin(href="/auth/login") Sign in
 
   main.home-main
     section.home-hero#home
@@ -77,13 +77,12 @@ block content
               path(d="M18 46h28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
           h3 Mechanic comes to you
           p No need to go to the garage. Once booked, just sit back and relax while the mechanic comes to you.
-      a.how-cta(href="/auth/login") Find out more ↓
 
     section.home-services#services
       .services-header
         span.services-kicker Our Services
         h2 All the ways we can help
-        p.services-subtitle Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        p.services-subtitle
       .services-grid
         .service-card
           .service-icon
@@ -91,38 +90,33 @@ block content
               path(d="M26 10h12l3 8H23l3-8Z" fill="none" stroke="currentColor" stroke-width="3")
               rect(x="20" y="18" width="24" height="36" rx="6" fill="none" stroke="currentColor" stroke-width="3")
               circle(cx="32" cy="44" r="5" fill="none" stroke="currentColor" stroke-width="3")
-          h3 Oil changes
-          p Curabitur at arcu sed ex venenatis laoreet. Ut lobortis.
+          h3 Repairs
         .service-card
           .service-icon
             svg(viewBox="0 0 64 64" aria-hidden="true")
               circle(cx="32" cy="32" r="18" fill="none" stroke="currentColor" stroke-width="3")
               path(d="M32 16v8M32 40v8M16 32h8M40 32h8" fill="none" stroke="currentColor" stroke-width="3")
               circle(cx="32" cy="32" r="4" fill="none" stroke="currentColor" stroke-width="3")
-          h3 ABS brakes
-          p Curabitur at arcu sed ex venenatis laoreet. Ut lobortis.
+          h3 Diagnostics
         .service-card
           .service-icon
             svg(viewBox="0 0 64 64" aria-hidden="true")
               path(d="M18 14v36M46 14v36M18 24h28M18 40h28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
               circle(cx="18" cy="24" r="3" fill="currentColor")
-          h3 Transmission service
-          p Curabitur at arcu sed ex venenatis laoreet. Ut lobortis.
+          h3 Servicing
         .service-card
           .service-icon
             svg(viewBox="0 0 64 64" aria-hidden="true")
               path(d="M20 12h10l-2 12h8l2-12h6l-3 22H23l-3-22Z" fill="none" stroke="currentColor" stroke-width="3")
               path(d="M24 34v14M40 34v14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
-          h3 Tires & wheels
-          p Curabitur at arcu sed ex venenatis laoreet. Ut lobortis.
+          h3 MOT
         .service-card
           .service-icon
             svg(viewBox="0 0 64 64" aria-hidden="true")
               rect(x="14" y="12" width="36" height="32" rx="6" fill="none" stroke="currentColor" stroke-width="3")
               path(d="M20 28h24M20 36h18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
               path(d="M20 48h24" fill="none" stroke="currentColor" stroke-width="3")
-          h3 Wash and clean
-          p Curabitur at arcu sed ex venenatis laoreet. Ut lobortis.
+          h3 Tyres
         .service-card
           .service-icon
             svg(viewBox="0 0 64 64" aria-hidden="true")
@@ -130,7 +124,79 @@ block content
               path(d="M24 40h16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
               circle(cx="24" cy="46" r="4" fill="none" stroke="currentColor" stroke-width="3")
               circle(cx="40" cy="46" r="4" fill="none" stroke="currentColor" stroke-width="3")
-          h3 Engine performance
-          p Curabitur at arcu sed ex venenatis laoreet. Ut lobortis.
+          h3 Pre-purchase inspections
+
+    section.home-apply#partner
+      .apply-content
+        .apply-copy
+          h2 Apply to be a mechanic
+          p Join ClickMechanic as a mechanic or garage and accept the work you want. Free to join, with great perks and discounts.
+          a.primary.apply-cta(href="/mechanic/home") Work with ClickMechanic
+        .apply-image
+          img(src="/images/home1.jpg" alt="Mechanic working on car")
+
+    section.home-review#review
+      .review-header
+        h2 What our customers are saying
+      .review-grid
+        article.review-card
+          img.review-photo(src="/images/review-1.jpg" alt="Simon Rebbitt")
+          h3 Simon Rebbitt
+          span BMW 5 SERIES
+          p The support staff are on hand to help, and the work gets done quickly and at a very competitive price.
+          a(href="#") Read more
+        article.review-card
+          img.review-photo(src="/images/review-2.jpg" alt="Barbara Mansour")
+          h3 Barbara Mansour
+          span VOLKSWAGEN GOLF IV
+          p ClickMechanic was fantastic. The mechanic could come to us and, on top of that, it was well-priced.
+          a(href="#") Read more
+        article.review-card
+          img.review-photo(src="/images/review-3.jpg" alt="Andrew Campbell")
+          h3 Andrew Campbell
+          span AUDI A4
+          p Simply put, I have now used ClickMechanic twice and I will certainly use ClickMechanic again.
+          a(href="#") Read more
+
+    section.home-contact#contact
+      .contact-grid
+        .contact-col
+          h4 Help & support
+          a(href="#about") How it Works
+          a(href="#") Support Center
+          a(href="#contact") Contact Us
+        .contact-col
+          h4 Company
+          a(href="#") About Us
+          a(href="#review") Reviews
+          a(href="#") Fleet Servicing
+          a(href="#partner") For Mechanics
+          a(href="#") Refer A Mechanic
+          a(href="#") Price Estimator
+          a(href="#") Careers
+          a(href="#") Terms & Privacy
+        .contact-col
+          h4 Popular locations
+          a(href="#") London
+          a(href="#") Manchester
+          a(href="#") Birmingham
+          a(href="#") Bristol
+          a(href="#") Newcastle
+          a(href="#") Brighton
+          a(href="#") All Locations
+        .contact-col
+          h4 Popular jobs
+          a(href="#") MOT
+          a(href="#") Servicing
+          a(href="#") Brake Pads
+          a(href="#") Cambelt/Timing Belt
+          a(href="#") Clutch
+          a(href="#") Battery
+          a(href="#") Diagnostic Inspection
+          a(href="#") Alternator
+          a(href="#") All Jobs
+      .contact-bottom
+        span Copyright © 2026 ClickMechanic Ltd.
+        span Site Map
 
   include ../partials/footer

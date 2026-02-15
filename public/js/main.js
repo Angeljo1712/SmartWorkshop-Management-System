@@ -68,11 +68,6 @@ if (heroBackdrop) {
 
     setLayerImage(layers[activeIndex], heroImages[heroIndex]);
     heroIndex = (heroIndex + 1) % heroImages.length;
-    const homeLink = document.querySelector('.home-nav a[href="#home"]');
-    homeLink?.addEventListener("click", () => {
-      // Show hero-2 (index 1) when clicking Home.
-      jumpToImage(1);
-    });
     setInterval(() => {
       const nextIndex = activeIndex === 0 ? 1 : 0;
       const current = layers[activeIndex];
@@ -92,6 +87,57 @@ if (heroBackdrop) {
 
       activeIndex = nextIndex;
     }, 5000);
+  }
+}
+
+const homeTopLink = document.querySelector('.home-nav a[href="#top"]');
+if (homeTopLink) {
+  homeTopLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
+
+const homeHeader = document.querySelector(".home-header");
+const homeHero = document.querySelector(".home-hero");
+if (homeHeader && homeHero) {
+  const applyHeaderState = (isHero) => {
+    homeHeader.classList.toggle("is-hero", isHero);
+    homeHeader.classList.toggle("is-light", !isHero);
+  };
+
+  if ("IntersectionObserver" in window) {
+    const updateObserver = () => {
+      const headerHeight = homeHeader.offsetHeight || 0;
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          applyHeaderState(entry.isIntersecting);
+        },
+        {
+          root: null,
+          threshold: 0,
+          rootMargin: `-${headerHeight}px 0px 0px 0px`
+        }
+      );
+      observer.observe(homeHero);
+      return observer;
+    };
+
+    let observer = updateObserver();
+    window.addEventListener("resize", () => {
+      observer.disconnect();
+      observer = updateObserver();
+    });
+  } else {
+    const updateHeaderTheme = () => {
+      const heroBottom = homeHero.getBoundingClientRect().bottom;
+      const headerHeight = homeHeader.offsetHeight || 0;
+      const isPastHero = heroBottom <= headerHeight + 1;
+      applyHeaderState(!isPastHero ? true : false);
+    };
+    updateHeaderTheme();
+    window.addEventListener("scroll", updateHeaderTheme, { passive: true });
+    window.addEventListener("resize", updateHeaderTheme);
   }
 }
 
@@ -139,6 +185,17 @@ const renderVehicleSummary = () => {
     `;
   }
 };
+
+const authPanel = document.querySelector(".auth-panel");
+if (authPanel) {
+  const toggleButtons = authPanel.querySelectorAll("[data-auth-toggle]");
+  toggleButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const mode = button.getAttribute("data-auth-toggle");
+      authPanel.classList.toggle("is-create", mode === "create");
+    });
+  });
+}
 
 const vehicleForm = document.getElementById("vehicleLookupForm");
 if (vehicleForm) {

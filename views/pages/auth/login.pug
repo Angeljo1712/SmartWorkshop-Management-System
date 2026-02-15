@@ -6,25 +6,55 @@ block vars
 
 block content
   main.auth-shell
-    section.auth-card
-      h1 Sign in
-      form.auth-form#signInForm
-        label
-          | Email address
-          input#signInEmail(type="text" placeholder="Email or username" autocomplete="username")
-        label
-          | Password
-          input#signInPassword(type="password" placeholder="••••••••" autocomplete="current-password")
-        a.auth-link(href="/auth/forgot-password") Forgot your password
-        p.form-error#signInError(role="alert" aria-live="polite")
-        button.primary.auth-submit(type="submit") Sign in
-        label.auth-remember
-          input(type="checkbox")
-          |  Remember me
-      .auth-divider
-        span or
-      button.auth-social.facebook(type="button") Sign in with Facebook
-      button.auth-social.passkey(type="button") Sign in with Passkey
-      p.auth-footnote
-        | No account? 
-        a(href="/") Click here to get my instant price.
+    section.auth-panel
+      .auth-content.auth-content--sign-in
+        h1 Sign in
+        p.auth-sub Welcome back. Please enter your details to continue.
+        .auth-social-row
+          button.auth-social-icon(type="button" aria-label="Sign in with Facebook") f
+          button.auth-social-icon(type="button" aria-label="Sign in with Google") G
+          button.auth-social-icon(type="button" aria-label="Sign in with LinkedIn") in
+        form.auth-form#signInForm
+          label
+            | Email address
+            input#signInEmail(type="text" placeholder="Email or username" autocomplete="username")
+          label
+            | Password
+            input#signInPassword(type="password" placeholder="••••••••" autocomplete="current-password")
+          a.auth-link(href="/auth/forgot-password") Forgot your password
+          p.form-error#signInError(role="alert" aria-live="polite")
+          button.primary.auth-submit(type="submit") Sign in
+          label.auth-remember
+            input(type="checkbox")
+            |  Remember me
+        p.auth-footnote
+          | No account? 
+          a(href="/") Get my instant price.
+      .auth-content.auth-content--create
+        h1 Create Account
+        .auth-social-row
+          button.auth-social-icon(type="button" aria-label="Sign up with Facebook") f
+          button.auth-social-icon(type="button" aria-label="Sign up with Google") G
+          button.auth-social-icon(type="button" aria-label="Sign up with LinkedIn") in
+        p.auth-sub or use your email for registration
+        form.auth-form#signUpForm
+          label
+            | Name
+            input#signUpName(type="text" placeholder="Your name" autocomplete="name")
+          label
+            | Email
+            input#signUpEmail(type="email" placeholder="Email" autocomplete="email")
+          label
+            | Password
+            input#signUpPassword(type="password" placeholder="••••••••" autocomplete="new-password")
+          p.form-error#signUpError(role="alert" aria-live="polite")
+          button.primary.auth-submit(type="submit") Sign up
+      .auth-aside
+        .auth-aside-copy.auth-aside--sign-in
+          h2 Hello, Friend!
+          p Enter your personal details and start your journey with us.
+          button.auth-ghost(type="button" data-auth-toggle="create") Get started
+        .auth-aside-copy.auth-aside--create
+          h2 Welcome Back!
+          p To keep connected with us please login with your personal info.
+          button.auth-ghost(type="button" data-auth-toggle="sign-in") Sign in
