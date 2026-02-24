@@ -18,54 +18,85 @@ block content
       aside.admin-rail
         .rail-brand
           span.logo SW
-          strong SmartWorkshop
         nav.rail-nav
-          button.admin-nav-link.rail-item.active(type="button" data-view="users") Candidates
-          button.admin-nav-link.rail-item(type="button" data-view="profile") Profile
+          button.admin-nav-link.rail-item.active(type="button" data-view="users")
+            span.rail-icon(aria-hidden="true")
+              svg(viewBox="0 0 24 24")
+                path(d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2")
+                circle(cx="8.5" cy="7" r="4")
+                path(d="M20 8v6")
+                path(d="M23 11h-6")
+            | Users
+          button.admin-nav-link.rail-item(type="button" data-view="profile")
+            span.rail-icon(aria-hidden="true")
+              svg(viewBox="0 0 24 24")
+                circle(cx="12" cy="8" r="4")
+                path(d="M5 20a7 7 0 0 1 14 0")
+            | Profile
+          button.admin-nav-link.rail-item(type="button" data-view="settings")
+            span.rail-icon(aria-hidden="true")
+              svg(viewBox="0 0 24 24")
+                circle(cx="12" cy="12" r="3")
+                path(d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 0 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.2a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3h.1a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8v.1a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.5 1z")
+            | Settings
         .rail-footer
           button.admin-signout#adminLogoutBtn(type="button") Sign out
 
       aside.admin-side
         .side-card
           .side-title Filters
-          .side-section
-            label.side-label AI Search
-            button.side-chip Data Engineers with 4+ years
-          .side-section
-            label.side-label Job title
-            input.side-input(type="text" placeholder="Search job titles")
-          .side-section
-            label.side-label Role
-            select#adminRoleFilter.side-select
-              option(value="all") All
-              option(value="ADMIN") Admin
-              option(value="MECHANIC") Mechanic
-              option(value="CUSTOMER") Customer
-          .side-section
-            label.side-label Status
-            select#adminStatusFilter.side-select
-              option(value="all") All
-              option(value="Active") Active
-              option(value="Pending") Pending
-              option(value="Suspended") Suspended
-              option(value="Banned") Banned
-          .side-section
-            label.side-label Date
-            select#adminDateFilter.side-select
-              option(value="all") All time
-              option(value="30") Last 30 days
-              option(value="90") Last 90 days
-              option(value="365") Last year
-          .side-section.actions
-            button.secondary#adminExportBtn(type="button") Export
-            button.primary#adminAddUserBtn(type="button") + Add User
+          .side-section(data-filter-section)
+            .side-section-head
+              label.side-label Job title
+              button.filter-toggle(type="button" aria-expanded="true" aria-label="Toggle Job title filter")
+                svg(viewBox="0 0 24 24" aria-hidden="true")
+                  path(d="M6 9l6 6 6-6")
+            .side-section-body
+              input.side-input(type="text" placeholder="Search job titles")
+          .side-section(data-filter-section)
+            .side-section-head
+              label.side-label Role
+              button.filter-toggle(type="button" aria-expanded="true" aria-label="Toggle Role filter")
+                svg(viewBox="0 0 24 24" aria-hidden="true")
+                  path(d="M6 9l6 6 6-6")
+            .side-section-body
+              select#adminRoleFilter.side-select
+                option(value="all") All
+                option(value="ADMIN") Admin
+                option(value="MECHANIC") Mechanic
+                option(value="CUSTOMER") Customer
+          .side-section(data-filter-section)
+            .side-section-head
+              label.side-label Status
+              button.filter-toggle(type="button" aria-expanded="true" aria-label="Toggle Status filter")
+                svg(viewBox="0 0 24 24" aria-hidden="true")
+                  path(d="M6 9l6 6 6-6")
+            .side-section-body
+              select#adminStatusFilter.side-select
+                option(value="all") All
+                option(value="Active") Active
+                option(value="Pending") Pending
+                option(value="Suspended") Suspended
+                option(value="Banned") Banned
+          .side-section(data-filter-section)
+            .side-section-head
+              label.side-label Date
+              button.filter-toggle(type="button" aria-expanded="true" aria-label="Toggle Date filter")
+                svg(viewBox="0 0 24 24" aria-hidden="true")
+                  path(d="M6 9l6 6 6-6")
+            .side-section-body
+              select#adminDateFilter.side-select
+                option(value="all") All time
+                option(value="30") Last 30 days
+                option(value="90") Last 90 days
+                option(value="365") Last year
 
       section.admin-main
         section.admin-view#adminUsersView
           .admin-table-card
             .admin-table-head
               .head-left
-                h3 Candidates
+                h3 Users
                 p
                   span#adminUserCount 0
               .admin-table-actions
@@ -74,7 +105,6 @@ block content
                   option(value="10") 10 rows
                   option(value="20") 20 rows
                   option(value="50") 50 rows
-                button.ghost#adminRefreshBtn(type="button") Refresh
 
             .admin-table-wrap
               table.admin-table
@@ -121,6 +151,24 @@ block content
               .profile-item
                 span.label Role
                 span#adminSettingsRole Administrator
+
+        section.admin-view.is-hidden#adminSettingsView
+          .admin-profile-card
+            .profile-left
+              .admin-profile-avatar AA
+              div
+                strong Admin Settings
+                span Manage your workspace preferences
+            .profile-right
+              .profile-item
+                span.label Theme
+                span Dark
+              .profile-item
+                span.label Notifications
+                span Enabled
+              .profile-item
+                span.label Access
+                span Administrator
 
         section.admin-panel.is-hidden#adminAddUserPanel
           .admin-panel-head

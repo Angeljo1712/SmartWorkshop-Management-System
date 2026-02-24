@@ -784,10 +784,11 @@ if (adminPage) {
   const adminAddUserClose = document.getElementById("adminAddUserClose");
   const adminAddUserForm = document.getElementById("adminAddUserForm");
   const adminAddUserError = document.getElementById("adminAddUserError");
-  const adminRefreshBtn = document.getElementById("adminRefreshBtn");
+  const filterSections = document.querySelectorAll("[data-filter-section]");
   const adminNavLinks = document.querySelectorAll(".admin-nav-link");
   const adminProfileView = document.getElementById("adminProfileView");
   const adminUsersView = document.getElementById("adminUsersView");
+  const adminSettingsView = document.getElementById("adminSettingsView");
   const adminProfileAvatar = document.getElementById("adminProfileAvatar");
   const adminProfileName = document.getElementById("adminProfileName");
   const adminProfileRole = document.getElementById("adminProfileRole");
@@ -1131,11 +1132,11 @@ if (adminPage) {
       adminNavLinks.forEach((btn) => btn.classList.toggle("active", btn === link));
       adminProfileView.classList.toggle("is-hidden", view !== "profile");
       adminUsersView.classList.toggle("is-hidden", view !== "users");
+      adminSettingsView?.classList.toggle("is-hidden", view !== "settings");
     });
   });
 
   adminExportBtn?.addEventListener("click", exportUsers);
-  adminRefreshBtn?.addEventListener("click", fetchUsers);
   adminSearch?.addEventListener("input", applyFilters);
   adminRoleFilter?.addEventListener("change", applyFilters);
   adminStatusFilter?.addEventListener("change", applyFilters);
@@ -1187,6 +1188,15 @@ if (adminPage) {
   } else {
     adminLoginError.textContent = "Admins only. Please sign in first.";
   }
+
+  filterSections.forEach((section) => {
+    const toggleBtn = section.querySelector(".filter-toggle");
+    if (!toggleBtn) return;
+    toggleBtn.addEventListener("click", () => {
+      const isCollapsed = section.classList.toggle("is-collapsed");
+      toggleBtn.setAttribute("aria-expanded", String(!isCollapsed));
+    });
+  });
 }
 
 const loginButton = document.getElementById("loginCustomer");

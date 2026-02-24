@@ -182,6 +182,13 @@ body {
   gap: 8px;
 }
 
+.side-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .side-label {
   font-size: 0.78rem;
   text-transform: uppercase;
@@ -211,6 +218,53 @@ body {
 .side-section.actions {
   grid-template-columns: 1fr;
   gap: 10px;
+}
+
+.filter-toggle {
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  color: #f2f6ff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.95;
+  position: relative;
+}
+
+.filter-toggle svg {
+  display: none;
+}
+
+.filter-toggle::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  transform: rotate(-135deg);
+  transition: transform 0.18s ease;
+}
+
+.filter-toggle:hover {
+  opacity: 1;
+}
+
+.side-section.is-collapsed .filter-toggle svg {
+  transform: none;
+}
+
+.side-section.is-collapsed .filter-toggle::before {
+  transform: rotate(45deg);
+}
+
+.side-section.is-collapsed .side-section-body {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
 }
 
 .admin-main .admin-table-card {
@@ -3871,9 +3925,10 @@ body.admin-body {
 
 .rail-brand {
   display: grid;
-  gap: 10px;
+  place-items: center;
   color: #f5f7fb;
   font-weight: 700;
+  padding: 2px 0 8px;
 }
 
 .rail-brand .logo {
@@ -3892,6 +3947,9 @@ body.admin-body {
 }
 
 .rail-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   text-align: left;
   border: 1px solid transparent;
   border-radius: 8px;
@@ -3909,6 +3967,24 @@ body.admin-body {
 .rail-item.active {
   background: rgba(230, 236, 247, 0.22);
   border-color: rgba(255, 255, 255, 0.2);
+}
+
+.rail-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rail-icon svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .rail-footer .admin-signout {
@@ -4122,4 +4198,13 @@ body.admin-body {
     min-width: 180px;
     flex: 1;
   }
+}
+
+/* Smooth accordion transition for admin filters */
+.side-section .side-section-body {
+  max-height: 140px;
+  opacity: 1;
+  transform: translateY(0);
+  overflow: hidden;
+  transition: max-height 0.22s ease, opacity 0.18s ease, transform 0.18s ease;
 }
