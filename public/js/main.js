@@ -811,21 +811,24 @@ if (adminPage) {
   const clearAdminSession = () => {
     sessionStorage.removeItem("userToken");
     sessionStorage.removeItem("userProfile");
+    sessionStorage.removeItem("activeRole");
   };
 
   const setAdminHeader = (user) => {
     const displayName = user?.full_name || user?.email || "Admin";
     const role = user?.role_name || "ADMIN";
     const initials = getInitials(displayName);
-    adminProfileAvatar.textContent = initials;
-    adminProfileName.textContent = displayName;
-    adminProfileRole.textContent = role;
-    adminSettingsAvatar.textContent = initials;
-    adminSettingsName.textContent = displayName;
-    adminSettingsEmail.textContent = user?.email || "admin@smartworkshop.local";
-    adminSettingsEmailDetail.textContent = `Email: ${user?.email || "admin@smartworkshop.local"}`;
-    adminSettingsRole.textContent = role;
-    adminSettingsPhone.textContent = "Phone: -";
+    if (adminProfileAvatar) adminProfileAvatar.textContent = initials;
+    if (adminProfileName) adminProfileName.textContent = displayName;
+    if (adminProfileRole) adminProfileRole.textContent = role;
+    if (adminSettingsAvatar) adminSettingsAvatar.textContent = initials;
+    if (adminSettingsName) adminSettingsName.textContent = displayName;
+    if (adminSettingsEmail) adminSettingsEmail.textContent = user?.email || "admin@smartworkshop.local";
+    if (adminSettingsEmailDetail) {
+      adminSettingsEmailDetail.textContent = `Email: ${user?.email || "admin@smartworkshop.local"}`;
+    }
+    if (adminSettingsRole) adminSettingsRole.textContent = role;
+    if (adminSettingsPhone) adminSettingsPhone.textContent = "Phone: -";
   };
 
   const setAdminVisibility = (loggedIn) => {
@@ -834,7 +837,7 @@ if (adminPage) {
     adminLogoutBtn.disabled = !loggedIn;
   };
 
-  const statusCycle = ["Active", "Inactive", "Banned", "Pending", "Suspended"];
+  const statusCycle = ["Active", "Pending", "Suspended", "Banned"];
   const toStatusLabel = (value) => {
     if (!value) return null;
     const lower = String(value).toLowerCase();
@@ -853,6 +856,47 @@ if (adminPage) {
   };
   const getAvatarUrl = (email) =>
     email ? `https://i.pravatar.cc/80?u=${encodeURIComponent(email)}` : "";
+  const fallbackLocations = [
+    "Los Angeles, CA",
+    "Sacramento, CA",
+    "San Francisco, CA",
+    "San Diego, CA",
+    "San Jose, CA",
+    "Oakland, CA"
+  ];
+  const getLocation = (user, index) => {
+    if (user.location) return user.location;
+    const city = user.city || user.town;
+    if (city) return `${city}, CA`;
+    return fallbackLocations[index % fallbackLocations.length];
+  };
+  const getCurrentJob = (user) => {
+    const byRole = {
+      ADMIN: "Operations Administrator",
+      MECHANIC: "Lead Service Mechanic",
+      CUSTOMER: "Vehicle Service Customer"
+    };
+    return byRole[user.role_name] || "Service Candidate";
+  };
+  const getExperience = (user) => {
+    const created = new Date(user.created_at);
+    if (!Number.isNaN(created.getTime())) {
+      const years = Math.max(1, Math.floor((Date.now() - created.getTime()) / (1000 * 60 * 60 * 24 * 365)));
+      return `${years} yrs.`;
+    }
+    return "5 yrs.";
+  };
+  const getReadiness = (user, index) => {
+    const status = getStatus(user, index);
+    if (status === "Active") return "5/5";
+    if (status === "Pending") return "4/5";
+    if (status === "Suspended") return "2/5";
+    return "1/5";
+  };
+  const getScore = (user, index) => {
+    const seed = Number(user.user_id) || index + 1;
+    return 420 + ((seed * 137) % 520);
+  };
 
   const formatDate = (value) => {
     if (!value) return "-";
@@ -886,11 +930,14 @@ if (adminPage) {
     filteredUsers = adminUsers.filter((user, index) => {
       const role = user.role_name || "";
       const status = getStatus(user, index);
+      const fullName = (user.full_name || "").toLowerCase();
+      const email = (user.email || "").toLowerCase();
+      const username = (user.username || "").toLowerCase();
       const matchesTerm =
         !term ||
-        user.full_name.toLowerCase().includes(term) ||
-        user.email.toLowerCase().includes(term) ||
-        (user.username || "").toLowerCase().includes(term) ||
+        fullName.includes(term) ||
+        email.includes(term) ||
+        username.includes(term) ||
         role.toLowerCase().includes(term);
       const matchesRole = roleValue === "all" || role === roleValue;
       const matchesStatus = statusValue === "all" || status === statusValue;
@@ -923,31 +970,33 @@ if (adminPage) {
 
     users.forEach((user, index) => {
       const row = document.createElement("tr");
-      const status = getStatus(user, index);
-      const statusClass = status.toLowerCase();
-      const lastActive = getLastActive(user, index);
+      const readiness = getReadiness(user, index);
+      const score = getScore(user, index);
+      const location = getLocation(user, index);
+      const currentJob = getCurrentJob(user);
+      const experience = getExperience(user);
       const avatarUrl = getAvatarUrl(user.email);
+      const displayName = user.full_name || user.email || "Unknown user";
       row.innerHTML = `
         <td class="table-check">
-          <input type="checkbox" aria-label="Select ${user.full_name}" disabled />
+          <input type="checkbox" aria-label="Select ${displayName}" disabled />
         </td>
         <td>
           <div class="user-cell">
             <div class="avatar">
-              ${avatarUrl ? `<img src="${avatarUrl}" alt="" />` : getInitials(user.full_name)}
+              ${avatarUrl ? `<img src="${avatarUrl}" alt="" />` : getInitials(displayName)}
             </div>
             <div class="user-meta">
-              <strong>${user.full_name}</strong>
-              <span>ID ${user.user_id}</span>
+              <strong>${displayName}</strong>
+              <span>${user.email || `ID ${user.user_id}`}</span>
             </div>
           </div>
         </td>
-        <td>${user.email}</td>
-        <td>${user.username || getUsername(user.email)}</td>
-        <td><span class="pill ${statusClass}">${status}</span></td>
-        <td><span class="role-chip">${user.role_name}</span></td>
-        <td>${formatDate(user.created_at)}</td>
-        <td>${lastActive}</td>
+        <td>${location}</td>
+        <td>${currentJob}</td>
+        <td>${experience}</td>
+        <td>${readiness}</td>
+        <td><span class="score-pill">${score}</span></td>
         <td class="table-actions">
           <div class="admin-actions-cell">
             <button class="icon-btn" type="button" title="Edit (coming soon)" disabled>
@@ -1073,8 +1122,7 @@ if (adminPage) {
 
   adminLogoutBtn?.addEventListener("click", () => {
     clearAdminSession();
-    setAdminHeader(null);
-    setAdminVisibility(false);
+    window.location.replace("/");
   });
 
   adminNavLinks.forEach((link) => {
