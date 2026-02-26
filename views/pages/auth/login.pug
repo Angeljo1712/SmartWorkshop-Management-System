@@ -9,27 +9,18 @@ block content
     section.auth-panel
       .auth-content.auth-content--sign-in
         h1 Sign in
-        p.auth-sub Welcome back. Please enter your details to continue.
         .auth-social-row
-          button.auth-social-icon(type="button" aria-label="Sign in with Facebook") f
-          button.auth-social-icon(type="button" aria-label="Sign in with Google") G
-          button.auth-social-icon(type="button" aria-label="Sign in with LinkedIn") in
+          button.auth-social-icon.auth-social-icon--facebook(type="button" aria-label="Sign in with Facebook")
+          button.auth-social-icon.auth-social-icon--google(type="button" aria-label="Sign in with Google")
+        p.auth-or or use your account
         form.auth-form#signInForm
           label
-            | Email address
-            input#signInEmail(type="text" placeholder="Email or username" autocomplete="username")
+            input#signInEmail(type="text" placeholder="Email" autocomplete="username")
           label
-            | Password
-            input#signInPassword(type="password" placeholder="••••••••" autocomplete="current-password")
+            input#signInPassword(type="password" placeholder="Password" autocomplete="current-password")
           a.auth-link(href="/auth/forgot-password") Forgot your password
           p.form-error#signInError(role="alert" aria-live="polite")
           button.primary.auth-submit(type="submit") Sign in
-          label.auth-remember
-            input(type="checkbox")
-            |  Remember me
-        p.auth-footnote
-          | No account? 
-          a(href="/") Get my instant price.
       .auth-content.auth-content--create
         .auth-vehicle-card
           h2 Let’s go!
@@ -46,9 +37,9 @@ block content
       .auth-aside
         .auth-aside-copy.auth-aside--sign-in
           h2 Hello, Friend!
-          p Enter your personal details and start your journey with us.
+          p If you already have an account with us, you can access your account.
           button.auth-ghost(type="button" data-auth-toggle="create") Get started
         .auth-aside-copy.auth-aside--create
           h2 Welcome Back!
-          p To keep connected with us please login with your personal info.
+          p If you already have an account with us, you can access your account.
           button.auth-ghost(type="button" data-auth-toggle="sign-in") Sign in
