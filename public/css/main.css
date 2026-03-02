@@ -3653,6 +3653,26 @@ body.admin-body {
   color: #e7ebf4;
 }
 
+body.admin-body .site-header.admin-header {
+  background: #15181d;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #f0f3f9;
+}
+
+body.admin-body .site-header.admin-header .brand strong,
+body.admin-body .site-header.admin-header .brand span {
+  color: #f0f3f9;
+}
+
+body.admin-body .site-header.admin-header .logo {
+  background: rgba(255, 255, 255, 0.12);
+  color: #f0f3f9;
+}
+
+body.admin-body .user-app {
+  grid-template-columns: 150px minmax(0, 1fr);
+}
+
 .admin-ui {
   min-height: 100vh;
   padding: 18px;
