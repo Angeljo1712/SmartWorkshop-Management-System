@@ -1364,6 +1364,7 @@ if (userPage) {
   const userSettingsEmailDetail = document.getElementById("userSettingsEmailDetail");
   const userSettingsUsername = document.getElementById("userSettingsUsername");
   const userSettingsRole = document.getElementById("userSettingsRole");
+  const userSettingsRoleBadge = document.getElementById("userSettingsRoleBadge");
   const userSettingsPhone = document.getElementById("userSettingsPhone");
   const userSettingsAddress = document.getElementById("userSettingsAddress");
   const userSettingsAvatarSettings = document.getElementById("userSettingsAvatarSettings");
@@ -1441,6 +1442,7 @@ if (userPage) {
     userSettingsEmailDetail.textContent = `Email: ${user?.email || "-"}`;
     if (userSettingsUsername) userSettingsUsername.textContent = `Username: ${user?.username || "-"}`;
     userSettingsRole.textContent = activeRole;
+    if (userSettingsRoleBadge) userSettingsRoleBadge.textContent = activeRole;
     userSettingsPhone.textContent = `Phone: ${user?.phone || "-"}`;
     if (userSettingsAddress) userSettingsAddress.textContent = `Address: ${user?.address || "-"}`;
     if (userSettingsAvatarSettings) setAvatar(userSettingsAvatarSettings, initials, user?.avatar_url);
