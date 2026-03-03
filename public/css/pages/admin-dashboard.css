@@ -1,0 +1,225 @@
+#adminPage.admin-ui {
+  min-height: 100vh;
+  padding: 18px;
+  background: transparent;
+  color: #dbe3f0;
+}
+
+#adminPage #adminApp.admin-app {
+  display: grid;
+  grid-template-columns: 150px 260px minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
+}
+
+#adminPage .admin-side .side-card {
+  height: 100%;
+  background: rgba(25, 31, 42, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 14px;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+#adminPage .side-title {
+  font-size: 1.05rem;
+  color: #f3f6fd;
+}
+
+#adminPage .side-label {
+  color: #b8c0ce;
+  font-size: 0.83rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+#adminPage .side-input,
+#adminPage .side-select {
+  width: 100%;
+  background: #1a212f;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #e5ebf6;
+  border-radius: 6px;
+  padding: 9px 10px;
+}
+
+#adminPage .side-chip {
+  border-radius: 6px;
+  background: rgba(122, 136, 186, 0.3);
+  color: #d4ddf4;
+  border: 1px solid rgba(193, 204, 242, 0.28);
+}
+
+#adminPage .side-section.actions {
+  margin-top: 8px;
+}
+
+#adminPage .side-section.actions button {
+  border-radius: 8px;
+}
+
+#adminPage .admin-main {
+  background: rgba(25, 31, 42, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 10px;
+  overflow: hidden;
+}
+
+#adminPage .admin-main .admin-table-card {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+#adminPage .admin-table-head {
+  margin-bottom: 8px;
+  padding: 6px;
+}
+
+#adminPage .admin-table-head h3 {
+  color: #eef3fc;
+  font-size: 1.7rem;
+  font-weight: 600;
+}
+
+#adminPage .admin-table-head p,
+#adminPage #adminRowsMeta {
+  color: #9fabbe;
+}
+
+#adminPage .admin-table-actions {
+  gap: 8px;
+}
+
+#adminPage .admin-table-actions #adminSearch {
+  min-width: 220px;
+}
+
+#adminPage .admin-table-wrap {
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(14, 19, 28, 0.9);
+}
+
+#adminPage .admin-table th,
+#adminPage .admin-table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.87rem;
+  color: #d5deed;
+  padding: 11px 10px;
+  white-space: nowrap;
+}
+
+#adminPage .admin-table th {
+  color: #8f9cb1;
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+#adminPage .admin-table tbody tr:hover {
+  background: rgba(120, 138, 174, 0.08);
+}
+
+#adminPage .user-cell .avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #2f3a4d;
+  color: #f2f6fd;
+  display: grid;
+  place-items: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+#adminPage .user-cell {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+#adminPage .user-meta strong {
+  display: block;
+  color: #edf3ff;
+  font-size: 0.87rem;
+}
+
+#adminPage .user-meta span {
+  color: #9aa8c0;
+  font-size: 0.78rem;
+}
+
+#adminPage .score-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: rgba(140, 109, 221, 0.3);
+  border: 1px solid rgba(181, 159, 237, 0.38);
+  color: #ded0ff;
+  font-weight: 600;
+}
+
+#adminPage .admin-actions-cell .icon-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+#adminPage .admin-actions-cell .icon-btn svg {
+  width: 13px;
+  height: 13px;
+  stroke: #bcc7d8;
+}
+
+#adminPage .admin-empty {
+  padding: 14px;
+}
+
+#adminPage .admin-profile-card,
+#adminPage .admin-panel {
+  background: rgba(14, 19, 28, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+}
+
+#adminPage .side-section .side-section-body {
+  max-height: 140px;
+  opacity: 1;
+  transform: translateY(0);
+  overflow: hidden;
+  transition: max-height 0.22s ease, opacity 0.18s ease, transform 0.18s ease;
+}
+
+@media (max-width: 1100px) {
+  #adminPage #adminApp.admin-app {
+    grid-template-columns: 1fr;
+  }
+
+  #adminPage .admin-rail {
+    min-height: auto;
+    grid-template-rows: auto auto auto;
+  }
+
+  #adminPage .rail-nav {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(120px, 1fr);
+  }
+
+  #adminPage .admin-table-actions {
+    flex-wrap: wrap;
+  }
+
+  #adminPage .admin-table-actions #adminSearch {
+    min-width: 180px;
+    flex: 1;
+  }
+}

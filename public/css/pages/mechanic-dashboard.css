@@ -1,0 +1,76 @@
+body.admin-body .mechanic-app {
+  grid-template-columns: 150px minmax(0, 1fr);
+  align-items: stretch;
+}
+
+body.admin-body .mechanic-app .admin-rail {
+  min-height: 100%;
+  height: 100%;
+  align-self: stretch;
+}
+
+body.admin-body .mechanic-content {
+  position: static;
+  z-index: auto;
+  width: 100%;
+  max-width: none;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 1fr;
+}
+
+body.admin-body .mechanic-content .settings-card {
+  background: rgba(8, 13, 23, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+body.admin-body .mechanic-content .mechanic-account-card .settings-divider {
+  height: 2px;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+body.admin-body .mechanic-content .mechanic-account-card .settings-row {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.24);
+  padding-bottom: 14px;
+}
+
+body.admin-body .mechanic-content .settings-header h2,
+body.admin-body .mechanic-content .mechanic-account-card .settings-row h4,
+body.admin-body .mechanic-content .mechanic-account-card .settings-meta h4 {
+  color: #eaf0fb;
+}
+
+body.admin-body .mechanic-content .settings-header p,
+body.admin-body .mechanic-content .mechanic-account-card .settings-row p,
+body.admin-body .mechanic-content .mechanic-account-card .settings-meta p,
+body.admin-body .mechanic-content .mechanic-note,
+body.admin-body .mechanic-content .subtle,
+body.admin-body .mechanic-content label span {
+  color: #a9b6cb;
+}
+
+body.admin-body .mechanic-content .mechanic-id,
+body.admin-body .mechanic-content .mechanic-id span {
+  color: #eef3fc;
+}
+
+body.admin-body .mechanic-content form {
+  display: grid;
+  gap: 12px;
+}
+
+body.admin-body .mechanic-content input[type="password"] {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(18, 25, 39, 0.95);
+  color: #eef3fc;
+  padding: 10px 12px;
+}
+
+body.admin-body .mechanic-content .mechanic-account-card .settings-avatar {
+  background: #d5def7;
+  color: #334085;
+}

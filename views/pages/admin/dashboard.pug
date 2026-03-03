@@ -4,6 +4,10 @@ block vars
   - var title = "SmartWorkshop - Admin"
   - var bodyClass = "admin-body"
 
+block head
+  link(rel="stylesheet", href="/css/pages/dashboard-layout.css")
+  link(rel="stylesheet", href="/css/pages/admin-dashboard.css")
+
 block content
   header.site-header.admin-header
     .brand
@@ -12,7 +16,7 @@ block content
         strong SmartWorkshop
         span Vehicle Service Marketplace
 
-  main.admin-shell.admin-ui#adminPage
+  main.admin-shell#adminPage
     section.admin-gate#adminGate
       .admin-gate-card
         h2 Admins only

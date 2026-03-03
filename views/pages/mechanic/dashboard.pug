@@ -2,7 +2,11 @@ extends ../../layouts/main
 
 block vars
   - var title = "SmartWorkshop - Mechanic Dashboard"
-  - var bodyClass = "mechanic-dashboard"
+  - var bodyClass = "admin-body"
+
+block head
+  link(rel="stylesheet", href="/css/pages/dashboard-layout.css")
+  link(rel="stylesheet", href="/css/pages/mechanic-dashboard.css")
 
 block content
   header.site-header.admin-header
@@ -12,25 +16,87 @@ block content
         strong SmartWorkshop
         span Vehicle Service Marketplace
 
-  main.mechanic-shell
-    aside.mechanic-panel
-      h3 Finish your profile now!
-      a.primary.ghost-link#mechanicEditProfile(href="/mechanic/0/profile") Edit profile
-      a.secondary.ghost-link#mechanicViewProfile(href="/mechanic/0/view") View profile
+  main.admin-shell.mechanic-shell#mechanicPage
+    section.admin-app.mechanic-app
+      aside.admin-rail
+        .rail-brand
+          span.logo SW
+        nav.rail-nav
+          button.admin-nav-link.rail-item.active(type="button")
+            span.rail-icon(aria-hidden="true")
+              svg(viewBox="0 0 24 24")
+                circle(cx="12" cy="8" r="4")
+                path(d="M5 20a7 7 0 0 1 14 0")
+            | Account
+          button.admin-nav-link.rail-item(type="button")
+            span.rail-icon(aria-hidden="true")
+              svg(viewBox="0 0 24 24")
+                path(d="M3 7h18")
+                path(d="M8 3v4")
+                path(d="M16 3v4")
+                rect(x="3" y="7" width="18" height="14" rx="2")
+            | Bookings
+          button.admin-nav-link.rail-item(type="button")
+            span.rail-icon(aria-hidden="true")
+              svg(viewBox="0 0 24 24")
+                path(d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z")
+                path(d="M9 12l2 2 4-4")
+            | MOT
+          button.admin-nav-link.rail-item(type="button")
+            span.rail-icon(aria-hidden="true")
+              svg(viewBox="0 0 24 24")
+                circle(cx="12" cy="12" r="3")
+                path(d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 0 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.2a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3h.1a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8v.1a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.5 1z")
+            | Settings
+        .rail-footer
+          button.admin-signout#mechanicLogoutBtn(type="button") Sign out
+        .is-hidden
+          a#mechanicEditProfile(href="/mechanic/0/profile")
+          a#mechanicViewProfile(href="/mechanic/0")
 
-    section.mechanic-main
-      h1 Welcome back
-        span#mechanicWelcomeName Angel G
-        | !
-      p.mechanic-id
-        | Mechanic ID:
-        span#mechanicId AG687
-      p.mechanic-note There's not too much to see here yet, but this will be the home for all of your bookings. Please take time to explore the links at the top of the page and read through the information provided.
+      section.admin-content.mechanic-content
+        .settings-card.mechanic-account-card
+          .settings-header
+            div
+              h2 Account Details
+              p Review your profile information.
+          .settings-divider
+          .settings-photo-row
+            .settings-avatar.settings-avatar-lg#mechanicAccountAvatar AG
+          .settings-divider
+          .settings-profile
+            .settings-meta
+              h4 Name
+              p#mechanicWelcomeName Angel G
+          .settings-divider
+          .settings-row
+            div
+              h4 Contacts
+              p#mechanicAccountPhone Phone: -
+              p#mechanicAccountEmail Email: mechanic@smartworkshop.local
+              p#mechanicAccountUsername Username: -
+              p#mechanicAccountAddress Address: -
+          .settings-row
+            div
+              h4 Role
+              p#mechanicAccountRole MECHANIC
+          .settings-row
+            div
+              h4 Theme
+              p Light mode
+          .settings-row
+            div
+              h4 Integration
+              p No integrations connected
+          p.is-hidden
+            | Mechanic ID:
+            span#mechanicId AG687
 
-      .mechanic-card.is-hidden#mechanicSetPasswordCard
-        h3 Set your password
-        .mechanic-card-body
-          p.subtle Finish creating your mechanic account by setting a password.
+        .settings-card.is-hidden#mechanicSetPasswordCard
+          .settings-header
+            div
+              h2 Set your password
+              p.subtle Finish creating your mechanic account by setting a password.
           form#setMechanicPasswordForm
             input(type="hidden" name="email" id="mechanicPasswordEmail")
             .field-grid
@@ -42,8 +108,3 @@ block content
                 input(type="password" name="confirm" id="mechanicPasswordConfirm" placeholder="••••••••")
             p.form-error#mechanicPasswordError(role="alert" aria-live="polite")
             button.primary(type="submit") Save password
-
-      .mechanic-card
-        h3 Your bookings
-        .mechanic-card-body
-          p You have not had any bookings yet.

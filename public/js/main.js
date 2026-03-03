@@ -1260,10 +1260,21 @@ if (signInForm) {
       });
       sessionStorage.setItem("userToken", result.token);
       sessionStorage.setItem("userProfile", JSON.stringify(result.user));
-      if (result.user.role_name === "ADMIN") {
+      const roles = Array.isArray(result.user?.roles) && result.user.roles.length
+        ? result.user.roles
+        : [result.user?.role_name || "CUSTOMER"];
+
+      if (roles.includes("ADMIN")) {
+        sessionStorage.setItem("activeRole", "ADMIN");
         window.location.href = "/admin";
         return;
       }
+      if (roles.includes("MECHANIC")) {
+        sessionStorage.setItem("activeRole", "MECHANIC");
+        window.location.href = "/mechanic/dashboard";
+        return;
+      }
+      sessionStorage.setItem("activeRole", "CUSTOMER");
       window.location.href = "/user/dashboard";
     } catch (err) {
       signInError.textContent = err?.error?.message || "Login failed. Check your credentials.";
@@ -1601,10 +1612,17 @@ if (userPage) {
   });
 }
 
-const mechanicDashboard = document.querySelector(".mechanic-shell");
+const mechanicDashboard = document.getElementById("mechanicPage") || document.querySelector(".mechanic-shell");
 if (mechanicDashboard) {
+  const mechanicLogoutBtn = document.getElementById("mechanicLogoutBtn");
   const nameEl = document.getElementById("mechanicWelcomeName");
   const idEl = document.getElementById("mechanicId");
+  const mechanicAccountAvatar = document.getElementById("mechanicAccountAvatar");
+  const mechanicAccountPhone = document.getElementById("mechanicAccountPhone");
+  const mechanicAccountEmail = document.getElementById("mechanicAccountEmail");
+  const mechanicAccountUsername = document.getElementById("mechanicAccountUsername");
+  const mechanicAccountAddress = document.getElementById("mechanicAccountAddress");
+  const mechanicAccountRole = document.getElementById("mechanicAccountRole");
   const editLink = document.getElementById("mechanicEditProfile");
   const viewLink = document.getElementById("mechanicViewProfile");
   const passwordCard = document.getElementById("mechanicSetPasswordCard");
@@ -1616,11 +1634,25 @@ if (mechanicDashboard) {
     try {
       const user = JSON.parse(profile);
       const name = [user.name, user.lastname].filter(Boolean).join(" ") || user.email || "Mechanic";
+      const initials = name
+        .split(/\s+/)
+        .slice(0, 2)
+        .map((part) => part[0] || "")
+        .join("")
+        .toUpperCase() || "ME";
+      const roles = Array.isArray(user?.roles) && user.roles.length ? user.roles : [user?.role_name || "MECHANIC"];
+      const activeRole = roles.includes("MECHANIC") ? "MECHANIC" : roles[0];
       if (nameEl) nameEl.textContent = name;
       if (idEl) {
         const base = (user.uuid_public || user.id || "0000").toString().slice(-4).toUpperCase();
         idEl.textContent = `AG${base}`;
       }
+      if (mechanicAccountAvatar) mechanicAccountAvatar.textContent = initials;
+      if (mechanicAccountPhone) mechanicAccountPhone.textContent = `Phone: ${user?.phone || "-"}`;
+      if (mechanicAccountEmail) mechanicAccountEmail.textContent = `Email: ${user?.email || "-"}`;
+      if (mechanicAccountUsername) mechanicAccountUsername.textContent = `Username: ${user?.username || "-"}`;
+      if (mechanicAccountAddress) mechanicAccountAddress.textContent = `Address: ${user?.address || "-"}`;
+      if (mechanicAccountRole) mechanicAccountRole.textContent = activeRole;
       if (editLink) {
         const userId = user.id || "0";
         editLink.href = `/mechanic/${userId}/profile`;
@@ -1665,6 +1697,13 @@ if (mechanicDashboard) {
       }
     });
   }
+
+  mechanicLogoutBtn?.addEventListener("click", () => {
+    sessionStorage.removeItem("userToken");
+    sessionStorage.removeItem("userProfile");
+    sessionStorage.removeItem("activeRole");
+    window.location.href = "/auth";
+  });
 }
 
 const mechanicEditNav = document.querySelector(".mechanic-edit-nav");
