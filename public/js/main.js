@@ -90,14 +90,6 @@ if (heroBackdrop) {
   }
 }
 
-const homeTopLink = document.querySelector('.home-nav a[href="#top"]');
-if (homeTopLink) {
-  homeTopLink.addEventListener("click", (event) => {
-    event.preventDefault();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-}
-
 const homeHeader = document.querySelector(".home-header");
 const homeHero = document.querySelector(".home-hero");
 if (homeHeader && homeHero) {
@@ -139,6 +131,18 @@ if (homeHeader && homeHero) {
     window.addEventListener("scroll", updateHeaderTheme, { passive: true });
     window.addEventListener("resize", updateHeaderTheme);
   }
+}
+
+const homeNavRootLink = document.querySelector('.home-nav a[href="/"]');
+if (homeNavRootLink) {
+  homeNavRootLink.addEventListener("click", (event) => {
+    // On the home page, keep URL clean and scroll smoothly instead of reloading.
+    if (window.location.pathname === "/") {
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      history.replaceState(null, "", "/");
+    }
+  });
 }
 
 const renderVehicleSummary = () => {
