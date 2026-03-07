@@ -32,7 +32,7 @@ services:
     env_file:
       - ./.env
     environment:
-      NODE_ENV: production
+      NODE_ENV: development
       API_PORT: 3000
       DB_HOST: db
       DB_PORT: 3306
@@ -41,8 +41,14 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
       SEED_ON_START: "false"
+      CHOKIDAR_USEPOLLING: "true"
+      CHOKIDAR_INTERVAL: "500"
     ports:
       - "${API_PORT}:3000"
+    command: npm run dev
+    volumes:
+      - ./:/app
+      - /app/node_modules
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest

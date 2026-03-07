@@ -11,9 +11,11 @@ const vehicleEnquiryRouter = require("./routes/vehicleEnquiry");
 const workshopsRouter = require("./routes/workshops");
 const bookingsRouter = require("./routes/bookings");
 const catalogRouter = require("./routes/catalog");
+const contactRouter = require("./routes/contact");
 const { errorHandler } = require("./middlewares/error");
 const { cors } = require("./middlewares/cors");
 const mechanicService = require("./services/mechanicService");
+const { createContactMessage } = require("./services/contactService");
 
 const app = express();
 
@@ -26,7 +28,35 @@ app.set("views", path.join(__dirname, "..", "views"));
 app.set("view engine", "pug");
 
 app.get("/", (req, res) => {
-  res.render("pages/home");
+  const contactStatus = req.query.contact === "sent" ? "sent" : null;
+  const contactError = req.query.contact === "error" ? "error" : null;
+  res.render("pages/home", { contactStatus, contactError });
+});
+
+app.post("/contact", (req, res, next) => {
+  const { name, email, subject, message } = req.body || {};
+  const forwarded = req.headers["x-forwarded-for"];
+  const ipAddress =
+    typeof forwarded === "string" && forwarded.length
+      ? forwarded.split(",")[0].trim()
+      : req.ip || req.socket?.remoteAddress || null;
+
+  createContactMessage({
+    name,
+    email,
+    subject,
+    message,
+    source: "home_web",
+    ipAddress,
+    userAgent: req.headers["user-agent"] || null
+  })
+    .then(() => res.redirect(302, "/?contact=sent#contact"))
+    .catch((err) => {
+      if (err?.code === "VALIDATION_ERROR") {
+        return res.redirect(302, "/?contact=error#contact");
+      }
+      return next(err);
+    });
 });
 
 app.get("/sign-in", (req, res) => {
@@ -232,6 +262,7 @@ app.use("/api/users", usersRouter);
 app.use("/api/vehicle-enquiry", vehicleEnquiryRouter);
 app.use("/api/bookings", bookingsRouter);
 app.use("/api/catalog", catalogRouter);
+app.use("/api/contact", contactRouter);
 app.use("/workshops", workshopsRouter);
 
 app.use(errorHandler);
