@@ -440,7 +440,7 @@
   margin-left: -48px;
   margin-right: -48px;
   scroll-margin-top: 0;
-  height: calc(70vh - 50px);
+  height: auto;
   min-height: calc((100vh - 50px) / 2);
   display: flex;
   flex-direction: column;
@@ -535,7 +535,7 @@
   margin-top: 0;
   margin-left: -48px;
   margin-right: -48px;
-  height: calc(70vh - 50px);
+  height: auto;
   min-height: calc((100vh - 50px) / 2);
   display: flex;
   flex-direction: column;
@@ -592,7 +592,7 @@
   margin-top: 0;
   margin-left: -48px;
   margin-right: -48px;
-  height: calc(70vh - 50px);
+  height: auto;
   min-height: calc((100vh - 50px) / 2);
   display: flex;
   flex-direction: column;
@@ -668,7 +668,7 @@
   margin-top: 0;
   margin-left: -48px;
   margin-right: -48px;
-  height: calc(70vh - 50px);
+  height: auto;
   min-height: calc((100vh - 50px) / 2);
   display: flex;
   flex-direction: column;
@@ -685,12 +685,14 @@
   background:
     linear-gradient(rgba(8, 11, 17, 0.88), rgba(8, 11, 17, 0.88)),
     url("/images/home3.jpg") center / cover no-repeat;
-  height: calc(35vh - 50px);
+  height: auto;
   min-height: calc((50vh - 50px) / 2);
   margin-left: -48px;
   margin-right: -48px;
   padding: 48px 48px;
   color: #f8fafc;
+  display: flex;
+  align-items: center;
 }
 
 .home-contact-links .contact-links-content {
@@ -1065,7 +1067,7 @@
   margin-top: 0;
   margin-left: -48px;
   margin-right: -48px;
-  height: calc(105vh - 50px);
+  height: auto;
   min-height: calc((100vh - 50px) / 2);
   
 }
@@ -1079,7 +1081,7 @@
 .home-how .how-header {
   text-align: center;
   max-width: 780px;
-  margin: -100px auto 100px;
+  margin: 0 auto 72px;
 }
 
 .home-how .how-kicker {
@@ -1307,6 +1309,28 @@
   }
 }
 
+@media (max-width: 1200px) {
+  .home-header .header-content {
+    gap: 10px;
+  }
+
+  .home-nav {
+    gap: 4px;
+    padding: 4px;
+  }
+
+  .home-pill {
+    padding: 6px 10px;
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+
+  .home-signin {
+    padding: 8px 12px;
+    white-space: nowrap;
+  }
+}
+
 @media (max-width: 1024px) {
   .home-header .header-content,
   .home-how .how-content,
@@ -1323,12 +1347,133 @@
   }
 
   .review-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
   }
 
   .contact-links-grid {
     grid-template-columns: 1fr 1fr;
     gap: 28px;
+  }
+
+  .home-services,
+  .home-apply,
+  .home-review,
+  .home-contact,
+  .home-contact-links {
+    height: auto;
+    min-height: calc(100vh - 50px);
+  }
+
+  .home-services .services-content,
+  .home-apply .apply-content,
+  .home-review .review-content,
+  .home-contact .contact-content,
+  .home-contact-links .contact-links-content {
+    width: min(980px, 100%);
+  }
+
+  .home-services {
+    padding-top: 56px;
+    padding-bottom: 56px;
+  }
+
+  .home-review {
+    padding-top: 56px;
+    padding-bottom: 56px;
+  }
+
+  .home-contact {
+    padding-top: 56px;
+    padding-bottom: 56px;
+  }
+
+  .home-contact-links {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  .review-card {
+    border-radius: 10px;
+    gap: 8px;
+    padding-bottom: 12px;
+  }
+
+  .review-photo {
+    height: 140px;
+  }
+
+  .review-card h3 {
+    font-size: 14px;
+    margin-top: 8px;
+  }
+
+  .review-card p {
+    font-size: 12px;
+    padding: 0 12px;
+  }
+
+  .apply-content {
+    gap: 24px;
+  }
+
+  .home-how {
+    height: auto;
+    min-height: calc(100vh - 50px);
+  }
+
+  .home-how .how-content {
+    width: min(980px, 100%);
+  }
+
+  .home-how .how-header {
+    margin: 0 auto 56px;
+  }
+
+  .how-grid {
+    gap: 24px;
+  }
+
+  .how-promise {
+    margin: 56px auto 0;
+    gap: 24px;
+    grid-template-columns: minmax(280px, 1fr) minmax(0, 1fr);
+  }
+
+  .home-hero .hero-content {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.82fr);
+    gap: 26px;
+    padding: 56px 24px;
+    width: min(980px, 100%);
+  }
+
+  .home-hero .hero-left {
+    max-width: 560px;
+  }
+
+  .home-hero h1 {
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    margin: 12px 0 14px;
+  }
+
+  .home-hero .lead {
+    font-size: 0.94rem;
+    max-width: 520px;
+  }
+
+  .home-hero .hero-card {
+    max-width: 380px;
+    padding: 22px;
+    border-radius: 16px;
+  }
+
+  .home-hero .hero-right {
+    align-items: center;
+  }
+
+  .home-nav .home-pill:nth-child(3),
+  .home-nav .home-pill:nth-child(5) {
+    display: none;
   }
 }
 
