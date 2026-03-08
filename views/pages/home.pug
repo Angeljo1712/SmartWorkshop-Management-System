@@ -194,40 +194,44 @@ block content
             input(type="text" name="subject" placeholder="Subject")
             textarea(name="message" rows="6" placeholder="Write Your Message*" required)
             button(type="submit") Send Message
-        .contact-grid
-          .contact-col
-            h4 Help & support
-            a(href="#how") How it Works
-            a(href="#") Support Center
-            a(href="#contact") Contact Us
-          .contact-col
-            h4 Company
-            a(href="#") About Us
-            a(href="#review") Reviews
-            a(href="#") Fleet Servicing
-            a(href="#partner") For Mechanics
-            a(href="#") Refer A Mechanic
-            a(href="#") Price Estimator
-            a(href="#") Careers
-            a(href="#") Terms & Privacy
-          .contact-col
-            h4 Popular locations
-            a(href="#") London
-            a(href="#") Manchester
-            a(href="#") Birmingham
-            a(href="#") Bristol
-            a(href="#") Newcastle
-            a(href="#") Brighton
-            a(href="#") All Locations
-          .contact-col
-            h4 Popular jobs
-            a(href="#") MOT
-            a(href="#") Servicing
-            a(href="#") Brake Pads
-            a(href="#") Cambelt/Timing Belt
-            a(href="#") Clutch
-            a(href="#") Battery
-            a(href="#") Diagnostic Inspection
-            a(href="#") Alternator
-            a(href="#") All Jobs
+
+    section.home-contact-links
+      .contact-links-content
+        .contact-links-grid
+          .contact-links-brand
+            h3 SmartWorkshop
+            p
+              | At SmartWorkshop, we connect drivers with trusted mechanics and workshops.
+              | Get fast quotes, clear pricing and reliable repairs.
+          .contact-links-useful
+            h4 Useful Links
+            .contact-links-two-cols
+              .contact-col
+                a(href="/") Home
+                a(href="#services") Services
+                a(href="#contact") Contact
+                a(href="#review") Reviews
+                a(href="#") FAQs
+                a(href="#partner") For Mechanics
+              .contact-col
+                a(href="#how") About
+                a(href="#") Our News
+                a(href="#contact") Contact Us
+          .contact-links-contact
+            h4 Contact
+            p
+              strong Address:
+              br
+              | Flat19 Claycorn Court, Esher, United Kingdom
+            a(href="#") Get Directions
+            p
+              strong Phone:
+              br
+              | +447541017233
+            p
+              strong Email:
+              br
+              | zang17@hotmail.com
+              br
+              | zang17univ@outlook.com
   include ../partials/footer
