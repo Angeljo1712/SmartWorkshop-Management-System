@@ -1420,6 +1420,7 @@ if (userPage) {
   const clearUserSession = () => {
     sessionStorage.removeItem("userToken");
     sessionStorage.removeItem("userProfile");
+    sessionStorage.removeItem("activeRole");
   };
 
   const setAvatar = (el, initials, url) => {
@@ -1501,7 +1502,7 @@ if (userPage) {
     sessionStorage.setItem("activeRole", "CUSTOMER");
     setUserHeader(profile);
   } else {
-    window.location.href = "/auth";
+    window.location.href = "/";
   }
 
   const setUserView = (view) => {
@@ -1612,7 +1613,7 @@ if (userPage) {
 
   userLogoutBtn?.addEventListener("click", () => {
     clearUserSession();
-    window.location.href = "/auth";
+    window.location.replace("/");
   });
 }
 
@@ -1706,7 +1707,7 @@ if (mechanicDashboard) {
     sessionStorage.removeItem("userToken");
     sessionStorage.removeItem("userProfile");
     sessionStorage.removeItem("activeRole");
-    window.location.href = "/auth";
+    window.location.replace("/");
   });
 }
 
