@@ -16,11 +16,23 @@ block content
           button.auth-social-icon.auth-social-icon--facebook(type="button" aria-label="Sign in with Facebook")
           button.auth-social-icon.auth-social-icon--google(type="button" aria-label="Sign in with Google")
         p.auth-or or use your account
-        form.auth-form#signInForm
+        form.auth-form#signInForm(autocomplete="off")
           label
-            input#signInEmail(type="text" placeholder="Email" autocomplete="username")
+            input#signInEmail(
+              type="text"
+              name="no_autofill_email"
+              placeholder="Email"
+              autocomplete="off"
+              autocapitalize="none"
+              spellcheck="false"
+            )
           label
-            input#signInPassword(type="password" placeholder="Password" autocomplete="current-password")
+            input#signInPassword(
+              type="password"
+              name="no_autofill_password"
+              placeholder="Password"
+              autocomplete="new-password"
+            )
           a.auth-link(href="/auth/forgot-password") Forgot your password
           p.form-error#signInError(role="alert" aria-live="polite")
           button.primary.auth-submit(type="submit") Sign in

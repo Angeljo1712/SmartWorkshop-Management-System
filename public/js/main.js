@@ -1245,6 +1245,15 @@ if (signInForm) {
   const signInPassword = document.getElementById("signInPassword");
   const signInError = document.getElementById("signInError");
 
+  // Force clean inputs on load to avoid browser/password-manager autofill remnants.
+  signInForm.reset();
+  if (signInEmail) signInEmail.value = "";
+  if (signInPassword) signInPassword.value = "";
+  setTimeout(() => {
+    if (signInEmail) signInEmail.value = "";
+    if (signInPassword) signInPassword.value = "";
+  }, 0);
+
   signInForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     signInError.textContent = "";
