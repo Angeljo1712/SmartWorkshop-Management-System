@@ -290,21 +290,14 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
 
 .user-vehicle-card {
   display: grid;
-  gap: 18px;
-}
-
-.user-vehicle-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 18px;
+  gap: 5px;
 }
 
 .user-vehicle-heading {
-  flex: 1;
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 14px;
-  padding: 16px;
+  width: 100%;
+  padding: 12px;
 }
 
 .user-vehicle-heading-top {
@@ -397,6 +390,7 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  max-height: 25%;
   align-items: center;
 }
 
@@ -541,10 +535,6 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
     grid-template-columns: 1fr;
   }
 
-  .user-vehicle-top {
-    flex-direction: column;
-  }
-
   .user-vehicle-heading-top {
     flex-direction: column;
   }
@@ -556,7 +546,7 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
   }
 
   .user-vehicle-cards {
-    grid-template-columns: 1fr;
+    grid-template-columns: 4fr;
   }
 
   .user-add-vehicle {
