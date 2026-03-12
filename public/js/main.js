@@ -1479,7 +1479,6 @@ if (userPage) {
   const userVehicleTaxStatus = document.getElementById("userVehicleTaxStatus");
   const userVehicleMileageStatus = document.getElementById("userVehicleMileageStatus");
   const userBookingsView = document.getElementById("userBookingsView");
-  const userMotView = document.getElementById("userMotView");
   const userSettingsView = document.getElementById("userSettingsView");
 
   const getInitials = (name) => {
@@ -1547,7 +1546,6 @@ if (userPage) {
     if (userSettingsPhoneSettings)
       userSettingsPhoneSettings.textContent = `Phone: ${user?.phone || "-"}`;
     if (userDashboardName) userDashboardName.textContent = displayName;
-
     if (userSettingsPhoneInput) userSettingsPhoneInput.value = user?.phone || "";
     if (userSettingsUsernameInput) userSettingsUsernameInput.value = user?.username || "";
     if (userSettingsEmailInput) userSettingsEmailInput.value = user?.email || "";
@@ -1589,7 +1587,6 @@ if (userPage) {
     userAccountView.classList.toggle("is-hidden", view !== "account");
     userVehicleView.classList.toggle("is-hidden", view !== "vehicle");
     userBookingsView.classList.toggle("is-hidden", view !== "bookings");
-    userMotView.classList.toggle("is-hidden", view !== "mot");
     userSettingsView.classList.toggle("is-hidden", view !== "settings");
   };
 
@@ -1878,14 +1875,14 @@ if (userPage) {
     });
   });
 
-  userAddVehicleBtn?.addEventListener("click", async () => {
-    const registrationNumber = userDashboardCarReg?.value?.trim().toUpperCase().replace(/\s+/g, "") || "";
+  const handleAddVehicle = async (registrationInput, errorOutput) => {
+    const registrationNumber = registrationInput?.value?.trim().toUpperCase().replace(/\s+/g, "") || "";
     if (!registrationNumber) {
-      if (userDashboardCarError) userDashboardCarError.textContent = "Please enter a registration number.";
+      if (errorOutput) errorOutput.textContent = "Please enter a registration number.";
       return;
     }
 
-    if (userDashboardCarError) userDashboardCarError.textContent = "";
+    if (errorOutput) errorOutput.textContent = "";
 
     try {
       const result = await api("/api/vehicle-enquiry", {
@@ -1905,21 +1902,23 @@ if (userPage) {
       };
 
       if (dashboardVehicles.some((vehicle) => vehicle.registrationNumber === vehicleData.registrationNumber)) {
-        if (userDashboardCarError) userDashboardCarError.textContent = "This vehicle is already in your dashboard.";
+        if (errorOutput) errorOutput.textContent = "This vehicle is already in your dashboard.";
         return;
       }
 
       dashboardVehicles = [...dashboardVehicles, normaliseDashboardVehicle(vehicleData)];
       saveDashboardVehicles(dashboardVehicles);
       renderDashboardVehicles(dashboardVehicles);
-      renderVehicleDetail(dashboardVehicles, vehicleData.registrationNumber);
-      if (userDashboardCarReg) userDashboardCarReg.value = "";
+      if (registrationInput) registrationInput.value = "";
     } catch (err) {
-      if (userDashboardCarError) {
-        userDashboardCarError.textContent =
-          err?.error?.message || err?.message || "Unable to look up vehicle details.";
+      if (errorOutput) {
+        errorOutput.textContent = err?.error?.message || err?.message || "Unable to look up vehicle details.";
       }
     }
+  };
+
+  userAddVehicleBtn?.addEventListener("click", async () => {
+    await handleAddVehicle(userDashboardCarReg, userDashboardCarError);
   });
 
   userQuickQuoteBtn?.addEventListener("click", () => {
