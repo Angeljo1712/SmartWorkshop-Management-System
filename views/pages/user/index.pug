@@ -10,11 +10,12 @@ block head
 
 block content
   header.site-header.admin-header
-    .brand
-      span.logo SW
-      div
-        strong SmartWorkshop
-        span Vehicle Service Marketplace
+    .user-header-content
+      .brand
+        span.logo SW
+        div
+          strong SmartWorkshop
+          span Vehicle Service Marketplace
 
   main.admin-shell#userPage
     section.admin-app.user-app
@@ -22,7 +23,15 @@ block content
         .rail-brand
           span.logo SW
         nav.rail-nav
-          button.admin-nav-link.rail-item.user-nav-link.active(type="button" data-view="account")
+          button.admin-nav-link.rail-item.user-nav-link.active(type="button" data-view="dashboard")
+            span.rail-icon(aria-hidden="true")
+              svg(viewBox="0 0 24 24")
+                rect(x="3" y="3" width="8" height="8" rx="1")
+                rect(x="13" y="3" width="8" height="5" rx="1")
+                rect(x="13" y="10" width="8" height="11" rx="1")
+                rect(x="3" y="13" width="8" height="8" rx="1")
+            | Dashboard
+          button.admin-nav-link.rail-item.user-nav-link(type="button" data-view="account")
             span.rail-icon(aria-hidden="true")
               svg(viewBox="0 0 24 24")
                 circle(cx="12" cy="8" r="4")
@@ -58,7 +67,63 @@ block content
         select#userRoleSwitcher.role-switcher
 
       .admin-content
-        section.admin-view#userAccountView
+        section.admin-view#userDashboardView
+          .settings-card.user-dashboard-card
+            .settings-header
+              div
+                h2 Welcome back
+                p#userDashboardName User
+            
+            .settings-divider
+
+            .settings-header
+              div
+                h2 Your Cars
+                p Save up to 100 vehicles in your account.
+
+            .user-car-summary
+              .user-car-top
+                span.user-reg-badge KL05USC
+                strong COROLLA COLOUR COL-N VVTI
+              .user-car-meta
+                span Petrol
+                span 21 years old
+                span 39,580 miles
+              .user-car-status
+                p Your MOT is valid · Due in 28 weeks
+                p Taxed · Due in 24 weeks
+
+            .settings-divider
+
+            h3.user-section-title Add another vehicle
+            .user-add-vehicle
+              input#userDashboardCarReg(type="text" placeholder="Enter Car Reg")
+              button.primary(type="button") Add Vehicle
+
+            .settings-divider
+
+            h3.user-section-title Your Bookings
+            .user-verify-card
+              p.user-verify-title Verify your account
+              p.user-verify-text Please verify your email address to view your booking history.
+              a.secondary(href="/user/dashboard") Go to Settings
+
+            .settings-divider
+
+            .user-quick-quote
+              label
+                | Vehicle Registration
+                input(type="text" value="KL05USC")
+              label
+                | Postcode
+                input(type="text" placeholder="Enter Your Postcode")
+              label
+                | Products
+                select
+                  option MOT, Full Service
+              button.primary(type="button") Compare Prices Instantly
+
+        section.admin-view.is-hidden#userAccountView
           .settings-card
             .settings-header
               div

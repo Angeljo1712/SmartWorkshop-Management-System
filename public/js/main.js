@@ -1273,16 +1273,23 @@ if (signInForm) {
       });
       sessionStorage.setItem("userToken", result.token);
       sessionStorage.setItem("userProfile", JSON.stringify(result.user));
-      const roles = Array.isArray(result.user?.roles) && result.user.roles.length
+      const rawRoles = Array.isArray(result.user?.roles) && result.user.roles.length
         ? result.user.roles
         : [result.user?.role_name || "CUSTOMER"];
+      const roles = rawRoles.map((role) => String(role || "").toUpperCase());
+      const hasCustomerRole = roles.includes("CUSTOMER") || roles.includes("USER");
+      const hasMechanicRole = roles.includes("MECHANIC");
 
       if (roles.includes("ADMIN")) {
         sessionStorage.setItem("activeRole", "ADMIN");
         window.location.href = "/admin";
         return;
       }
-      if (roles.includes("MECHANIC")) {
+      if (hasMechanicRole && hasCustomerRole) {
+        window.location.href = "/auth/select-role";
+        return;
+      }
+      if (hasMechanicRole) {
         sessionStorage.setItem("activeRole", "MECHANIC");
         window.location.href = "/mechanic/dashboard";
         return;
@@ -1292,6 +1299,47 @@ if (signInForm) {
     } catch (err) {
       signInError.textContent = err?.error?.message || "Login failed. Check your credentials.";
     }
+  });
+}
+
+const rolePickerButtons = document.querySelectorAll("[data-role-target]");
+if (rolePickerButtons.length) {
+  const storedProfile = sessionStorage.getItem("userProfile");
+  let roles = [];
+  try {
+    const parsed = storedProfile ? JSON.parse(storedProfile) : null;
+    const rawRoles = Array.isArray(parsed?.roles) && parsed.roles.length
+      ? parsed.roles
+      : [parsed?.role_name || ""];
+    roles = rawRoles.map((role) => String(role || "").toUpperCase());
+  } catch (_err) {
+    roles = [];
+  }
+
+  const hasCustomerRole = roles.includes("CUSTOMER") || roles.includes("USER");
+  const hasMechanicRole = roles.includes("MECHANIC");
+
+  if (!hasCustomerRole || !hasMechanicRole) {
+    if (hasMechanicRole) {
+      sessionStorage.setItem("activeRole", "MECHANIC");
+      window.location.replace("/mechanic/dashboard");
+    } else {
+      sessionStorage.setItem("activeRole", "CUSTOMER");
+      window.location.replace("/user/dashboard");
+    }
+  }
+
+  rolePickerButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const targetRole = String(button.getAttribute("data-role-target") || "").toUpperCase();
+      if (targetRole === "MECHANIC") {
+        sessionStorage.setItem("activeRole", "MECHANIC");
+        window.location.href = "/mechanic/dashboard";
+        return;
+      }
+      sessionStorage.setItem("activeRole", "CUSTOMER");
+      window.location.href = "/user/dashboard";
+    });
   });
 }
 
@@ -1409,6 +1457,8 @@ if (userPage) {
   const userSettingsNotifications = document.getElementById("userSettingsNotifications");
   const userSettingsSecurity = document.getElementById("userSettingsSecurity");
   const userNavLinks = document.querySelectorAll(".user-nav-link");
+  const userDashboardView = document.getElementById("userDashboardView");
+  const userDashboardName = document.getElementById("userDashboardName");
   const userAccountView = document.getElementById("userAccountView");
   const userBookingsView = document.getElementById("userBookingsView");
   const userMotView = document.getElementById("userMotView");
@@ -1454,7 +1504,8 @@ if (userPage) {
   };
 
   const setUserHeader = (user) => {
-    const displayName = user?.full_name || user?.email || "User";
+    const joinedName = [user?.name, user?.lastname].filter(Boolean).join(" ").trim();
+    const displayName = user?.full_name || joinedName || user?.email || "User";
     const roles = Array.isArray(user?.roles) && user.roles.length ? user.roles : [user?.role_name || "CUSTOMER"];
     const activeRole = resolveActiveRole(roles);
     const initials = getInitials(displayName);
@@ -1477,6 +1528,7 @@ if (userPage) {
     if (userSettingsRoleSettings) userSettingsRoleSettings.textContent = activeRole;
     if (userSettingsPhoneSettings)
       userSettingsPhoneSettings.textContent = `Phone: ${user?.phone || "-"}`;
+    if (userDashboardName) userDashboardName.textContent = displayName;
 
     if (userSettingsPhoneInput) userSettingsPhoneInput.value = user?.phone || "";
     if (userSettingsUsernameInput) userSettingsUsernameInput.value = user?.username || "";
@@ -1515,6 +1567,7 @@ if (userPage) {
   }
 
   const setUserView = (view) => {
+    userDashboardView.classList.toggle("is-hidden", view !== "dashboard");
     userAccountView.classList.toggle("is-hidden", view !== "account");
     userBookingsView.classList.toggle("is-hidden", view !== "bookings");
     userMotView.classList.toggle("is-hidden", view !== "mot");

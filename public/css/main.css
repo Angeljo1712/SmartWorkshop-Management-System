@@ -2812,7 +2812,7 @@ body.admin-body .site-header.admin-header .logo {
   display: grid;
   grid-template-rows: auto 1fr auto;
   gap: 18px;
-  min-height: calc(100vh - 36px);
+  min-height: calc(100vh - 16px);
 }
 
 .rail-brand {
@@ -3073,7 +3073,7 @@ body.admin-body .site-header.admin-header .logo {
   }
 
   .admin-rail {
-    min-height: auto;
+    min-height: 100px;
     grid-template-rows: auto auto auto;
   }
 

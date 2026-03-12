@@ -15,6 +15,7 @@
 #mechanicPage .admin-app,
 #adminPage #adminApp.admin-app {
   min-width: 0;
+  min-height: calc(100vh - 140px);
   align-items: stretch;
 }
 

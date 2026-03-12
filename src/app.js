@@ -71,6 +71,10 @@ app.get("/auth/login", (req, res) => {
   res.render("pages/auth/login");
 });
 
+app.get("/auth/select-role", (req, res) => {
+  res.render("pages/auth/select-role");
+});
+
 app.get("/auth/forgot-password", (req, res) => {
   res.render("pages/auth/forgot-password");
 });
