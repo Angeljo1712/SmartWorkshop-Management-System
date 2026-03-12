@@ -545,6 +545,7 @@ body {
 .settings-header {
   display: flex;
   align-items: center;
+  max-height: 70px;
   justify-content: space-between;
   gap: 12px;
 }
@@ -642,7 +643,7 @@ body.admin-body .settings-card {
 }
 
 .settings-divider {
-  height: 1px;
+  height: 3px;
   background: var(--border);
 }
 

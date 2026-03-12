@@ -25,6 +25,155 @@ body.admin-body #userPage .settings-card {
   min-height: calc(100vh - 140px);
 }
 
+body.admin-body #userBookingsView .settings-card {
+  display: block;
+}
+
+body.admin-body #userSettingsView .settings-card {
+  gap: 0;
+}
+
+body.admin-body #userSettingsView .settings-layout {
+  grid-template-columns: 150px 1fr;
+  gap: 24px;
+}
+
+body.admin-body #userSettingsView .settings-panel,
+body.admin-body #userSettingsView .settings-subview {
+  display: block;
+}
+
+body.admin-body #userSettingsView .settings-subnav {
+  background: linear-gradient(180deg, #425369 0%, #3a4a5f 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+body.admin-body #userSettingsView .settings-subnav-link {
+  color: #e8edf6;
+  border-radius: 8px;
+}
+
+body.admin-body #userSettingsView .settings-subnav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+body.admin-body #userSettingsView .settings-subnav-link.active {
+  background: rgba(230, 236, 247, 0.22);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #e8edf6;
+}
+
+body.admin-body #userSettingsView .settings-divider {
+  background: #ffffff;
+  opacity: 1;
+}
+
+body.admin-body #userBookingsView .settings-header h2,
+body.admin-body #userBookingsView .settings-header p,
+body.admin-body #userBookingsView .user-booking-column h4,
+body.admin-body #userBookingsView .user-booking-photos h4,
+body.admin-body #userBookingsView .user-booking-reference {
+  color: #eaf0fb;
+}
+
+body.admin-body #userBookingsView .user-booking-column p,
+body.admin-body #userBookingsView .user-booking-column li,
+body.admin-body #userBookingsView .user-booking-column a {
+  color: #c8d4e8;
+}
+
+.user-booking-card {
+  margin-top: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.user-booking-toolbar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.user-booking-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #3ea74c;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.user-booking-reference {
+  justify-self: center;
+}
+
+.user-booking-actions {
+  min-width: 92px;
+}
+
+.user-booking-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+  padding: 20px;
+}
+
+.user-booking-column {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+
+.user-booking-column h4,
+.user-booking-photos h4 {
+  margin: 10px 0 0;
+  font-size: 1rem;
+}
+
+.user-booking-column p,
+.user-booking-column ul {
+  margin: 0;
+}
+
+.user-booking-column ul {
+  padding-left: 18px;
+}
+
+.user-booking-price {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.user-booking-photos {
+  padding: 0 20px 20px;
+}
+
+.user-booking-photo-grid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.user-booking-photo-grid img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 body.admin-body #userAccountView .settings-header h2,
 body.admin-body #userAccountView .settings-row h4,
 body.admin-body #userAccountView .settings-meta h4 {
@@ -301,7 +450,7 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
   border-radius: 14px;
   width: 100%;
   max-height: 25%;
-  margin-bottom: 20px; 
+  
   padding: 16px;
 }
 
@@ -554,6 +703,20 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
 
   .user-vehicle-cards {
     grid-template-columns: 1fr;
+  }
+
+  .user-booking-grid,
+  .user-booking-photo-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .user-booking-toolbar {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
+  .user-booking-reference {
+    justify-self: start;
   }
 
   .user-add-vehicle {

@@ -168,62 +168,117 @@ block content
 
         section.admin-view.is-hidden#userVehicleView
           .settings-card.user-vehicle-card
-            .user-vehicle-heading
-              .user-vehicle-heading-top
-                h2#userVehicleTitle RENAULT CLIO RENAULTSPORT NAV TROPHY A
-                .user-vehicle-selector
-                  span.user-reg-badge#userVehicleRegBadge BP67XRZ
-                  .user-vehicle-dropdown
-                    button#userVehicleDropdownBtn.user-vehicle-dropdown-btn(type="button" aria-label="Select vehicle")
-                      span.user-vehicle-dropdown-arrow ▾
-                    .user-vehicle-dropdown-menu.is-hidden#userVehicleDropdownMenu
+            .user-vehicle-grid
+              .user-vehicle-block.user-vehicle-block--header
+                .user-vehicle-heading
+                  .user-vehicle-heading-top
+                    h2#userVehicleTitle RENAULT CLIO RENAULTSPORT NAV TROPHY A
+                    .user-vehicle-selector
+                      span.user-reg-badge#userVehicleRegBadge BP67XRZ
+                      .user-vehicle-dropdown
+                        button#userVehicleDropdownBtn.user-vehicle-dropdown-btn(type="button" aria-label="Select vehicle")
+                          span.user-vehicle-dropdown-arrow ▾
+                        .user-vehicle-dropdown-menu.is-hidden#userVehicleDropdownMenu
 
-            .user-vehicle-pills
-              span#userVehicleFuel Pill Petrol
-              span#userVehicleAge Pill 8 years old
-              span#userVehicleMileage Pill 13,126 miles
+              .user-vehicle-block.user-vehicle-block--meta
+                .user-vehicle-pills
+                  span#userVehicleFuel Pill Petrol
+                  span#userVehicleAge Pill 8 years old
+                  span#userVehicleMileage Pill 13,126 miles
 
-            .user-vehicle-cards
-              .user-vehicle-info-card.is-mot
-                .user-vehicle-info-icon △
-                .user-vehicle-info-copy
-                  strong Your MOT is valid
-                  p#userVehicleMotStatus Due in 6 months
-                .user-vehicle-info-arrow ›
-              .user-vehicle-info-card.is-tax
-                .user-vehicle-info-icon ✓
-                .user-vehicle-info-copy
-                  strong Your Tax is valid
-                  p#userVehicleTaxStatus Due in 8 months
-                .user-vehicle-info-arrow ›
-              .user-vehicle-info-card.is-mileage
-                .user-vehicle-info-icon ⦿
-                .user-vehicle-info-copy
-                  strong Mileage at last MOT
-                  p#userVehicleMileageStatus 13,126 miles
-                .user-vehicle-info-arrow ›
-              .user-vehicle-info-card.is-details
-                .user-vehicle-info-icon car
-                .user-vehicle-info-copy
-                  strong Vehicle Details
-                  p View your vehicle's information
-                .user-vehicle-info-arrow ›
+              .user-vehicle-block.user-vehicle-block--cards
+                .user-vehicle-cards
+                  .user-vehicle-info-card.is-mot
+                    .user-vehicle-info-icon △
+                    .user-vehicle-info-copy
+                      strong Your MOT is valid
+                      p#userVehicleMotStatus Due in 6 months
+                    .user-vehicle-info-arrow ›
+                  .user-vehicle-info-card.is-tax
+                    .user-vehicle-info-icon ✓
+                    .user-vehicle-info-copy
+                      strong Your Tax is valid
+                      p#userVehicleTaxStatus Due in 8 months
+                    .user-vehicle-info-arrow ›
+                  .user-vehicle-info-card.is-mileage
+                    .user-vehicle-info-icon ⦿
+                    .user-vehicle-info-copy
+                      strong Mileage at last MOT
+                      p#userVehicleMileageStatus 13,126 miles
+                    .user-vehicle-info-arrow ›
+                  .user-vehicle-info-card.is-details
+                    .user-vehicle-info-icon car
+                    .user-vehicle-info-copy
+                      strong Vehicle Details
+                      p View your vehicle's information
+                    .user-vehicle-info-arrow ›
 
         section.admin-view.is-hidden#userBookingsView
           .settings-card
             .settings-header
               div
-                h2 Bookings
-                p See your upcoming and past bookings.
-            p.form-error No bookings to show yet.
+                h2 Your bookings
+                p Review your most recent booking.
 
-        section.admin-view.is-hidden#userMotView
-          .settings-card
-            .settings-header
-              div
-                h2 MOT Reminders
-                p Track MOT due dates and reminders.
-            p.form-error No MOT reminders set.
+            .user-booking-card
+              .user-booking-toolbar
+                span.user-booking-status PAID
+                strong.user-booking-reference Reference: 16334274
+                button.primary.user-booking-actions(type="button") Actions
+
+              .user-booking-grid
+                .user-booking-column
+                  h4 Date & Time
+                  p 08:00-10:00 on Monday 11th August 2025
+
+                  h4 Location
+                  p Flat 19 Claycorn Court, Station Way
+                  p Claygate
+                  p Esher
+                  p KT10 0QR
+
+                  h4 Contact Details
+                  p Angel Gomes
+                  p zang17@hotmail.com
+                  p 07541017233
+
+                .user-booking-column
+                  h4 Vehicle
+                  p Toyota Corolla 1.4L Petrol 2005
+                  p KL05USC
+                  p Mileage: 39,179 miles
+
+                  h4 Mechanic
+                  p Sheren
+
+                  h4 Total Price
+                  p.user-booking-price £244.70
+
+                  h4 Amount Paid
+                  p.user-booking-price £244.70
+
+                .user-booking-column
+                  h4 Labour
+                  ul
+                    li Brake pipe copper soldering and protect the inner (driver side)
+
+                  h4 Parts
+                  ul
+                    li Brake hydraulic fluid
+                    li Copart soldering and line processing
+
+                  h4 Documents
+                  a(href="#") View receipt
+
+              .user-booking-photos
+                h4 Photos
+                .user-booking-photo-grid
+                  img(src="/images/home1.jpg" alt="Booking photo 1")
+                  img(src="/images/home2.jpg" alt="Booking photo 2")
+                  img(src="/images/hero-1.jpg" alt="Booking photo 3")
+                  img(src="/images/hero-2.jpg" alt="Booking photo 4")
+                  img(src="/images/hero-3.jpg" alt="Booking photo 5")
+                  img(src="/images/hero-4.jpg" alt="Booking photo 6")
 
         section.admin-view.is-hidden#userSettingsView
           .settings-card
