@@ -1468,7 +1468,16 @@ if (userPage) {
   const userQuickQuoteBtn = document.getElementById("userQuickQuoteBtn");
   const userAccountView = document.getElementById("userAccountView");
   const userVehicleView = document.getElementById("userVehicleView");
-  const userVehicleList = document.getElementById("userVehicleList");
+  const userVehicleTitle = document.getElementById("userVehicleTitle");
+  const userVehicleRegBadge = document.getElementById("userVehicleRegBadge");
+  const userVehicleDropdownBtn = document.getElementById("userVehicleDropdownBtn");
+  const userVehicleDropdownMenu = document.getElementById("userVehicleDropdownMenu");
+  const userVehicleFuel = document.getElementById("userVehicleFuel");
+  const userVehicleAge = document.getElementById("userVehicleAge");
+  const userVehicleMileage = document.getElementById("userVehicleMileage");
+  const userVehicleMotStatus = document.getElementById("userVehicleMotStatus");
+  const userVehicleTaxStatus = document.getElementById("userVehicleTaxStatus");
+  const userVehicleMileageStatus = document.getElementById("userVehicleMileageStatus");
   const userBookingsView = document.getElementById("userBookingsView");
   const userMotView = document.getElementById("userMotView");
   const userSettingsView = document.getElementById("userSettingsView");
@@ -1592,7 +1601,8 @@ if (userPage) {
     yearOfManufacture: new Date().getFullYear() - 21,
     mileage: "39,580 miles",
     motStatus: "Due in 28 weeks",
-    taxStatus: "Due in 24 weeks"
+    taxStatus: "Due in 24 weeks",
+    favorite: false
   };
 
   const normaliseDashboardVehicle = (vehicle) => {
@@ -1605,9 +1615,20 @@ if (userPage) {
       yearOfManufacture: vehicle.yearOfManufacture || null,
       mileage: vehicle.mileage || "-",
       motStatus: vehicle.motStatus || "MOT status not available",
-      taxStatus: vehicle.taxStatus || "Tax status not available"
+      taxStatus: vehicle.taxStatus || "Tax status not available",
+      favorite: Boolean(vehicle.favorite)
     };
   };
+
+  const saveDashboardVehicles = (vehicles) => {
+    sessionStorage.setItem("userDashboardVehicles", JSON.stringify(vehicles));
+  };
+
+  const saveSelectedVehicleReg = (registrationNumber) => {
+    sessionStorage.setItem("userSelectedVehicleReg", registrationNumber);
+  };
+
+  const getSelectedVehicleReg = () => sessionStorage.getItem("userSelectedVehicleReg");
 
   const getDashboardVehicles = () => {
     const storedList = sessionStorage.getItem("userDashboardVehicles");
@@ -1640,6 +1661,10 @@ if (userPage) {
   };
 
   const renderDashboardVehicles = (vehicles) => {
+    const closeVehicleMenus = () => {
+      document.querySelectorAll(".user-car-menu-panel").forEach((panel) => panel.classList.add("is-hidden"));
+    };
+
     const buildVehicleCard = (vehicle) => {
       const reg = vehicle.registrationNumber || "-";
       const make = String(vehicle.make || "").trim();
@@ -1663,9 +1688,15 @@ if (userPage) {
               <span>${model || "Vehicle details loaded"}</span>
             </div>
           </div>
-          <div class="user-car-actions" aria-hidden="true">
-            <span class="user-car-star">★</span>
-            <span class="user-car-menu">⋮</span>
+          <div class="user-car-actions">
+            <button class="user-car-star${vehicle.favorite ? " is-favorite" : ""}" type="button" data-action="favorite" data-reg="${reg}" aria-label="Toggle favourite">★</button>
+            <div class="user-car-menu-wrap">
+              <button class="user-car-menu" type="button" data-action="menu" data-reg="${reg}" aria-label="Open vehicle menu">⋮</button>
+              <div class="user-car-menu-panel is-hidden" data-menu-for="${reg}">
+                <button type="button" data-action="edit" data-reg="${reg}">Edit</button>
+                <button type="button" data-action="remove" data-reg="${reg}" class="danger">Remove</button>
+              </div>
+            </div>
           </div>
         </div>
         <div class="user-car-meta">
@@ -1695,7 +1726,7 @@ if (userPage) {
       return card;
     };
 
-    [userCarList, userVehicleList].forEach((listEl) => {
+    [userCarList].forEach((listEl) => {
       if (!listEl) return;
       listEl.innerHTML = "";
       vehicles.forEach((vehicle) => {
@@ -1707,8 +1738,131 @@ if (userPage) {
     if (userQuickQuoteReg && latestVehicle) userQuickQuoteReg.value = latestVehicle.registrationNumber || "";
   };
 
+  const renderVehicleDetail = (vehicles, preferredReg) => {
+    if (!userVehicleDropdownMenu) return;
+
+    const selectedReg = preferredReg || getSelectedVehicleReg() || vehicles[0]?.registrationNumber;
+    const selectedVehicle =
+      vehicles.find((vehicle) => vehicle.registrationNumber === selectedReg) || vehicles[0] || null;
+
+    userVehicleDropdownMenu.innerHTML = "";
+    vehicles.forEach((vehicle) => {
+      if (selectedVehicle && vehicle.registrationNumber === selectedVehicle.registrationNumber) return;
+      const item = document.createElement("button");
+      item.type = "button";
+      item.className = "user-vehicle-dropdown-item";
+      item.dataset.reg = vehicle.registrationNumber;
+      item.innerHTML = `
+        <span class="user-vehicle-dropdown-title">${[vehicle.make, vehicle.model].filter(Boolean).join(" ") || vehicle.registrationNumber}</span>
+        <span class="user-reg-badge">${vehicle.registrationNumber}</span>
+      `;
+      userVehicleDropdownMenu.appendChild(item);
+    });
+
+    if (!selectedVehicle) return;
+
+    const make = String(selectedVehicle.make || "").trim();
+    const model = String(selectedVehicle.model || "").trim();
+    const year = Number(selectedVehicle.yearOfManufacture);
+    const age = Number.isFinite(year) ? `${Math.max(new Date().getFullYear() - year, 0)} years old` : "-";
+    const mileage =
+      typeof selectedVehicle.mileage === "number"
+        ? `${selectedVehicle.mileage.toLocaleString()} miles`
+        : String(selectedVehicle.mileage || "-");
+
+    if (userVehicleTitle) userVehicleTitle.textContent = [make, model].filter(Boolean).join(" ") || selectedVehicle.registrationNumber;
+    if (userVehicleRegBadge) userVehicleRegBadge.textContent = selectedVehicle.registrationNumber || "-";
+    if (userVehicleFuel) userVehicleFuel.textContent = selectedVehicle.fuelType || "-";
+    if (userVehicleAge) userVehicleAge.textContent = age;
+    if (userVehicleMileage) userVehicleMileage.textContent = mileage;
+    if (userVehicleMotStatus) userVehicleMotStatus.textContent = selectedVehicle.motStatus || "MOT status not available";
+    if (userVehicleTaxStatus) userVehicleTaxStatus.textContent = selectedVehicle.taxStatus || "Tax status not available";
+    if (userVehicleMileageStatus) userVehicleMileageStatus.textContent = mileage;
+
+    saveSelectedVehicleReg(selectedVehicle.registrationNumber);
+  };
+
   let dashboardVehicles = getDashboardVehicles();
   renderDashboardVehicles(dashboardVehicles);
+  renderVehicleDetail(dashboardVehicles);
+
+  const handleVehicleCardAction = (event) => {
+    const actionEl = event.target.closest("[data-action]");
+    if (!actionEl) return;
+
+    const action = actionEl.dataset.action;
+    const reg = actionEl.dataset.reg;
+    if (!reg) return;
+
+    if (action === "menu") {
+      const panel = actionEl.parentElement?.querySelector(".user-car-menu-panel");
+      const shouldOpen = panel?.classList.contains("is-hidden");
+      document.querySelectorAll(".user-car-menu-panel").forEach((menu) => menu.classList.add("is-hidden"));
+      if (panel && shouldOpen) panel.classList.remove("is-hidden");
+      return;
+    }
+
+    if (action === "favorite") {
+      dashboardVehicles = dashboardVehicles.map((vehicle) =>
+        vehicle.registrationNumber === reg ? { ...vehicle, favorite: !vehicle.favorite } : vehicle
+      );
+      saveDashboardVehicles(dashboardVehicles);
+      renderDashboardVehicles(dashboardVehicles);
+      renderVehicleDetail(dashboardVehicles, reg);
+      return;
+    }
+
+    if (action === "edit") {
+      if (userDashboardCarReg) {
+        userDashboardCarReg.value = reg;
+        userDashboardCarReg.focus();
+      }
+      if (userQuickQuoteReg) userQuickQuoteReg.value = reg;
+      renderVehicleDetail(dashboardVehicles, reg);
+      setUserView("vehicle");
+      userNavLinks.forEach((btn) => btn.classList.toggle("active", btn.dataset.view === "vehicle"));
+      document.querySelectorAll(".user-car-menu-panel").forEach((menu) => menu.classList.add("is-hidden"));
+      return;
+    }
+
+    if (action === "remove") {
+      const confirmed = window.confirm(`Are you sure you want to remove ${reg} from your account?`);
+      if (!confirmed) return;
+
+      dashboardVehicles = dashboardVehicles.filter((vehicle) => vehicle.registrationNumber !== reg);
+      if (!dashboardVehicles.length) {
+        dashboardVehicles = [defaultDashboardVehicle];
+      }
+      saveDashboardVehicles(dashboardVehicles);
+      renderDashboardVehicles(dashboardVehicles);
+      renderVehicleDetail(dashboardVehicles);
+    }
+  };
+
+  [userCarList].forEach((listEl) => {
+    listEl?.addEventListener("click", handleVehicleCardAction);
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest(".user-car-menu-wrap")) {
+      document.querySelectorAll(".user-car-menu-panel").forEach((menu) => menu.classList.add("is-hidden"));
+    }
+
+    if (!event.target.closest(".user-vehicle-dropdown")) {
+      userVehicleDropdownMenu?.classList.add("is-hidden");
+    }
+  });
+
+  userVehicleDropdownBtn?.addEventListener("click", () => {
+    userVehicleDropdownMenu?.classList.toggle("is-hidden");
+  });
+
+  userVehicleDropdownMenu?.addEventListener("click", (event) => {
+    const item = event.target.closest(".user-vehicle-dropdown-item");
+    if (!item) return;
+    renderVehicleDetail(dashboardVehicles, item.dataset.reg);
+    userVehicleDropdownMenu.classList.add("is-hidden");
+  });
 
   const setSettingsSubview = (view) => {
     userSettingsGeneral.classList.toggle("is-hidden", view !== "general");
@@ -1756,8 +1910,9 @@ if (userPage) {
       }
 
       dashboardVehicles = [...dashboardVehicles, normaliseDashboardVehicle(vehicleData)];
-      sessionStorage.setItem("userDashboardVehicles", JSON.stringify(dashboardVehicles));
+      saveDashboardVehicles(dashboardVehicles);
       renderDashboardVehicles(dashboardVehicles);
+      renderVehicleDetail(dashboardVehicles, vehicleData.registrationNumber);
       if (userDashboardCarReg) userDashboardCarReg.value = "";
     } catch (err) {
       if (userDashboardCarError) {
