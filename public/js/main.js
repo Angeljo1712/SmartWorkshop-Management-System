@@ -1459,7 +1459,16 @@ if (userPage) {
   const userNavLinks = document.querySelectorAll(".user-nav-link");
   const userDashboardView = document.getElementById("userDashboardView");
   const userDashboardName = document.getElementById("userDashboardName");
+  const userCarList = document.getElementById("userCarList");
+  const userDashboardCarReg = document.getElementById("userDashboardCarReg");
+  const userAddVehicleBtn = document.getElementById("userAddVehicleBtn");
+  const userDashboardCarError = document.getElementById("userDashboardCarError");
+  const userQuickQuoteReg = document.getElementById("userQuickQuoteReg");
+  const userQuickQuoteProduct = document.getElementById("userQuickQuoteProduct");
+  const userQuickQuoteBtn = document.getElementById("userQuickQuoteBtn");
   const userAccountView = document.getElementById("userAccountView");
+  const userVehicleView = document.getElementById("userVehicleView");
+  const userVehicleList = document.getElementById("userVehicleList");
   const userBookingsView = document.getElementById("userBookingsView");
   const userMotView = document.getElementById("userMotView");
   const userSettingsView = document.getElementById("userSettingsView");
@@ -1569,10 +1578,137 @@ if (userPage) {
   const setUserView = (view) => {
     userDashboardView.classList.toggle("is-hidden", view !== "dashboard");
     userAccountView.classList.toggle("is-hidden", view !== "account");
+    userVehicleView.classList.toggle("is-hidden", view !== "vehicle");
     userBookingsView.classList.toggle("is-hidden", view !== "bookings");
     userMotView.classList.toggle("is-hidden", view !== "mot");
     userSettingsView.classList.toggle("is-hidden", view !== "settings");
   };
+
+  const defaultDashboardVehicle = {
+    registrationNumber: "KL05USC",
+    make: "COROLLA",
+    model: "COLOUR COL-N VVTI",
+    fuelType: "Petrol",
+    yearOfManufacture: new Date().getFullYear() - 21,
+    mileage: "39,580 miles",
+    motStatus: "Due in 28 weeks",
+    taxStatus: "Due in 24 weeks"
+  };
+
+  const normaliseDashboardVehicle = (vehicle) => {
+    if (!vehicle) return null;
+    return {
+      registrationNumber: vehicle.registrationNumber || "-",
+      make: vehicle.make || "",
+      model: vehicle.model || "",
+      fuelType: vehicle.fuelType || "-",
+      yearOfManufacture: vehicle.yearOfManufacture || null,
+      mileage: vehicle.mileage || "-",
+      motStatus: vehicle.motStatus || "MOT status not available",
+      taxStatus: vehicle.taxStatus || "Tax status not available"
+    };
+  };
+
+  const getDashboardVehicles = () => {
+    const storedList = sessionStorage.getItem("userDashboardVehicles");
+    if (storedList) {
+      try {
+        const parsed = JSON.parse(storedList);
+        if (Array.isArray(parsed) && parsed.length) {
+          return parsed.map(normaliseDashboardVehicle).filter(Boolean);
+        }
+      } catch (_err) {
+        sessionStorage.removeItem("userDashboardVehicles");
+      }
+    }
+
+    const legacyVehicle = sessionStorage.getItem("userDashboardVehicle");
+    if (legacyVehicle) {
+      try {
+        const parsed = normaliseDashboardVehicle(JSON.parse(legacyVehicle));
+        if (parsed) {
+          sessionStorage.setItem("userDashboardVehicles", JSON.stringify([parsed]));
+          sessionStorage.removeItem("userDashboardVehicle");
+          return [parsed];
+        }
+      } catch (_err) {
+        sessionStorage.removeItem("userDashboardVehicle");
+      }
+    }
+
+    return [defaultDashboardVehicle];
+  };
+
+  const renderDashboardVehicles = (vehicles) => {
+    const buildVehicleCard = (vehicle) => {
+      const reg = vehicle.registrationNumber || "-";
+      const make = String(vehicle.make || "").trim();
+      const model = String(vehicle.model || "").trim();
+      const fuel = vehicle.fuelType || "-";
+      const year = Number(vehicle.yearOfManufacture);
+      const age = Number.isFinite(year) ? `${Math.max(new Date().getFullYear() - year, 0)} years old` : "-";
+      const mileage =
+        typeof vehicle.mileage === "number"
+          ? `${vehicle.mileage.toLocaleString()} miles`
+          : String(vehicle.mileage || "-");
+
+      const card = document.createElement("div");
+      card.className = "user-car-summary";
+      card.innerHTML = `
+        <div class="user-car-top">
+          <div class="user-car-headline">
+            <span class="user-reg-badge">${reg}</span>
+            <div class="user-car-title-block">
+              <strong>${make || reg}</strong>
+              <span>${model || "Vehicle details loaded"}</span>
+            </div>
+          </div>
+          <div class="user-car-actions" aria-hidden="true">
+            <span class="user-car-star">★</span>
+            <span class="user-car-menu">⋮</span>
+          </div>
+        </div>
+        <div class="user-car-meta">
+          <span>${fuel}</span>
+          <span>${age}</span>
+          <span>${mileage}</span>
+        </div>
+        <div class="user-car-status">
+          <div class="user-car-status-item">
+            <span class="user-car-status-icon">△</span>
+            <div>
+              <strong>Your MOT is valid</strong>
+              <p>${vehicle.motStatus || "MOT status not available"}</p>
+            </div>
+            <span class="user-car-status-arrow">›</span>
+          </div>
+          <div class="user-car-status-item">
+            <span class="user-car-status-icon">✓</span>
+            <div>
+              <strong>Taxed</strong>
+              <p>${vehicle.taxStatus || "Tax status not available"}</p>
+            </div>
+            <span class="user-car-status-arrow">›</span>
+          </div>
+        </div>
+      `;
+      return card;
+    };
+
+    [userCarList, userVehicleList].forEach((listEl) => {
+      if (!listEl) return;
+      listEl.innerHTML = "";
+      vehicles.forEach((vehicle) => {
+        listEl.appendChild(buildVehicleCard(vehicle));
+      });
+    });
+
+    const latestVehicle = vehicles[vehicles.length - 1];
+    if (userQuickQuoteReg && latestVehicle) userQuickQuoteReg.value = latestVehicle.registrationNumber || "";
+  };
+
+  let dashboardVehicles = getDashboardVehicles();
+  renderDashboardVehicles(dashboardVehicles);
 
   const setSettingsSubview = (view) => {
     userSettingsGeneral.classList.toggle("is-hidden", view !== "general");
@@ -1586,6 +1722,54 @@ if (userPage) {
       userNavLinks.forEach((btn) => btn.classList.toggle("active", btn === link));
       setUserView(view);
     });
+  });
+
+  userAddVehicleBtn?.addEventListener("click", async () => {
+    const registrationNumber = userDashboardCarReg?.value?.trim().toUpperCase().replace(/\s+/g, "") || "";
+    if (!registrationNumber) {
+      if (userDashboardCarError) userDashboardCarError.textContent = "Please enter a registration number.";
+      return;
+    }
+
+    if (userDashboardCarError) userDashboardCarError.textContent = "";
+
+    try {
+      const result = await api("/api/vehicle-enquiry", {
+        method: "POST",
+        body: JSON.stringify({ registrationNumber })
+      });
+
+      const vehicleData = {
+        registrationNumber: result.registrationNumber || registrationNumber,
+        make: result.make || "",
+        model: result.model || "",
+        fuelType: result.fuelType || "",
+        yearOfManufacture: result.yearOfManufacture || null,
+        mileage: result.motTests?.[0]?.odometerValue || result.mileage || "-",
+        motStatus: "MOT details loaded",
+        taxStatus: "Tax details loaded"
+      };
+
+      if (dashboardVehicles.some((vehicle) => vehicle.registrationNumber === vehicleData.registrationNumber)) {
+        if (userDashboardCarError) userDashboardCarError.textContent = "This vehicle is already in your dashboard.";
+        return;
+      }
+
+      dashboardVehicles = [...dashboardVehicles, normaliseDashboardVehicle(vehicleData)];
+      sessionStorage.setItem("userDashboardVehicles", JSON.stringify(dashboardVehicles));
+      renderDashboardVehicles(dashboardVehicles);
+      if (userDashboardCarReg) userDashboardCarReg.value = "";
+    } catch (err) {
+      if (userDashboardCarError) {
+        userDashboardCarError.textContent =
+          err?.error?.message || err?.message || "Unable to look up vehicle details.";
+      }
+    }
+  });
+
+  userQuickQuoteBtn?.addEventListener("click", () => {
+    const selectedType = userQuickQuoteProduct?.value || "repair";
+    window.location.href = `/bookings/work/?type=${encodeURIComponent(selectedType)}`;
   });
 
   settingsSubnavLinks.forEach((link) => {

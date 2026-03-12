@@ -567,6 +567,14 @@ body {
   gap: 18px;
 }
 
+body.admin-body .settings-card {
+  background: rgba(8, 13, 23, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  box-shadow: none;
+  color: #eaf0fb;
+}
+
 .settings-profile {
   display: grid;
   grid-template-columns: 1fr auto;
