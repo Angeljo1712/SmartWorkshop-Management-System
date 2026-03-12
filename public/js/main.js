@@ -1575,6 +1575,7 @@ if (userPage) {
   };
 
   const profile = getUserProfile();
+  const userToken = sessionStorage.getItem("userToken");
   if (profile) {
     sessionStorage.setItem("activeRole", "CUSTOMER");
     setUserHeader(profile);
@@ -1605,6 +1606,8 @@ if (userPage) {
   const normaliseDashboardVehicle = (vehicle) => {
     if (!vehicle) return null;
     return {
+      id: vehicle.id || null,
+      uuid_public: vehicle.uuid_public || null,
       registrationNumber: vehicle.registrationNumber || "-",
       make: vehicle.make || "",
       model: vehicle.model || "",
@@ -1654,7 +1657,23 @@ if (userPage) {
       }
     }
 
-    return [defaultDashboardVehicle];
+    return [];
+  };
+
+  const mergeDashboardVehicles = (storedVehicles, remoteVehicles) => {
+    if (!Array.isArray(remoteVehicles)) {
+      return storedVehicles;
+    }
+
+    if (!remoteVehicles.length) {
+      return [];
+    }
+
+    const storedMap = new Map(storedVehicles.map((vehicle) => [vehicle.registrationNumber, vehicle]));
+    return remoteVehicles.map((vehicle) => ({
+      ...vehicle,
+      ...(storedMap.get(vehicle.registrationNumber) || {})
+    }));
   };
 
   const renderDashboardVehicles = (vehicles) => {
@@ -1726,13 +1745,23 @@ if (userPage) {
     [userCarList].forEach((listEl) => {
       if (!listEl) return;
       listEl.innerHTML = "";
+      if (!vehicles.length) {
+        const emptyState = document.createElement("div");
+        emptyState.className = "user-empty-state";
+        emptyState.innerHTML = `
+          <strong>No vehicles added yet.</strong>
+          <span>Add a registration above to save a vehicle to your account.</span>
+        `;
+        listEl.appendChild(emptyState);
+        return;
+      }
       vehicles.forEach((vehicle) => {
         listEl.appendChild(buildVehicleCard(vehicle));
       });
     });
 
     const latestVehicle = vehicles[vehicles.length - 1];
-    if (userQuickQuoteReg && latestVehicle) userQuickQuoteReg.value = latestVehicle.registrationNumber || "";
+    if (userQuickQuoteReg) userQuickQuoteReg.value = latestVehicle ? latestVehicle.registrationNumber || "" : "";
   };
 
   const renderVehicleDetail = (vehicles, preferredReg) => {
@@ -1743,6 +1772,18 @@ if (userPage) {
       vehicles.find((vehicle) => vehicle.registrationNumber === selectedReg) || vehicles[0] || null;
 
     userVehicleDropdownMenu.innerHTML = "";
+    if (!selectedVehicle) {
+      if (userVehicleTitle) userVehicleTitle.textContent = "No vehicle selected";
+      if (userVehicleRegBadge) userVehicleRegBadge.textContent = "-";
+      if (userVehicleFuel) userVehicleFuel.textContent = "-";
+      if (userVehicleAge) userVehicleAge.textContent = "-";
+      if (userVehicleMileage) userVehicleMileage.textContent = "-";
+      if (userVehicleMotStatus) userVehicleMotStatus.textContent = "MOT status not available";
+      if (userVehicleTaxStatus) userVehicleTaxStatus.textContent = "Tax status not available";
+      if (userVehicleMileageStatus) userVehicleMileageStatus.textContent = "-";
+      return;
+    }
+
     vehicles.forEach((vehicle) => {
       if (selectedVehicle && vehicle.registrationNumber === selectedVehicle.registrationNumber) return;
       const item = document.createElement("button");
@@ -1783,7 +1824,21 @@ if (userPage) {
   renderDashboardVehicles(dashboardVehicles);
   renderVehicleDetail(dashboardVehicles);
 
-  const handleVehicleCardAction = (event) => {
+  const syncDashboardVehiclesFromApi = async () => {
+    if (!userToken) return;
+
+    try {
+      const vehicles = await apiAuth("/api/users/me/vehicles", userToken);
+      dashboardVehicles = mergeDashboardVehicles(getDashboardVehicles(), vehicles.map(normaliseDashboardVehicle));
+      saveDashboardVehicles(dashboardVehicles);
+      renderDashboardVehicles(dashboardVehicles);
+      renderVehicleDetail(dashboardVehicles);
+    } catch (_err) {
+      // Keep local fallback when the API is not available.
+    }
+  };
+
+  const handleVehicleCardAction = async (event) => {
     const actionEl = event.target.closest("[data-action]");
     if (!actionEl) return;
 
@@ -1826,10 +1881,17 @@ if (userPage) {
       const confirmed = window.confirm(`Are you sure you want to remove ${reg} from your account?`);
       if (!confirmed) return;
 
-      dashboardVehicles = dashboardVehicles.filter((vehicle) => vehicle.registrationNumber !== reg);
-      if (!dashboardVehicles.length) {
-        dashboardVehicles = [defaultDashboardVehicle];
+      if (userToken) {
+        try {
+          await apiAuth(`/api/users/me/vehicles/${encodeURIComponent(reg)}`, userToken, {
+            method: "DELETE"
+          });
+        } catch (_err) {
+          return;
+        }
       }
+
+      dashboardVehicles = dashboardVehicles.filter((vehicle) => vehicle.registrationNumber !== reg);
       saveDashboardVehicles(dashboardVehicles);
       renderDashboardVehicles(dashboardVehicles);
       renderVehicleDetail(dashboardVehicles);
@@ -1906,6 +1968,15 @@ if (userPage) {
         return;
       }
 
+      if (userToken) {
+        const persisted = await apiAuth("/api/users/me/vehicles", userToken, {
+          method: "POST",
+          body: JSON.stringify(vehicleData)
+        });
+        vehicleData.id = persisted?.id || null;
+        vehicleData.uuid_public = persisted?.uuid_public || null;
+      }
+
       dashboardVehicles = [...dashboardVehicles, normaliseDashboardVehicle(vehicleData)];
       saveDashboardVehicles(dashboardVehicles);
       renderDashboardVehicles(dashboardVehicles);
@@ -1920,6 +1991,8 @@ if (userPage) {
   userAddVehicleBtn?.addEventListener("click", async () => {
     await handleAddVehicle(userDashboardCarReg, userDashboardCarError);
   });
+
+  syncDashboardVehiclesFromApi();
 
   userQuickQuoteBtn?.addEventListener("click", () => {
     const selectedType = userQuickQuoteProduct?.value || "repair";

@@ -112,6 +112,90 @@ const updateUserAvatar = async (userId, avatarUrl) => {
   return getUserById(userId);
 };
 
+const mapVehicleRow = (row) => ({
+  id: row.id,
+  uuid_public: row.uuid_public,
+  registrationNumber: row.license_plate,
+  make: row.make || "",
+  model: row.model || "",
+  yearOfManufacture: row.year || null,
+  fuelType: row.fuel_type || "",
+  mileage: row.mileage || "-",
+  motStatus: row.mot_status || "MOT status not available",
+  taxStatus: row.tax_status || "Tax status not available"
+});
+
+const listUserVehicles = async (userId) => {
+  const [rows] = await pool.query(
+    `SELECT id,
+            BIN_TO_UUID(uuid_public) AS uuid_public,
+            license_plate,
+            make,
+            model,
+            year,
+            NULL AS fuel_type,
+            NULL AS mileage,
+            NULL AS mot_status,
+            NULL AS tax_status
+     FROM vehicles
+     WHERE user_id = ?
+     ORDER BY id ASC`,
+    [userId]
+  );
+
+  return rows.map(mapVehicleRow);
+};
+
+const saveUserVehicle = async (userId, payload) => {
+  const registrationNumber = String(payload.registrationNumber || "").trim().toUpperCase().replace(/\s+/g, "");
+  if (!registrationNumber) {
+    throw new AppError("VALIDATION_ERROR", "registrationNumber is required", 400);
+  }
+
+  const make = String(payload.make || "").trim();
+  const model = String(payload.model || "").trim();
+  const year = payload.yearOfManufacture ? Number(payload.yearOfManufacture) : null;
+
+  await pool.query(
+    `INSERT INTO vehicles (uuid_public, user_id, license_plate, make, model, year)
+     VALUES (UUID_TO_BIN(UUID()), ?, ?, ?, ?, ?)
+     ON DUPLICATE KEY UPDATE
+       make = VALUES(make),
+       model = VALUES(model),
+       year = VALUES(year)`,
+    [userId, registrationNumber, make, model, Number.isFinite(year) ? year : null]
+  );
+
+  const [rows] = await pool.query(
+    `SELECT id,
+            BIN_TO_UUID(uuid_public) AS uuid_public,
+            license_plate,
+            make,
+            model,
+            year,
+            NULL AS fuel_type,
+            NULL AS mileage,
+            NULL AS mot_status,
+            NULL AS tax_status
+     FROM vehicles
+     WHERE user_id = ? AND license_plate = ?
+     LIMIT 1`,
+    [userId, registrationNumber]
+  );
+
+  return rows[0] ? mapVehicleRow(rows[0]) : null;
+};
+
+const deleteUserVehicle = async (userId, registrationNumber) => {
+  const normalized = String(registrationNumber || "").trim().toUpperCase().replace(/\s+/g, "");
+  if (!normalized) {
+    throw new AppError("VALIDATION_ERROR", "registrationNumber is required", 400);
+  }
+
+  await pool.query("DELETE FROM vehicles WHERE user_id = ? AND license_plate = ?", [userId, normalized]);
+  return { deleted: true };
+};
+
 const requestEmailChange = async (userId, newEmail) => {
   if (!newEmail) {
     throw new AppError("VALIDATION_ERROR", "email is required", 400);
@@ -157,4 +241,13 @@ const confirmEmailChange = async (token) => {
   return getUserById(request.user_id);
 };
 
-module.exports = { getUserById, updateUserProfile, updateUserAvatar, requestEmailChange, confirmEmailChange };
+module.exports = {
+  getUserById,
+  updateUserProfile,
+  updateUserAvatar,
+  requestEmailChange,
+  confirmEmailChange,
+  listUserVehicles,
+  saveUserVehicle,
+  deleteUserVehicle
+};

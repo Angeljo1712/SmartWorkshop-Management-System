@@ -40,10 +40,29 @@ const confirmEmailChangeHandler = async (req, res) => {
   res.json({ message: "Email updated.", user });
 };
 
+const listMyVehiclesHandler = async (req, res) => {
+  const vehicles = await userService.listUserVehicles(req.user.userId);
+  res.json(vehicles);
+};
+
+const addMyVehicleHandler = async (req, res) => {
+  const vehicle = await userService.saveUserVehicle(req.user.userId, req.body || {});
+  res.status(201).json(vehicle);
+};
+
+const deleteMyVehicleHandler = async (req, res) => {
+  const registrationNumber = String(req.params.registrationNumber || "");
+  const result = await userService.deleteUserVehicle(req.user.userId, registrationNumber);
+  res.json(result);
+};
+
 module.exports = {
   getMeHandler,
   updateMeHandler,
   uploadAvatarHandler,
   requestEmailChangeHandler,
-  confirmEmailChangeHandler
+  confirmEmailChangeHandler,
+  listMyVehiclesHandler,
+  addMyVehicleHandler,
+  deleteMyVehicleHandler
 };
