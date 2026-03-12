@@ -441,16 +441,23 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
   display: block;
 }
 
-.user-vehicle-card > * + * {
-  margin-top: 8px;
+.user-vehicle-layout {
+  display: grid;
+  grid-template-areas:
+    "heading"
+    "meta"
+    "cards";
+  gap: 8px;
 }
 
 .user-vehicle-heading {
+  grid-area: heading;
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 14px;
   width: 100%;
-  max-height: 25%;
-  padding: 16px;
+  max-height: none;
+  height: 400px;
+  padding: 12px;
 }
 
 .user-vehicle-heading-top {
@@ -540,11 +547,12 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
 }
 
 .user-vehicle-pills {
+  grid-area: meta;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   max-height: 25%;
-  margin: 0px 0px 20px;
+  margin: 0px 0px 0px;
   align-items: center;
 }
 
@@ -556,6 +564,7 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
 }
 
 .user-vehicle-cards {
+  grid-area: cards;
   display: grid;
   margin: 0 0 20px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -641,8 +650,9 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 14px;
   width: 100%;
-  max-height: 25%;
-  padding: 16px;
+  max-height: none;
+  height: auto;
+  padding: 12px;
 }
 
 .user-vehicle-heading-top {
@@ -736,7 +746,7 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
   flex-wrap: wrap;
   gap: 10px;
   max-height: 25%;
-  margin: 0px 0px 20px;
+  margin: 0px 0px 00px;
   align-items: center;
 }
 
@@ -1039,3 +1049,4 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
     font-size: 0.95rem;
   }
 }
+  
