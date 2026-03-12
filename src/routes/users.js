@@ -10,7 +10,8 @@ const {
   confirmEmailChangeHandler,
   listMyVehiclesHandler,
   addMyVehicleHandler,
-  deleteMyVehicleHandler
+  deleteMyVehicleHandler,
+  listMyBookingsHandler
 } = require("../controllers/userController");
 
 const router = express.Router();
@@ -22,6 +23,7 @@ router.post("/me/email-change", authenticate, asyncHandler(requestEmailChangeHan
 router.get("/me/vehicles", authenticate, asyncHandler(listMyVehiclesHandler));
 router.post("/me/vehicles", authenticate, asyncHandler(addMyVehicleHandler));
 router.delete("/me/vehicles/:registrationNumber", authenticate, asyncHandler(deleteMyVehicleHandler));
+router.get("/me/bookings", authenticate, asyncHandler(listMyBookingsHandler));
 router.get("/confirm-email", asyncHandler(confirmEmailChangeHandler));
 
 module.exports = router;

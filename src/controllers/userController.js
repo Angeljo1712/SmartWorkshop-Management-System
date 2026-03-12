@@ -56,6 +56,11 @@ const deleteMyVehicleHandler = async (req, res) => {
   res.json(result);
 };
 
+const listMyBookingsHandler = async (req, res) => {
+  const bookings = await userService.listUserBookings(req.user.userId);
+  res.json(bookings);
+};
+
 module.exports = {
   getMeHandler,
   updateMeHandler,
@@ -64,5 +69,6 @@ module.exports = {
   confirmEmailChangeHandler,
   listMyVehiclesHandler,
   addMyVehicleHandler,
-  deleteMyVehicleHandler
+  deleteMyVehicleHandler,
+  listMyBookingsHandler
 };

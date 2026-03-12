@@ -196,6 +196,137 @@ const deleteUserVehicle = async (userId, registrationNumber) => {
   return { deleted: true };
 };
 
+const listUserBookings = async (userId) => {
+  const [rows] = await pool.query(
+    `SELECT b.id,
+            BIN_TO_UUID(b.uuid_public) AS uuid_public,
+            b.status,
+            b.notes,
+            b.subtotal_eur,
+            b.vat_eur,
+            b.total_eur,
+            b.created_at,
+            a.line1,
+            a.line2,
+            a.city,
+            a.postal_code,
+            a.country,
+            v.license_plate,
+            v.make,
+            v.model,
+            v.year,
+            s.start_at AS slot_start_at,
+            s.end_at AS slot_end_at,
+            up.name AS mechanic_name,
+            up.lastname AS mechanic_lastname
+     FROM bookings b
+     LEFT JOIN addresses a ON a.id = b.address_id
+     LEFT JOIN vehicles v ON v.id = b.vehicle_id
+     LEFT JOIN availability_slots s ON s.id = b.slot_id
+     LEFT JOIN user_profiles up ON up.user_id = b.mechanic_id
+     WHERE b.customer_id = ?
+     ORDER BY b.created_at DESC`,
+    [userId]
+  );
+
+  if (!rows.length) return [];
+
+  const bookingIds = rows.map((row) => row.id);
+
+  const [itemRows] = await pool.query(
+    `SELECT bi.booking_id,
+            sc.name,
+            bi.labour_minutes,
+            bi.parts_json,
+            bi.line_total_eur
+     FROM booking_items bi
+     INNER JOIN service_catalog sc ON sc.id = bi.service_id
+     WHERE bi.booking_id IN (?)`,
+    [bookingIds]
+  );
+
+  const [paymentRows] = await pool.query(
+    `SELECT p.booking_id, p.status, p.amount_eur, p.currency, p.provider_ref
+     FROM payments p
+     INNER JOIN (
+       SELECT booking_id, MAX(id) AS latest_id
+       FROM payments
+       WHERE booking_id IN (?)
+       GROUP BY booking_id
+     ) latest ON latest.latest_id = p.id`,
+    [bookingIds]
+  );
+
+  const itemsByBooking = new Map();
+  itemRows.forEach((row) => {
+    const list = itemsByBooking.get(row.booking_id) || [];
+    let parts = [];
+    if (row.parts_json) {
+      try {
+        parts = typeof row.parts_json === "string" ? JSON.parse(row.parts_json) : row.parts_json;
+      } catch (_err) {
+        parts = [];
+      }
+    }
+    list.push({
+      name: row.name,
+      labour_minutes: row.labour_minutes,
+      parts,
+      line_total_eur: row.line_total_eur
+    });
+    itemsByBooking.set(row.booking_id, list);
+  });
+
+  const paymentsByBooking = new Map(paymentRows.map((row) => [row.booking_id, row]));
+
+  return rows.map((row) => {
+    const items = itemsByBooking.get(row.id) || [];
+    const payment = paymentsByBooking.get(row.id) || null;
+    return {
+      id: row.id,
+      uuid_public: row.uuid_public,
+      reference: row.uuid_public || String(row.id),
+      status: row.status,
+      notes: row.notes || "",
+      totals: {
+        subtotal_eur: Number(row.subtotal_eur || 0),
+        vat_eur: Number(row.vat_eur || 0),
+        total_eur: Number(row.total_eur || 0)
+      },
+      created_at: row.created_at,
+      slot: row.slot_start_at
+        ? {
+            start_at: row.slot_start_at,
+            end_at: row.slot_end_at
+          }
+        : null,
+      address: {
+        line1: row.line1 || "",
+        line2: row.line2 || "",
+        city: row.city || "",
+        postal_code: row.postal_code || "",
+        country: row.country || ""
+      },
+      vehicle: {
+        registrationNumber: row.license_plate || "",
+        make: row.make || "",
+        model: row.model || "",
+        yearOfManufacture: row.year || null
+      },
+      mechanic: [row.mechanic_name, row.mechanic_lastname].filter(Boolean).join(" ") || null,
+      payment: payment
+        ? {
+            status: payment.status,
+            amount_eur: Number(payment.amount_eur || 0),
+            currency: payment.currency,
+            provider_ref: payment.provider_ref
+          }
+        : null,
+      items
+    };
+  });
+};
+
 const requestEmailChange = async (userId, newEmail) => {
   if (!newEmail) {
     throw new AppError("VALIDATION_ERROR", "email is required", 400);
@@ -249,5 +380,6 @@ module.exports = {
   confirmEmailChange,
   listUserVehicles,
   saveUserVehicle,
-  deleteUserVehicle
+  deleteUserVehicle,
+  listUserBookings
 };

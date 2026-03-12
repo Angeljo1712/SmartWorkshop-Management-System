@@ -233,69 +233,15 @@ block content
                 .settings-header
                   div
                     h2 Your bookings
-                    p Review your most recent booking.
+                    p Review your confirmed bookings.
 
               .bookings-section.bookings-section--card
-                .user-booking-card
-                  .user-booking-toolbar
-                    span.user-booking-status PAID
-                    strong.user-booking-reference Reference: 16334274
-                    button.primary.user-booking-actions(type="button") Actions
-
-                  .user-booking-grid
-                    .user-booking-column
-                      h4 Date & Time
-                      p 08:00-10:00 on Monday 11th August 2025
-
-                      h4 Location
-                      p Flat 19 Claycorn Court, Station Way
-                      p Claygate
-                      p Esher
-                      p KT10 0QR
-
-                      h4 Contact Details
-                      p Angel Gomes
-                      p zang17@hotmail.com
-                      p 07541017233
-
-                    .user-booking-column
-                      h4 Vehicle
-                      p Toyota Corolla 1.4L Petrol 2005
-                      p KL05USC
-                      p Mileage: 39,179 miles
-
-                      h4 Mechanic
-                      p Sheren
-
-                      h4 Total Price
-                      p.user-booking-price £244.70
-
-                      h4 Amount Paid
-                      p.user-booking-price £244.70
-
-                    .user-booking-column
-                      h4 Labour
-                      ul
-                        li Brake pipe copper soldering and protect the inner (driver side)
-
-                      h4 Parts
-                      ul
-                        li Brake hydraulic fluid
-                        li Copart soldering and line processing
-
-                      h4 Documents
-                      a(href="#") View receipt
+                #userBookingsList.user-bookings-list
 
               .bookings-section.bookings-section--photos
-                .user-booking-photos
+                .user-booking-photos#userBookingsPhotos
                   h4 Photos
-                  .user-booking-photo-grid
-                    img(src="/images/home1.jpg" alt="Booking photo 1")
-                    img(src="/images/home2.jpg" alt="Booking photo 2")
-                    img(src="/images/hero-1.jpg" alt="Booking photo 3")
-                    img(src="/images/hero-2.jpg" alt="Booking photo 4")
-                    img(src="/images/hero-3.jpg" alt="Booking photo 5")
-                    img(src="/images/hero-4.jpg" alt="Booking photo 6")
+                  p.user-booking-empty#userBookingsPhotosEmpty No booking photos available.
 
         section.admin-view.is-hidden#userSettingsView
           .settings-card.user-settings-card

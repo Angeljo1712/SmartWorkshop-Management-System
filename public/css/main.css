@@ -623,7 +623,7 @@ body.admin-body .settings-card {
   gap: 12px;
   align-items: center;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  border-bottom: 3px solid rgba(15, 23, 42, 0.06);
 }
 
 .settings-row:last-child {
@@ -645,7 +645,7 @@ body.admin-body .settings-card {
 
 .settings-divider {
   height: 3px;
-  background: var(--border);
+  background: #ffffff;
 }
 
 .settings-layout {

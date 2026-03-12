@@ -59,7 +59,7 @@ body.admin-body #userSettingsView .settings-card {
 }
 
 .user-settings-card {
-  display: flex;
+  display: block;
 }
 
 .user-settings-layout {
@@ -68,9 +68,7 @@ body.admin-body #userSettingsView .settings-card {
     "header"
     "divider"
     "layout";
-  gap: 20px;
-  flex: 1;
-  width: 100%;
+  gap: 30px;
 }
 
 .settings-section--header {
@@ -135,12 +133,17 @@ body.admin-body #userBookingsView .user-booking-reference {
 
 body.admin-body #userBookingsView .user-booking-column p,
 body.admin-body #userBookingsView .user-booking-column li,
-body.admin-body #userBookingsView .user-booking-column a {
+body.admin-body #userBookingsView .user-booking-column a,
+body.admin-body #userBookingsView .user-booking-empty {
   color: #c8d4e8;
 }
 
+.user-bookings-list {
+  display: grid;
+  gap: 16px;
+}
+
 .user-booking-card {
-  margin-top: 20px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 14px;
   overflow: hidden;
@@ -229,6 +232,10 @@ body.admin-body #userBookingsView .user-booking-column a {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.user-booking-empty {
+  margin: 0;
+}
+
 body.admin-body #userAccountView .settings-header h2,
 body.admin-body #userAccountView .settings-row h4,
 body.admin-body #userAccountView .settings-meta h4 {
@@ -302,12 +309,12 @@ body.admin-body #userAccountView .settings-meta p {
 }
 
 body.admin-body #userAccountView .settings-divider {
-  height: 2px;
-  background: rgba(255, 255, 255, 0.28);
+  height: 3px;
+  background: #ffffff;
 }
 
 body.admin-body #userAccountView .settings-row {
-  border-bottom: 2px solid rgba(255, 255, 255, 0.24);
+  border-bottom: 3px solid #ffffff;
   padding-bottom: 14px;
 }
 
@@ -332,7 +339,6 @@ body.admin-body #userDashboardView .user-verify-title {
 body.admin-body #userDashboardView .settings-divider {
   height: 3px;
   background: #ffffff;
-  opacity: 1;
 }
 
 body.admin-body #userDashboardView .user-verify-text,
@@ -341,9 +347,6 @@ body.admin-body #userDashboardView .user-quick-quote label {
   color: #a9b6cb;
 }
 
-body.admin-body #userDashboardView .settings-divider {
-  background: rgba(255, 255, 255, 0.18);
-}
 
 body.admin-body #userDashboardView .user-car-summary,
 body.admin-body #userDashboardView .user-verify-card,

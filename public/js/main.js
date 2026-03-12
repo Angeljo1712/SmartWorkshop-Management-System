@@ -1479,6 +1479,9 @@ if (userPage) {
   const userVehicleTaxStatus = document.getElementById("userVehicleTaxStatus");
   const userVehicleMileageStatus = document.getElementById("userVehicleMileageStatus");
   const userBookingsView = document.getElementById("userBookingsView");
+  const userBookingsList = document.getElementById("userBookingsList");
+  const userBookingsPhotos = document.getElementById("userBookingsPhotos");
+  const userBookingsPhotosEmpty = document.getElementById("userBookingsPhotosEmpty");
   const userSettingsView = document.getElementById("userSettingsView");
 
   const getInitials = (name) => {
@@ -1629,6 +1632,42 @@ if (userPage) {
   };
 
   const getSelectedVehicleReg = () => sessionStorage.getItem("userSelectedVehicleReg");
+
+  const formatBookingStatus = (status, paymentStatus) => {
+    if (paymentStatus === "authorized" || paymentStatus === "auth_captured") return "PAID";
+    return String(status || "requested").replace(/_/g, " ").toUpperCase();
+  };
+
+  const formatBookingDateTime = (slot) => {
+    if (!slot?.start_at || !slot?.end_at) return "Date and time not assigned yet";
+    const start = new Date(slot.start_at);
+    const end = new Date(slot.end_at);
+    if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return "Date and time not assigned yet";
+    const time = `${start.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}-${end.toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit"
+    })}`;
+    const date = start.toLocaleDateString("en-GB", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+    return `${time} on ${date}`;
+  };
+
+  const formatCurrency = (amount, currency = "EUR") => {
+    const normalizedCurrency = String(currency || "EUR").toUpperCase();
+    const value = Number(amount || 0);
+    try {
+      return new Intl.NumberFormat("en-GB", {
+        style: "currency",
+        currency: normalizedCurrency
+      }).format(value);
+    } catch (_err) {
+      return `${normalizedCurrency} ${value.toFixed(2)}`;
+    }
+  };
 
   const getDashboardVehicles = () => {
     const storedList = sessionStorage.getItem("userDashboardVehicles");
@@ -1820,6 +1859,73 @@ if (userPage) {
     saveSelectedVehicleReg(selectedVehicle.registrationNumber);
   };
 
+  const renderUserBookings = (bookings) => {
+    if (!userBookingsList) return;
+    const user = getUserProfile() || {};
+    userBookingsList.innerHTML = "";
+
+    if (!Array.isArray(bookings) || !bookings.length) {
+      const emptyState = document.createElement("p");
+      emptyState.className = "user-booking-empty";
+      emptyState.textContent = "No bookings to show yet.";
+      userBookingsList.appendChild(emptyState);
+      if (userBookingsPhotos) userBookingsPhotos.classList.add("is-hidden");
+      return;
+    }
+
+    if (userBookingsPhotos) userBookingsPhotos.classList.remove("is-hidden");
+    if (userBookingsPhotosEmpty) userBookingsPhotosEmpty.textContent = "No booking photos available.";
+
+    bookings.forEach((booking) => {
+      const addressLines = [booking.address?.line1, booking.address?.line2, booking.address?.city, booking.address?.postal_code].filter(Boolean);
+      const mechanicName = booking.mechanic || "Unassigned";
+      const vehicleLabel = [booking.vehicle?.make, booking.vehicle?.model, booking.vehicle?.yearOfManufacture].filter(Boolean).join(" ");
+      const parts = booking.items.flatMap((item) => (Array.isArray(item.parts) ? item.parts : []));
+
+      const card = document.createElement("article");
+      card.className = "user-booking-card";
+      card.innerHTML = `
+        <div class="user-booking-toolbar">
+          <span class="user-booking-status">${formatBookingStatus(booking.status, booking.payment?.status)}</span>
+          <strong class="user-booking-reference">Reference: ${booking.reference}</strong>
+          <button class="primary user-booking-actions" type="button">Actions</button>
+        </div>
+        <div class="user-booking-grid">
+          <div class="user-booking-column">
+            <h4>Date & Time</h4>
+            <p>${formatBookingDateTime(booking.slot)}</p>
+            <h4>Location</h4>
+            ${addressLines.map((line) => `<p>${line}</p>`).join("") || "<p>Address not available</p>"}
+            <h4>Contact Details</h4>
+            <p>${[user.name, user.lastname].filter(Boolean).join(" ") || user.email || "-"}</p>
+            <p>${user.email || "-"}</p>
+            <p>${user.phone || "-"}</p>
+          </div>
+          <div class="user-booking-column">
+            <h4>Vehicle</h4>
+            <p>${vehicleLabel || booking.vehicle?.registrationNumber || "-"}</p>
+            <p>${booking.vehicle?.registrationNumber || "-"}</p>
+            <h4>Mechanic</h4>
+            <p>${mechanicName}</p>
+            <h4>Total Price</h4>
+            <p class="user-booking-price">${formatCurrency(booking.totals?.total_eur, booking.payment?.currency)}</p>
+            <h4>Amount Paid</h4>
+            <p class="user-booking-price">${formatCurrency(booking.payment?.amount_eur ?? booking.totals?.total_eur, booking.payment?.currency)}</p>
+          </div>
+          <div class="user-booking-column">
+            <h4>Services</h4>
+            <ul>${booking.items.map((item) => `<li>${item.name}</li>`).join("") || "<li>No services attached</li>"}</ul>
+            <h4>Parts</h4>
+            <ul>${parts.map((part) => `<li>${typeof part === "string" ? part : part?.name || JSON.stringify(part)}</li>`).join("") || "<li>No parts recorded</li>"}</ul>
+            <h4>Documents</h4>
+            <p>${booking.payment?.provider_ref ? `Payment ref: ${booking.payment.provider_ref}` : "No documents available"}</p>
+          </div>
+        </div>
+      `;
+      userBookingsList.appendChild(card);
+    });
+  };
+
   let dashboardVehicles = getDashboardVehicles();
   renderDashboardVehicles(dashboardVehicles);
   renderVehicleDetail(dashboardVehicles);
@@ -1835,6 +1941,16 @@ if (userPage) {
       renderVehicleDetail(dashboardVehicles);
     } catch (_err) {
       // Keep local fallback when the API is not available.
+    }
+  };
+
+  const syncUserBookingsFromApi = async () => {
+    if (!userToken || !userBookingsList) return;
+    try {
+      const bookings = await apiAuth("/api/users/me/bookings", userToken);
+      renderUserBookings(bookings);
+    } catch (_err) {
+      renderUserBookings([]);
     }
   };
 
@@ -1993,6 +2109,7 @@ if (userPage) {
   });
 
   syncDashboardVehiclesFromApi();
+  syncUserBookingsFromApi();
 
   userQuickQuoteBtn?.addEventListener("click", () => {
     const selectedType = userQuickQuoteProduct?.value || "repair";
