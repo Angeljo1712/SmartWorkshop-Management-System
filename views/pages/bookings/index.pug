@@ -2,10 +2,19 @@ extends ../../layouts/main
 
 block vars
   - var title = "SmartWorkshop - Bookings"
-  - var bodyClass = ""
+  - var bodyClass = "bookings-body"
+
+block head
+  link(rel="stylesheet", href="/css/pages/bookings.css")
 
 block content
-  include ../../partials/navbar
+  header.main-header.general-header
+    .header-content
+      a.main-brand(href="/")
+        span.main-logo SW
+        div
+          strong SmartWorkshop
+          span Vehicle Service Marketplace
   main.page-shell.bookings-shell
     .bookings-hero
       .stepper(aria-label="Booking steps")

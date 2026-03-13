@@ -8,13 +8,17 @@ block vars
   - var history = profile && profile.work_history ? profile.work_history : ""
   - var memberships = profile && profile.memberships ? profile.memberships : []
 
+block head
+  link(rel="stylesheet" href="/css/pages/mechanic-edit.css")
+
 block content
-  header.site-header.admin-header
-    .brand
-      span.logo SW
-      div
-        strong SmartWorkshop
-        span Vehicle Service Marketplace
+  header.main-header.general-header
+    .header-content
+      .main-brand
+        span.main-logo SW
+        div
+          strong SmartWorkshop
+          span Vehicle Service Marketplace
 
   main.mechanic-edit-shell
     include ./partials/edit-nav.pug

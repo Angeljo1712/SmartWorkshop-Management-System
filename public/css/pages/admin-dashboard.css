@@ -15,7 +15,7 @@
 #adminPage .admin-side .side-card {
   height: 100%;
   background: rgba(25, 31, 42, 0.96);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-light-08);
   border-radius: 8px;
   padding: 14px;
   display: grid;
@@ -39,7 +39,7 @@
 #adminPage .side-select {
   width: 100%;
   background: #1a212f;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-light-08);
   color: #e5ebf6;
   border-radius: 6px;
   padding: 9px 10px;
@@ -62,7 +62,7 @@
 
 #adminPage .admin-main {
   background: rgba(25, 31, 42, 0.96);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-light-08);
   border-radius: 8px;
   padding: 10px;
   overflow: hidden;
@@ -187,7 +187,7 @@
 #adminPage .admin-profile-card,
 #adminPage .admin-panel {
   background: rgba(14, 19, 28, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-light-08);
   border-radius: 8px;
 }
 

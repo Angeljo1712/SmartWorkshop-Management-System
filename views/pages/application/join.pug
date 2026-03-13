@@ -4,10 +4,13 @@ block vars
   - var title = "SmartWorkshop - Join as a Mechanic"
   - var bodyClass = "application-body"
 
+block head
+  link(rel="stylesheet" href="/css/pages/application.css")
+
 block content
   header.application-topbar
-    .brand
-      span.logo SW
+    .main-brand
+      span.main-logo SW
       strong SmartWorkshop
     nav.application-links
       a(href="/mechanic/home#how") How it works

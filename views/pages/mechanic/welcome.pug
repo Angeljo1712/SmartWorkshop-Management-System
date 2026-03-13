@@ -4,13 +4,17 @@ block vars
   - var title = "SmartWorkshop - Welcome"
   - var bodyClass = "mechanic-view-body"
 
+block head
+  link(rel="stylesheet" href="/css/pages/mechanic-view.css")
+
 block content
-  header.site-header.admin-header
-    .brand
-      span.logo SW
-      div
-        strong SmartWorkshop
-        span Vehicle Service Marketplace
+  header.main-header.general-header
+    .header-content
+      .main-brand
+        span.main-logo SW
+        div
+          strong SmartWorkshop
+          span Vehicle Service Marketplace
 
   main.mechanic-view-shell
     section.mechanic-view-main

@@ -1,0 +1,123 @@
+.mechanic-body {
+  margin: 0;
+  background: #0b1220;
+  color: white;
+}
+
+.mechanic-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 40px;
+  background: #0d78d6;
+  color: white;
+}
+
+.mechanic-topbar .main-brand {
+  color: white;
+}
+
+.mechanic-topbar .main-logo {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.mechanic-links {
+  display: flex;
+  gap: 20px;
+}
+
+.mechanic-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mechanic-user {
+  font-weight: 600;
+}
+
+.mechanic-hero {
+  position: relative;
+  min-height: calc(100vh - 64px);
+  display: grid;
+  place-items: center;
+  padding: 60px 40px;
+  background: url("https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1800&q=80")
+    center/cover no-repeat;
+}
+
+.mechanic-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 7, 18, 0.6);
+}
+
+.mechanic-content {
+  position: relative;
+  z-index: 1;
+  width: min(1200px, 100%);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 32px;
+  align-items: center;
+}
+
+.mechanic-copy h1 {
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  margin-bottom: 20px;
+}
+
+.mechanic-copy ul {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.mechanic-copy li::before {
+  content: "✓";
+  color: #22c55e;
+  margin-right: 8px;
+}
+
+.mechanic-form {
+  background: white;
+  color: var(--ink);
+  border-radius: 12px;
+  padding: 24px;
+  display: grid;
+  gap: 12px;
+  box-shadow: var(--shadow);
+}
+
+.mechanic-form .row {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.mechanic-form input {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.mechanic-form button {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .mechanic-topbar {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .mechanic-links {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

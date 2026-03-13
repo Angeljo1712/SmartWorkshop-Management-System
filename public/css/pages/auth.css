@@ -1,5 +1,5 @@
 .auth-body {
-  background: radial-gradient(circle at 10% 0%, #2a3345 0%, #161c27 38%, #11161e 100%);
+  background: var(--bg-app-dark);
   min-height: 100vh;
 }
 
@@ -87,7 +87,7 @@
 }
 
 .role-picker-card:hover {
-  border-color: #0a62d0;
+  border-color: var(--brand-blue);
   box-shadow: 0 12px 30px rgba(10, 98, 208, 0.18);
   transform: translateY(-2px);
 }
@@ -199,7 +199,7 @@
 
 .auth-vehicle-form input {
   background: #0b0f15;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--surface-light-12);
   color: #f8fafc;
   border-radius: 12px;
   padding: 10px 12px;
@@ -607,7 +607,7 @@
 }
 
 .auth-content--reset .auth-footnote a {
-  color: #0a62d0;
+  color: var(--brand-blue);
 }
 
 .auth-content--forgot .auth-form label {
@@ -656,7 +656,7 @@
 }
 
 .auth-content--forgot .auth-footnote a {
-  color: #0a62d0;
+  color: var(--brand-blue);
 }
 
 @media (max-width: 860px) {

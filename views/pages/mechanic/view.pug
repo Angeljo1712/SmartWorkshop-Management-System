@@ -5,13 +5,17 @@ block vars
   - var bodyClass = "mechanic-view-body"
   - var activePage = "view"
 
+block head
+  link(rel="stylesheet" href="/css/pages/mechanic-view.css")
+
 block content
-  header.site-header.admin-header
-    .brand
-      span.logo SW
-      div
-        strong SmartWorkshop
-        span Vehicle Service Marketplace
+  header.main-header.general-header
+    .header-content
+      .main-brand
+        span.main-logo SW
+        div
+          strong SmartWorkshop
+          span Vehicle Service Marketplace
 
   - var profileName = profile && profile.name ? profile.name : "Mechanic"
   - var profileLocation = profile && profile.location ? profile.location : "Surrey"

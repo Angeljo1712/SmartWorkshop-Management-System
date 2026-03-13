@@ -5,6 +5,11 @@
   --muted: #5b677a;
   --surface: #ffffff;
   --bg: #f3f6ff;
+  --bg-app-dark: radial-gradient(circle at 10% 0%, #2a3345 0%, #161c27 38%, #11161e 100%);
+  --bg-surface-dark: #15181d;
+  --brand-blue: #0a62d0;
+  --border-light-08: rgba(255, 255, 255, 0.08);
+  --surface-light-12: rgba(255, 255, 255, 0.12);
   --border: rgba(15, 23, 42, 0.12);
   --shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
 }
