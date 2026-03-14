@@ -6,7 +6,7 @@ block vars
 
 block content
   header.main-header.home-header#top
-    .header-content
+    .body-content
       a.main-brand(href="/")
         span.main-logo SW
         div
@@ -26,30 +26,31 @@ block content
       .hero-backdrop
         .hero-backdrop-layer.is-active
         .hero-backdrop-layer
-      .hero-content
-        .hero-left
-          p.eyebrow Trusted mechanics. Transparent pricing.
-          h1 Book verified workshops and track every repair in real time.
-          p.lead
-            | SmartWorkshop connects customers with qualified mechanics, lets you compare quotations, and
-            | keeps everyone aligned on status and completion.
-          .hero-sub
-        .hero-right
-          .hero-card
-            h2 Let’s go!
-            p Start a new service request in under a minute.
-            form.hero-form#vehicleLookupForm
-              label
-                | Vehicle registration
-                input#vehicleReg(name="vehicleReg" type="text" placeholder="AB12CDE" autocomplete="off")
-              label
-                | Postcode
-                input#postcode(name="postcode" type="text" placeholder="SW1A 1AA" autocomplete="postal-code")
-              p.form-error#vehicleLookupError(role="alert" aria-live="polite")
-              button.primary(type="submit") Get my instant price
+      .body-content
+        .hero-content
+          .hero-left
+            p.eyebrow Trusted mechanics. Transparent pricing.
+            h1 Book verified workshops and track every repair in real time.
+            p.lead
+              | SmartWorkshop connects customers with qualified mechanics, lets you compare quotations, and
+              | keeps everyone aligned on status and completion.
+            .hero-sub
+          .hero-right
+            .hero-card
+              h2 Let’s go!
+              p Start a new service request in under a minute.
+              form.hero-form#vehicleLookupForm
+                label
+                  | Vehicle registration
+                  input#vehicleReg(name="vehicleReg" type="text" placeholder="AB12CDE" autocomplete="off")
+                label
+                  | Postcode
+                  input#postcode(name="postcode" type="text" placeholder="SW1A 1AA" autocomplete="postal-code")
+                p.form-error#vehicleLookupError(role="alert" aria-live="polite")
+                button.primary(type="submit") Get my instant price
 
     section.home-how#how
-      .how-content
+      .body-content
         .how-header
           span.how-kicker How it works
           h2 Book a trusted mechanic in just a few clicks
@@ -96,7 +97,7 @@ block content
             a.how-promise-cta(href="#services") Find out more
 
     section.home-services#services
-      .services-content
+      .body-content
         .services-header
           span.services-kicker Our Services
           h2 All the ways we can help
@@ -145,16 +146,17 @@ block content
             h3 Pre-purchase inspections
 
     section.home-apply#partner
-      .apply-content
-        .apply-copy
-          h2 Apply to be a mechanic
-          p Join ClickMechanic as a mechanic or garage and accept the work you want. Free to join, with great perks and discounts.
-          a.primary.apply-cta(href="/mechanic/home") Work with ClickMechanic
-        .apply-image
-          img(src="/images/home1.jpg" alt="Mechanic working on car")
+      .body-content
+        .apply-content
+          .apply-copy
+            h2 Apply to be a mechanic
+            p Join ClickMechanic as a mechanic or garage and accept the work you want. Free to join, with great perks and discounts.
+            a.primary.apply-cta(href="/mechanic/home") Work with ClickMechanic
+          .apply-image
+            img(src="/images/home1.jpg" alt="Mechanic working on car")
 
     section.home-review#review
-      .review-content
+      .body-content
         .review-header
           h2 What our customers are saying
         .review-grid
@@ -178,7 +180,7 @@ block content
             a(href="#") Read more
 
     section.home-contact#contact
-      .contact-content
+      .body-content
         .contact-form-wrap
           .contact-form-header
             h2 Contact Us
@@ -196,7 +198,7 @@ block content
             button(type="submit") Send Message
 
     section.home-contact-links
-      .contact-links-content
+      .body-content
         .contact-links-grid
           .contact-links-brand
             h3 SmartWorkshop
