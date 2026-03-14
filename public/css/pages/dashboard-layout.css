@@ -1,11 +1,11 @@
 /* Shared dashboard structure: user, mechanic, admin */
 
-#userPage.admin-shell,
-#mechanicPage.admin-shell,
-#adminPage.admin-shell {
+#userPage.primari-shell,
+#mechanicPage.primari-shell,
+#adminPage.primari-shell {
   max-width: none;
   margin: 0;
-  padding: 18px;
+  padding: 32px 48px;
   display: grid;
   gap: 28px;
   width: 100%;

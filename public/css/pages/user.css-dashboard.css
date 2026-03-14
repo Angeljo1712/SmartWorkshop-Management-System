@@ -1100,7 +1100,7 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
 
 /* Responsive matrix for user dashboard */
 @media (max-width: 1440px) {
-  body.admin-body .admin-shell {
+  body.admin-body .primari-shell {
     padding: 24px 28px;
   }
 
@@ -1128,7 +1128,7 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
     display: none;
   }
 
-  body.admin-body .admin-shell {
+  body.admin-body .primari-shell {
     padding: 16px;
     gap: 14px;
   }
@@ -1190,7 +1190,7 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
 }
 
 @media (max-width: 375px) {
-  body.admin-body .admin-shell {
+  body.admin-body .primari-shell {
     padding: 12px;
   }
 

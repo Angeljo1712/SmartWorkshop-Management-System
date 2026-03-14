@@ -4,6 +4,11 @@
   color: #eef1f6;
 }
 
+.home-main.primari-shell {
+  padding: 0;
+  display: block;
+}
+
 .home-body .main-header {
   position: sticky;
   top: 0;

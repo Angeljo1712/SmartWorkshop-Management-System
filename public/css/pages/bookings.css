@@ -20,9 +20,10 @@
   color: #f0f3f9;
 }
 
-.bookings-shell {
-  max-width: 1200px;
-  margin: 0 auto;
+.bookings-body .primari-shell {
+  padding: 48px;
+  display: grid;
+  gap: 0;
 }
 
 /* Index */

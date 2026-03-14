@@ -53,6 +53,13 @@ body {
   padding: 48px;
 }
 
+.page-shell-content {
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
 .admin-form {
   display: grid;
   gap: 12px;
@@ -313,13 +320,10 @@ header.main-header:not(.home-header):not(.general-header) {
 }
 
 /* Shared buttons */
-/* Shared admin shell */
-.admin-shell {
+/* Shared primary shell */
+.primari-shell {
   max-width: none;
   margin: 0;
-  padding: 32px 48px;
-  display: grid;
-  gap: 28px;
 }
 
 .admin-signout {
