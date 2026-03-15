@@ -103,42 +103,98 @@
 }
 
 .stepper {
+  width: min(980px, 100%);
   display: grid;
-  grid-auto-flow: column;
-  gap: 24px;
-  align-items: center;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  align-items: start;
+  position: relative;
+  padding: 22px 28px 18px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(243, 247, 255, 0.92) 100%);
+  border: 1px solid rgba(76, 120, 255, 0.16);
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.12);
+}
+
+.stepper::before {
+  content: "";
+  position: absolute;
+  left: 12.5%;
+  right: 12.5%;
+  top: 38px;
+  height: 3px;
+  border-radius: 999px;
+  background: #d6dbe8;
+}
+
+.stepper::after {
+  content: "";
+  position: absolute;
+  left: 12.5%;
+  width: 25%;
+  top: 38px;
+  height: 3px;
+  border-radius: 999px;
+  background: #2563eb;
 }
 
 .step {
+  position: relative;
   display: grid;
   justify-items: center;
-  gap: 8px;
-  color: var(--muted);
+  gap: 10px;
+  color: #4b5a73;
   font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
+  text-transform: none;
+  text-align: center;
+  padding: 0 14px;
+  z-index: 1;
 }
 
 .step-dot {
-  width: 34px;
-  height: 34px;
+  width: 28px;
+  height: 28px;
   border-radius: 999px;
   border: 2px solid #d6dbe8;
   display: grid;
   place-items: center;
   font-weight: 700;
+  font-size: 12px;
   color: #8b96a8;
-  background: white;
+  background: #ffffff;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.9);
 }
 
-.step.is-complete .step-dot,
+.step-label {
+  display: grid;
+  gap: 4px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.step-label::after {
+  content: "Explain your step here.";
+  font-size: 12px;
+  font-weight: 400;
+  color: #6b7280;
+}
+
+.step.is-complete .step-dot {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
 .step.is-active .step-dot {
-  border-color: #45b36b;
-  color: #1f8f47;
+  background: #ffffff;
+  border-color: #2563eb;
+  color: #2563eb;
 }
 
-.step.is-active {
-  color: #1f8f47;
+.step.is-active .step-label,
+.step.is-complete .step-label {
+  color: #0f172a;
 }
 
 .bookings-headline h1 {
@@ -721,7 +777,13 @@
 
 @media (max-width: 900px) {
   .stepper {
-    grid-auto-flow: row;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 12px;
+    padding: 18px;
+  }
+
+  .stepper::before {
+    display: none;
   }
 
   .bookings-card {
@@ -731,5 +793,11 @@
 
   .bookings-card:last-child {
     border-bottom: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .stepper {
+    grid-template-columns: 1fr;
   }
 }
