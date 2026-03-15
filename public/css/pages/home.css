@@ -469,7 +469,7 @@
   background: #f7f8fb;
   color: #0f172a;
   border-radius: 0;
-  scroll-margin-top: 0;
+  scroll-margin-top: 70px;
   height: auto;
   align-content: center;
 }
@@ -556,6 +556,7 @@
   margin-top: 0;
   height: auto;
   align-content: center;
+  scroll-margin-top: 70px;
 }
 
 .apply-content {
@@ -608,6 +609,7 @@
   margin-top: 0;
   height: auto;
   align-content: center;
+  scroll-margin-top: 70px;
 }
 
 .review-header {
@@ -673,6 +675,7 @@
   margin-top: 0;
   height: auto;
   align-content: center;
+  scroll-margin-top: 70px;
 }
 
 .home-contact-links {

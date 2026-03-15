@@ -9,7 +9,7 @@ block head
 
 block content
   header.main-header.general-header
-    .header-content
+    .body-content
       a.main-brand(href="/")
         span.main-logo SW
         div
@@ -139,3 +139,4 @@ block content
                   button.toggle(type="button") No
             p.form-error#bookingDetailsError(role="alert" aria-live="polite")
             button.primary.details-submit(type="submit") Continue to payment
+  include ../../partials/general-footer
