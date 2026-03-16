@@ -17,126 +17,102 @@ block content
           span Vehicle Service Marketplace
   main.primari-shell#bookingDetailsPage
     .page-shell-content
-      .details-layout
-        aside.details-summary
-          .price-card
-            .price-head
-              span Total price
-              span.save-badge You save 51%
-            .price-main
-              span.price-value#summaryTotal £0.00
-              span.price-note Quote includes VAT where applicable
-          .summary-section
-            h3 Confirmed work
-            p.form-error.is-hidden#selectedWorkEmpty No items selected yet.
-            #selectedWorkList
-            .summary-item
-              strong Subtotal
-              span#summarySubtotal £0.00
-            .summary-item
-              strong VAT
-              span#summaryVat £0.00
-          .summary-section
-            h3 Work details
-            p#summaryNotes No notes yet.
-            p#summaryDrivable Vehicle drivable: -
-          .summary-section
-            h3 Availability
-            p#summaryAvailability No availability selected yet.
-        section.details-content
-          h1 Booking details
-          form#bookingDetailsForm
-            .details-card
-              h3 Your details
-              .field-grid
+      .details-layout1
+        .bookings-stepper
+          .stepper(aria-label="Booking steps")
+            .step.is-complete
+              span.step-dot 1
+              span.step-label Car
+            .step.is-complete
+              span.step-dot 2
+              span.step-label Select work
+            .step.is-active
+              span.step-dot 3
+              span.step-label Details
+            .step
+              span.step-dot 4
+              span.step-label Book
+        .details-layout
+          aside.details-summary
+            .price-card.details-price-card
+              .price-head
+                span Total price
+              .price-main
+                span.price-value#summaryTotal £0.00
+                span.price-note Quote includes VAT where applicable
+              p.price-vehicle#summaryVehicleLine Toyota Corolla 1.4L Petrol 2005 · KT10 0QR
+              p.price-work#summaryWorkLine No work selected yet.
+              p.price-help
+                | If you have any questions please check our 
+                a(href="#") help centre
+          section.details-content
+            h1 Booking details
+            form#bookingDetailsForm
+              .details-card.details-card--your-details
+                h3 Your details
+                .field-grid
+                  label
+                    | First name
+                    input#detailsFirstName(type="text" required)
+                  label
+                    | Last name
+                    input#detailsLastName(type="text" required)
                 label
-                  | First name
-                  input#detailsFirstName(type="text" placeholder="First name" required)
+                  | Email
+                  input#detailsEmail(type="email" required)
+                p.form-error.is-hidden#detailsEmailExistsMessage This account is already in our system.
+                a.details-signin(href="/auth/login") Sign in with an existing account
+                label.checkbox
+                  input#detailsOptIn(type="checkbox")
+                  span Opt in to receive MOT reminders and monthly promotions.
+              .details-card.details-card--booking-address
+                h3 Booking address & phone
+                .field-grid
+                  label
+                    | Street address 1
+                    input#detailsAddress1(type="text" required)
+                  label
+                    | Street address 2 (optional)
+                    input#detailsAddress2(type="text")
+                .field-grid
+                  label
+                    | City
+                    input#detailsCity(type="text" required)
+                  label
+                    | Postcode
+                    input#detailsPostcode(type="text" required)
+                label#detailsPhoneLabel
+                  | Phone number
+                  input#detailsPhone(type="text" required)
+                p.help-text We'll use this phone number to send you updates about your booking.
+              .details-card.availability-card
+                h3 When is the vehicle available?
+                p.help-text Select all the times when you are available. A mechanic will confirm a 2-hour window.
+                .date-strip
+                  button.ghost#availabilityPrevMonth(type="button" aria-label="Previous month") &lt;
+                  span#availabilityMonthLabel
+                  button.ghost#availabilityNextMonth(type="button" aria-label="Next month") &gt;
+                .availability-grid#availabilityGrid
+              .details-card.details-card--work-details
+                h3 Work details
+                .notice-box
+                  p Describe the problem in as much detail as possible. Try to include the symptoms and details of any other diagnostics you've had done.
                 label
-                  | Last name
-                  input#detailsLastName(type="text" placeholder="Last name" required)
-              label
-                | Email
-                input#detailsEmail(type="email" placeholder="Email" required)
-              a.details-signin(href="/auth/login") Sign in with an existing account
-              label.checkbox
-                input#detailsOptIn(type="checkbox")
-                span Opt in to receive MOT reminders and monthly promotions.
-            .details-card
-              h3 Booking address & phone
-              .field-grid
-                label
-                  | Street address 1
-                  input#detailsAddress1(type="text" placeholder="Street address" required)
-                label
-                  | Street address 2 (optional)
-                  input#detailsAddress2(type="text" placeholder="Street address")
-              .field-grid
-                label
-                  | City
-                  input#detailsCity(type="text" placeholder="City" required)
-                label
-                  | Postcode
-                  input#detailsPostcode(type="text" placeholder="KT10 0QR" required)
-              label
-                | Phone number
-                input#detailsPhone(type="text" placeholder="Phone number" required)
-              p.help-text We'll use this phone number to send you updates about your booking.
-            .details-card
-              h3 When is the vehicle available?
-              p.help-text Select all the times when you are available. A mechanic will confirm a 2-hour window.
-              .date-strip
-                button.ghost(type="button") &lt;
-                span 6 Feb 2026
-                button.ghost(type="button") &gt;
-              .availability-grid
-                .availability-day(data-day="6th" data-weekday="Friday")
-                  strong 6th
-                  span Friday
-                  button.slot(type="button" data-time="All day") All day
-                  button.slot(type="button" data-time="8-10 AM") 8-10 AM
-                  button.slot(type="button" data-time="10-12 AM") 10-12 AM
-                  button.slot(type="button" data-time="12-2 PM") 12-2 PM
-                  button.slot(type="button" data-time="2-4 PM") 2-4 PM
-                  button.slot(type="button" data-time="4-6 PM") 4-6 PM
-                .availability-day(data-day="7th" data-weekday="Saturday")
-                  strong 7th
-                  span Saturday
-                  button.slot(type="button" data-time="All day") All day
-                  button.slot(type="button" data-time="8-10 AM") 8-10 AM
-                  button.slot(type="button" data-time="10-12 AM") 10-12 AM
-                  button.slot(type="button" data-time="12-2 PM") 12-2 PM
-                  button.slot(type="button" data-time="2-4 PM") 2-4 PM
-                  button.slot(type="button" data-time="4-6 PM") 4-6 PM
-                .availability-day(data-day="8th" data-weekday="Sunday")
-                  strong 8th
-                  span Sunday
-                  button.slot(type="button" data-time="All day") All day
-                  button.slot(type="button" data-time="8-10 AM") 8-10 AM
-                  button.slot(type="button" data-time="10-12 AM") 10-12 AM
-                  button.slot(type="button" data-time="12-2 PM") 12-2 PM
-                  button.slot(type="button" data-time="2-4 PM") 2-4 PM
-                  button.slot(type="button" data-time="4-6 PM") 4-6 PM
-            .details-card
-              h3 Work details
-              .notice-box
-                p Describe the problem in as much detail as possible. Try to include the symptoms and details of any other diagnostics you've had done.
-              label
-                | Diagnostic inspection notes:
-                textarea#detailsNotes(placeholder="Describe the issue" rows="4")
-              .notice-box
-                p Please note, this is an inspection service only.
-                a(href="#") More info
-            .details-card
-              h3 Your vehicle
-              p.help-text
-                | We'll offer your booking to mobile mechanics & workshops who provide collection & delivery.
-                a(href="#") Learn more
-              .toggle-row
-                span Is your vehicle drivable if collected?
-                .toggle-options
-                  button.toggle.is-active(type="button") Yes
-                  button.toggle(type="button") No
-            p.form-error#bookingDetailsError(role="alert" aria-live="polite")
-            button.primary.details-submit(type="submit") Continue to payment
+                  | Diagnostic inspection notes:
+                  textarea#detailsNotes(rows="4")
+                .notice-box
+                  p Please note, this is an inspection service only.
+                  a(href="#") More info
+              .details-card.details-card--your-vehicle
+                h3 Your vehicle
+                p.help-text
+                  | We'll offer your booking to mobile mechanics & workshops who provide collection & delivery.
+                  a(href="#") Learn more
+                .toggle-row
+                  span Is your vehicle drivable if collected?
+                  .toggle-options
+                    button.toggle(type="button") Yes
+                    button.toggle(type="button") No
+              p.form-error#bookingDetailsError(role="alert" aria-live="polite")
+              button.primary.details-submit(type="submit") Continue to payment
   include ../../partials/general-footer

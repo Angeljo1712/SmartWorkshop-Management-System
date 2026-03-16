@@ -5,7 +5,8 @@ const {
   getDraftHandler,
   addDraftItemHandler,
   removeDraftItemHandler,
-  payDraftHandler
+  payDraftHandler,
+  setDraftAccountPasswordHandler
 } = require("../controllers/bookingsController");
 
 const router = express.Router();
@@ -15,5 +16,6 @@ router.get("/draft", asyncHandler(getDraftHandler));
 router.post("/draft/items", asyncHandler(addDraftItemHandler));
 router.delete("/draft/items/:serviceId", asyncHandler(removeDraftItemHandler));
 router.post("/draft/pay", asyncHandler(payDraftHandler));
+router.post("/draft/account-password", asyncHandler(setDraftAccountPasswordHandler));
 
 module.exports = router;

@@ -17,195 +17,213 @@ block content
           span Vehicle Service Marketplace
   main.primari-shell
     .page-shell-content
-      nav.work-tabs(aria-label="Service types")
-        a.work-tab(class=(type === "repair" ? "is-active" : "") href="/bookings/work?type=repair") Repairs
-        a.work-tab(class=(type === "diagnostics" ? "is-active" : "") href="/bookings/work?type=diagnostics") Diagnostics
-        a.work-tab(class=(type === "service" ? "is-active" : "") href="/bookings/work?type=service") Servicing & MOT
-        a.work-tab(class=(type === "tyres" ? "is-active" : "") href="/bookings/work?type=tyres") Tyres
-        a.work-tab(class=(type === "inspection" ? "is-active" : "") href="/bookings/work?type=inspection") Pre-purchase inspections
-      .work-layout(data-service-category=type)
-        section.bookings-work
-          if type === "diagnostics"
-            h2 In-person diagnostic
-            p Get a mechanic to diagnose the issue and give you a no-obligation quote for any required repairs.
-            ul.work-list#serviceList
-            p.form-error#serviceListEmpty No services found.
-            p.work-hint
-              | Unsure what's wrong with your car?
-              a(href="#" aria-label="Use our free diagnostics tool") Use our free diagnostics tool.
-          else if type === "service"
-            h2 Servicing & MOT
-            ul.work-list#serviceList
-            p.form-error#serviceListEmpty No services found.
-            .compare-table
-              .compare-header
-                span Compare
-                span Interim
-                span Full
-                span Major
-              .compare-row
-                span Number of checks
-                span 50
-                span 70
-                span 71
-              .compare-row
-                span Parts included
-                span
-                span
-                span
-              .compare-row
-                span Engine oil
-                span ✓
-                span ✓
-                span ✓
-              .compare-row
-                span Oil filter
-                span ✓
-                span ✓
-                span ✓
-              .compare-row
-                span Air filter
-                span ✕
-                span ✓
-                span ✓
-              .compare-row
-                span Pollen filter
-                span ✕
-                span ✕
-                span ✓
-              .compare-row
-                span Spark plugs
-                span ✕
-                span ✕
-                span ✓
-              .compare-row
-                span Fuel filter
-                span ✕
-                span ✕
-                span ✓
-              .compare-row
-                span Top-ups included
-                span ✓
-                span ✓
-                span ✓
-              .compare-row
-                span Screen wash
-                span ✓
-                span ✓
-                span ✓
-              .compare-row
-                span Antifreeze
-                span ✓
-                span ✓
-                span ✓
-              .compare-row
-                span Brake fluid
-                span ✓
-                span ✓
-                span ✓
-              .compare-row
-                span Power steering fluid
-                span ✓
-                span ✓
-                span ✓
-              .compare-row
-                span Battery fluid
-                span ✓
-                span ✓
-                span ✓
-              .compare-row
-                span Transfer box oil
-                span ✕
-                span ✕
-                span ✓
-              .compare-row
-                span Manual trans. oil
-                span ✕
-                span ✓
-                span ✓
-              .compare-footer
-                span Price
-                span £123.45
-                span £152.86
-                span £208.25
-              .compare-actions
-                span
-                button.primary(type="button") Add
-                button.primary(type="button") Add
-                button.primary(type="button") Add
-          else if type === "inspection"
-            h2 Pre-purchase inspections
-            ul.work-list#serviceList
-            p.form-error#serviceListEmpty No services found.
-            .compare-table
-              .compare-header
-                span Compare
-                span Basic
-                span Standard
-                span Premium
-              .compare-row
-                span Number of checks
-                span 86
-                span 136
-                span 185
-              .compare-row
-                span Emailed report
-                span ✓
-                span ✓
-                span ✓
-              .compare-row
-                span Road test (10 min)
-                span ✓
-                span ✓
-                span ✓
-              .compare-row
-                span Follow-up call
-                span ✕
-                span ✓
-                span ✓
-              .compare-row
-                span Plug in check
-                span ✕
-                span ✕
-                span ✓
-              .compare-row
-                span Photos
-                span ✕
-                span ✕
-                span ✓
-              .compare-footer
-                span Price
-                span £94.87
-                span £114.29
-                span £163.95
-              .compare-actions
-                span
-                button.primary(type="button") Add
-                button.primary(type="button") Add
-                button.primary(type="button") Add
-          else
-            h2 Search for your repair
-            .work-search
-              input(type="text" placeholder="Search available repairs" aria-label="Search available repairs")
-            h3 Choose from popular repairs
-            ul.work-list#serviceList
-            p.form-error#serviceListEmpty No services found.
-        aside.work-summary
-          .price-card
-            .price-head
-              span Total price
-              span.save-badge You save 51%
-            .price-main
-              span.price-value#summaryTotalWork £0.00
-              span.price-note Quote includes VAT where applicable
-            .price-compare
-              span Dealer price: £912.48
-            .price-vehicle
-              span Toyota Corolla 1.4L Petrol 2005 · KT10 0QR
-              a(href="#") Edit
-          .summary-section
-            h3 Selected work
-            p.form-error.is-hidden#selectedWorkEmptyWork No items selected yet.
-            #selectedWorkListWork
-          a.next-step(href="/bookings/details") Next step
+      .work-layout1
+        .bookings-stepper
+          .stepper(aria-label="Booking steps")
+            .step.is-complete
+              span.step-dot 1
+              span.step-label Car
+            .step.is-active
+              span.step-dot 2
+              span.step-label Select work
+            .step
+              span.step-dot 3
+              span.step-label Details
+            .step
+              span.step-dot 4
+              span.step-label Book
+        .work-layout(data-service-category=type)
+          nav.work-tabs(aria-label="Service types")
+            a.work-tab(class=(type === "repair" ? "is-active" : "") href="/bookings/work?type=repair") Repairs
+            a.work-tab(class=(type === "diagnostics" ? "is-active" : "") href="/bookings/work?type=diagnostics") Diagnostics
+            a.work-tab(class=(type === "service" ? "is-active" : "") href="/bookings/work?type=service") Servicing & MOT
+            a.work-tab(class=(type === "tyres" ? "is-active" : "") href="/bookings/work?type=tyres") Tyres
+            a.work-tab(class=(type === "inspection" ? "is-active" : "") href="/bookings/work?type=inspection") Pre-purchase inspections
+          section.bookings-work
+            if type === "diagnostics"
+              h2 In-person diagnostic
+              p Get a mechanic to diagnose the issue and give you a no-obligation quote for any required repairs.
+              ul.work-list#serviceList
+              p.form-error#serviceListEmpty No services found.
+              p.work-hint
+                | Unsure what's wrong with your car?
+                a(href="#" aria-label="Use our free diagnostics tool") Use our free diagnostics tool.
+            else if type === "service"
+              h2 Servicing & MOT
+              ul.work-list#serviceList
+              p.form-error#serviceListEmpty No services found.
+              .compare-table
+                .compare-header
+                  span Compare
+                  span Interim
+                  span Full
+                  span Major
+                .compare-row
+                  span Number of checks
+                  span 50
+                  span 70
+                  span 71
+                .compare-row
+                  span Parts included
+                  span
+                  span
+                  span
+                .compare-row
+                  span Engine oil
+                  span ✓
+                  span ✓
+                  span ✓
+                .compare-row
+                  span Oil filter
+                  span ✓
+                  span ✓
+                  span ✓
+                .compare-row
+                  span Air filter
+                  span ✕
+                  span ✓
+                  span ✓
+                .compare-row
+                  span Pollen filter
+                  span ✕
+                  span ✕
+                  span ✓
+                .compare-row
+                  span Spark plugs
+                  span ✕
+                  span ✕
+                  span ✓
+                .compare-row
+                  span Fuel filter
+                  span ✕
+                  span ✕
+                  span ✓
+                .compare-row
+                  span Top-ups included
+                  span ✓
+                  span ✓
+                  span ✓
+                .compare-row
+                  span Screen wash
+                  span ✓
+                  span ✓
+                  span ✓
+                .compare-row
+                  span Antifreeze
+                  span ✓
+                  span ✓
+                  span ✓
+                .compare-row
+                  span Brake fluid
+                  span ✓
+                  span ✓
+                  span ✓
+                .compare-row
+                  span Power steering fluid
+                  span ✓
+                  span ✓
+                  span ✓
+                .compare-row
+                  span Battery fluid
+                  span ✓
+                  span ✓
+                  span ✓
+                .compare-row
+                  span Transfer box oil
+                  span ✕
+                  span ✕
+                  span ✓
+                .compare-row
+                  span Manual trans. oil
+                  span ✕
+                  span ✓
+                  span ✓
+                .compare-footer
+                  span Price
+                  span £123.45
+                  span £152.86
+                  span £208.25
+                .compare-actions
+                  span
+                  button.primary.compare-service-toggle(type="button" data-service-code="service_interim" data-selected="false") Add
+                  button.primary.compare-service-toggle(type="button" data-service-code="service_full" data-selected="false") Add
+                  button.primary.compare-service-toggle(type="button" data-service-code="service_major" data-selected="false") Add
+            else if type === "inspection"
+              h2 Pre-purchase inspections
+              ul.work-list#serviceList
+              p.form-error#serviceListEmpty No services found.
+              .compare-table
+                .compare-header
+                  span Compare
+                  span Basic
+                  span Standard
+                  span Premium
+                .compare-row
+                  span Number of checks
+                  span 86
+                  span 136
+                  span 185
+                .compare-row
+                  span Emailed report
+                  span ✓
+                  span ✓
+                  span ✓
+                .compare-row
+                  span Road test (10 min)
+                  span ✓
+                  span ✓
+                  span ✓
+                .compare-row
+                  span Follow-up call
+                  span ✕
+                  span ✓
+                  span ✓
+                .compare-row
+                  span Plug in check
+                  span ✕
+                  span ✕
+                  span ✓
+                .compare-row
+                  span Photos
+                  span ✕
+                  span ✕
+                  span ✓
+                .compare-footer
+                  span Price
+                  span £94.87
+                  span £114.29
+                  span £163.95
+                .compare-actions
+                  span
+                  button.primary.compare-service-toggle(type="button" data-service-code="inspection_basic" data-selected="false") Add
+                  button.primary.compare-service-toggle(type="button" data-service-code="inspection_standard" data-selected="false") Add
+                  button.primary.compare-service-toggle(type="button" data-service-code="inspection_premium" data-selected="false") Add
+            else
+              h2 Search for your repair
+              .work-search
+                input(type="text" placeholder="Search available repairs" aria-label="Search available repairs")
+              h3 Choose from popular repairs
+              ul.work-list#serviceList
+              p.form-error#serviceListEmpty No services found.
+          aside.work-summary
+            .price-card
+              .price-head
+                span Total price
+              .price-main
+                span.price-value#summaryTotalWork £0.00
+                span.price-note Quote includes VAT where applicable
+              .price-vehicle
+                span Toyota Corolla 1.4L Petrol 2005 · KT10 0QR
+                a(href="#") Edit
+            .summary-section.is-hidden#workSummarySection
+              h3 Selected work
+              p.form-error.is-hidden#selectedWorkEmptyWork No items selected yet.
+              #selectedWorkListWork
+            a.next-step.is-hidden#workNextStep(href="/bookings/details") Next step
+            .work-help
+              h3 Need help?
+              p Tell us what you need and compare fixed-price quotes before you book.
   include ../../partials/general-footer
+
+
+

@@ -46,6 +46,7 @@ const saveBookingDetails = async (payload) => {
 
   const [existing] = await pool.query("SELECT id FROM users WHERE email = ?", [email]);
   let userId = null;
+  let createdAccount = false;
 
   if (existing[0]) {
     userId = existing[0].id;
@@ -68,6 +69,7 @@ const saveBookingDetails = async (payload) => {
       [email, username, passwordHash, "user", "active", phone]
     );
     userId = result.insertId;
+    createdAccount = true;
     await pool.query("INSERT INTO user_profiles (user_id, name, lastname) VALUES (?, ?, ?)", [
       userId,
       firstName,
@@ -104,7 +106,7 @@ const saveBookingDetails = async (payload) => {
     ]
   );
 
-  return { customerId: userId };
+  return { customerId: userId, createdAccount };
 };
 
 const ensureDraft = async (sessionId) => {
@@ -133,7 +135,7 @@ const getDraft = async (sessionId) => {
   const draftId = draftRows[0].id;
   const [itemRows] = await pool.query(
     `SELECT bdi.service_id, bdi.qty, bdi.line_total_eur,
-            sc.name, sc.description
+            sc.name, sc.description, sc.base_labour_minutes
      FROM booking_draft_items bdi
      JOIN service_catalog sc ON sc.id = bdi.service_id
      WHERE bdi.draft_id = ?
@@ -329,4 +331,40 @@ const payDraft = async ({ session_id, provider = "mock", currency = "GBP" }) => 
   return { ok: true, status: "paid", amount: draft.total, currency, booking_id: bookingResult.insertId };
 };
 
-module.exports = { saveBookingDetails, getDraft, addDraftItem, removeDraftItem, payDraft };
+const setDraftAccountPassword = async ({ session_id, password }) => {
+  if (!session_id || !password) {
+    throw new AppError("VALIDATION_ERROR", "session_id and password are required", 400);
+  }
+  if (password.length < 10) {
+    throw new AppError("VALIDATION_ERROR", "Password must be at least 10 characters", 400);
+  }
+  if (!/[A-Z]/.test(password)) {
+    throw new AppError("VALIDATION_ERROR", "Password must include an uppercase letter", 400);
+  }
+  if (!/[0-9]/.test(password)) {
+    throw new AppError("VALIDATION_ERROR", "Password must include a number", 400);
+  }
+  if (!/[^A-Za-z0-9]/.test(password)) {
+    throw new AppError("VALIDATION_ERROR", "Password must include a symbol", 400);
+  }
+
+  const [draftRows] = await pool.query(
+    `SELECT bd.user_id, u.email
+     FROM booking_drafts bd
+     JOIN users u ON u.id = bd.user_id
+     WHERE bd.session_id = ?`,
+    [session_id]
+  );
+
+  const draft = draftRows[0];
+  if (!draft?.user_id) {
+    throw new AppError("VALIDATION_ERROR", "Draft user not found", 400);
+  }
+
+  const passwordHash = await bcrypt.hash(password, 10);
+  await pool.query("UPDATE users SET password_hash = ? WHERE id = ?", [passwordHash, draft.user_id]);
+
+  return { ok: true, email: draft.email, user_id: draft.user_id };
+};
+
+module.exports = { saveBookingDetails, getDraft, addDraftItem, removeDraftItem, payDraft, setDraftAccountPassword };

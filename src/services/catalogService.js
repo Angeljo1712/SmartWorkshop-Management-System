@@ -7,7 +7,7 @@ const listServices = async ({ category, region }) => {
   }
 
   const [rows] = await pool.query(
-    `SELECT sc.id, sc.code, sc.name, sc.category, sc.description,
+    `SELECT sc.id, sc.code, sc.name, sc.category, sc.description, sc.base_labour_minutes,
             sp.labour_rate_eur AS price,
             sp.vat_pct
      FROM service_catalog sc
