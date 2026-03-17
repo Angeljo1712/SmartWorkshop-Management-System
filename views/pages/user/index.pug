@@ -10,7 +10,7 @@ block head
 
 block content
   header.main-header.general-header
-    .header-content
+    .body-content
       .main-brand
         span.main-logo SW
         div
@@ -18,305 +18,305 @@ block content
           span Vehicle Service Marketplace
 
   main.primari-shell#userPage
-    section.admin-app.user-app
-      aside.admin-rail
-        .rail-brand
-          span.logo SW
-        nav.rail-nav
-          button.admin-nav-link.rail-item.user-nav-link.active(type="button" data-view="dashboard")
-            span.rail-icon(aria-hidden="true")
-              svg(viewBox="0 0 24 24")
-                rect(x="3" y="3" width="8" height="8" rx="1")
-                rect(x="13" y="3" width="8" height="5" rx="1")
-                rect(x="13" y="10" width="8" height="11" rx="1")
-                rect(x="3" y="13" width="8" height="8" rx="1")
-            | Dashboard
-          button.admin-nav-link.rail-item.user-nav-link(type="button" data-view="account")
-            span.rail-icon(aria-hidden="true")
-              svg(viewBox="0 0 24 24")
-                circle(cx="12" cy="8" r="4")
-                path(d="M5 20a7 7 0 0 1 14 0")
-            | Account
-          button.admin-nav-link.rail-item.user-nav-link(type="button" data-view="vehicle")
-            span.rail-icon(aria-hidden="true")
-              svg(viewBox="0 0 24 24")
-                path(d="M5 16l1.5-5A2 2 0 0 1 8.4 9h7.2a2 2 0 0 1 1.9 2l1.5 5")
-                path(d="M4 16h16v3a1 1 0 0 1-1 1h-1v-2H6v2H5a1 1 0 0 1-1-1z")
-                circle(cx="7.5" cy="16.5" r="1")
-                circle(cx="16.5" cy="16.5" r="1")
-            | Vehicle
-          button.admin-nav-link.rail-item.user-nav-link(type="button" data-view="bookings")
-            span.rail-icon(aria-hidden="true")
-              svg(viewBox="0 0 24 24")
-                path(d="M3 7h18")
-                path(d="M8 3v4")
-                path(d="M16 3v4")
-                rect(x="3" y="7" width="18" height="14" rx="2")
-            | Bookings
-          button.admin-nav-link.rail-item.user-nav-link(type="button" data-view="settings")
-            span.rail-icon(aria-hidden="true")
-              svg(viewBox="0 0 24 24")
-                circle(cx="12" cy="12" r="3")
-                path(d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 0 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.2a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3h.1a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8v.1a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.5 1z")
-            | Settings
-        .rail-footer
-          button.admin-signout#userLogoutBtn(type="button") Sign out
+    .page-shell-content
+      section.user-layout
+          aside.admin-rail
+            .rail-brand
+              span.logo SW
+            nav.rail-nav
+              button.admin-nav-link.rail-item.user-nav-link.active(type="button" data-view="dashboard")
+                span.rail-icon(aria-hidden="true")
+                  svg(viewBox="0 0 24 24")
+                    rect(x="3" y="3" width="8" height="8" rx="1")
+                    rect(x="13" y="3" width="8" height="5" rx="1")
+                    rect(x="13" y="10" width="8" height="11" rx="1")
+                    rect(x="3" y="13" width="8" height="8" rx="1")
+                | Dashboard
+              button.admin-nav-link.rail-item.user-nav-link(type="button" data-view="account")
+                span.rail-icon(aria-hidden="true")
+                  svg(viewBox="0 0 24 24")
+                    circle(cx="12" cy="8" r="4")
+                    path(d="M5 20a7 7 0 0 1 14 0")
+                | Account
+              button.admin-nav-link.rail-item.user-nav-link(type="button" data-view="vehicle")
+                span.rail-icon(aria-hidden="true")
+                  svg(viewBox="0 0 24 24")
+                    path(d="M5 16l1.5-5A2 2 0 0 1 8.4 9h7.2a2 2 0 0 1 1.9 2l1.5 5")
+                    path(d="M4 16h16v3a1 1 0 0 1-1 1h-1v-2H6v2H5a1 1 0 0 1-1-1z")
+                    circle(cx="7.5" cy="16.5" r="1")
+                    circle(cx="16.5" cy="16.5" r="1")
+                | Vehicle
+              button.admin-nav-link.rail-item.user-nav-link(type="button" data-view="bookings")
+                span.rail-icon(aria-hidden="true")
+                  svg(viewBox="0 0 24 24")
+                    path(d="M3 7h18")
+                    path(d="M8 3v4")
+                    path(d="M16 3v4")
+                    rect(x="3" y="7" width="18" height="14" rx="2")
+                | Bookings
+              button.admin-nav-link.rail-item.user-nav-link(type="button" data-view="settings")
+                span.rail-icon(aria-hidden="true")
+                  svg(viewBox="0 0 24 24")
+                    circle(cx="12" cy="12" r="3")
+                    path(d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 0 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.2a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3h.1a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8v.1a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.5 1z")
+                | Settings
+            .rail-footer
+              button.admin-signout#userLogoutBtn(type="button") Sign out
 
-      .is-hidden
-        .admin-profile-avatar#userProfileAvatar AG
-        strong#userProfileName Angel Gomes
-        span#userProfileRole ADMIN
-        select#userRoleSwitcher.role-switcher
+          .is-hidden
+            .admin-profile-avatar#userProfileAvatar AG
+            strong#userProfileName Angel Gomes
+            span#userProfileRole ADMIN
+            select#userRoleSwitcher.role-switcher
 
-      .admin-content
-        section.admin-view#userDashboardView
-          .settings-card.user-dashboard-card
-            .user-dashboard-layout
-              .dashboard-section.dashboard-section--welcome
-                .settings-header
-                  div
-                    h2 Welcome back
-                    p#userDashboardName User
-              
-              .settings-divider
+          .admin-content
+            section.admin-view#userDashboardView
+              .settings-card.user-dashboard-card
+                .user-dashboard-layout
+                  .dashboard-section.dashboard-section--welcome
+                    .settings-header
+                      div
+                        h2 Welcome back
+                        p#userDashboardName User
 
-              .dashboard-section.dashboard-section--cars-header
-                .settings-header
-                  div
-                    h2 Your Cars
-                    p Save up to 100 vehicles in your account.
+                  .settings-divider
 
-              .dashboard-section.dashboard-section--cars-list
-                .user-car-list#userCarList
-                  .user-car-summary
-                    .user-car-top
-                      span.user-reg-badge KL05USC
-                      strong COROLLA COLOUR COL-N VVTI
-                    .user-car-meta
-                      span Petrol
-                      span 21 years old
-                      span 39,580 miles
-                    .user-car-status
-                      p Your MOT is valid · Due in 28 weeks
-                      p Taxed · Due in 24 weeks
+                  .dashboard-section.dashboard-section--cars-header
+                    .settings-header
+                      div
+                        h2 Your Cars
+                        p Save up to 100 vehicles in your account.
 
-              .dashboard-section.dashboard-section--add-title
-                h3.user-section-title Add another vehicle
+                  .dashboard-section.dashboard-section--cars-list
+                    .user-car-list#userCarList
+                      .user-car-summary
+                        .user-car-top
+                          span.user-reg-badge KL05USC
+                          strong COROLLA COLOUR COL-N VVTI
+                        .user-car-meta
+                          span Petrol
+                          span 21 years old
+                          span 39,580 miles
+                        .user-car-status
+                          p Your MOT is valid · Due in 28 weeks
+                          p Taxed · Due in 24 weeks
 
-              .dashboard-section.dashboard-section--add-form
-                .user-add-vehicle
-                  input#userDashboardCarReg(type="text" placeholder="Enter Car Reg")
-                  button.primary#userAddVehicleBtn(type="button") Add Vehicle
-                p.form-error#userDashboardCarError(role="alert" aria-live="polite")
+                  .dashboard-section.dashboard-section--add-title
+                    h3.user-section-title Add another vehicle
 
-              .settings-divider
+                  .dashboard-section.dashboard-section--add-form
+                    .user-add-vehicle
+                      input#userDashboardCarReg(type="text" placeholder="Enter Car Reg")
+                      button.primary#userAddVehicleBtn(type="button") Add Vehicle
+                    p.form-error#userDashboardCarError(role="alert" aria-live="polite")
 
-              .dashboard-section.dashboard-section--quote
-                .user-quick-quote
-                  label
-                    | Vehicle Registration
-                    input#userQuickQuoteReg(type="text" value="KL05USC")
-                  label
-                    | Postcode
-                    input(type="text" placeholder="Enter Your Postcode")
-                  label
-                    | Products
-                    select#userQuickQuoteProduct
-                      option(value="repair") Repairs
-                      option(value="diagnostics") Diagnostics
-                      option(value="service") Servicing & MOT
-                      option(value="tyres") Tyres
-                      option(value="inspection") Pre-purchase inspections
-                  button.primary#userQuickQuoteBtn(type="button") Compare Prices Instantly
+                  .dashboard-section.dashboard-section--quote
+                    .user-quick-quote
+                      label
+                        | Vehicle Registration
+                        input#userQuickQuoteReg(type="text" value="KL05USC")
+                      label
+                        | Postcode
+                        input(type="text" placeholder="Enter Your Postcode")
+                      label
+                        | Products
+                        select#userQuickQuoteProduct
+                          option(value="repair") Repairs
+                          option(value="diagnostics") Diagnostics
+                          option(value="service") Servicing & MOT
+                          option(value="tyres") Tyres
+                          option(value="inspection") Pre-purchase inspections
+                      button.primary#userQuickQuoteBtn(type="button") Compare Prices Instantly
 
-        section.admin-view.is-hidden#userAccountView
-          .settings-card.user-account-card
-            .user-account-layout
-              .account-section.account-section--header
-                .settings-header
-                  div
-                    h2 Account Details
-                    p Review your profile information.
+          section.admin-view.is-hidden#userAccountView
+            .settings-card.user-account-card
+              .user-account-layout
+                .account-section.account-section--header
+                  .settings-header
+                    div
+                      h2 Account Details
+                      p Review your profile information.
 
-              .settings-divider
-
-              .account-section.account-section--avatar
-                .settings-photo-row
-                  .settings-avatar.settings-avatar-lg#userSettingsAvatar AG
-
-              .settings-divider
-
-              .account-section.account-section--profile
-                .settings-profile
-                  .settings-meta
-                    h4 Name
-                    p#userSettingsName Angel Gomes
-                    span#userSettingsRoleBadge.is-hidden CUSTOMER
-
-              .settings-divider
-
-              .account-section.account-section--contacts
-                .settings-row
-                  div
-                    h4 Contacts
-                    p#userSettingsPhone Phone: -
-                    p#userSettingsEmailDetail Email: admin@smartworkshop.local
-                    p#userSettingsUsername Username: -
-                    p#userSettingsAddress Address: -
-
-              .account-section.account-section--role
-                .settings-row
-                  div
-                    h4 Role
-                    p#userSettingsRole ADMIN
-
-              .account-section.account-section--theme
-                .settings-row
-                  div
-                    h4 Theme
-                    p Light mode
-
-              .account-section.account-section--integration
-                .settings-row
-                  div
-                    h4 Integration
-                    p No integrations connected
-
-        section.admin-view.is-hidden#userVehicleView
-          .settings-card.user-vehicle-card
-            .user-vehicle-layout
-              .user-vehicle-heading
-                .user-vehicle-heading-top
-                  h2#userVehicleTitle RENAULT CLIO RENAULTSPORT NAV TROPHY A
-                  .user-vehicle-selector
-                    span.user-reg-badge#userVehicleRegBadge BP67XRZ
-                    .user-vehicle-dropdown
-                      button#userVehicleDropdownBtn.user-vehicle-dropdown-btn(type="button" aria-label="Select vehicle")
-                        span.user-vehicle-dropdown-arrow ▾
-                      .user-vehicle-dropdown-menu.is-hidden#userVehicleDropdownMenu
-
-              .user-vehicle-pills
-                span#userVehicleFuel Pill Petrol
-                span#userVehicleAge Pill 8 years old
-                span#userVehicleMileage Pill 13,126 miles
-
-              .user-vehicle-cards
-                .user-vehicle-info-card.is-mot
-                  .user-vehicle-info-icon △
-                  .user-vehicle-info-copy
-                    strong Your MOT is valid
-                    p#userVehicleMotStatus Due in 6 months
-                  .user-vehicle-info-arrow ›
-                .user-vehicle-info-card.is-tax
-                  .user-vehicle-info-icon ✓
-                  .user-vehicle-info-copy
-                    strong Your Tax is valid
-                    p#userVehicleTaxStatus Due in 8 months
-                  .user-vehicle-info-arrow ›
-                .user-vehicle-info-card.is-mileage
-                  .user-vehicle-info-icon ⦿
-                  .user-vehicle-info-copy
-                    strong Mileage at last MOT
-                    p#userVehicleMileageStatus 13,126 miles
-                  .user-vehicle-info-arrow ›
-                .user-vehicle-info-card.is-details
-                  .user-vehicle-info-icon car
-                  .user-vehicle-info-copy
-                    strong Vehicle Details
-                    p View your vehicle's information
-                  .user-vehicle-info-arrow ›
-
-        section.admin-view.is-hidden#userBookingsView
-          .settings-card.user-bookings-card
-            .user-bookings-layout
-              .bookings-section.bookings-section--header
-                .settings-header
-                  div
-                    h2 Your bookings
-                    p Review your confirmed bookings.
-
-              .bookings-section.bookings-section--card
-                #userBookingsList.user-bookings-list
-
-              .bookings-section.bookings-section--photos
-                .user-booking-photos#userBookingsPhotos
-                  h4 Photos
-                  p.user-booking-empty#userBookingsPhotosEmpty No booking photos available.
-
-        section.admin-view.is-hidden#userSettingsView
-          .settings-card.user-settings-card
-            .user-settings-layout
-              .settings-section.settings-section--header
-                .settings-header
-                  div
-                    h2 Account settings
-                    p Manage your profile and preferences.
-
-              .settings-section.settings-section--divider
                 .settings-divider
 
-              .settings-section.settings-section--layout
-                .settings-layout
-                  nav.settings-subnav
-                    button.settings-subnav-link.active(type="button" data-subview="general") General
-                    button.settings-subnav-link(type="button" data-subview="notifications") Notifications
-                    button.settings-subnav-link(type="button" data-subview="security") Login & security
+                .account-section.account-section--avatar
+                  .settings-photo-row
+                    .settings-avatar.settings-avatar-lg#userSettingsAvatar AG
 
-                  .settings-panel
-                    section.settings-subview#userSettingsGeneral
-                      .settings-photo-row
-                        .settings-avatar.settings-avatar-lg#userSettingsAvatarSettings AG
-                        label.ghost(for="userSettingsPhotoInput") Upload
-                        input.file-input#userSettingsPhotoInput(type="file" accept="image/*")
+                .settings-divider
 
-                      .settings-divider
+                .account-section.account-section--profile
+                  .settings-profile
+                    .settings-meta
+                      h4 Name
+                      p#userSettingsName Angel Gomes
+                      span#userSettingsRoleBadge.is-hidden CUSTOMER
 
-                      .settings-profile
-                        .settings-meta
-                          h4 Full name
-                          p#userSettingsNameSettings Angel Gomes
-                        button.secondary(type="button") Edit
+                .settings-divider
 
-                      .settings-divider
+                .account-section.account-section--contacts
+                  .settings-row
+                    div
+                      h4 Contacts
+                      p#userSettingsPhone Phone: -
+                      p#userSettingsEmailDetail Email: admin@smartworkshop.local
+                      p#userSettingsUsername Username: -
+                      p#userSettingsAddress Address: -
 
-                      .settings-row
-                        div
-                          h4 Contacts
-                          label.settings-field
-                            | Phone
-                            input#userSettingsPhoneInput(type="text" placeholder="Add phone")
-                          label.settings-field
-                            | Username
-                            input#userSettingsUsernameInput(type="text" placeholder="Add username")
-                          label.settings-field
-                            | Email
-                            input#userSettingsEmailInput(type="email" placeholder="Add email")
-                          label.settings-field
-                            | Address
-                            input#userSettingsAddressInput(type="text" placeholder="Add address")
-                          p.form-error#userSettingsContactMessage(role="alert" aria-live="polite")
-                        button.secondary#userSettingsContactSave(type="button") Save
+                .account-section.account-section--role
+                  .settings-row
+                    div
+                      h4 Role
+                      p#userSettingsRole ADMIN
 
-                      .settings-row
-                        div
-                          h4 Role
-                          p#userSettingsRoleSettings ADMIN
-                        button.secondary(type="button") Edit
+                .account-section.account-section--theme
+                  .settings-row
+                    div
+                      h4 Theme
+                      p Light mode
 
-                      .settings-row
-                        div
-                          h4 Theme
-                          p Light mode
-                        button.secondary(type="button") Light mode
+                .account-section.account-section--integration
+                  .settings-row
+                    div
+                      h4 Integration
+                      p No integrations connected
 
-                      .settings-row
-                        div
-                          h4 Integration
-                          p No integrations connected
-                        button.secondary(type="button") Connect
+          section.admin-view.is-hidden#userVehicleView
+            .settings-card.user-vehicle-card
+              .user-vehicle-layout
+                .user-vehicle-heading
+                  .user-vehicle-heading-top
+                    h2#userVehicleTitle RENAULT CLIO RENAULTSPORT NAV TROPHY A
+                    .user-vehicle-selector
+                      span.user-reg-badge#userVehicleRegBadge BP67XRZ
+                      .user-vehicle-dropdown
+                        button#userVehicleDropdownBtn.user-vehicle-dropdown-btn(type="button" aria-label="Select vehicle")
+                          span.user-vehicle-dropdown-arrow ▾
+                        .user-vehicle-dropdown-menu.is-hidden#userVehicleDropdownMenu
 
-                    section.settings-subview.is-hidden#userSettingsNotifications
-                      p.form-error No notification preferences configured.
+                .user-vehicle-pills
+                  span#userVehicleFuel Pill Petrol
+                  span#userVehicleAge Pill 8 years old
+                  span#userVehicleMileage Pill 13,126 miles
 
-                    section.settings-subview.is-hidden#userSettingsSecurity
-                      p.form-error Security options will appear here.
+                .user-vehicle-cards
+                  .user-vehicle-info-card.is-mot
+                    .user-vehicle-info-icon △
+                    .user-vehicle-info-copy
+                      strong Your MOT is valid
+                      p#userVehicleMotStatus Due in 6 months
+                    .user-vehicle-info-arrow ›
+                  .user-vehicle-info-card.is-tax
+                    .user-vehicle-info-icon ✓
+                    .user-vehicle-info-copy
+                      strong Your Tax is valid
+                      p#userVehicleTaxStatus Due in 8 months
+                    .user-vehicle-info-arrow ›
+                  .user-vehicle-info-card.is-mileage
+                    .user-vehicle-info-icon ⦿
+                    .user-vehicle-info-copy
+                      strong Mileage at last MOT
+                      p#userVehicleMileageStatus 13,126 miles
+                    .user-vehicle-info-arrow ›
+                  .user-vehicle-info-card.is-details
+                    .user-vehicle-info-icon car
+                    .user-vehicle-info-copy
+                      strong Vehicle Details
+                      p View your vehicle's information
+                    .user-vehicle-info-arrow ›
+
+          section.admin-view.is-hidden#userBookingsView
+            .settings-card.user-bookings-card
+              .user-bookings-layout
+                .bookings-section.bookings-section--header
+                  .settings-header
+                    div
+                      h2 Your bookings
+                      p Review your confirmed bookings.
+
+                .bookings-section.bookings-section--card
+                  #userBookingsList.user-bookings-list
+
+                .bookings-section.bookings-section--photos
+                  .user-booking-photos#userBookingsPhotos
+                    h4 Photos
+                    p.user-booking-empty#userBookingsPhotosEmpty No booking photos available.
+
+          section.admin-view.is-hidden#userSettingsView
+            .settings-card.user-settings-card
+              .user-settings-layout
+                .settings-section.settings-section--header
+                  .settings-header
+                    div
+                      h2 Account settings
+                      p Manage your profile and preferences.
+
+                .settings-section.settings-section--divider
+                  .settings-divider
+
+                .settings-section.settings-section--layout
+                  .settings-layout
+                    nav.settings-subnav
+                      button.settings-subnav-link.active(type="button" data-subview="general") General
+                      button.settings-subnav-link(type="button" data-subview="notifications") Notifications
+                      button.settings-subnav-link(type="button" data-subview="security") Login & security
+
+                    .settings-panel
+                      section.settings-subview#userSettingsGeneral
+                        .settings-photo-row
+                          .settings-avatar.settings-avatar-lg#userSettingsAvatarSettings AG
+                          label.ghost(for="userSettingsPhotoInput") Upload
+                          input.file-input#userSettingsPhotoInput(type="file" accept="image/*")
+
+                        .settings-divider
+
+                        .settings-profile
+                          .settings-meta
+                            h4 Full name
+                            p#userSettingsNameSettings Angel Gomes
+                          button.secondary(type="button") Edit
+
+                        .settings-divider
+
+                        .settings-row
+                          div
+                            h4 Contacts
+                            label.settings-field
+                              | Phone
+                              input#userSettingsPhoneInput(type="text" placeholder="Add phone")
+                            label.settings-field
+                              | Username
+                              input#userSettingsUsernameInput(type="text" placeholder="Add username")
+                            label.settings-field
+                              | Email
+                              input#userSettingsEmailInput(type="email" placeholder="Add email")
+                            label.settings-field
+                              | Address
+                              input#userSettingsAddressInput(type="text" placeholder="Add address")
+                            p.form-error#userSettingsContactMessage(role="alert" aria-live="polite")
+                          button.secondary#userSettingsContactSave(type="button") Save
+
+                        .settings-row
+                          div
+                            h4 Role
+                            p#userSettingsRoleSettings ADMIN
+                          button.secondary(type="button") Edit
+
+                        .settings-row
+                          div
+                            h4 Theme
+                            p Light mode
+                          button.secondary(type="button") Light mode
+
+                        .settings-row
+                          div
+                            h4 Integration
+                            p No integrations connected
+                          button.secondary(type="button") Connect
+
+                      section.settings-subview.is-hidden#userSettingsNotifications
+                        p.form-error No notification preferences configured.
+
+                      section.settings-subview.is-hidden#userSettingsSecurity
+                        p.form-error Security options will appear here.
+  include ../../partials/general-footer

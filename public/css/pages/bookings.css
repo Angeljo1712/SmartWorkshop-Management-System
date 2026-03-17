@@ -35,36 +35,6 @@
   align-content: start;
 }
 
-.bookings-body .general-footer {
-  background: var(--bg-surface-dark);
-  color: #f0f3f9;
-  padding: 14px 48px;
-}
-
-.bookings-body .general-footer .body-content {
-  width: min(1280px, 100%);
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.bookings-body .general-footer .main-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
-}
-
-.bookings-body .general-footer .main-brand strong {
-  color: #f0f3f9;
-}
-
-.bookings-body .general-footer .main-logo {
-  background: var(--surface-light-12);
-  color: #f0f3f9;
-}
-
 /* Index */
 
 .bookings-layout {

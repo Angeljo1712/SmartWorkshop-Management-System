@@ -1,20 +1,73 @@
-body.admin-body .user-app {
-  grid-template-columns: 150px minmax(0, 1fr);
+body.admin-body .user-layout {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(150px, 150px) minmax(0, 1fr);
   align-items: stretch;
+  gap: 18px;
+}
+
+body.admin-body .user-layout::before {
+  content: "";
+  position: absolute;
+  inset: -14px -18px -14px -18px;
+  border-radius: 26px;
+  background:
+    linear-gradient(180deg, rgba(88, 105, 136, 0.18) 0%, rgba(45, 57, 76, 0.34) 100%);
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.06),
+    inset -1px 0 0 rgba(255, 255, 255, 0.03);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.admin-body .user-layout::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 58px;
+  width: 26px;
+  border-radius: 16px;
+  background: rgba(132, 151, 186, 0.18);
+  border: 1px solid rgba(222, 232, 248, 0.45);
+  box-shadow:
+    14px 0 0 rgba(10, 14, 22, 0.46),
+    15px 0 0 rgba(226, 233, 245, 0.62);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.admin-body .user-layout > .admin-rail,
+body.admin-body .user-layout > .admin-content,
+body.admin-body .user-layout > .is-hidden {
+  position: relative;
+  z-index: 1;
+}
+
+body.admin-body .user-layout > .admin-rail {
+  min-width: 150px;
+}
+
+body.admin-body .user-layout > .admin-rail,
+body.admin-body .user-layout > .admin-content {
+  border: 2px solid #ffffff;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
 
 body.admin-body .main-header.general-header {
   display: block;
 }
 
-body.admin-body #userPage {
-  width: min(1280px, 100%);
-  margin: 0 auto;
+body.admin-body .user-layout .rail-item.active,
+body.admin-body .user-layout .rail-item:focus-visible {
+  background: #1b212b;
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.72);
 }
 
-
 body.admin-body #userPage .settings-card {
-  min-height: calc(100vh - 140px);
+  min-height: auto;
 }
 
 body.admin-body #userBookingsView .settings-card {
@@ -345,14 +398,26 @@ body.admin-body #userDashboardView .user-verify-card,
 body.admin-body #userDashboardView .user-add-vehicle input,
 body.admin-body #userDashboardView .user-quick-quote input,
 body.admin-body #userDashboardView .user-quick-quote select {
+  border-color: rgba(15, 23, 42, 0.18);
+}
+
+body.admin-body #userDashboardView .user-car-summary,
+body.admin-body #userDashboardView .user-verify-card {
   background: rgba(255, 255, 255, 0.03);
   border-color: rgba(255, 255, 255, 0.16);
   color: #eaf0fb;
 }
 
+body.admin-body #userDashboardView .user-add-vehicle input,
+body.admin-body #userDashboardView .user-quick-quote input,
+body.admin-body #userDashboardView .user-quick-quote select {
+  background: #ffffff;
+  color: #0f172a;
+}
+
 body.admin-body #userDashboardView .user-add-vehicle input::placeholder,
 body.admin-body #userDashboardView .user-quick-quote input::placeholder {
-  color: #9fb0c9;
+  color: #6b7280;
 }
 
 .user-dashboard-card .user-section-title {
@@ -1052,8 +1117,8 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
 
 .user-quick-quote select,
 .user-quick-quote select option {
-  background: rgba(8, 13, 23, 0.94);
-  color: #eaf0fb;
+  background: #ffffff;
+  color: #0f172a;
 }
 
 .user-quick-quote .primary {
@@ -1104,8 +1169,8 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
     padding: 24px 28px;
   }
 
-  body.admin-body .user-app {
-    grid-template-columns: 130px minmax(0, 1fr);
+  body.admin-body .user-layout {
+    grid-template-columns: minmax(150px, 150px) minmax(0, 1fr);
     gap: 14px;
   }
 
@@ -1133,11 +1198,11 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
     gap: 14px;
   }
 
-  body.admin-body .user-app {
+  body.admin-body .user-layout {
     grid-template-columns: 1fr;
   }
 
-  body.admin-body .user-app .rail-nav {
+  body.admin-body .user-layout .rail-nav {
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: minmax(110px, 1fr);
@@ -1145,7 +1210,7 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
     padding-bottom: 4px;
   }
 
-  body.admin-body .user-app .rail-footer {
+  body.admin-body .user-layout .rail-footer {
     display: none;
   }
 
@@ -1169,12 +1234,12 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
     font-size: 1rem;
   }
 
-  body.admin-body .user-app .rail-nav {
+  body.admin-body .user-layout .rail-nav {
     grid-auto-columns: minmax(100px, 1fr);
     gap: 4px;
   }
 
-  body.admin-body .user-app .rail-item {
+  body.admin-body .user-layout .rail-item {
     font-size: 0.8rem;
     padding: 8px 8px;
   }
@@ -1213,7 +1278,7 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
     font-size: 0.92rem;
   }
 
-  body.admin-body .user-app .rail-item {
+  body.admin-body .user-layout .rail-item {
     font-size: 0.74rem;
     padding: 7px 6px;
   }

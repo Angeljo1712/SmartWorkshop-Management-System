@@ -308,6 +308,36 @@ header.main-header:not(.home-header):not(.general-header) {
   font-weight: 700;
 }
 
+.general-footer {
+  background: var(--bg-surface-dark);
+  color: #f0f3f9;
+  padding: 14px 48px;
+}
+
+.general-footer .body-content {
+  width: min(1280px, 100%);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.general-footer .main-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.general-footer .main-brand strong {
+  color: #f0f3f9;
+}
+
+.general-footer .main-logo {
+  background: var(--surface-light-12);
+  color: #f0f3f9;
+}
+
 .site-nav {
   display: flex;
   gap: 24px;
@@ -1212,6 +1242,8 @@ body.admin-body {
   background: var(--bg-app-dark);
   color: #e7ebf4;
   min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   overflow-x: hidden;
 }
 

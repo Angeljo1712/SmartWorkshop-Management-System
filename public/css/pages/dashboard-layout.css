@@ -5,17 +5,29 @@
 #adminPage.primari-shell {
   max-width: none;
   margin: 0;
-  padding: 32px 48px;
+  min-height: 100%;
+  padding: 0;
   display: grid;
-  gap: 28px;
+  grid-template-columns: 1fr;
+  gap: 0;
   width: 100%;
 }
 
-#userPage .admin-app,
+#userPage .page-shell-content {
+  width: min(1280px, 100%);
+  margin: 0 auto;
+  min-height: 100%;
+  height: 100%;
+  padding: 32px 48px;
+  display: grid;
+  align-content: start;
+}
+
+#userPage .user-layout,
 #mechanicPage .admin-app,
 #adminPage #adminApp.admin-app {
   min-width: 0;
-  min-height: calc(100vh - 140px);
+  min-height: auto;
   align-items: stretch;
 }
 
@@ -41,7 +53,7 @@
 }
 
 @media (max-width: 1100px) {
-  #userPage .admin-app,
+  #userPage .user-layout,
   #mechanicPage .admin-app,
   #adminPage #adminApp.admin-app {
     grid-template-columns: 1fr;
