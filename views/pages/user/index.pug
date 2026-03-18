@@ -77,7 +77,10 @@ block content
                     .settings-header
                       div
                         h2 Welcome back
-                        p#userDashboardName User
+                        p#userDashboardName.user-welcome-name User
+                      .user-welcome-corner-wrap
+                        h2.user-welcome-corner Dashboard
+                        p.user-welcome-corner-subtitle General information
 
                   .settings-divider
 
@@ -100,6 +103,8 @@ block content
                         .user-car-status
                           p Your MOT is valid · Due in 28 weeks
                           p Taxed · Due in 24 weeks
+
+                  .settings-divider
 
                   .dashboard-section.dashboard-section--add-title
                     h3.user-section-title Add another vehicle
@@ -131,11 +136,14 @@ block content
             section.admin-view.is-hidden#userAccountView
               .settings-card.user-account-card
                 .user-account-layout
-                  .account-section.account-section--header
+                  .dashboard-section.dashboard-section--welcome.account-section--welcome
                     .settings-header
                       div
-                        h2 Account Details
-                        p Review your profile information.
+                        h2 Welcome back
+                        p.user-welcome-name User
+                      .user-welcome-corner-wrap
+                        h2.user-welcome-corner Account Details
+                        p.user-welcome-corner-subtitle Review your profile information.
 
                   .settings-divider
 
@@ -184,6 +192,15 @@ block content
             section.admin-view.is-hidden#userVehicleView
               .settings-card.user-vehicle-card
                 .user-vehicle-layout
+                  .dashboard-section.dashboard-section--welcome.vehicle-section--welcome
+                    .settings-header
+                      div
+                        h2 Welcome back
+                        p.user-welcome-name User
+                      .user-welcome-corner-wrap
+                        h2.user-welcome-corner Vehicle
+                        p.user-welcome-corner-subtitle Information related to your vehicles
+
                   .user-vehicle-heading
                     .user-vehicle-heading-top
                       h2#userVehicleTitle RENAULT CLIO RENAULTSPORT NAV TROPHY A
@@ -228,11 +245,14 @@ block content
             section.admin-view.is-hidden#userBookingsView
               .settings-card.user-bookings-card
                 .user-bookings-layout
-                  .bookings-section.bookings-section--header
+                  .dashboard-section.dashboard-section--welcome.bookings-section--welcome
                     .settings-header
                       div
-                        h2 Your bookings
-                        p Review your confirmed bookings.
+                        h2 Welcome back
+                        p.user-welcome-name User
+                      .user-welcome-corner-wrap
+                        h2.user-welcome-corner Your bookings
+                        p.user-welcome-corner-subtitle Review of your bookings
 
                   .bookings-section.bookings-section--card
                     #userBookingsList.user-bookings-list
@@ -245,11 +265,14 @@ block content
             section.admin-view.is-hidden#userSettingsView
               .settings-card.user-settings-card
                 .user-settings-layout
-                  .settings-section.settings-section--header
+                  .dashboard-section.dashboard-section--welcome.settings-section--welcome
                     .settings-header
                       div
-                        h2 Account settings
-                        p Manage your profile and preferences.
+                        h2 Welcome back
+                        p.user-welcome-name User
+                      .user-welcome-corner-wrap
+                        h2.user-welcome-corner Account settings
+                        p.user-welcome-corner-subtitle Manage your profile and preferences.
 
                   .settings-section.settings-section--divider
                     .settings-divider

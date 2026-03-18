@@ -81,14 +81,14 @@ body.admin-body #userBookingsView .settings-card {
 .user-bookings-layout {
   display: grid;
   grid-template-areas:
-    "header"
+    "welcome"
     "card"
     "photos";
   gap: 30px;
 }
 
-.bookings-section--header {
-  grid-area: header;
+.bookings-section--welcome {
+  grid-area: welcome;
 }
 
 .bookings-section--card {
@@ -110,28 +110,27 @@ body.admin-body #userSettingsView .settings-card {
 .user-settings-layout {
   display: grid;
   grid-template-areas:
-    "header"
-    "divider"
-    "layout";
-  gap: 30px;
+    "welcome welcome"
+    "subnav panel";
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 30px 24px;
+  align-items: start;
 }
 
-.settings-section--header {
-  grid-area: header;
+.settings-section--welcome {
+  grid-area: welcome;
 }
 
 .settings-section--divider {
-  grid-area: divider;
+  display: none;
 }
 
 .settings-section--layout {
-  grid-area: layout;
+  display: contents;
 }
 
 body.admin-body #userSettingsView .settings-layout {
-  grid-template-columns: 150px 1fr;
-  gap: 24px;
-  align-items: stretch;
+  display: contents;
 }
 
 body.admin-body #userSettingsView .settings-panel,
@@ -140,6 +139,7 @@ body.admin-body #userSettingsView .settings-subview {
 }
 
 body.admin-body #userSettingsView .settings-subnav {
+  grid-area: subnav;
   background: linear-gradient(180deg, #425369 0%, #3a4a5f 100%);
   border: 1px solid var(--border-light-08);
   border-radius: 8px;
@@ -294,7 +294,7 @@ body.admin-body #userAccountView .settings-meta h4 {
 .user-account-layout {
   display: grid;
   grid-template-areas:
-    "header"
+    "welcome"
     "divider-top"
     "avatar"
     "divider-mid"
@@ -305,10 +305,6 @@ body.admin-body #userAccountView .settings-meta h4 {
     "theme"
     "integration";
   gap: 30px;
-}
-
-.account-section--header {
-  grid-area: header;
 }
 
 .user-account-layout > .settings-divider:nth-of-type(1) {
@@ -381,6 +377,22 @@ body.admin-body #userDashboardView .user-verify-title {
   color: #eaf0fb;
 }
 
+#userDashboardView .user-welcome-corner {
+  margin: 0;
+}
+
+.user-welcome-corner-wrap {
+  display: grid;
+  gap: 4px;
+  justify-items: end;
+}
+
+.user-welcome-corner-subtitle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #a9b6cb;
+}
+
 body.admin-body #userDashboardView .settings-divider {
   height: 3px;
   background: #ffffff;
@@ -388,8 +400,13 @@ body.admin-body #userDashboardView .settings-divider {
 
 body.admin-body #userDashboardView .user-verify-text,
 body.admin-body #userDashboardView .user-car-meta span,
-body.admin-body #userDashboardView .user-quick-quote label {
+body.admin-body #userDashboardView .user-quick-quote label,
+body.admin-body #userDashboardView .form-error {
   color: #a9b6cb;
+}
+
+body.admin-body #userSettingsView .settings-panel {
+  grid-area: panel;
 }
 
 
@@ -437,11 +454,15 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
     "divider-top"
     "cars-header"
     "cars-list"
+    "divider-middle"
     "add-title"
     "add-form"
-    "divider-bottom"
     "quote";
   gap: 30px;
+}
+
+.account-section--welcome {
+  grid-area: welcome;
 }
 
 .dashboard-section--welcome {
@@ -466,10 +487,12 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
 
 .dashboard-section--add-form {
   grid-area: add-form;
+  width: min(720px, 100%);
+  margin: 0 auto;
 }
 
 .user-dashboard-layout > .settings-divider:last-of-type {
-  grid-area: divider-bottom;
+  grid-area: divider-middle;
 }
 
 .dashboard-section--quote {
@@ -667,6 +690,7 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 10px;
+  width: 100%;
 }
 
 .user-add-vehicle input {
@@ -682,10 +706,15 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
 .user-vehicle-layout {
   display: grid;
   grid-template-areas:
+    "welcome"
     "heading"
     "meta"
     "cards";
   gap: 30px;
+}
+
+.vehicle-section--welcome {
+  grid-area: welcome;
 }
 
 .user-vehicle-heading {
@@ -1099,6 +1128,8 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
 .user-quick-quote {
   display: grid;
   gap: 10px;
+  width: min(720px, 100%);
+  margin: 0 auto;
 }
 
 .user-quick-quote label {
@@ -1123,6 +1154,7 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
 
 .user-quick-quote .primary {
   margin-top: 4px;
+  justify-self: center;
 }
 
 @media (max-width: 980px) {
@@ -1177,6 +1209,15 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
 }
 
 @media (max-width: 768px) {
+  .user-settings-layout {
+    grid-template-areas:
+      "welcome"
+      "header"
+      "subnav"
+      "panel";
+    grid-template-columns: 1fr;
+  }
+
   body.admin-body .main-header.general-header {
     padding: 14px 16px;
   }

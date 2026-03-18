@@ -1850,6 +1850,7 @@ if (userPage) {
   const userNavLinks = document.querySelectorAll(".user-nav-link");
   const userDashboardView = document.getElementById("userDashboardView");
   const userDashboardName = document.getElementById("userDashboardName");
+  const userWelcomeNames = document.querySelectorAll(".user-welcome-name");
   const userCarList = document.getElementById("userCarList");
   const userDashboardCarReg = document.getElementById("userDashboardCarReg");
   const userAddVehicleBtn = document.getElementById("userAddVehicleBtn");
@@ -1940,6 +1941,9 @@ if (userPage) {
     if (userSettingsPhoneSettings)
       userSettingsPhoneSettings.textContent = `Phone: ${user?.phone || "-"}`;
     if (userDashboardName) userDashboardName.textContent = displayName;
+    userWelcomeNames.forEach((element) => {
+      element.textContent = displayName;
+    });
     if (userSettingsPhoneInput) userSettingsPhoneInput.value = user?.phone || "";
     if (userSettingsUsernameInput) userSettingsUsernameInput.value = user?.username || "";
     if (userSettingsEmailInput) userSettingsEmailInput.value = user?.email || "";
