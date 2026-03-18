@@ -2896,6 +2896,7 @@ if (userPage) {
 
 const mechanicDashboard = document.getElementById("mechanicPage") || document.querySelector(".mechanic-shell");
 if (mechanicDashboard) {
+  const mechanicBackBtn = document.getElementById("mechanicBackBtn");
   const mechanicLogoutBtn = document.getElementById("mechanicLogoutBtn");
   const nameEl = document.getElementById("mechanicWelcomeName");
   const idEl = document.getElementById("mechanicId");
@@ -2979,6 +2980,10 @@ if (mechanicDashboard) {
       }
     });
   }
+
+  mechanicBackBtn?.addEventListener("click", () => {
+    window.location.href = "/auth/select-role";
+  });
 
   mechanicLogoutBtn?.addEventListener("click", () => {
     sessionStorage.removeItem("userToken");
