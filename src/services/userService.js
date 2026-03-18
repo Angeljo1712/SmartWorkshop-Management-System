@@ -1,6 +1,7 @@
 const { pool } = require("../config/pool");
 const { AppError } = require("../utils/appError");
 const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
 
 const toRoleLabel = (role) => {
   const normalized = String(role || "").toLowerCase();
@@ -8,6 +9,23 @@ const toRoleLabel = (role) => {
   if (normalized === "mechanic") return "MECHANIC";
   if (normalized === "admin") return "ADMIN";
   return String(role || "").toUpperCase();
+};
+
+const formatAddressRow = (row) =>
+  [row?.line1, row?.line2, row?.city, row?.postal_code, row?.country]
+    .filter((value) => String(value || "").trim())
+    .join(", ");
+
+const getLatestAddress = async (userId) => {
+  const [rows] = await pool.query(
+    `SELECT line1, line2, city, postal_code, country
+     FROM addresses
+     WHERE user_id = ?
+     ORDER BY id DESC
+     LIMIT 1`,
+    [userId]
+  );
+  return rows[0] || null;
 };
 
 const getUserById = async (userId) => {
@@ -24,6 +42,8 @@ const getUserById = async (userId) => {
   );
   const user = rows[0];
   if (!user) return null;
+  const addressRow = await getLatestAddress(userId);
+  const address = formatAddressRow(addressRow) || "";
   const roles = (user.roles ? String(user.roles).split(",") : [user.role]).map(toRoleLabel);
   const primaryRole = roles.includes("ADMIN")
     ? "ADMIN"
@@ -32,6 +52,16 @@ const getUserById = async (userId) => {
       : "CUSTOMER";
   return {
     ...user,
+    address,
+    address_details: addressRow
+      ? {
+          line1: addressRow.line1 || "",
+          line2: addressRow.line2 || "",
+          city: addressRow.city || "",
+          postal_code: addressRow.postal_code || "",
+          country: addressRow.country || "GB"
+        }
+      : null,
     role_name: primaryRole,
     roles
   };
@@ -50,7 +80,7 @@ const resolveNames = (payload) => {
   return { name: null, lastname: null };
 };
 
-const updateUserProfile = async (userId, { name, lastname, full_name, phone, username }) => {
+const updateUserProfile = async (userId, { name, lastname, full_name, phone, username, address }) => {
   const updates = [];
   const params = [];
 
@@ -87,6 +117,32 @@ const updateUserProfile = async (userId, { name, lastname, full_name, phone, use
     await pool.query(`UPDATE users SET ${updates.join(", ")} WHERE id = ?`, params);
   }
 
+  if (address !== undefined) {
+    if (address && typeof address === "object") {
+      const line1 = String(address.line1 || "").trim();
+      const line2 = String(address.line2 || "").trim();
+      const city = String(address.city || "").trim();
+      const postalCode = String(address.postal_code || "").trim();
+      const country = String(address.country || "GB").trim() || "GB";
+      if (line1 && city && postalCode) {
+        await pool.query(
+          `INSERT INTO addresses (uuid_public, user_id, label, line1, line2, city, postal_code, country, location)
+           VALUES (UUID_TO_BIN(UUID()), ?, 'Profile', ?, ?, ?, ?, ?, ST_GeomFromText('POINT(0 0)', 4326))`,
+          [userId, line1, line2 || null, city, postalCode, country]
+        );
+      }
+    } else {
+      const normalizedAddress = String(address || "").trim();
+      if (normalizedAddress) {
+        await pool.query(
+          `INSERT INTO addresses (uuid_public, user_id, label, line1, line2, city, postal_code, country, location)
+           VALUES (UUID_TO_BIN(UUID()), ?, 'Profile', ?, NULL, '-', '-', 'GB', ST_GeomFromText('POINT(0 0)', 4326))`,
+          [userId, normalizedAddress]
+        );
+      }
+    }
+  }
+
   const resolved = resolveNames({ name, lastname, full_name });
   if (resolved.name && resolved.lastname) {
     await pool.query(
@@ -95,7 +151,7 @@ const updateUserProfile = async (userId, { name, lastname, full_name, phone, use
        ON DUPLICATE KEY UPDATE name = VALUES(name), lastname = VALUES(lastname)`,
       [userId, resolved.name, resolved.lastname]
     );
-  } else if (!updates.length) {
+  } else if (!updates.length && address === undefined) {
     throw new AppError("VALIDATION_ERROR", "No profile fields provided", 400);
   }
 
@@ -110,6 +166,45 @@ const updateUserAvatar = async (userId, avatarUrl) => {
     [userId, avatarUrl]
   );
   return getUserById(userId);
+};
+
+const changeUserPassword = async (userId, { old_password, new_password }) => {
+  const currentPassword = String(old_password || "");
+  const nextPassword = String(new_password || "");
+
+  if (!currentPassword || !nextPassword) {
+    throw new AppError("VALIDATION_ERROR", "old_password and new_password are required", 400);
+  }
+  if (nextPassword.length < 10) {
+    throw new AppError("VALIDATION_ERROR", "New password must be at least 10 characters long.", 400);
+  }
+  if (!/[A-Z]/.test(nextPassword)) {
+    throw new AppError("VALIDATION_ERROR", "New password must include at least one uppercase letter.", 400);
+  }
+  if (!/[0-9]/.test(nextPassword)) {
+    throw new AppError("VALIDATION_ERROR", "New password must include at least one number.", 400);
+  }
+  if (!/[^A-Za-z0-9]/.test(nextPassword)) {
+    throw new AppError("VALIDATION_ERROR", "New password must include at least one special character.", 400);
+  }
+
+  const [rows] = await pool.query("SELECT password_hash FROM users WHERE id = ? LIMIT 1", [userId]);
+  const user = rows[0];
+  if (!user) {
+    throw new AppError("NOT_FOUND", "User not found", 404);
+  }
+
+  const matches = await bcrypt.compare(currentPassword, user.password_hash);
+  if (!matches) {
+    throw new AppError("AUTH_FAILED", "Old password is incorrect.", 401);
+  }
+  if (currentPassword === nextPassword) {
+    throw new AppError("VALIDATION_ERROR", "New password must be different from the old password.", 400);
+  }
+
+  const passwordHash = await bcrypt.hash(nextPassword, 10);
+  await pool.query("UPDATE users SET password_hash = ? WHERE id = ?", [passwordHash, userId]);
+  return { message: "Password updated." };
 };
 
 const mapVehicleRow = (row) => ({
@@ -376,6 +471,7 @@ module.exports = {
   getUserById,
   updateUserProfile,
   updateUserAvatar,
+  changeUserPassword,
   requestEmailChange,
   confirmEmailChange,
   listUserVehicles,

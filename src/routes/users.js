@@ -4,6 +4,7 @@ const { asyncHandler } = require("../utils/asyncHandler");
 const { uploadAvatar } = require("../middlewares/upload");
 const {
   getMeHandler,
+  changePasswordHandler,
   updateMeHandler,
   uploadAvatarHandler,
   requestEmailChangeHandler,
@@ -18,6 +19,7 @@ const router = express.Router();
 
 router.get("/me", authenticate, asyncHandler(getMeHandler));
 router.patch("/me", authenticate, asyncHandler(updateMeHandler));
+router.post("/me/change-password", authenticate, asyncHandler(changePasswordHandler));
 router.post("/me/avatar", authenticate, uploadAvatar.single("avatar"), asyncHandler(uploadAvatarHandler));
 router.post("/me/email-change", authenticate, asyncHandler(requestEmailChangeHandler));
 router.get("/me/vehicles", authenticate, asyncHandler(listMyVehiclesHandler));

@@ -1835,7 +1835,31 @@ if (userPage) {
   const userSettingsEmailDetailSettings = document.getElementById("userSettingsEmailDetailSettings");
   const userSettingsRoleSettings = document.getElementById("userSettingsRoleSettings");
   const userSettingsPhoneSettings = document.getElementById("userSettingsPhoneSettings");
+  const userSettingsPhoneValueSettings = document.getElementById("userSettingsPhoneValueSettings");
+  const userSettingsUsernameValueSettings = document.getElementById("userSettingsUsernameValueSettings");
+  const userSettingsEmailValueSettings = document.getElementById("userSettingsEmailValueSettings");
+  const userSettingsAddressValueSettings = document.getElementById("userSettingsAddressValueSettings");
+  const userSettingsEditButtons = document.querySelectorAll("[data-settings-field]");
+  const userSettingsEditModal = document.getElementById("userSettingsEditModal");
+  const userSettingsEditTitle = document.getElementById("userSettingsEditTitle");
+  const userSettingsEditDescription = document.getElementById("userSettingsEditDescription");
+  const userSettingsEditLabel = document.getElementById("userSettingsEditLabel");
+  const userSettingsEditInput = document.getElementById("userSettingsEditInput");
+  const userSettingsNameGrid = document.getElementById("userSettingsNameGrid");
+  const userSettingsEditFirstName = document.getElementById("userSettingsEditFirstName");
+  const userSettingsEditMiddleName = document.getElementById("userSettingsEditMiddleName");
+  const userSettingsEditLastName = document.getElementById("userSettingsEditLastName");
+  const userSettingsAddressGrid = document.getElementById("userSettingsAddressGrid");
+  const userSettingsEditAddressLine1 = document.getElementById("userSettingsEditAddressLine1");
+  const userSettingsEditAddressLine2 = document.getElementById("userSettingsEditAddressLine2");
+  const userSettingsEditCity = document.getElementById("userSettingsEditCity");
+  const userSettingsEditPostcode = document.getElementById("userSettingsEditPostcode");
+  const userSettingsEditMessage = document.getElementById("userSettingsEditMessage");
+  const userSettingsEditSave = document.getElementById("userSettingsEditSave");
+  const userSettingsEditCancel = document.getElementById("userSettingsEditCancel");
+  const userSettingsEditClose = document.getElementById("userSettingsEditClose");
   const userRoleSwitcher = document.getElementById("userRoleSwitcher");
+  const userSettingsPhotoButton = document.getElementById("userSettingsPhotoButton");
   const userSettingsPhotoInput = document.getElementById("userSettingsPhotoInput");
   const userSettingsPhoneInput = document.getElementById("userSettingsPhoneInput");
   const userSettingsUsernameInput = document.getElementById("userSettingsUsernameInput");
@@ -1847,6 +1871,14 @@ if (userPage) {
   const userSettingsGeneral = document.getElementById("userSettingsGeneral");
   const userSettingsNotifications = document.getElementById("userSettingsNotifications");
   const userSettingsSecurity = document.getElementById("userSettingsSecurity");
+  const userSecurityPasswordForm = document.getElementById("userSecurityPasswordForm");
+  const userSecurityOldPassword = document.getElementById("userSecurityOldPassword");
+  const userSecurityNewPassword = document.getElementById("userSecurityNewPassword");
+  const userSecurityConfirmPassword = document.getElementById("userSecurityConfirmPassword");
+  const userSecurityPasswordMessage = document.getElementById("userSecurityPasswordMessage");
+  const userSecurity2faEmail = document.getElementById("userSecurity2faEmail");
+  const userSecurity2faSms = document.getElementById("userSecurity2faSms");
+  const userSecurity2faEnable = document.getElementById("userSecurity2faEnable");
   const userNavLinks = document.querySelectorAll(".user-nav-link");
   const userDashboardView = document.getElementById("userDashboardView");
   const userDashboardName = document.getElementById("userDashboardName");
@@ -1940,14 +1972,18 @@ if (userPage) {
     if (userSettingsRoleSettings) userSettingsRoleSettings.textContent = activeRole;
     if (userSettingsPhoneSettings)
       userSettingsPhoneSettings.textContent = `Phone: ${user?.phone || "-"}`;
+    if (userSettingsPhoneValueSettings) userSettingsPhoneValueSettings.textContent = user?.phone || "-";
+    if (userSettingsUsernameValueSettings) userSettingsUsernameValueSettings.textContent = user?.username || "-";
+    if (userSettingsEmailValueSettings) userSettingsEmailValueSettings.textContent = user?.email || "-";
+    if (userSettingsAddressValueSettings) userSettingsAddressValueSettings.textContent = user?.address || "-";
     if (userDashboardName) userDashboardName.textContent = displayName;
     userWelcomeNames.forEach((element) => {
       element.textContent = displayName;
     });
-    if (userSettingsPhoneInput) userSettingsPhoneInput.value = user?.phone || "";
-    if (userSettingsUsernameInput) userSettingsUsernameInput.value = user?.username || "";
-    if (userSettingsEmailInput) userSettingsEmailInput.value = user?.email || "";
-    if (userSettingsAddressInput) userSettingsAddressInput.value = user?.address || "";
+    if (userSettingsPhoneInput) userSettingsPhoneInput.value = "";
+    if (userSettingsUsernameInput) userSettingsUsernameInput.value = "";
+    if (userSettingsEmailInput) userSettingsEmailInput.value = "";
+    if (userSettingsAddressInput) userSettingsAddressInput.value = "";
 
     if (userRoleSwitcher) {
       userRoleSwitcher.innerHTML = "";
@@ -1972,11 +2008,113 @@ if (userPage) {
     }
   };
 
+  const settingsFieldConfig = {
+    full_name: {
+      label: "Full name",
+      description: "Update the full name shown in your profile.",
+      type: "text",
+      getValue: (user) => user?.full_name || [user?.name, user?.lastname].filter(Boolean).join(" ").trim(),
+      isNameField: true
+    },
+    phone: {
+      label: "Phone",
+      description: "Update your phone number.",
+      type: "text",
+      getValue: (user) => user?.phone || ""
+    },
+    username: {
+      label: "Username",
+      description: "Update your username.",
+      type: "text",
+      getValue: (user) => user?.username || ""
+    },
+    email: {
+      label: "Email",
+      description: "Request an email change confirmation.",
+      type: "email",
+      getValue: (user) => user?.email || ""
+    },
+    address: {
+      label: "Address",
+      description: "Update your address.",
+      type: "text",
+      getValue: (user) => user?.address || "",
+      isAddressField: true
+    }
+  };
+
+  let activeSettingsField = "";
+
+  const closeSettingsEditModal = () => {
+    activeSettingsField = "";
+    userSettingsEditModal?.classList.add("is-hidden");
+    if (userSettingsEditMessage) userSettingsEditMessage.textContent = "";
+    if (userSettingsEditInput) userSettingsEditInput.value = "";
+    if (userSettingsEditFirstName) userSettingsEditFirstName.value = "";
+    if (userSettingsEditMiddleName) userSettingsEditMiddleName.value = "";
+    if (userSettingsEditLastName) userSettingsEditLastName.value = "";
+    if (userSettingsEditAddressLine1) userSettingsEditAddressLine1.value = "";
+    if (userSettingsEditAddressLine2) userSettingsEditAddressLine2.value = "";
+    if (userSettingsEditCity) userSettingsEditCity.value = "";
+    if (userSettingsEditPostcode) userSettingsEditPostcode.value = "";
+  };
+
+  const openSettingsEditModal = (field) => {
+    const config = settingsFieldConfig[field];
+    const profileData = getUserProfile() || {};
+    if (!config || !userSettingsEditModal || !userSettingsEditInput) return;
+    activeSettingsField = field;
+    if (userSettingsEditTitle) userSettingsEditTitle.textContent = `Update ${config.label}`;
+    if (userSettingsEditDescription) userSettingsEditDescription.textContent = config.description;
+    if (userSettingsNameGrid) userSettingsNameGrid.classList.toggle("is-hidden", !config.isNameField);
+    if (userSettingsAddressGrid) userSettingsAddressGrid.classList.toggle("is-hidden", !config.isAddressField);
+    if (userSettingsEditInput?.parentElement) userSettingsEditInput.parentElement.classList.toggle("is-hidden", !!config.isNameField);
+    if (userSettingsEditInput?.parentElement && config.isAddressField) {
+      userSettingsEditInput.parentElement.classList.add("is-hidden");
+    }
+    if (config.isNameField) {
+      if (userSettingsEditFirstName) userSettingsEditFirstName.value = profileData?.name || "";
+      const lastNameParts = String(profileData?.lastname || "").trim().split(/\s+/).filter(Boolean);
+      if (userSettingsEditLastName) userSettingsEditLastName.value = lastNameParts.pop() || "";
+      if (userSettingsEditMiddleName) userSettingsEditMiddleName.value = lastNameParts.join(" ");
+    } else if (config.isAddressField) {
+      const addressDetails = profileData?.address_details || {};
+      if (userSettingsEditAddressLine1) userSettingsEditAddressLine1.value = addressDetails.line1 || "";
+      if (userSettingsEditAddressLine2) userSettingsEditAddressLine2.value = addressDetails.line2 || "";
+      if (userSettingsEditCity) userSettingsEditCity.value = addressDetails.city || "";
+      if (userSettingsEditPostcode) userSettingsEditPostcode.value = addressDetails.postal_code || "";
+    } else {
+      if (userSettingsEditLabel) userSettingsEditLabel.textContent = config.label;
+      userSettingsEditInput.type = config.type || "text";
+      userSettingsEditInput.value = config.getValue(profileData) || "";
+    }
+    if (userSettingsEditMessage) userSettingsEditMessage.textContent = "";
+    userSettingsEditModal.classList.remove("is-hidden");
+    if (config.isNameField) {
+      userSettingsEditFirstName?.focus();
+      userSettingsEditFirstName?.select();
+    } else if (config.isAddressField) {
+      userSettingsEditAddressLine1?.focus();
+      userSettingsEditAddressLine1?.select();
+    } else {
+      userSettingsEditInput.focus();
+      userSettingsEditInput.select();
+    }
+  };
+
   const profile = getUserProfile();
   const userToken = sessionStorage.getItem("userToken");
   if (profile) {
     sessionStorage.setItem("activeRole", "CUSTOMER");
     setUserHeader(profile);
+    if (userToken) {
+      apiAuth("/api/users/me", userToken)
+        .then((freshProfile) => {
+          sessionStorage.setItem("userProfile", JSON.stringify(freshProfile));
+          setUserHeader(freshProfile);
+        })
+        .catch(() => {});
+    }
   } else {
     window.location.href = "/";
   }
@@ -2194,8 +2332,7 @@ if (userPage) {
       });
     });
 
-    const latestVehicle = vehicles[vehicles.length - 1];
-    if (userQuickQuoteReg) userQuickQuoteReg.value = latestVehicle ? latestVehicle.registrationNumber || "" : "";
+    if (userQuickQuoteReg) userQuickQuoteReg.value = "";
   };
 
   const renderVehicleDetail = (vehicles, preferredReg) => {
@@ -2380,7 +2517,6 @@ if (userPage) {
         userDashboardCarReg.value = reg;
         userDashboardCarReg.focus();
       }
-      if (userQuickQuoteReg) userQuickQuoteReg.value = reg;
       renderVehicleDetail(dashboardVehicles, reg);
       setUserView("vehicle");
       userNavLinks.forEach((btn) => btn.classList.toggle("active", btn.dataset.view === "vehicle"));
@@ -2418,12 +2554,16 @@ if (userPage) {
       document.querySelectorAll(".user-car-menu-panel").forEach((menu) => menu.classList.add("is-hidden"));
     }
 
-    if (!event.target.closest(".user-vehicle-dropdown")) {
+    if (!event.target.closest(".user-vehicle-heading")) {
       userVehicleDropdownMenu?.classList.add("is-hidden");
     }
   });
 
   userVehicleDropdownBtn?.addEventListener("click", () => {
+    userVehicleDropdownMenu?.classList.toggle("is-hidden");
+  });
+
+  userVehicleTitle?.addEventListener("click", () => {
     userVehicleDropdownMenu?.classList.toggle("is-hidden");
   });
 
@@ -2507,7 +2647,10 @@ if (userPage) {
   syncUserBookingsFromApi();
 
   userQuickQuoteBtn?.addEventListener("click", () => {
-    const selectedType = userQuickQuoteProduct?.value || "repair";
+    const selectedType = userQuickQuoteProduct?.value || "";
+    if (!selectedType) {
+      return;
+    }
     window.location.href = `/bookings/work/?type=${encodeURIComponent(selectedType)}`;
   });
 
@@ -2517,6 +2660,151 @@ if (userPage) {
       settingsSubnavLinks.forEach((btn) => btn.classList.toggle("active", btn === link));
       setSettingsSubview(view);
     });
+  });
+
+  const syncSecurity2faButton = () => {
+    const hasSelection = Boolean(userSecurity2faEmail?.checked || userSecurity2faSms?.checked);
+    userSecurity2faEnable?.classList.toggle("is-active", hasSelection);
+    if (userSecurity2faEnable) userSecurity2faEnable.disabled = !hasSelection;
+  };
+
+  userSecurity2faEmail?.addEventListener("change", syncSecurity2faButton);
+  userSecurity2faSms?.addEventListener("change", syncSecurity2faButton);
+  syncSecurity2faButton();
+
+  userSecurityPasswordForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const token = sessionStorage.getItem("userToken");
+    const oldPassword = userSecurityOldPassword?.value || "";
+    const newPassword = userSecurityNewPassword?.value || "";
+    const confirmPassword = userSecurityConfirmPassword?.value || "";
+    if (userSecurityPasswordMessage) userSecurityPasswordMessage.textContent = "";
+
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      if (userSecurityPasswordMessage) {
+        userSecurityPasswordMessage.textContent = "Please complete all password fields.";
+      }
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      if (userSecurityPasswordMessage) {
+        userSecurityPasswordMessage.textContent = "New password and confirmation must match.";
+      }
+      return;
+    }
+
+    try {
+      const result = await apiAuth("/api/users/me/change-password", token, {
+        method: "POST",
+        body: JSON.stringify({
+          old_password: oldPassword,
+          new_password: newPassword
+        })
+      });
+      if (userSecurityPasswordMessage) {
+        userSecurityPasswordMessage.textContent = result?.message || "Password updated.";
+      }
+      if (userSecurityOldPassword) userSecurityOldPassword.value = "";
+      if (userSecurityNewPassword) userSecurityNewPassword.value = "";
+      if (userSecurityConfirmPassword) userSecurityConfirmPassword.value = "";
+    } catch (err) {
+      if (userSecurityPasswordMessage) {
+        userSecurityPasswordMessage.textContent =
+          err?.error?.message || err?.message || "Unable to change password.";
+      }
+    }
+  });
+
+  userSettingsEditButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      openSettingsEditModal(button.dataset.settingsField || "");
+    });
+  });
+
+  document.querySelectorAll("[data-close-modal]").forEach((element) => {
+    element.addEventListener("click", closeSettingsEditModal);
+  });
+
+  userSettingsEditCancel?.addEventListener("click", closeSettingsEditModal);
+  userSettingsEditClose?.addEventListener("click", closeSettingsEditModal);
+
+  userSettingsEditSave?.addEventListener("click", async () => {
+    const token = sessionStorage.getItem("userToken");
+    const field = activeSettingsField;
+    const config = settingsFieldConfig[field];
+    const value = userSettingsEditInput?.value?.trim() || "";
+    if (!token || !config) return;
+    if (userSettingsEditMessage) userSettingsEditMessage.textContent = "";
+
+    try {
+      if (config.isNameField) {
+        const firstName = userSettingsEditFirstName?.value?.trim() || "";
+        const middleName = userSettingsEditMiddleName?.value?.trim() || "";
+        const lastName = userSettingsEditLastName?.value?.trim() || "";
+        if (!firstName || !lastName) {
+          throw { message: "First name and Last name are required, Middle name is optional" };
+        }
+        const payload = await apiAuth("/api/users/me", token, {
+          method: "PATCH",
+          body: JSON.stringify({
+            name: firstName,
+            lastname: [middleName, lastName].filter(Boolean).join(" ")
+          })
+        });
+        sessionStorage.setItem("userProfile", JSON.stringify(payload));
+        setUserHeader(payload);
+        closeSettingsEditModal();
+        return;
+      }
+
+      if (config.isAddressField) {
+        const line1 = userSettingsEditAddressLine1?.value?.trim() || "";
+        const line2 = userSettingsEditAddressLine2?.value?.trim() || "";
+        const city = userSettingsEditCity?.value?.trim() || "";
+        const postal_code = userSettingsEditPostcode?.value?.trim() || "";
+        if (!line1 || !city || !postal_code) {
+          throw { message: "Address line 1, City and PostCode are required." };
+        }
+        const payload = await apiAuth("/api/users/me", token, {
+          method: "PATCH",
+          body: JSON.stringify({
+            address: { line1, line2, city, postal_code }
+          })
+        });
+        sessionStorage.setItem("userProfile", JSON.stringify(payload));
+        setUserHeader(payload);
+        closeSettingsEditModal();
+        return;
+      }
+
+      if (!value) {
+        throw { message: `${config.label} is required.` };
+      }
+
+      if (field === "email") {
+        const payload = await apiAuth("/api/users/me/email-change", token, {
+          method: "POST",
+          body: JSON.stringify({ email: value })
+        });
+        if (userSettingsEditMessage) {
+          userSettingsEditMessage.textContent = payload?.message || "Confirmation email sent.";
+        }
+        return;
+      }
+
+      const patchPayload = { [field]: value };
+      const payload = await apiAuth("/api/users/me", token, {
+        method: "PATCH",
+        body: JSON.stringify(patchPayload)
+      });
+      sessionStorage.setItem("userProfile", JSON.stringify(payload));
+      setUserHeader(payload);
+      closeSettingsEditModal();
+    } catch (err) {
+      if (userSettingsEditMessage) {
+        userSettingsEditMessage.textContent = err?.error?.message || err?.message || "Unable to update this field.";
+      }
+    }
   });
 
   userSettingsContactSave?.addEventListener("click", async () => {
@@ -2594,6 +2882,10 @@ if (userPage) {
     } finally {
       event.target.value = "";
     }
+  });
+
+  userSettingsPhotoButton?.addEventListener("click", () => {
+    userSettingsPhotoInput?.click();
   });
 
   userLogoutBtn?.addEventListener("click", () => {

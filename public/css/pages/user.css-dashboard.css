@@ -111,6 +111,7 @@ body.admin-body #userSettingsView .settings-card {
   display: grid;
   grid-template-areas:
     "welcome welcome"
+    "divider divider"
     "subnav panel";
   grid-template-columns: 150px minmax(0, 1fr);
   gap: 30px 24px;
@@ -122,7 +123,8 @@ body.admin-body #userSettingsView .settings-card {
 }
 
 .settings-section--divider {
-  display: none;
+  display: block;
+  grid-area: divider;
 }
 
 .settings-section--layout {
@@ -133,16 +135,21 @@ body.admin-body #userSettingsView .settings-layout {
   display: contents;
 }
 
-body.admin-body #userSettingsView .settings-panel,
+body.admin-body #userSettingsView .settings-panel {
+  grid-area: panel;
+  display: grid;
+}
+
 body.admin-body #userSettingsView .settings-subview {
-  display: block;
+  display: grid;
 }
 
 body.admin-body #userSettingsView .settings-subnav {
   grid-area: subnav;
   background: linear-gradient(180deg, #425369 0%, #3a4a5f 100%);
-  border: 1px solid var(--border-light-08);
-  border-radius: 8px;
+  border: 2px solid #ffffff;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
   padding: 10px;
   align-self: stretch;
   height: 100%;
@@ -158,14 +165,340 @@ body.admin-body #userSettingsView .settings-subnav-link:hover {
 }
 
 body.admin-body #userSettingsView .settings-subnav-link.active {
-  background: rgba(230, 236, 247, 0.22);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: #e8edf6;
+  background: #0d1220;
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 body.admin-body #userSettingsView .settings-divider {
   background: #ffffff;
   opacity: 1;
+}
+
+body.admin-body #userSettingsView .settings-header h2,
+body.admin-body #userSettingsView .settings-header p,
+body.admin-body #userSettingsView .user-welcome-corner,
+body.admin-body #userSettingsView .user-welcome-corner-subtitle {
+  color: #ffffff;
+}
+
+body.admin-body #userSettingsView .settings-photo-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 16px;
+}
+
+body.admin-body #userSettingsView .settings-photo-row .ghost {
+  justify-self: end;
+  background: #4f627b;
+  border-color: #4f627b;
+  color: #ffffff;
+}
+
+body.admin-body #userSettingsView .secondary {
+  background: #4f627b;
+  border-color: #4f627b;
+  color: #ffffff;
+}
+
+body.admin-body #userSettingsView .settings-field,
+body.admin-body #userSettingsView .settings-field h4,
+body.admin-body #userSettingsView .settings-row h4,
+body.admin-body #userSettingsView .settings-profile h4,
+body.admin-body #userSettingsView .settings-profile p,
+body.admin-body #userSettingsView .settings-row p,
+body.admin-body #userSettingsView .form-error {
+  color: #ffffff;
+}
+
+body.admin-body #userSettingsView .settings-contact-list {
+  display: grid;
+  gap: 14px;
+}
+
+body.admin-body #userSettingsView .settings-contact-item {
+  display: block;
+  min-height: 44px;
+}
+
+body.admin-body #userSettingsView .settings-contact-copy {
+  display: grid;
+  gap: 6px;
+}
+
+body.admin-body #userSettingsView .settings-contact-label {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+body.admin-body #userSettingsView .settings-contact-copy p {
+  margin: 0;
+  color: #ffffff;
+}
+
+body.admin-body #userSettingsView .settings-contact-actions {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  justify-items: end;
+}
+
+body.admin-body #userSettingsView .settings-contact-actions .secondary {
+  min-height: 44px;
+}
+
+body.admin-body #userSettingsSecurity {
+  gap: 26px;
+}
+
+body.admin-body #userSettingsSecurity .security-card {
+  display: grid;
+  gap: 26px;
+  padding: 24px;
+  border: 2px solid #ffffff;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+body.admin-body #userSettingsSecurity .security-card-head h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.25rem;
+}
+
+body.admin-body #userSettingsSecurity .security-form {
+  width: min(500px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 18px;
+}
+
+body.admin-body #userSettingsSecurity .security-field {
+  display: grid;
+  gap: 8px;
+}
+
+body.admin-body #userSettingsSecurity .security-field span {
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+body.admin-body #userSettingsSecurity .security-field input {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+body.admin-body #userSettingsSecurity .security-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+body.admin-body #userSettingsSecurity .security-actions .ghost {
+  background: #4f627b;
+  border-color: #4f627b;
+  color: #ffffff;
+}
+
+body.admin-body #userSecurity2faEnable {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.62);
+}
+
+body.admin-body #userSecurity2faEnable:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+body.admin-body #userSecurity2faEnable.is-active {
+  background: #4f627b;
+  border-color: #4f627b;
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+body.admin-body #userSettingsSecurity .security-2fa-grid {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+}
+
+body.admin-body #userSettingsSecurity .security-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+body.admin-body #userSettingsSecurity .security-check input {
+  width: 20px;
+  height: 20px;
+}
+
+body.admin-body #userSettingsNotifications .notifications-card {
+  display: grid;
+  gap: 28px;
+  padding: 24px;
+  border: 2px solid #ffffff;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  background: #0d1220;
+}
+
+body.admin-body #userSettingsNotifications .notifications-card-head h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.25rem;
+}
+
+body.admin-body #userSettingsNotifications .notifications-check {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 14px;
+  color: #ffffff;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+body.admin-body #userSettingsNotifications .notifications-check input {
+  width: 20px;
+  height: 20px;
+  margin-top: 3px;
+}
+
+body.admin-body #userSettingsNotifications .notifications-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+body.admin-body #userSettingsNotifications .notifications-actions .ghost {
+  background: #4f627b;
+  border-color: #4f627b;
+  color: #ffffff;
+}
+
+body.admin-body .settings-edit-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+}
+
+body.admin-body .settings-edit-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 8, 16, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+body.admin-body .settings-edit-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(520px, calc(100vw - 32px));
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+  border: 2px solid #ffffff;
+  border-radius: 18px;
+  background: #101722;
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
+}
+
+body.admin-body .settings-edit-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
+}
+
+body.admin-body .settings-edit-head h3,
+body.admin-body .settings-edit-dialog p,
+body.admin-body .settings-edit-field span {
+  color: #ffffff;
+  margin: 0;
+}
+
+body.admin-body #userSettingsEditDescription {
+  text-align: center;
+}
+
+body.admin-body .settings-edit-close {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  position: absolute;
+  right: 0;
+}
+
+body.admin-body .settings-edit-field {
+  display: grid;
+  gap: 8px;
+}
+
+body.admin-body .settings-edit-name-grid .settings-edit-field span {
+  text-align: center;
+}
+
+body.admin-body .settings-edit-field input {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+body.admin-body .settings-edit-name-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+body.admin-body .settings-edit-address-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+body.admin-body .settings-edit-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+body.admin-body .settings-edit-actions .secondary,
+body.admin-body .settings-edit-actions .ghost {
+  color: #ffffff;
+}
+
+body.admin-body #userSettingsEditCancel.secondary {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+body.admin-body #userSettingsEditCancel.secondary:hover,
+body.admin-body #userSettingsEditSave.ghost:hover {
+  background: #4f627b;
+  border-color: #4f627b;
+  color: #ffffff;
 }
 
 body.admin-body #userBookingsView .settings-header h2,
@@ -299,10 +632,13 @@ body.admin-body #userAccountView .settings-meta h4 {
     "avatar"
     "divider-mid"
     "profile"
-    "divider-bottom"
+    "divider-profile"
     "contacts"
+    "divider-bottom"
     "role"
+    "divider-lower"
     "theme"
+    "divider-final"
     "integration";
   gap: 30px;
 }
@@ -324,7 +660,19 @@ body.admin-body #userAccountView .settings-meta h4 {
 }
 
 .user-account-layout > .settings-divider:nth-of-type(3) {
+  grid-area: divider-profile;
+}
+
+.user-account-layout > .settings-divider:nth-of-type(4) {
   grid-area: divider-bottom;
+}
+
+.user-account-layout > .settings-divider:nth-of-type(5) {
+  grid-area: divider-lower;
+}
+
+.user-account-layout > .settings-divider:nth-of-type(6) {
+  grid-area: divider-final;
 }
 
 .account-section--contacts {
@@ -333,6 +681,11 @@ body.admin-body #userAccountView .settings-meta h4 {
 
 .account-section--role {
   grid-area: role;
+}
+
+.account-section--role .settings-row {
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .account-section--theme {
@@ -345,8 +698,11 @@ body.admin-body #userAccountView .settings-meta h4 {
 
 body.admin-body #userAccountView .settings-header p,
 body.admin-body #userAccountView .settings-row p,
-body.admin-body #userAccountView .settings-meta p {
-  color: #a9b6cb;
+body.admin-body #userAccountView .settings-meta p,
+body.admin-body #userAccountView .account-section p,
+body.admin-body #userAccountView .account-section h4,
+body.admin-body #userAccountView .account-section span {
+  color: #ffffff;
 }
 
 body.admin-body #userAccountView .settings-divider {
@@ -400,9 +756,12 @@ body.admin-body #userDashboardView .settings-divider {
 
 body.admin-body #userDashboardView .user-verify-text,
 body.admin-body #userDashboardView .user-car-meta span,
-body.admin-body #userDashboardView .user-quick-quote label,
 body.admin-body #userDashboardView .form-error {
   color: #a9b6cb;
+}
+
+body.admin-body #userDashboardView .user-quick-quote label {
+  color: #ffffff;
 }
 
 body.admin-body #userSettingsView .settings-panel {
@@ -707,6 +1066,7 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
   display: grid;
   grid-template-areas:
     "welcome"
+    "divider-top"
     "heading"
     "meta"
     "cards";
@@ -717,8 +1077,35 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
   grid-area: welcome;
 }
 
+.user-vehicle-layout > .settings-divider {
+  grid-area: divider-top;
+}
+
+body.admin-body #userVehicleView .settings-divider {
+  height: 3px;
+  background: #ffffff;
+}
+
+body.admin-body #userVehicleView .settings-header h2,
+body.admin-body #userVehicleView .settings-header p,
+body.admin-body #userVehicleView .user-welcome-corner,
+body.admin-body #userVehicleView .user-welcome-corner-subtitle,
+body.admin-body #userVehicleView .user-vehicle-pills span,
+body.admin-body #userVehicleView .user-vehicle-info-copy strong,
+body.admin-body #userVehicleView .user-vehicle-info-copy p,
+body.admin-body #userVehicleView .user-vehicle-info-arrow,
+body.admin-body #userVehicleView .user-vehicle-dropdown-btn,
+body.admin-body #userVehicleView .user-vehicle-dropdown-arrow {
+  color: #ffffff;
+}
+
+body.admin-body #userVehicleView .user-reg-badge {
+  color: #000000;
+}
+
 .user-vehicle-heading {
   grid-area: heading;
+  position: relative;
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 14px;
   width: 100%;
@@ -728,46 +1115,53 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
 }
 
 .user-vehicle-heading-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 20px;
+  min-height: 72px;
 }
 
-.user-vehicle-heading h2 {
+.user-vehicle-title-button {
   margin: 0;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
   color: #f7fbff;
-  font-size: clamp(2rem, 3vw, 3rem);
+  font-size: clamp(2.1rem, 3.1vw, 2.8rem);
   line-height: 1.05;
   text-transform: uppercase;
-  flex: 1;
-}
-
-.user-vehicle-selector {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-
-.user-vehicle-dropdown {
-  position: relative;
+  min-width: 0;
+  align-self: center;
 }
 
 .user-vehicle-dropdown-btn {
   appearance: none;
   border: 0;
   background: transparent;
-  color: #94a3b8;
-  font-size: 1.6rem;
-  line-height: 1;
+  display: inline-flex;
+  align-items: center;
   cursor: pointer;
   padding: 0;
+  justify-self: start;
+  align-self: center;
+}
+
+.user-reg-badge {
+  align-self: center;
+  font-size: 1.1rem;
+  padding: 10px 16px;
 }
 
 .user-vehicle-dropdown-arrow {
   display: inline-block;
+  font-size: 1.6rem;
+  line-height: 1;
 }
+
 
 .user-vehicle-dropdown-menu {
   position: absolute;
@@ -922,20 +1316,12 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
   padding: 12px;
 }
 
-.user-vehicle-heading-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-}
-
 .user-vehicle-heading h2 {
   margin: 0;
   color: #f7fbff;
   font-size: clamp(2rem, 3vw, 3rem);
   line-height: 1.05;
   text-transform: uppercase;
-  flex: 1;
 }
 
 .user-vehicle-selector {
@@ -1162,10 +1548,6 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
     grid-template-columns: 1fr;
   }
 
-  .user-vehicle-heading-top {
-    flex-direction: column;
-  }
-
   .user-vehicle-dropdown-menu {
     left: 0;
     right: auto;
@@ -1212,7 +1594,7 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
   .user-settings-layout {
     grid-template-areas:
       "welcome"
-      "header"
+      "divider"
       "subnav"
       "panel";
     grid-template-columns: 1fr;

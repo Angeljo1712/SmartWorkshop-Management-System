@@ -11,9 +11,22 @@ const getMeHandler = async (req, res) => {
   res.json(user);
 };
 
+const changePasswordHandler = async (req, res) => {
+  const { old_password, new_password } = req.body || {};
+  const result = await userService.changeUserPassword(req.user.userId, { old_password, new_password });
+  res.json(result);
+};
+
 const updateMeHandler = async (req, res) => {
-  const { name, lastname, full_name, phone, username } = req.body || {};
-  const user = await userService.updateUserProfile(req.user.userId, { name, lastname, full_name, phone, username });
+  const { name, lastname, full_name, phone, username, address } = req.body || {};
+  const user = await userService.updateUserProfile(req.user.userId, {
+    name,
+    lastname,
+    full_name,
+    phone,
+    username,
+    address
+  });
   res.json(user);
 };
 
@@ -63,6 +76,7 @@ const listMyBookingsHandler = async (req, res) => {
 
 module.exports = {
   getMeHandler,
+  changePasswordHandler,
   updateMeHandler,
   uploadAvatarHandler,
   requestEmailChangeHandler,
