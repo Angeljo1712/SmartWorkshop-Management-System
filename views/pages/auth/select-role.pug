@@ -5,20 +5,24 @@ block vars
   - var bodyClass = "auth-body"
 
 block content
-  main.auth-shell
-    a.auth-mini-brand(href="/")
-      span.logo SW
-      span SmartWorkshop
+  main.primari-shell
+    .page-shell-content
+      .role-layout
+        a.auth-mini-brand(href="/")
+          span.logo SW
+          span SmartWorkshop
 
-    section.role-picker-panel
-      h1 Choose how to continue
-      p.role-picker-sub You have access to both environments. Select where you want to enter.
+        section.role-picker-panel
+          h1 Choose how to continue
+          p.role-picker-sub You have access to both environments. Select where you want to enter.
 
-      .role-picker-grid
-        button.role-picker-card(type="button" data-role-target="CUSTOMER")
-          h2 Customer
-          p Track bookings, reminders and account details.
+          .role-picker-grid
+            button.role-picker-card(type="button" data-role-target="CUSTOMER")
+              h2 Customer
+              p Track bookings, reminders and account details.
 
-        button.role-picker-card(type="button" data-role-target="MECHANIC")
-          h2 Mechanic
-          p Manage jobs, profile and workshop settings.
+            button.role-picker-card(type="button" data-role-target="MECHANIC")
+              h2 Mechanic
+              p Manage jobs, profile and workshop settings.
+
+  include ../../partials/general-footer

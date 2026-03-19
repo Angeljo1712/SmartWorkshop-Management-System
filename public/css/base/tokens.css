@@ -5,7 +5,11 @@
   --muted: #5b677a;
   --surface: #ffffff;
   --bg: #f3f6ff;
-  --bg-app-dark: radial-gradient(circle at 10% 0%, #2a3345 0%, #161c27 38%, #11161e 100%);
+  --bg-app-dark-radial: radial-gradient(circle at top left, #2a3345 0%, #1b2330 42%, #11161e 100%);
+  --bg-app-dark: var(--bg-app-dark-radial);
+  --bg-layout-decor-solid: rgba(39, 48, 64, 0.78);
+  --bg-layout-decor-gradient: linear-gradient(180deg, rgba(29, 37, 51, 0.78) 0%, rgba(86, 102, 129, 0.34) 100%);
+  --bg-layout-decor: var(--bg-layout-decor-solid);
   --bg-surface-dark: #15181d;
   --brand-blue: #0a62d0;
   --border-light-08: rgba(255, 255, 255, 0.08);
