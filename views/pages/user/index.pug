@@ -11,7 +11,7 @@ block head
 block content
   header.main-header.general-header
     .body-content
-      .main-brand
+      a.main-brand(href="/")
         span.main-logo SW
         div
           strong SmartWorkshop
@@ -20,7 +20,7 @@ block content
   main.primari-shell#userPage
     .page-shell-content
       section.user-layout
-          aside.admin-rail
+          aside.user-rail
             .rail-brand
               span.logo SW
             nav.rail-nav
@@ -263,6 +263,73 @@ block content
                     .user-booking-photos#userBookingsPhotos
                       h4 Photos
                       p.user-booking-empty#userBookingsPhotosEmpty No booking photos available.
+
+                  .bookings-section.bookings-section--resolution.is-hidden#userResolutionOverview
+                    .user-resolution-layout
+                      .mechanic-resolution-card
+                        .mechanic-resolution-card-header Current cases
+                        .mechanic-resolution-table
+                          .mechanic-resolution-table-head
+                            span Status
+                            span Reference
+                            span Updated at
+                            span Subject
+                            span
+                          #userResolutionCasesTable
+
+                  .bookings-section.bookings-section--resolution.is-hidden#userResolutionMessageView
+                    .mechanic-resolution-detail
+                      .mechanic-resolution-detail-head
+                        button.mechanic-resolution-back#userResolutionBackBtn(type="button") Back
+                        h3#userResolutionDetailTitle Message mechanic regarding booking
+                      .mechanic-resolution-card
+                        .mechanic-resolution-field
+                          label(for="userResolutionIssue") Please select your issue from the list below:
+                          select#userResolutionIssue
+                            option(value="general" selected) Message mechanic
+                            option(value="complaint") Complaint
+                        p.mechanic-resolution-notice#userResolutionNotice No case has been created for this booking yet.
+                        button.primary#userResolutionGoToCase(type="button") Go to case
+                      .mechanic-resolution-card
+                        .mechanic-resolution-card-header#userResolutionCaseListTitle Resolution cases already created for booking
+                        .mechanic-resolution-table
+                          .mechanic-resolution-table-head
+                            span Status
+                            span Reference
+                            span Updated at
+                            span Subject
+                            span
+                          #userResolutionBookingCasesTable
+
+                  .bookings-section.bookings-section--resolution.is-hidden#userResolutionCaseView
+                    .mechanic-resolution-case-view
+                      .mechanic-resolution-case
+                        .mechanic-resolution-detail-head
+                          button.mechanic-resolution-back#userResolutionCaseBackBtn(type="button") Back
+                          h3#userResolutionCaseTitle General Enquiry
+                        .mechanic-resolution-thread#userResolutionMessages
+                        .mechanic-resolution-compose
+                          textarea#userResolutionMessageInput(rows="5" placeholder="Add a new message here")
+                          .mechanic-resolution-compose-actions
+                            button.primary#userResolutionSendBtn(type="button") Send message
+                      aside.mechanic-resolution-sidebar
+                        .mechanic-resolution-sidebar-card
+                          h4#userResolutionSidebarTitle Current status of booking
+                          .mechanic-resolution-sidebar-row
+                            strong Mechanic
+                            span#userResolutionSidebarMechanic -
+                          .mechanic-resolution-sidebar-row
+                            strong Car
+                            span#userResolutionSidebarCar -
+                          .mechanic-resolution-sidebar-row
+                            strong Address
+                            span#userResolutionSidebarAddress -
+                          .mechanic-resolution-sidebar-row
+                            strong Work
+                            span#userResolutionSidebarWork -
+                          .mechanic-resolution-sidebar-row
+                            strong Total Price
+                            span#userResolutionSidebarTotal -
 
             section.admin-view.is-hidden#userSettingsView
               .settings-card.user-settings-card

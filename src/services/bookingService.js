@@ -321,6 +321,26 @@ const payDraft = async ({ session_id, provider = "mock", currency = "GBP" }) => 
     );
   }
 
+  const [mechanicRows] = await pool.query(
+    `SELECT DISTINCT u.id
+     FROM users u
+     LEFT JOIN user_roles ur ON ur.user_id = u.id
+     WHERE u.status = 'active'
+       AND (
+         LOWER(u.role) = 'mechanic'
+         OR LOWER(ur.role) = 'mechanic'
+       )`
+  );
+
+  if (mechanicRows.length) {
+    const offerValues = mechanicRows.map((row) => [bookingResult.insertId, row.id]);
+    await pool.query(
+      `INSERT INTO booking_offers (booking_id, mechanic_id)
+       VALUES ?`,
+      [offerValues]
+    );
+  }
+
   await pool.query(
     `UPDATE booking_drafts
      SET payment_status = ?, payment_provider = ?, payment_amount_eur = ?, payment_currency = ?

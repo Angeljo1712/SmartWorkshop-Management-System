@@ -1,5 +1,5 @@
 const express = require("express");
-const { authenticate } = require("../middlewares/auth");
+const { authenticate, authorizeRoles } = require("../middlewares/auth");
 const { asyncHandler } = require("../utils/asyncHandler");
 const { uploadAvatar } = require("../middlewares/upload");
 const {
@@ -12,7 +12,22 @@ const {
   listMyVehiclesHandler,
   addMyVehicleHandler,
   deleteMyVehicleHandler,
-  listMyBookingsHandler
+  listMyBookingsHandler,
+  listMyMechanicOffersHandler,
+  listMyMechanicAssignedBookingsHandler,
+  listMyMechanicServiceCoverageHandler,
+  listMyResolutionCasesHandler,
+  openMyResolutionCaseHandler,
+  getMyResolutionCaseHandler,
+  addMyResolutionMessageHandler,
+  listMyMechanicResolutionCasesHandler,
+  openMyMechanicResolutionCaseHandler,
+  getMyMechanicResolutionCaseHandler,
+  addMyMechanicResolutionMessageHandler,
+  getMyMechanicProfileHandler,
+  updateMyMechanicProfileHandler,
+  updateMyMechanicServiceCoverageHandler,
+  respondMyMechanicOfferHandler
 } = require("../controllers/userController");
 
 const router = express.Router();
@@ -26,6 +41,26 @@ router.get("/me/vehicles", authenticate, asyncHandler(listMyVehiclesHandler));
 router.post("/me/vehicles", authenticate, asyncHandler(addMyVehicleHandler));
 router.delete("/me/vehicles/:registrationNumber", authenticate, asyncHandler(deleteMyVehicleHandler));
 router.get("/me/bookings", authenticate, asyncHandler(listMyBookingsHandler));
+router.get("/me/resolution-cases", authenticate, asyncHandler(listMyResolutionCasesHandler));
+router.post("/me/resolution-cases", authenticate, asyncHandler(openMyResolutionCaseHandler));
+router.get("/me/resolution-cases/:caseId", authenticate, asyncHandler(getMyResolutionCaseHandler));
+router.post("/me/resolution-cases/:caseId/messages", authenticate, asyncHandler(addMyResolutionMessageHandler));
+router.get("/me/mechanic-offers", authenticate, authorizeRoles("MECHANIC"), asyncHandler(listMyMechanicOffersHandler));
+router.get("/me/mechanic-bookings", authenticate, authorizeRoles("MECHANIC"), asyncHandler(listMyMechanicAssignedBookingsHandler));
+router.get("/me/mechanic-service-coverage", authenticate, authorizeRoles("MECHANIC"), asyncHandler(listMyMechanicServiceCoverageHandler));
+router.get("/me/mechanic-resolution-cases", authenticate, authorizeRoles("MECHANIC"), asyncHandler(listMyMechanicResolutionCasesHandler));
+router.post("/me/mechanic-resolution-cases", authenticate, authorizeRoles("MECHANIC"), asyncHandler(openMyMechanicResolutionCaseHandler));
+router.get("/me/mechanic-resolution-cases/:caseId", authenticate, authorizeRoles("MECHANIC"), asyncHandler(getMyMechanicResolutionCaseHandler));
+router.post("/me/mechanic-resolution-cases/:caseId/messages", authenticate, authorizeRoles("MECHANIC"), asyncHandler(addMyMechanicResolutionMessageHandler));
+router.get("/me/mechanic-profile", authenticate, authorizeRoles("MECHANIC"), asyncHandler(getMyMechanicProfileHandler));
+router.patch("/me/mechanic-profile", authenticate, authorizeRoles("MECHANIC"), asyncHandler(updateMyMechanicProfileHandler));
+router.patch("/me/mechanic-service-coverage", authenticate, authorizeRoles("MECHANIC"), asyncHandler(updateMyMechanicServiceCoverageHandler));
+router.post(
+  "/me/mechanic-offers/:offerId/respond",
+  authenticate,
+  authorizeRoles("MECHANIC"),
+  asyncHandler(respondMyMechanicOfferHandler)
+);
 router.get("/confirm-email", asyncHandler(confirmEmailChangeHandler));
 
 module.exports = router;

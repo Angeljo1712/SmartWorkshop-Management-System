@@ -1,12 +1,16 @@
 extends ../../layouts/main
 
 block vars
-  - var title = "SmartWorkshop - Edit Profile"
+  - var title = "SmartWorkshop - Mechanic Profile"
   - var bodyClass = "mechanic-edit-body"
   - var activePage = "profile"
-  - var years = profile && profile.years_experience ? profile.years_experience : ""
-  - var history = profile && profile.work_history ? profile.work_history : ""
-  - var memberships = profile && profile.memberships ? profile.memberships : []
+  - var profileName = profile && profile.name ? profile.name : "Mechanic"
+  - var profileLocation = profile && profile.location ? profile.location : "Surrey"
+  - var activeSince = profile && profile.created_at ? new Date(profile.created_at).toLocaleString("en-GB", { month: "long", year: "numeric" }) : "February 2026"
+  - var qualifications = profile && profile.qualifications && profile.qualifications.length ? profile.qualifications : ["NVQ Level 3 Qualified"]
+  - var yearsExperience = profile && profile.years_experience ? profile.years_experience : 5
+  - var jobsDone = profile && profile.jobs_done ? profile.jobs_done : 0
+  - var workHistory = profile && profile.work_history ? profile.work_history : "Add your work history to show customers the experience behind your profile."
 
 block head
   link(rel="stylesheet" href="/css/pages/mechanic-edit.css")
@@ -14,7 +18,7 @@ block head
 block content
   header.main-header.general-header
     .header-content
-      .main-brand
+      a.main-brand(href="/")
         span.main-logo SW
         div
           strong SmartWorkshop
@@ -23,64 +27,33 @@ block content
   main.mechanic-edit-shell.primari-shell
     include ./partials/edit-nav.pug
 
-    section.mechanic-edit-main
-      .edit-card
-        h3 ClickMechanic tip
-        p.subtle
-          | Adding a link to your ClickMechanic profile on your website helps customers find you faster.
-      form(method="post" action=`/mechanic/${mechanicId}/profile`)
-        .edit-card
-          h3 Technical skills
-          label
-            span Years as a mechanic
-            input(type="number" name="years_experience" min="0" placeholder="0" value=years)
-          label
-            span Work history
-            textarea(name="work_history" rows="4" placeholder="Tell us about your work history.")= history
+    section.mechanic-edit-main.mechanic-profile-preview
+      .mechanic-profile-view-layout
+        aside.mechanic-profile-view-sidebar
+          .mechanic-profile-avatar-card
+            .mechanic-profile-avatar
+              if profile && profile.avatar_url
+                img(src=profile.avatar_url alt="Profile photo")
+              else
+                span 🔧
+          button.primary.mechanic-profile-cta(type="button") Get A Quote
+          .mechanic-profile-info-card
+            span (#{jobsDone} ratings)
+            ul
+              li #{yearsExperience} years professional experience
+              li Active since #{activeSince}
+          .mechanic-profile-info-card
+            h4 Qualifications
+            ul
+              each q in qualifications
+                li= q
 
-        .edit-card
-          h3 Address and coverage
-          p.section-label Contact address
-          label
-            span Address line 1
-            input(type="text")
-          label
-            span Address line 2
-            input(type="text")
-          label
-            span City
-            input(type="text")
-          label
-            span Postcode
-            input(type="text")
-          p.section-label Premises address
-          label.checkbox
-            input(type="checkbox")
-            | Same as contact address
-          label
-            span Travel radius (miles)
-            input(type="number" min="0" value="5")
-
-        .edit-card
-          h3 What kind of service do you offer? (tick all that apply)
-          label.checkbox
-            input(type="checkbox")
-            | Mobile mechanic service
-          label.checkbox
-            input(type="checkbox")
-            | Customer drop off
-          label.checkbox
-            input(type="checkbox")
-            | Collection and delivery
-          h3 Memberships
-          .form-row
-            label.checkbox
-              input(type="checkbox" name="memberships" value="IMI" checked=memberships.includes("IMI"))
-              | IMI
-            label.checkbox
-              input(type="checkbox" name="memberships" value="AA Approved" checked=memberships.includes("AA Approved"))
-              | AA Approved
-            label.checkbox
-              input(type="checkbox" name="memberships" value="RAC Approved" checked=memberships.includes("RAC Approved"))
-              | RAC Approved
-          button.primary(type="submit") Save
+        section.mechanic-profile-view-main
+          h1 #{profileName}, #{profileLocation} | ClickMechanic
+          .mechanic-profile-tabs
+            button.active(type="button") Area Covered
+          .mechanic-profile-map
+            .map-placeholder Map area preview
+          .mechanic-profile-about
+            h3 Work history
+            p= workHistory

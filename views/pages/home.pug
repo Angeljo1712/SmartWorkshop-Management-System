@@ -19,7 +19,17 @@ block content
         a.home-pill(href="#partner") Partner
         a.home-pill(href="#review") Review
         a.home-pill(href="#contact") Contact
-      a.home-signin(href="/auth/login") Sign in
+      a.home-signin#homeSessionLink(href="/auth/login") Sign in
+      .home-session-menu.is-hidden#homeSessionMenu
+        button.home-session-menu-btn#homeSessionMenuBtn(type="button" aria-expanded="false")
+          span#homeSessionMenuName Account
+          span.home-session-menu-arrow ▾
+        .home-session-menu-panel.is-hidden#homeSessionMenuPanel
+          button.home-session-menu-item(type="button" data-view="dashboard") Dashboard
+          button.home-session-menu-item(type="button" data-view="account") Account
+          button.home-session-menu-item(type="button" data-view="vehicle") Vehicle
+          button.home-session-menu-item(type="button" data-view="bookings") Bookings
+          button.home-session-menu-item(type="button" data-view="settings") Settings
 
   main.home-main.primari-shell
     section.home-hero#home

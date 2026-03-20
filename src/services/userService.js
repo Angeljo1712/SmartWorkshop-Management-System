@@ -1,4 +1,5 @@
 const { pool } = require("../config/pool");
+const { env } = require("../config/env");
 const { AppError } = require("../utils/appError");
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
@@ -18,7 +19,8 @@ const formatAddressRow = (row) =>
 
 const getLatestAddress = async (userId) => {
   const [rows] = await pool.query(
-    `SELECT line1, line2, city, postal_code, country
+    `SELECT line1, line2, city, postal_code, country,
+            ST_Y(location) AS lat, ST_X(location) AS lng
      FROM addresses
      WHERE user_id = ?
      ORDER BY id DESC
@@ -26,6 +28,88 @@ const getLatestAddress = async (userId) => {
     [userId]
   );
   return rows[0] || null;
+};
+
+const getAddressByLabel = async (userId, label) => {
+  const [rows] = await pool.query(
+    `SELECT id, line1, line2, city, postal_code, country,
+            ST_Y(location) AS lat, ST_X(location) AS lng
+     FROM addresses
+     WHERE user_id = ? AND label = ?
+     ORDER BY id DESC
+     LIMIT 1`,
+    [userId, label]
+  );
+  return rows[0] || null;
+};
+
+const geocodeAddress = async ({ line1, line2, city, postal_code, country }) => {
+  const normalizedLine1 = String(line1 || "").trim();
+  const normalizedLine2 = String(line2 || "").trim();
+  const normalizedCity = String(city || "").trim();
+  const normalizedPostcode = String(postal_code || "").trim().replace(/\s+/g, " ");
+  const normalizedCountry = String(country || "").trim() || "GB";
+
+  const queries = [
+    [normalizedLine1, normalizedLine2, normalizedCity, normalizedPostcode, normalizedCountry],
+    [normalizedLine1, normalizedCity, normalizedPostcode, normalizedCountry],
+    [normalizedPostcode, normalizedCity, normalizedCountry],
+    [normalizedPostcode, normalizedCountry]
+  ]
+    .map((parts) => parts.filter((value) => String(value || "").trim()).join(", "))
+    .filter(Boolean);
+
+  if (!queries.length || typeof fetch !== "function") {
+    return null;
+  }
+
+  if (env.geoapify.apiKey) {
+    for (const rawQuery of queries) {
+      const query = encodeURIComponent(rawQuery);
+      try {
+        const response = await fetch(
+          `https://api.geoapify.com/v1/geocode/search?text=${query}&limit=1&format=json&apiKey=${encodeURIComponent(env.geoapify.apiKey)}`,
+          {
+            headers: {
+              "User-Agent": "SmartWorkshop/1.0"
+            }
+          }
+        );
+        if (!response.ok) continue;
+        const results = await response.json();
+        const match = Array.isArray(results?.results) ? results.results[0] : null;
+        const lat = Number(match?.lat);
+        const lng = Number(match?.lon);
+        if (Number.isFinite(lat) && Number.isFinite(lng)) {
+          return { lat, lng };
+        }
+      } catch {
+        continue;
+      }
+    }
+  }
+
+  for (const rawQuery of queries) {
+    const query = encodeURIComponent(rawQuery);
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=jsonv2&limit=1`, {
+        headers: {
+          "User-Agent": "SmartWorkshop/1.0"
+        }
+      });
+      if (!response.ok) continue;
+      const results = await response.json();
+      const match = Array.isArray(results) ? results[0] : null;
+      const lat = Number(match?.lat);
+      const lng = Number(match?.lon);
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        return { lat, lng };
+      }
+    } catch {
+      continue;
+    }
+  }
+  return null;
 };
 
 const getUserById = async (userId) => {
@@ -422,6 +506,897 @@ const listUserBookings = async (userId) => {
   });
 };
 
+const listMechanicBookingOffers = async (mechanicId) => {
+  const [rows] = await pool.query(
+    `SELECT bo.id,
+            bo.status AS offer_status,
+            bo.sent_at,
+            bo.responded_at,
+            b.id AS booking_id,
+            BIN_TO_UUID(b.uuid_public) AS booking_uuid_public,
+            b.status AS booking_status,
+            b.notes,
+            b.total_eur,
+            b.created_at,
+            a.line1,
+            a.line2,
+            a.city,
+            a.postal_code,
+            a.country,
+            v.license_plate,
+            v.make,
+            v.model,
+            v.year,
+            up.name AS customer_name,
+            up.lastname AS customer_lastname,
+            u.email AS customer_email
+     FROM booking_offers bo
+     INNER JOIN bookings b ON b.id = bo.booking_id
+     INNER JOIN users u ON u.id = b.customer_id
+     LEFT JOIN user_profiles up ON up.user_id = b.customer_id
+     LEFT JOIN addresses a ON a.id = b.address_id
+     LEFT JOIN vehicles v ON v.id = b.vehicle_id
+     WHERE bo.mechanic_id = ?
+     ORDER BY
+       CASE bo.status
+         WHEN 'pending' THEN 0
+         WHEN 'accepted' THEN 1
+         WHEN 'declined' THEN 2
+         WHEN 'expired' THEN 3
+         ELSE 4
+       END,
+       bo.sent_at DESC`,
+    [mechanicId]
+  );
+
+  if (!rows.length) return [];
+
+  const bookingIds = [...new Set(rows.map((row) => row.booking_id))];
+  const [itemRows] = await pool.query(
+    `SELECT bi.booking_id,
+            sc.name,
+            bi.labour_minutes,
+            bi.line_total_eur
+     FROM booking_items bi
+     INNER JOIN service_catalog sc ON sc.id = bi.service_id
+     WHERE bi.booking_id IN (?)`,
+    [bookingIds]
+  );
+
+  const itemsByBooking = new Map();
+  itemRows.forEach((row) => {
+    const list = itemsByBooking.get(row.booking_id) || [];
+    list.push({
+      name: row.name,
+      labour_minutes: row.labour_minutes,
+      line_total_eur: Number(row.line_total_eur || 0)
+    });
+    itemsByBooking.set(row.booking_id, list);
+  });
+
+  return rows.map((row) => ({
+    offer_id: row.id,
+    status: row.offer_status,
+    sent_at: row.sent_at,
+    responded_at: row.responded_at,
+    booking: {
+      id: row.booking_id,
+      uuid_public: row.booking_uuid_public,
+      reference: String(row.booking_id),
+      status: row.booking_status,
+      notes: row.notes || "",
+      total_eur: Number(row.total_eur || 0),
+      created_at: row.created_at
+    },
+    customer: {
+      name: [row.customer_name, row.customer_lastname].filter(Boolean).join(" ") || "Customer",
+      email: row.customer_email || ""
+    },
+    vehicle: {
+      registrationNumber: row.license_plate || "",
+      make: row.make || "",
+      model: row.model || "",
+      yearOfManufacture: row.year || null
+    },
+    address: {
+      line1: row.line1 || "",
+      line2: row.line2 || "",
+      city: row.city || "",
+      postal_code: row.postal_code || "",
+      country: row.country || ""
+    },
+    items: itemsByBooking.get(row.booking_id) || []
+  }));
+};
+
+const listMechanicAssignedBookings = async (mechanicId) => {
+  const [rows] = await pool.query(
+    `SELECT b.id AS booking_id,
+            BIN_TO_UUID(b.uuid_public) AS booking_uuid_public,
+            b.status AS booking_status,
+            b.total_eur,
+            b.created_at,
+            a.line1,
+            a.line2,
+            a.city,
+            a.postal_code,
+            a.country,
+            v.license_plate,
+            v.make,
+            v.model,
+            v.year,
+            up.name AS customer_name,
+            up.lastname AS customer_lastname,
+            u.email AS customer_email
+     FROM bookings b
+     INNER JOIN users u ON u.id = b.customer_id
+     LEFT JOIN user_profiles up ON up.user_id = b.customer_id
+     LEFT JOIN addresses a ON a.id = b.address_id
+     LEFT JOIN vehicles v ON v.id = b.vehicle_id
+     WHERE b.mechanic_id = ?
+     ORDER BY b.created_at DESC`,
+    [mechanicId]
+  );
+
+  if (!rows.length) return [];
+
+  const bookingIds = rows.map((row) => row.booking_id);
+  const [itemRows] = await pool.query(
+    `SELECT bi.booking_id, sc.name, bi.labour_minutes, bi.line_total_eur
+     FROM booking_items bi
+     INNER JOIN service_catalog sc ON sc.id = bi.service_id
+     WHERE bi.booking_id IN (?)`,
+    [bookingIds]
+  );
+  const itemsByBooking = new Map();
+  itemRows.forEach((row) => {
+    const list = itemsByBooking.get(row.booking_id) || [];
+    list.push({
+      name: row.name,
+      labour_minutes: row.labour_minutes,
+      line_total_eur: Number(row.line_total_eur || 0)
+    });
+    itemsByBooking.set(row.booking_id, list);
+  });
+
+  return rows.map((row) => ({
+    booking: {
+      id: row.booking_id,
+      reference: String(row.booking_id),
+      uuid_public: row.booking_uuid_public,
+      status: row.booking_status,
+      total_eur: Number(row.total_eur || 0),
+      created_at: row.created_at
+    },
+    customer: {
+      name: [row.customer_name, row.customer_lastname].filter(Boolean).join(" ") || "Customer",
+      email: row.customer_email || ""
+    },
+    vehicle: {
+      registrationNumber: row.license_plate || "",
+      make: row.make || "",
+      model: row.model || "",
+      yearOfManufacture: row.year || null
+    },
+    address: {
+      line1: row.line1 || "",
+      line2: row.line2 || "",
+      city: row.city || "",
+      postal_code: row.postal_code || "",
+      country: row.country || ""
+    },
+    items: itemsByBooking.get(row.booking_id) || []
+  }));
+};
+
+const listMechanicResolutionCases = async (mechanicId, { bookingId } = {}) => {
+  const params = [mechanicId];
+  let bookingFilter = "";
+  if (Number.isInteger(Number(bookingId)) && Number(bookingId) > 0) {
+    bookingFilter = " AND rc.booking_id = ? ";
+    params.push(Number(bookingId));
+  }
+  const [rows] = await pool.query(
+    `SELECT rc.id, rc.booking_id, rc.case_type, rc.subject, rc.reference, rc.status, rc.updated_at,
+            b.total_eur,
+            v.license_plate, v.make, v.model, v.year,
+            a.line1, a.line2, a.city, a.postal_code, a.country,
+            up.name AS customer_name, up.lastname AS customer_lastname, u.email AS customer_email
+     FROM resolution_cases rc
+     INNER JOIN bookings b ON b.id = rc.booking_id
+     INNER JOIN users u ON u.id = rc.customer_id
+     LEFT JOIN user_profiles up ON up.user_id = rc.customer_id
+     LEFT JOIN addresses a ON a.id = b.address_id
+     LEFT JOIN vehicles v ON v.id = b.vehicle_id
+     WHERE rc.mechanic_id = ? ${bookingFilter}
+     ORDER BY rc.updated_at DESC`,
+    params
+  );
+  return rows.map((row) => ({
+    id: row.id,
+    booking_id: row.booking_id,
+    type: row.case_type,
+    subject: row.subject,
+    reference: row.reference,
+    status: row.status,
+    updated_at: row.updated_at,
+    booking: {
+      id: row.booking_id,
+      reference: String(row.booking_id),
+      total_eur: Number(row.total_eur || 0)
+    },
+    customer: {
+      name: [row.customer_name, row.customer_lastname].filter(Boolean).join(" ") || "Customer",
+      email: row.customer_email || ""
+    },
+    vehicle: {
+      registrationNumber: row.license_plate || "",
+      make: row.make || "",
+      model: row.model || "",
+      yearOfManufacture: row.year || null
+    },
+    address: {
+      line1: row.line1 || "",
+      line2: row.line2 || "",
+      city: row.city || "",
+      postal_code: row.postal_code || "",
+      country: row.country || ""
+    }
+  }));
+};
+
+const listUserResolutionCases = async (userId, { bookingId } = {}) => {
+  const params = [userId];
+  let bookingFilter = "";
+  if (Number.isInteger(Number(bookingId)) && Number(bookingId) > 0) {
+    bookingFilter = " AND rc.booking_id = ? ";
+    params.push(Number(bookingId));
+  }
+  const [rows] = await pool.query(
+    `SELECT rc.id, rc.booking_id, rc.case_type, rc.subject, rc.reference, rc.status, rc.updated_at,
+            b.total_eur,
+            v.license_plate, v.make, v.model, v.year,
+            a.line1, a.line2, a.city, a.postal_code, a.country,
+            up.name AS mechanic_name, up.lastname AS mechanic_lastname, u.email AS mechanic_email
+     FROM resolution_cases rc
+     INNER JOIN bookings b ON b.id = rc.booking_id
+     INNER JOIN users u ON u.id = rc.mechanic_id
+     LEFT JOIN user_profiles up ON up.user_id = rc.mechanic_id
+     LEFT JOIN addresses a ON a.id = b.address_id
+     LEFT JOIN vehicles v ON v.id = b.vehicle_id
+     WHERE rc.customer_id = ? ${bookingFilter}
+     ORDER BY rc.updated_at DESC`,
+    params
+  );
+  return rows.map((row) => ({
+    id: row.id,
+    booking_id: row.booking_id,
+    type: row.case_type,
+    subject: row.subject,
+    reference: row.reference,
+    status: row.status,
+    updated_at: row.updated_at,
+    booking: {
+      id: row.booking_id,
+      reference: String(row.booking_id),
+      total_eur: Number(row.total_eur || 0)
+    },
+    mechanic: {
+      name: [row.mechanic_name, row.mechanic_lastname].filter(Boolean).join(" ") || "Mechanic",
+      email: row.mechanic_email || ""
+    },
+    vehicle: {
+      registrationNumber: row.license_plate || "",
+      make: row.make || "",
+      model: row.model || "",
+      yearOfManufacture: row.year || null
+    },
+    address: {
+      line1: row.line1 || "",
+      line2: row.line2 || "",
+      city: row.city || "",
+      postal_code: row.postal_code || "",
+      country: row.country || ""
+    }
+  }));
+};
+
+const openUserResolutionCase = async (userId, { booking_id, type }) => {
+  const bookingId = Number(booking_id);
+  const caseType = String(type || "general").trim().toLowerCase();
+  if (!Number.isInteger(bookingId) || bookingId <= 0) {
+    throw new AppError("VALIDATION_ERROR", "booking_id is required", 400);
+  }
+  if (!["general", "complaint"].includes(caseType)) {
+    throw new AppError("VALIDATION_ERROR", "type must be general or complaint", 400);
+  }
+
+  const [bookingRows] = await pool.query(
+    `SELECT id, mechanic_id
+     FROM bookings
+     WHERE id = ? AND customer_id = ?`,
+    [bookingId, userId]
+  );
+  const booking = bookingRows[0];
+  if (!booking) {
+    throw new AppError("NOT_FOUND", "Booking not found for this customer", 404);
+  }
+  if (!booking.mechanic_id) {
+    throw new AppError("VALIDATION_ERROR", "This booking has no assigned mechanic yet", 400);
+  }
+
+  const [existingRows] = await pool.query(
+    `SELECT id FROM resolution_cases
+     WHERE booking_id = ? AND customer_id = ? AND case_type = ? AND status = 'open'
+     ORDER BY id DESC
+     LIMIT 1`,
+    [bookingId, userId, caseType]
+  );
+  const existing = existingRows[0];
+  if (existing) return existing.id;
+
+  const [countRows] = await pool.query(
+    "SELECT COALESCE(MAX(sequence_no), 0) AS max_sequence FROM resolution_cases WHERE booking_id = ?",
+    [bookingId]
+  );
+  const nextSequence = Number(countRows[0]?.max_sequence || 0) + 1;
+  const reference = `${bookingId}/${nextSequence}`;
+  const subject = caseType === "complaint" ? "Complaint" : "General Enquiry";
+
+  const [result] = await pool.query(
+    `INSERT INTO resolution_cases (booking_id, mechanic_id, customer_id, case_type, subject, sequence_no, reference, status)
+     VALUES (?, ?, ?, ?, ?, ?, ?, 'open')`,
+    [bookingId, booking.mechanic_id, userId, caseType, subject, nextSequence, reference]
+  );
+  return result.insertId;
+};
+
+const getUserResolutionCaseDetail = async (userId, caseId) => {
+  const id = Number(caseId);
+  if (!Number.isInteger(id) || id <= 0) {
+    throw new AppError("VALIDATION_ERROR", "caseId is invalid", 400);
+  }
+
+  const [rows] = await pool.query(
+    `SELECT rc.id, rc.booking_id, rc.case_type, rc.subject, rc.reference, rc.status, rc.updated_at,
+            b.total_eur, b.created_at,
+            v.license_plate, v.make, v.model, v.year,
+            a.line1, a.line2, a.city, a.postal_code, a.country,
+            up.name AS mechanic_name, up.lastname AS mechanic_lastname, u.email AS mechanic_email
+     FROM resolution_cases rc
+     INNER JOIN bookings b ON b.id = rc.booking_id
+     INNER JOIN users u ON u.id = rc.mechanic_id
+     LEFT JOIN user_profiles up ON up.user_id = rc.mechanic_id
+     LEFT JOIN addresses a ON a.id = b.address_id
+     LEFT JOIN vehicles v ON v.id = b.vehicle_id
+     WHERE rc.id = ? AND rc.customer_id = ?
+     LIMIT 1`,
+    [id, userId]
+  );
+  const row = rows[0];
+  if (!row) {
+    throw new AppError("NOT_FOUND", "Resolution case not found", 404);
+  }
+
+  const [itemRows] = await pool.query(
+    `SELECT sc.name, bi.labour_minutes, bi.line_total_eur
+     FROM booking_items bi
+     INNER JOIN service_catalog sc ON sc.id = bi.service_id
+     WHERE bi.booking_id = ?`,
+    [row.booking_id]
+  );
+  const [messageRows] = await pool.query(
+    `SELECT rcm.id, rcm.body, rcm.created_at, rcm.sender_id,
+            up.name, up.lastname, u.email
+     FROM resolution_case_messages rcm
+     INNER JOIN users u ON u.id = rcm.sender_id
+     LEFT JOIN user_profiles up ON up.user_id = rcm.sender_id
+     WHERE rcm.case_id = ?
+     ORDER BY rcm.created_at ASC`,
+    [id]
+  );
+
+  return {
+    id: row.id,
+    booking_id: row.booking_id,
+    type: row.case_type,
+    subject: row.subject,
+    reference: row.reference,
+    status: row.status,
+    updated_at: row.updated_at,
+    booking: {
+      id: row.booking_id,
+      reference: String(row.booking_id),
+      total_eur: Number(row.total_eur || 0),
+      created_at: row.created_at
+    },
+    mechanic: {
+      name: [row.mechanic_name, row.mechanic_lastname].filter(Boolean).join(" ") || "Mechanic",
+      email: row.mechanic_email || ""
+    },
+    vehicle: {
+      registrationNumber: row.license_plate || "",
+      make: row.make || "",
+      model: row.model || "",
+      yearOfManufacture: row.year || null
+    },
+    address: {
+      line1: row.line1 || "",
+      line2: row.line2 || "",
+      city: row.city || "",
+      postal_code: row.postal_code || "",
+      country: row.country || ""
+    },
+    items: itemRows.map((item) => ({
+      name: item.name,
+      labour_minutes: item.labour_minutes,
+      line_total_eur: Number(item.line_total_eur || 0)
+    })),
+    messages: messageRows.map((message) => ({
+      id: message.id,
+      body: message.body,
+      created_at: message.created_at,
+      sender_id: message.sender_id,
+      sender_name: [message.name, message.lastname].filter(Boolean).join(" ") || message.email || "User",
+      sender_role: message.sender_id === userId ? "customer" : "mechanic"
+    }))
+  };
+};
+
+const addUserResolutionMessage = async (userId, caseId, body) => {
+  const text = String(body || "").trim();
+  if (!text) {
+    throw new AppError("VALIDATION_ERROR", "message is required", 400);
+  }
+  await getUserResolutionCaseDetail(userId, caseId);
+  await pool.query(
+    "INSERT INTO resolution_case_messages (case_id, sender_id, body) VALUES (?, ?, ?)",
+    [Number(caseId), userId, text]
+  );
+  return getUserResolutionCaseDetail(userId, caseId);
+};
+
+const openMechanicResolutionCase = async (mechanicId, { booking_id, type }) => {
+  const bookingId = Number(booking_id);
+  const caseType = String(type || "general").trim().toLowerCase();
+  if (!Number.isInteger(bookingId) || bookingId <= 0) {
+    throw new AppError("VALIDATION_ERROR", "booking_id is required", 400);
+  }
+  if (!["general", "complaint"].includes(caseType)) {
+    throw new AppError("VALIDATION_ERROR", "type must be general or complaint", 400);
+  }
+
+  const [bookingRows] = await pool.query(
+    `SELECT id, customer_id
+     FROM bookings
+     WHERE id = ? AND mechanic_id = ?`,
+    [bookingId, mechanicId]
+  );
+  const booking = bookingRows[0];
+  if (!booking) {
+    throw new AppError("NOT_FOUND", "Booking not found for this mechanic", 404);
+  }
+
+  const [existingRows] = await pool.query(
+    `SELECT id FROM resolution_cases
+     WHERE booking_id = ? AND mechanic_id = ? AND case_type = ? AND status = 'open'
+     ORDER BY id DESC
+     LIMIT 1`,
+    [bookingId, mechanicId, caseType]
+  );
+  const existing = existingRows[0];
+  if (existing) {
+    return existing.id;
+  }
+
+  const [countRows] = await pool.query(
+    "SELECT COALESCE(MAX(sequence_no), 0) AS max_sequence FROM resolution_cases WHERE booking_id = ?",
+    [bookingId]
+  );
+  const nextSequence = Number(countRows[0]?.max_sequence || 0) + 1;
+  const reference = `${bookingId}/${nextSequence}`;
+  const subject = caseType === "complaint" ? "Complaint" : "General Enquiry";
+
+  const [result] = await pool.query(
+    `INSERT INTO resolution_cases (booking_id, mechanic_id, customer_id, case_type, subject, sequence_no, reference, status)
+     VALUES (?, ?, ?, ?, ?, ?, ?, 'open')`,
+    [bookingId, mechanicId, booking.customer_id, caseType, subject, nextSequence, reference]
+  );
+  return result.insertId;
+};
+
+const getMechanicResolutionCaseDetail = async (mechanicId, caseId) => {
+  const id = Number(caseId);
+  if (!Number.isInteger(id) || id <= 0) {
+    throw new AppError("VALIDATION_ERROR", "caseId is invalid", 400);
+  }
+
+  const [rows] = await pool.query(
+    `SELECT rc.id, rc.booking_id, rc.case_type, rc.subject, rc.reference, rc.status, rc.updated_at,
+            b.total_eur, b.created_at,
+            v.license_plate, v.make, v.model, v.year,
+            a.line1, a.line2, a.city, a.postal_code, a.country,
+            up.name AS customer_name, up.lastname AS customer_lastname, u.email AS customer_email
+     FROM resolution_cases rc
+     INNER JOIN bookings b ON b.id = rc.booking_id
+     INNER JOIN users u ON u.id = rc.customer_id
+     LEFT JOIN user_profiles up ON up.user_id = rc.customer_id
+     LEFT JOIN addresses a ON a.id = b.address_id
+     LEFT JOIN vehicles v ON v.id = b.vehicle_id
+     WHERE rc.id = ? AND rc.mechanic_id = ?
+     LIMIT 1`,
+    [id, mechanicId]
+  );
+  const row = rows[0];
+  if (!row) {
+    throw new AppError("NOT_FOUND", "Resolution case not found", 404);
+  }
+
+  const [itemRows] = await pool.query(
+    `SELECT sc.name, bi.labour_minutes, bi.line_total_eur
+     FROM booking_items bi
+     INNER JOIN service_catalog sc ON sc.id = bi.service_id
+     WHERE bi.booking_id = ?`,
+    [row.booking_id]
+  );
+  const [messageRows] = await pool.query(
+    `SELECT rcm.id, rcm.body, rcm.created_at, rcm.sender_id,
+            up.name, up.lastname, u.email
+     FROM resolution_case_messages rcm
+     INNER JOIN users u ON u.id = rcm.sender_id
+     LEFT JOIN user_profiles up ON up.user_id = rcm.sender_id
+     WHERE rcm.case_id = ?
+     ORDER BY rcm.created_at ASC`,
+    [id]
+  );
+
+  return {
+    id: row.id,
+    booking_id: row.booking_id,
+    type: row.case_type,
+    subject: row.subject,
+    reference: row.reference,
+    status: row.status,
+    updated_at: row.updated_at,
+    booking: {
+      id: row.booking_id,
+      reference: String(row.booking_id),
+      total_eur: Number(row.total_eur || 0),
+      created_at: row.created_at
+    },
+    customer: {
+      name: [row.customer_name, row.customer_lastname].filter(Boolean).join(" ") || "Customer",
+      email: row.customer_email || ""
+    },
+    vehicle: {
+      registrationNumber: row.license_plate || "",
+      make: row.make || "",
+      model: row.model || "",
+      yearOfManufacture: row.year || null
+    },
+    address: {
+      line1: row.line1 || "",
+      line2: row.line2 || "",
+      city: row.city || "",
+      postal_code: row.postal_code || "",
+      country: row.country || ""
+    },
+    items: itemRows.map((item) => ({
+      name: item.name,
+      labour_minutes: item.labour_minutes,
+      line_total_eur: Number(item.line_total_eur || 0)
+    })),
+    messages: messageRows.map((message) => ({
+      id: message.id,
+      body: message.body,
+      created_at: message.created_at,
+      sender_id: message.sender_id,
+      sender_name: [message.name, message.lastname].filter(Boolean).join(" ") || message.email || "User",
+      sender_role: message.sender_id === mechanicId ? "mechanic" : "customer"
+    }))
+  };
+};
+
+const addMechanicResolutionMessage = async (mechanicId, caseId, body) => {
+  const text = String(body || "").trim();
+  if (!text) {
+    throw new AppError("VALIDATION_ERROR", "message is required", 400);
+  }
+  await getMechanicResolutionCaseDetail(mechanicId, caseId);
+  await pool.query(
+    "INSERT INTO resolution_case_messages (case_id, sender_id, body) VALUES (?, ?, ?)",
+    [Number(caseId), mechanicId, text]
+  );
+  return getMechanicResolutionCaseDetail(mechanicId, caseId);
+};
+
+const getMechanicProfile = async (userId) => {
+  const [rows] = await pool.query(
+    `SELECT u.id, u.email, u.created_at,
+            p.name, p.lastname, p.avatar_url,
+            mp.display_name, mp.about, mp.jobs_done, mp.rating_avg, mp.is_mobile, mp.vat_id,
+            mp.years_experience, mp.work_history, mp.travel_radius_miles
+     FROM users u
+     LEFT JOIN user_profiles p ON p.user_id = u.id
+     LEFT JOIN mechanic_profiles mp ON mp.user_id = u.id
+     WHERE u.id = ?`,
+    [userId]
+  );
+  const user = rows[0];
+  if (!user) return null;
+
+  const contactAddress = (await getAddressByLabel(userId, "Contact")) || (await getLatestAddress(userId));
+  const premisesAddress = await getAddressByLabel(userId, "Premises");
+  const [qualificationRows] = await pool.query(
+    `SELECT name
+     FROM mechanic_qualifications
+     WHERE user_id = ?
+     ORDER BY created_at DESC`,
+    [userId]
+  );
+  const [membershipRows] = await pool.query(
+    `SELECT name
+     FROM mechanic_memberships
+     WHERE user_id = ?
+     ORDER BY created_at DESC`,
+    [userId]
+  );
+
+  const name = user.display_name || [user.name, user.lastname].filter(Boolean).join(" ") || user.email;
+  const location = contactAddress?.city || "Surrey";
+  const [serviceRows] = await pool.query(
+    `SELECT service_type
+     FROM mechanic_services_offered
+     WHERE user_id = ?
+     ORDER BY id ASC`,
+    [userId]
+  );
+
+  return {
+    id: user.id,
+    name,
+    location,
+    email: user.email,
+    avatar_url: user.avatar_url,
+    rating: Number(user.rating_avg || 0),
+    jobs_done: Number(user.jobs_done || 0),
+    created_at: user.created_at,
+    is_mobile: user.is_mobile === null ? true : Boolean(user.is_mobile),
+    vat_id: user.vat_id || null,
+    years_experience: user.years_experience || null,
+    work_history: user.work_history || "",
+    travel_radius_miles: user.travel_radius_miles || null,
+    address: contactAddress,
+    contact_address: contactAddress,
+    premises_address: premisesAddress,
+    qualifications: qualificationRows.map((row) => row.name).filter(Boolean),
+    memberships: membershipRows.map((row) => row.name).filter(Boolean),
+    services_offered: serviceRows.map((row) => row.service_type).filter(Boolean)
+  };
+};
+
+const listMechanicServiceCoverage = async (userId) => {
+  const [catalogRows] = await pool.query(
+    `SELECT sc.id, sc.code, sc.name, sc.category, sc.group_name, sc.subcategory, sc.display_order,
+            ms.enabled
+     FROM service_catalog sc
+     LEFT JOIN mechanic_services ms
+       ON ms.service_id = sc.id AND ms.mechanic_id = ?
+     ORDER BY
+       COALESCE(sc.group_name, sc.category) ASC,
+       COALESCE(sc.subcategory, '') ASC,
+       sc.display_order ASC,
+       sc.name ASC`,
+    [userId]
+  );
+
+  const hasExplicitConfig = catalogRows.some((row) => row.enabled !== null && row.enabled !== undefined);
+  const titleize = (value) =>
+    String(value || "")
+      .split("_")
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+
+  const groups = new Map();
+  for (const row of catalogRows) {
+    const groupKey = row.group_name || row.category;
+    const subKey = row.subcategory || "general";
+    if (!groups.has(groupKey)) {
+      groups.set(groupKey, {
+        key: groupKey,
+        label: titleize(groupKey),
+        subcategories: new Map()
+      });
+    }
+    const group = groups.get(groupKey);
+    if (!group.subcategories.has(subKey)) {
+      group.subcategories.set(subKey, {
+        key: subKey,
+        label: titleize(subKey),
+        services: []
+      });
+    }
+    group.subcategories.get(subKey).services.push({
+      id: row.id,
+      code: row.code,
+      name: row.name,
+      selected: hasExplicitConfig ? Boolean(row.enabled) : true
+    });
+  }
+
+  return Array.from(groups.values()).map((group) => ({
+    key: group.key,
+    label: group.label,
+    subcategories: Array.from(group.subcategories.values())
+  }));
+};
+
+const updateMechanicServiceCoverage = async (userId, payload) => {
+  const selectedIds = Array.isArray(payload?.service_ids)
+    ? payload.service_ids.map((value) => Number(value)).filter((value) => Number.isInteger(value) && value > 0)
+    : [];
+
+  const [catalogRows] = await pool.query("SELECT id FROM service_catalog");
+  const allIds = catalogRows.map((row) => Number(row.id)).filter(Number.isInteger);
+  const selectedSet = new Set(selectedIds);
+
+  await pool.query("DELETE FROM mechanic_services WHERE mechanic_id = ?", [userId]);
+  for (const serviceId of allIds) {
+    await pool.query(
+      "INSERT INTO mechanic_services (mechanic_id, service_id, enabled) VALUES (?, ?, ?)",
+      [userId, serviceId, selectedSet.has(serviceId) ? 1 : 0]
+    );
+  }
+
+  return listMechanicServiceCoverage(userId);
+};
+
+const saveAddressWithLabel = async (userId, label, payload) => {
+  const line1 = String(payload?.line1 || "").trim();
+  const line2 = String(payload?.line2 || "").trim();
+  const city = String(payload?.city || "").trim();
+  const postalCode = String(payload?.postal_code || "").trim();
+  const country = String(payload?.country || "GB").trim() || "GB";
+
+  if (!line1 || !city || !postalCode) {
+    return;
+  }
+
+  const existing = await getAddressByLabel(userId, label);
+  const geocoded = await geocodeAddress({
+    line1,
+    line2,
+    city,
+    postal_code: postalCode,
+    country
+  });
+  const lat = Number(geocoded?.lat ?? existing?.lat);
+  const lng = Number(geocoded?.lng ?? existing?.lng);
+  const hasExistingCoordinates = Number.isFinite(lat) && Number.isFinite(lng);
+  const pointWkt = hasExistingCoordinates ? `POINT(${lng} ${lat})` : "POINT(0 0)";
+
+  await pool.query("DELETE FROM addresses WHERE user_id = ? AND label = ?", [userId, label]);
+  await pool.query(
+    `INSERT INTO addresses (uuid_public, user_id, label, line1, line2, city, postal_code, country, location)
+     VALUES (UUID_TO_BIN(UUID()), ?, ?, ?, ?, ?, ?, ?, ST_GeomFromText(?, 4326))`,
+    [userId, label, line1, line2 || null, city, postalCode, country, pointWkt]
+  );
+};
+
+const updateMechanicProfile = async (userId, payload) => {
+  const years = payload.years_experience === "" || payload.years_experience === undefined
+    ? null
+    : Number(payload.years_experience);
+  const workHistory = String(payload.work_history || "").trim() || null;
+  const travelRadius = payload.travel_radius_miles === "" || payload.travel_radius_miles === undefined
+    ? null
+    : Number(payload.travel_radius_miles);
+  const isMobile = payload.is_mobile ? 1 : 0;
+
+  await pool.query(
+    `INSERT INTO mechanic_profiles (user_id, display_name, legal_name, years_experience, work_history, travel_radius_miles, is_mobile)
+     VALUES (?, '-', '-', ?, ?, ?, ?)
+     ON DUPLICATE KEY UPDATE
+       years_experience = VALUES(years_experience),
+       work_history = VALUES(work_history),
+       travel_radius_miles = VALUES(travel_radius_miles),
+       is_mobile = VALUES(is_mobile)`,
+    [userId, Number.isFinite(years) ? years : null, workHistory, Number.isFinite(travelRadius) ? travelRadius : null, isMobile]
+  );
+
+  await saveAddressWithLabel(userId, "Contact", payload.contact_address || {});
+  if (payload.same_as_contact_address) {
+    await pool.query("DELETE FROM addresses WHERE user_id = ? AND label = ?", [userId, "Premises"]);
+  } else {
+    await saveAddressWithLabel(userId, "Premises", payload.premises_address || {});
+  }
+
+  await pool.query("DELETE FROM mechanic_services_offered WHERE user_id = ?", [userId]);
+  const services = Array.isArray(payload.services_offered) ? payload.services_offered : [];
+  for (const serviceType of services) {
+    const normalized = String(serviceType || "").trim();
+    if (!normalized) continue;
+    await pool.query(
+      "INSERT INTO mechanic_services_offered (user_id, service_type) VALUES (?, ?)",
+      [userId, normalized]
+    );
+  }
+
+  return getMechanicProfile(userId);
+};
+
+const respondToMechanicBookingOffer = async (mechanicId, offerId, action) => {
+  const normalizedAction = String(action || "").trim().toLowerCase();
+  if (!["accept", "decline"].includes(normalizedAction)) {
+    throw new AppError("VALIDATION_ERROR", "action must be accept or decline", 400);
+  }
+
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    const [offerRows] = await connection.query(
+      `SELECT bo.id, bo.booking_id, bo.status, b.mechanic_id, b.status AS booking_status
+       FROM booking_offers bo
+       INNER JOIN bookings b ON b.id = bo.booking_id
+       WHERE bo.id = ? AND bo.mechanic_id = ?
+       FOR UPDATE`,
+      [offerId, mechanicId]
+    );
+
+    const offer = offerRows[0];
+    if (!offer) {
+      throw new AppError("NOT_FOUND", "Booking offer not found", 404);
+    }
+    if (offer.status !== "pending") {
+      throw new AppError("VALIDATION_ERROR", `Offer is already ${offer.status}`, 400);
+    }
+
+    if (normalizedAction === "accept") {
+      if (offer.mechanic_id || offer.booking_status === "accepted") {
+        throw new AppError("CONFLICT", "This booking has already been accepted by another mechanic", 409);
+      }
+
+      await connection.query(
+        `UPDATE booking_offers
+         SET status = 'accepted', responded_at = CURRENT_TIMESTAMP
+         WHERE id = ?`,
+        [offerId]
+      );
+
+      await connection.query(
+        `UPDATE booking_offers
+         SET status = 'expired', responded_at = CURRENT_TIMESTAMP
+         WHERE booking_id = ? AND id <> ? AND status = 'pending'`,
+        [offer.booking_id, offerId]
+      );
+
+      await connection.query(
+        `UPDATE bookings
+         SET mechanic_id = ?, status = 'accepted'
+         WHERE id = ?`,
+        [mechanicId, offer.booking_id]
+      );
+    } else {
+      await connection.query(
+        `UPDATE booking_offers
+         SET status = 'declined', responded_at = CURRENT_TIMESTAMP
+         WHERE id = ?`,
+        [offerId]
+      );
+    }
+
+    await connection.commit();
+    return { ok: true, offer_id: offerId, status: normalizedAction === "accept" ? "accepted" : "declined" };
+  } catch (err) {
+    await connection.rollback();
+    throw err;
+  } finally {
+    connection.release();
+  }
+};
+
 const requestEmailChange = async (userId, newEmail) => {
   if (!newEmail) {
     throw new AppError("VALIDATION_ERROR", "email is required", 400);
@@ -477,5 +1452,20 @@ module.exports = {
   listUserVehicles,
   saveUserVehicle,
   deleteUserVehicle,
-  listUserBookings
+  listUserBookings,
+  listMechanicBookingOffers,
+  listMechanicAssignedBookings,
+  listUserResolutionCases,
+  openUserResolutionCase,
+  getUserResolutionCaseDetail,
+  addUserResolutionMessage,
+  listMechanicResolutionCases,
+  openMechanicResolutionCase,
+  getMechanicResolutionCaseDetail,
+  addMechanicResolutionMessage,
+  getMechanicProfile,
+  listMechanicServiceCoverage,
+  updateMechanicServiceCoverage,
+  updateMechanicProfile,
+  respondToMechanicBookingOffer
 };

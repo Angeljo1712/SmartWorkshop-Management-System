@@ -32,6 +32,193 @@ const apiAuth = (path, token, options = {}) =>
     }
   });
 
+const getStoredUserSession = () => {
+  const rawProfile = sessionStorage.getItem("userProfile");
+  if (!rawProfile) return null;
+  try {
+    const user = JSON.parse(rawProfile);
+    const roles = Array.isArray(user?.roles) && user.roles.length ? user.roles : [user?.role_name || user?.role || "CUSTOMER"];
+    const activeRole = sessionStorage.getItem("activeRole") || (roles.includes("MECHANIC") ? "MECHANIC" : roles.includes("ADMIN") ? "ADMIN" : "CUSTOMER");
+    const firstName = String(user?.name || "").trim() || String(user?.email || "Account").trim().split("@")[0];
+    return { user, activeRole, firstName };
+  } catch {
+    return null;
+  }
+};
+
+const resolveDashboardHref = (activeRole) =>
+  activeRole === "MECHANIC"
+    ? "/mechanic/dashboard"
+    : activeRole === "ADMIN"
+      ? "/admin/dashboard"
+      : "/user";
+
+const buildMechanicHeaderMenuMarkup = () => `
+  <div class="mechanic-header-menu">
+    <button class="mechanic-header-menu-btn" type="button" aria-expanded="false">
+      <span class="mechanic-header-first-name"></span>
+      <span class="mechanic-header-menu-arrow">▾</span>
+    </button>
+    <div class="mechanic-header-menu-panel is-hidden">
+      <button class="mechanic-header-menu-item" type="button" data-target-view="dashboard">Dashboard</button>
+      <button class="mechanic-header-menu-item" type="button" data-target-view="procedure">Procedures</button>
+      <button class="mechanic-header-menu-item" type="button" data-target-view="payments">Payments</button>
+      <button class="mechanic-header-menu-item" type="button" data-href="/mechanic/dashboard">ClickMechanic app</button>
+      <button class="mechanic-header-menu-item" type="button" data-href="/mechanic/dashboard">App guide</button>
+      <button class="mechanic-header-menu-item" type="button" data-target-page="profile">Your profile</button>
+      <button class="mechanic-header-menu-item" type="button" data-target-page="preferences">Service schedules</button>
+      <button class="mechanic-header-menu-item" type="button" data-target-view="settings">Account settings</button>
+      <button class="mechanic-header-menu-item" type="button" data-action="logout">Logout</button>
+    </div>
+  </div>
+`;
+
+const buildCustomerHeaderMenuMarkup = () => `
+  <div class="customer-header-menu">
+    <button class="customer-header-menu-btn" type="button" aria-expanded="false">
+      <span class="customer-header-first-name"></span>
+      <span class="customer-header-menu-arrow">▾</span>
+    </button>
+    <div class="customer-header-menu-panel is-hidden">
+      <button class="customer-header-menu-item" type="button" data-view="dashboard">Dashboard</button>
+      <button class="customer-header-menu-item" type="button" data-view="account">Account</button>
+      <button class="customer-header-menu-item" type="button" data-view="vehicle">Vehicle</button>
+      <button class="customer-header-menu-item" type="button" data-view="bookings">Bookings</button>
+      <button class="customer-header-menu-item" type="button" data-view="settings">Settings</button>
+    </div>
+  </div>
+`;
+
+document.querySelectorAll(".main-header.general-header").forEach((header) => {
+  const container = header.querySelector(".body-content, .header-content");
+  if (!container) return;
+  if (container.querySelector(".header-session-link, .mechanic-header-menu, .customer-header-menu")) return;
+  const session = getStoredUserSession();
+  if (!session) return;
+  if (session.activeRole === "MECHANIC") {
+    if (!container.querySelector(".mechanic-header-menu")) {
+      const wrapper = document.createElement("div");
+      wrapper.innerHTML = buildMechanicHeaderMenuMarkup();
+      const menu = wrapper.firstElementChild;
+      menu.querySelector(".mechanic-header-first-name").textContent = session.firstName.toUpperCase();
+      container.appendChild(menu);
+    }
+    return;
+  }
+  if (session.activeRole === "CUSTOMER") {
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = buildCustomerHeaderMenuMarkup();
+    const menu = wrapper.firstElementChild;
+    menu.querySelector(".customer-header-first-name").textContent = session.firstName.toUpperCase();
+    container.appendChild(menu);
+    return;
+  }
+  const link = document.createElement("a");
+  link.className = "header-session-link";
+  link.href = resolveDashboardHref(session.activeRole);
+  link.textContent = session.firstName;
+  container.appendChild(link);
+});
+
+const clearStoredSessionAndGoHome = () => {
+  sessionStorage.removeItem("userToken");
+  sessionStorage.removeItem("userProfile");
+  sessionStorage.removeItem("activeRole");
+  window.location.replace("/");
+};
+
+const openMechanicTargetPage = (page, user) => {
+  const mechanicId = user?.id || "0";
+  if (page === "profile") {
+    window.location.href = `/mechanic/${mechanicId}/profile`;
+    return;
+  }
+  if (page === "preferences") {
+    window.location.href = `/mechanic/${mechanicId}/preferences`;
+  }
+};
+
+document.querySelectorAll(".mechanic-header-menu").forEach((menu) => {
+  const session = getStoredUserSession();
+  if (!session || session.activeRole !== "MECHANIC") return;
+  const button = menu.querySelector(".mechanic-header-menu-btn");
+  const panel = menu.querySelector(".mechanic-header-menu-panel");
+  const nameEl = menu.querySelector(".mechanic-header-first-name");
+  const items = menu.querySelectorAll(".mechanic-header-menu-item");
+  if (nameEl && !nameEl.textContent.trim()) {
+    nameEl.textContent = session.firstName.toUpperCase();
+  }
+  button?.addEventListener("click", () => {
+    const isHidden = panel?.classList.contains("is-hidden");
+    panel?.classList.toggle("is-hidden", !isHidden);
+    button.setAttribute("aria-expanded", isHidden ? "true" : "false");
+  });
+  items.forEach((item) => {
+    item.addEventListener("click", () => {
+      panel?.classList.add("is-hidden");
+      button?.setAttribute("aria-expanded", "false");
+      const action = item.dataset.action || "";
+      const href = item.dataset.href || "";
+      const targetView = item.dataset.targetView || "";
+      const targetPage = item.dataset.targetPage || "";
+      if (action === "logout") {
+        clearStoredSessionAndGoHome();
+        return;
+      }
+      if (targetPage) {
+        openMechanicTargetPage(targetPage, session.user);
+        return;
+      }
+      if (targetView) {
+        sessionStorage.setItem("mechanicHeaderTargetView", targetView);
+        window.location.href = "/mechanic/dashboard";
+        return;
+      }
+      if (href) {
+        window.location.href = href;
+      }
+    });
+  });
+  document.addEventListener("click", (event) => {
+    if (!panel || !button) return;
+    if (menu.contains(event.target)) return;
+    panel.classList.add("is-hidden");
+    button.setAttribute("aria-expanded", "false");
+  });
+});
+
+document.querySelectorAll(".customer-header-menu").forEach((menu) => {
+  const session = getStoredUserSession();
+  if (!session || session.activeRole !== "CUSTOMER") return;
+  const button = menu.querySelector(".customer-header-menu-btn");
+  const panel = menu.querySelector(".customer-header-menu-panel");
+  const nameEl = menu.querySelector(".customer-header-first-name");
+  const items = menu.querySelectorAll(".customer-header-menu-item");
+  if (nameEl && !nameEl.textContent.trim()) {
+    nameEl.textContent = session.firstName.toUpperCase();
+  }
+  button?.addEventListener("click", () => {
+    const isHidden = panel?.classList.contains("is-hidden");
+    panel?.classList.toggle("is-hidden", !isHidden);
+    button.setAttribute("aria-expanded", isHidden ? "true" : "false");
+  });
+  items.forEach((item) => {
+    item.addEventListener("click", () => {
+      panel?.classList.add("is-hidden");
+      button?.setAttribute("aria-expanded", "false");
+      const targetView = item.dataset.view || "dashboard";
+      sessionStorage.setItem("userHeaderTargetView", targetView);
+      window.location.href = "/user";
+    });
+  });
+  document.addEventListener("click", (event) => {
+    if (!panel || !button) return;
+    if (menu.contains(event.target)) return;
+    panel.classList.add("is-hidden");
+    button.setAttribute("aria-expanded", "false");
+  });
+});
+
 const postcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
 
 const heroBackdrop = document.querySelector(".home-hero .hero-backdrop");
@@ -93,10 +280,56 @@ if (heroBackdrop) {
 const homeHeader = document.querySelector(".home-header");
 const homeHero = document.querySelector(".home-hero");
 if (homeHeader && homeHero) {
+  const homeSessionLink = document.getElementById("homeSessionLink");
+  const homeSessionMenu = document.getElementById("homeSessionMenu");
+  const homeSessionMenuBtn = document.getElementById("homeSessionMenuBtn");
+  const homeSessionMenuPanel = document.getElementById("homeSessionMenuPanel");
+  const homeSessionMenuName = document.getElementById("homeSessionMenuName");
   const applyHeaderState = (isHero) => {
     homeHeader.classList.toggle("is-hero", isHero);
     homeHeader.classList.toggle("is-light", !isHero);
   };
+
+  const session = getStoredUserSession();
+  if (homeSessionLink && session) {
+    if (session.activeRole === "CUSTOMER" && homeSessionMenu) {
+      homeSessionLink.classList.add("is-hidden");
+      homeSessionMenu.classList.remove("is-hidden");
+      if (homeSessionMenuName) homeSessionMenuName.textContent = session.firstName.toUpperCase();
+      homeSessionMenuBtn?.addEventListener("click", () => {
+        const isHidden = homeSessionMenuPanel?.classList.contains("is-hidden");
+        homeSessionMenuPanel?.classList.toggle("is-hidden", !isHidden);
+        homeSessionMenuBtn.setAttribute("aria-expanded", isHidden ? "true" : "false");
+      });
+      homeSessionMenu.querySelectorAll(".home-session-menu-item").forEach((item) => {
+        item.addEventListener("click", () => {
+          const targetView = item.dataset.view || "dashboard";
+          homeSessionMenuPanel?.classList.add("is-hidden");
+          homeSessionMenuBtn?.setAttribute("aria-expanded", "false");
+          homeSessionMenu
+            .querySelectorAll(".home-session-menu-item")
+            .forEach((btn) => btn.classList.toggle("is-active", btn === item));
+          sessionStorage.setItem("homeUserTargetView", targetView);
+          window.location.href = "/user";
+        });
+      });
+      document.addEventListener("click", (event) => {
+        if (!homeSessionMenu.contains(event.target)) {
+          homeSessionMenuPanel?.classList.add("is-hidden");
+          homeSessionMenuBtn?.setAttribute("aria-expanded", "false");
+        }
+      });
+    } else {
+      homeSessionLink.textContent = session.firstName;
+      homeSessionLink.href = resolveDashboardHref(session.activeRole);
+    }
+  }
+
+  if (homeSessionMenu) {
+    homeSessionMenu.querySelectorAll(".home-session-menu-item").forEach((item) => {
+      item.classList.toggle("is-active", item.dataset.view === "dashboard");
+    });
+  }
 
   if ("IntersectionObserver" in window) {
     const updateObserver = () => {
@@ -934,7 +1167,14 @@ const bookingDetailsForm = document.getElementById("bookingDetailsForm");
 if (bookingDetailsForm) {
   const errorEl = document.getElementById("bookingDetailsError");
   const toggleButtons = bookingDetailsForm.querySelectorAll(".toggle");
+  const detailsFirstNameInput = document.getElementById("detailsFirstName");
+  const detailsLastNameInput = document.getElementById("detailsLastName");
   const detailsEmailInput = document.getElementById("detailsEmail");
+  const detailsAddress1Input = document.getElementById("detailsAddress1");
+  const detailsAddress2Input = document.getElementById("detailsAddress2");
+  const detailsCityInput = document.getElementById("detailsCity");
+  const detailsPostcodeInput = document.getElementById("detailsPostcode");
+  const detailsPhoneInput = document.getElementById("detailsPhone");
   const detailsEmailExistsMessage = document.getElementById("detailsEmailExistsMessage");
   const availabilityGrid = bookingDetailsForm.querySelector("#availabilityGrid");
   const availabilityMonthLabel = bookingDetailsForm.querySelector("#availabilityMonthLabel");
@@ -949,6 +1189,35 @@ if (bookingDetailsForm) {
   minimumAvailabilityDate.setMonth(minimumAvailabilityDate.getMonth() + 1);
   let currentAvailabilityStartDate = new Date(minimumAvailabilityDate);
   const availabilitySelections = new Map();
+
+  const applyBookingDetailsUserData = (user) => {
+    if (!user) return;
+    const addressDetails = user.address_details || {};
+    if (detailsFirstNameInput && !detailsFirstNameInput.value.trim()) {
+      detailsFirstNameInput.value = user.name || "";
+    }
+    if (detailsLastNameInput && !detailsLastNameInput.value.trim()) {
+      detailsLastNameInput.value = user.lastname || "";
+    }
+    if (detailsEmailInput && !detailsEmailInput.value.trim()) {
+      detailsEmailInput.value = user.email || "";
+    }
+    if (detailsAddress1Input && !detailsAddress1Input.value.trim()) {
+      detailsAddress1Input.value = addressDetails.line1 || user.address || "";
+    }
+    if (detailsAddress2Input && !detailsAddress2Input.value.trim()) {
+      detailsAddress2Input.value = addressDetails.line2 || "";
+    }
+    if (detailsCityInput && !detailsCityInput.value.trim()) {
+      detailsCityInput.value = addressDetails.city || user.city || "";
+    }
+    if (detailsPostcodeInput && !detailsPostcodeInput.value.trim()) {
+      detailsPostcodeInput.value = addressDetails.postal_code || user.postcode || "";
+    }
+    if (detailsPhoneInput && !detailsPhoneInput.value.trim()) {
+      detailsPhoneInput.value = user.phone || "";
+    }
+  };
 
   const formatOrdinalDay = (dayNumber) => {
     const remainder = dayNumber % 10;
@@ -1058,6 +1327,23 @@ if (bookingDetailsForm) {
   });
 
   detailsEmailInput?.addEventListener("blur", checkBookingDetailsEmail);
+
+  const bookingSession = getStoredUserSession();
+  if (bookingSession?.activeRole === "CUSTOMER") {
+    applyBookingDetailsUserData(bookingSession.user);
+    const bookingUserToken = sessionStorage.getItem("userToken");
+    if (bookingUserToken) {
+      apiAuth("/api/users/me", bookingUserToken)
+        .then((freshUser) => {
+          const storedProfile = sessionStorage.getItem("userProfile");
+          if (storedProfile) {
+            sessionStorage.setItem("userProfile", JSON.stringify(freshUser));
+          }
+          applyBookingDetailsUserData(freshUser);
+        })
+        .catch(() => {});
+    }
+  }
 
   renderAvailabilityCalendar(currentAvailabilityStartDate);
 
@@ -1906,6 +2192,30 @@ if (userPage) {
   const userBookingsList = document.getElementById("userBookingsList");
   const userBookingsPhotos = document.getElementById("userBookingsPhotos");
   const userBookingsPhotosEmpty = document.getElementById("userBookingsPhotosEmpty");
+  const userBookingsCardSection = document.querySelector("#userBookingsView .bookings-section--card");
+  const userBookingsPhotosSection = document.querySelector("#userBookingsView .bookings-section--photos");
+  const userResolutionOverview = document.getElementById("userResolutionOverview");
+  const userResolutionCasesTable = document.getElementById("userResolutionCasesTable");
+  const userResolutionMessageView = document.getElementById("userResolutionMessageView");
+  const userResolutionBackBtn = document.getElementById("userResolutionBackBtn");
+  const userResolutionDetailTitle = document.getElementById("userResolutionDetailTitle");
+  const userResolutionIssue = document.getElementById("userResolutionIssue");
+  const userResolutionNotice = document.getElementById("userResolutionNotice");
+  const userResolutionGoToCase = document.getElementById("userResolutionGoToCase");
+  const userResolutionCaseListTitle = document.getElementById("userResolutionCaseListTitle");
+  const userResolutionBookingCasesTable = document.getElementById("userResolutionBookingCasesTable");
+  const userResolutionCaseView = document.getElementById("userResolutionCaseView");
+  const userResolutionCaseBackBtn = document.getElementById("userResolutionCaseBackBtn");
+  const userResolutionCaseTitle = document.getElementById("userResolutionCaseTitle");
+  const userResolutionMessages = document.getElementById("userResolutionMessages");
+  const userResolutionMessageInput = document.getElementById("userResolutionMessageInput");
+  const userResolutionSendBtn = document.getElementById("userResolutionSendBtn");
+  const userResolutionSidebarTitle = document.getElementById("userResolutionSidebarTitle");
+  const userResolutionSidebarMechanic = document.getElementById("userResolutionSidebarMechanic");
+  const userResolutionSidebarCar = document.getElementById("userResolutionSidebarCar");
+  const userResolutionSidebarAddress = document.getElementById("userResolutionSidebarAddress");
+  const userResolutionSidebarWork = document.getElementById("userResolutionSidebarWork");
+  const userResolutionSidebarTotal = document.getElementById("userResolutionSidebarTotal");
   const userSettingsView = document.getElementById("userSettingsView");
 
   const getInitials = (name) => {
@@ -2125,6 +2435,10 @@ if (userPage) {
     userVehicleView.classList.toggle("is-hidden", view !== "vehicle");
     userBookingsView.classList.toggle("is-hidden", view !== "bookings");
     userSettingsView.classList.toggle("is-hidden", view !== "settings");
+  };
+
+  const setActiveUserNav = (view) => {
+    userNavLinks.forEach((btn) => btn.classList.toggle("active", btn.dataset.view === view));
   };
 
   const defaultDashboardVehicle = {
@@ -2420,7 +2734,14 @@ if (userPage) {
         <div class="user-booking-toolbar">
           <span class="user-booking-status">${formatBookingStatus(booking.status, booking.payment?.status)}</span>
           <strong class="user-booking-reference">Reference: ${booking.reference}</strong>
-          <button class="primary user-booking-actions" type="button">Actions</button>
+          <div class="user-booking-actions-wrap">
+            <button class="primary user-booking-actions" type="button" data-booking-actions-toggle="${booking.id}">Actions</button>
+            <div class="user-booking-actions-panel is-hidden">
+              <button class="user-booking-actions-item" type="button" data-user-resolution-message="${booking.id}" ${booking.mechanic ? "" : "disabled"}>
+                Message to Mechanic
+              </button>
+            </div>
+          </div>
         </div>
         <div class="user-booking-grid">
           <div class="user-booking-column">
@@ -2481,8 +2802,133 @@ if (userPage) {
     try {
       const bookings = await apiAuth("/api/users/me/bookings", userToken);
       renderUserBookings(bookings);
+      latestUserBookings = Array.isArray(bookings) ? bookings : [];
+      await syncUserResolutionOverview();
     } catch (_err) {
       renderUserBookings([]);
+      latestUserBookings = [];
+      renderUserResolutionCaseRows(userResolutionCasesTable, []);
+    }
+  };
+
+  let latestUserBookings = [];
+  let latestUserResolutionCases = [];
+  let pendingUserResolutionBookingId = null;
+  let pendingUserResolutionCaseId = null;
+
+  const formatUserResolutionDateTime = (value) => {
+    if (!value) return "-";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "-";
+    return new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    }).format(date);
+  };
+
+  const setUserResolutionSubview = (view) => {
+    const isOverview = view === "overview";
+    const isMessage = view === "message";
+    const isCase = view === "case";
+    userBookingsCardSection?.classList.toggle("is-hidden", isMessage || isCase);
+    userBookingsPhotosSection?.classList.toggle("is-hidden", isMessage || isCase);
+    userResolutionOverview?.classList.toggle("is-hidden", !isOverview);
+    userResolutionMessageView?.classList.toggle("is-hidden", !isMessage);
+    userResolutionCaseView?.classList.toggle("is-hidden", !isCase);
+    if (isMessage || isCase) {
+      userBookingsView?.scrollIntoView({ block: "start", behavior: "smooth" });
+    }
+  };
+
+  const renderUserResolutionCaseRows = (target, cases) => {
+    if (!target) return;
+    target.innerHTML = "";
+    if (!Array.isArray(cases) || !cases.length) return;
+    cases.forEach((entry) => {
+      const row = document.createElement("div");
+      row.className = "mechanic-resolution-table-row";
+      row.innerHTML = `
+        <span class="mechanic-resolution-status">${String(entry.subject || entry.type || "General enquiry").toUpperCase()}</span>
+        <span>${entry.reference || "-"}</span>
+        <span>${formatUserResolutionDateTime(entry.updated_at)}</span>
+        <span>${entry.subject || "-"}</span>
+        <button class="mechanic-resolution-link" type="button" data-user-resolution-case-id="${entry.id}">View</button>
+      `;
+      target.appendChild(row);
+    });
+  };
+
+  const syncUserResolutionOverview = async () => {
+    if (!userToken || !userResolutionCasesTable) return;
+    try {
+      const cases = await apiAuth("/api/users/me/resolution-cases", userToken);
+      latestUserResolutionCases = Array.isArray(cases) ? cases : [];
+      renderUserResolutionCaseRows(userResolutionCasesTable, latestUserResolutionCases);
+      userResolutionOverview?.classList.toggle("is-hidden", !latestUserResolutionCases.length);
+    } catch (_err) {
+      latestUserResolutionCases = [];
+      renderUserResolutionCaseRows(userResolutionCasesTable, []);
+      userResolutionOverview?.classList.add("is-hidden");
+    }
+  };
+
+  const openUserResolutionMessage = async (bookingId, type = "general") => {
+    pendingUserResolutionBookingId = Number(bookingId);
+    pendingUserResolutionCaseId = null;
+    if (userResolutionIssue) userResolutionIssue.value = type;
+    const booking = latestUserBookings.find((entry) => Number(entry.id) === Number(bookingId));
+    const reference = booking?.reference || bookingId;
+    if (userResolutionDetailTitle) {
+      userResolutionDetailTitle.textContent = `Message mechanic regarding booking #${reference}`;
+    }
+    if (userResolutionCaseListTitle) {
+      userResolutionCaseListTitle.textContent = `Resolution cases already created for booking #${reference}`;
+    }
+    const cases = await apiAuth(`/api/users/me/resolution-cases?booking_id=${encodeURIComponent(bookingId)}`, userToken);
+    const bookingCases = Array.isArray(cases) ? cases : [];
+    renderUserResolutionCaseRows(userResolutionBookingCasesTable, bookingCases);
+    if (userResolutionNotice) {
+      userResolutionNotice.textContent = bookingCases.some((entry) => entry.type === type && entry.status === "open")
+        ? "You already have an open dialog for this issue type."
+        : "No case has been created for this booking yet.";
+    }
+    setUserResolutionSubview("message");
+  };
+
+  const renderUserResolutionCaseDetail = (detail) => {
+    pendingUserResolutionCaseId = detail?.id || null;
+    pendingUserResolutionBookingId = detail?.booking?.id || detail?.booking_id || null;
+    if (userResolutionCaseTitle) userResolutionCaseTitle.textContent = detail?.subject || "General Enquiry";
+    if (userResolutionSidebarTitle) {
+      userResolutionSidebarTitle.textContent = `Current status of booking #${detail?.booking?.reference || detail?.booking_id || "-"}`;
+    }
+    if (userResolutionSidebarMechanic) userResolutionSidebarMechanic.textContent = detail?.mechanic?.name || "-";
+    if (userResolutionSidebarCar) {
+      userResolutionSidebarCar.textContent = [detail?.vehicle?.make, detail?.vehicle?.model, detail?.vehicle?.registrationNumber].filter(Boolean).join(" · ") || "-";
+    }
+    if (userResolutionSidebarAddress) {
+      userResolutionSidebarAddress.textContent = [detail?.address?.line1, detail?.address?.line2, detail?.address?.city, detail?.address?.postal_code].filter(Boolean).join(", ") || "-";
+    }
+    if (userResolutionSidebarWork) {
+      userResolutionSidebarWork.textContent = (detail?.items || []).map((item) => item.name).join(", ") || "-";
+    }
+    if (userResolutionSidebarTotal) {
+      userResolutionSidebarTotal.textContent = formatCurrency(detail?.booking?.total_eur, "GBP");
+    }
+    if (userResolutionMessages) {
+      userResolutionMessages.innerHTML = "";
+      (detail?.messages || []).forEach((message) => {
+        const item = document.createElement("div");
+        item.className = `mechanic-resolution-message ${message.sender_role === "customer" ? "is-customer" : "is-mechanic"}`;
+        item.innerHTML = `
+          <div class="mechanic-resolution-bubble">${String(message.body || "").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>")}</div>
+          <span class="mechanic-resolution-message-meta">${message.sender_name || "User"}, ${formatUserResolutionDateTime(message.created_at)}</span>
+        `;
+        userResolutionMessages.appendChild(item);
+      });
     }
   };
 
@@ -2549,9 +2995,32 @@ if (userPage) {
     listEl?.addEventListener("click", handleVehicleCardAction);
   });
 
+  userBookingsList?.addEventListener("click", async (event) => {
+    const toggle = event.target.closest("[data-booking-actions-toggle]");
+    if (toggle) {
+      const panel = toggle.parentElement?.querySelector(".user-booking-actions-panel");
+      const shouldOpen = panel?.classList.contains("is-hidden");
+      userBookingsList.querySelectorAll(".user-booking-actions-panel").forEach((item) => item.classList.add("is-hidden"));
+      if (panel && shouldOpen) panel.classList.remove("is-hidden");
+      return;
+    }
+
+    const resolutionMessage = event.target.closest("[data-user-resolution-message]");
+    if (resolutionMessage) {
+      const bookingId = Number(resolutionMessage.dataset.userResolutionMessage);
+      if (!bookingId) return;
+      userBookingsList.querySelectorAll(".user-booking-actions-panel").forEach((item) => item.classList.add("is-hidden"));
+      await openUserResolutionMessage(bookingId, "general");
+    }
+  });
+
   document.addEventListener("click", (event) => {
     if (!event.target.closest(".user-car-menu-wrap")) {
       document.querySelectorAll(".user-car-menu-panel").forEach((menu) => menu.classList.add("is-hidden"));
+    }
+
+    if (!event.target.closest(".user-booking-actions-wrap")) {
+      userBookingsList?.querySelectorAll(".user-booking-actions-panel").forEach((menu) => menu.classList.add("is-hidden"));
     }
 
     if (!event.target.closest(".user-vehicle-heading")) {
@@ -2580,13 +3049,23 @@ if (userPage) {
     userSettingsSecurity.classList.toggle("is-hidden", view !== "security");
   };
 
+  setUserResolutionSubview("overview");
+
   userNavLinks.forEach((link) => {
     link.addEventListener("click", () => {
       const view = link.dataset.view;
-      userNavLinks.forEach((btn) => btn.classList.toggle("active", btn === link));
+      setActiveUserNav(view);
       setUserView(view);
     });
   });
+
+  const initialUserView = sessionStorage.getItem("userHeaderTargetView") || sessionStorage.getItem("homeUserTargetView");
+  if (initialUserView && ["dashboard", "account", "vehicle", "bookings", "settings"].includes(initialUserView)) {
+    setUserView(initialUserView);
+    setActiveUserNav(initialUserView);
+    sessionStorage.removeItem("userHeaderTargetView");
+    sessionStorage.removeItem("homeUserTargetView");
+  }
 
   const handleAddVehicle = async (registrationInput, errorOutput) => {
     const registrationNumber = registrationInput?.value?.trim().toUpperCase().replace(/\s+/g, "") || "";
@@ -2645,6 +3124,60 @@ if (userPage) {
 
   syncDashboardVehiclesFromApi();
   syncUserBookingsFromApi();
+
+  userResolutionBackBtn?.addEventListener("click", () => {
+    setUserResolutionSubview("overview");
+  });
+
+  userResolutionCaseBackBtn?.addEventListener("click", async () => {
+    if (pendingUserResolutionBookingId) {
+      await openUserResolutionMessage(pendingUserResolutionBookingId, userResolutionIssue?.value || "general");
+      return;
+    }
+    setUserResolutionSubview("overview");
+  });
+
+  userResolutionGoToCase?.addEventListener("click", async () => {
+    if (!pendingUserResolutionBookingId || !userToken) return;
+    const detail = await apiAuth("/api/users/me/resolution-cases", userToken, {
+      method: "POST",
+      body: JSON.stringify({
+        booking_id: pendingUserResolutionBookingId,
+        type: userResolutionIssue?.value || "general"
+      })
+    });
+    await syncUserResolutionOverview();
+    renderUserResolutionCaseDetail(detail);
+    setUserResolutionSubview("case");
+  });
+
+  userResolutionCasesTable?.addEventListener("click", async (event) => {
+    const viewButton = event.target.closest("[data-user-resolution-case-id]");
+    if (!viewButton || !userToken) return;
+    const detail = await apiAuth(`/api/users/me/resolution-cases/${encodeURIComponent(viewButton.dataset.userResolutionCaseId)}`, userToken);
+    renderUserResolutionCaseDetail(detail);
+    setUserResolutionSubview("case");
+  });
+
+  userResolutionBookingCasesTable?.addEventListener("click", async (event) => {
+    const viewButton = event.target.closest("[data-user-resolution-case-id]");
+    if (!viewButton || !userToken) return;
+    const detail = await apiAuth(`/api/users/me/resolution-cases/${encodeURIComponent(viewButton.dataset.userResolutionCaseId)}`, userToken);
+    renderUserResolutionCaseDetail(detail);
+    setUserResolutionSubview("case");
+  });
+
+  userResolutionSendBtn?.addEventListener("click", async () => {
+    const body = String(userResolutionMessageInput?.value || "").trim();
+    if (!pendingUserResolutionCaseId || !body || !userToken) return;
+    const detail = await apiAuth(`/api/users/me/resolution-cases/${encodeURIComponent(pendingUserResolutionCaseId)}/messages`, userToken, {
+      method: "POST",
+      body: JSON.stringify({ body })
+    });
+    if (userResolutionMessageInput) userResolutionMessageInput.value = "";
+    renderUserResolutionCaseDetail(detail);
+    await syncUserResolutionOverview();
+  });
 
   userQuickQuoteBtn?.addEventListener("click", () => {
     const selectedType = userQuickQuoteProduct?.value || "";
@@ -2898,14 +3431,106 @@ const mechanicDashboard = document.getElementById("mechanicPage") || document.qu
 if (mechanicDashboard) {
   const mechanicBackBtn = document.getElementById("mechanicBackBtn");
   const mechanicLogoutBtn = document.getElementById("mechanicLogoutBtn");
+  const mechanicNavLinks = mechanicDashboard.querySelectorAll(".rail-nav .rail-item[data-view]");
+  const mechanicSubnavLinks = mechanicDashboard.querySelectorAll(".mechanic-subnav .settings-subnav-link[data-view]");
+  const mechanicDashboardView = document.getElementById("mechanicDashboardView");
+  const mechanicResolutionCenterView = document.getElementById("mechanicResolutionCenterView");
+  const mechanicProcedureView = document.getElementById("mechanicProcedureView");
+  const mechanicPaymentsView = document.getElementById("mechanicPaymentsView");
+  const mechanicProfileView = document.getElementById("mechanicProfileView");
+  const mechanicAccountView = document.getElementById("mechanicAccountView");
+  const mechanicPictureView = document.getElementById("mechanicPictureView");
+  const mechanicCertificationsView = document.getElementById("mechanicCertificationsView");
+  const mechanicTaxView = document.getElementById("mechanicTaxView");
+  const mechanicDocumentsView = document.getElementById("mechanicDocumentsView");
+  const mechanicPreferencesView = document.getElementById("mechanicPreferencesView");
+  const mechanicTypesView = document.getElementById("mechanicTypesView");
+  const mechanicSettingsView = document.getElementById("mechanicSettingsView");
   const nameEl = document.getElementById("mechanicWelcomeName");
+  const mechanicAccountName = document.getElementById("mechanicAccountName");
   const idEl = document.getElementById("mechanicId");
+  const mechanicBookingsList = document.getElementById("mechanicBookingsList");
   const mechanicAccountAvatar = document.getElementById("mechanicAccountAvatar");
+  const mechanicAccountAvatarSecondary = document.getElementById("mechanicAccountAvatarSecondary");
   const mechanicAccountPhone = document.getElementById("mechanicAccountPhone");
+  const mechanicAccountPhoneSecondary = document.getElementById("mechanicAccountPhoneSecondary");
   const mechanicAccountEmail = document.getElementById("mechanicAccountEmail");
+  const mechanicAccountEmailSecondary = document.getElementById("mechanicAccountEmailSecondary");
   const mechanicAccountUsername = document.getElementById("mechanicAccountUsername");
+  const mechanicAccountUsernameSecondary = document.getElementById("mechanicAccountUsernameSecondary");
   const mechanicAccountAddress = document.getElementById("mechanicAccountAddress");
+  const mechanicAccountAddressSecondary = document.getElementById("mechanicAccountAddressSecondary");
   const mechanicAccountRole = document.getElementById("mechanicAccountRole");
+  const mechanicAccountRoleSecondary = document.getElementById("mechanicAccountRoleSecondary");
+  const mechanicProfileAvatar = document.getElementById("mechanicProfileAvatar");
+  const mechanicProfileHeading = document.getElementById("mechanicProfileHeading");
+  const mechanicProfileRatings = document.getElementById("mechanicProfileRatings");
+  const mechanicProfileExperience = document.getElementById("mechanicProfileExperience");
+  const mechanicProfileActiveSince = document.getElementById("mechanicProfileActiveSince");
+  const mechanicProfileJobsCompleted = document.getElementById("mechanicProfileJobsCompleted");
+  const mechanicProfileQualifications = document.getElementById("mechanicProfileQualifications");
+  const mechanicProfileMemberships = document.getElementById("mechanicProfileMemberships");
+  const mechanicProfileBaseLocation = document.getElementById("mechanicProfileBaseLocation");
+  const mechanicProfilePostcode = document.getElementById("mechanicProfilePostcode");
+  const mechanicProfileRadius = document.getElementById("mechanicProfileRadius");
+  const mechanicProfileServiceType = document.getElementById("mechanicProfileServiceType");
+  const mechanicProfileMapEl = document.getElementById("mechanicProfileMap");
+  const mechanicEditProfileView = document.getElementById("mechanicEditProfileView");
+  const mechanicEditYears = document.getElementById("mechanicEditYears");
+  const mechanicEditWorkHistory = document.getElementById("mechanicEditWorkHistory");
+  const mechanicEditContactLine1 = document.getElementById("mechanicEditContactLine1");
+  const mechanicEditContactLine2 = document.getElementById("mechanicEditContactLine2");
+  const mechanicEditContactCity = document.getElementById("mechanicEditContactCity");
+  const mechanicEditContactPostcode = document.getElementById("mechanicEditContactPostcode");
+  const mechanicEditPremisesLine1 = document.getElementById("mechanicEditPremisesLine1");
+  const mechanicEditPremisesLine2 = document.getElementById("mechanicEditPremisesLine2");
+  const mechanicEditPremisesCity = document.getElementById("mechanicEditPremisesCity");
+  const mechanicEditPremisesPostcode = document.getElementById("mechanicEditPremisesPostcode");
+  const mechanicEditPremisesFields = document.getElementById("mechanicEditPremisesFields");
+  const mechanicEditTravelRadius = document.getElementById("mechanicEditTravelRadius");
+  const mechanicEditMobileService = document.getElementById("mechanicEditMobileService");
+  const mechanicEditCustomerDropoff = document.getElementById("mechanicEditCustomerDropoff");
+  const mechanicEditCollectionDelivery = document.getElementById("mechanicEditCollectionDelivery");
+  const mechanicEditSameAddress = document.getElementById("mechanicEditSameAddress");
+  const mechanicEditProfileForm = document.getElementById("mechanicEditProfileForm");
+  const mechanicEditProfileError = document.getElementById("mechanicEditProfileError");
+  const mechanicTypesTree = document.getElementById("mechanicTypesTree");
+  const mechanicTypesSaveBtn = document.getElementById("mechanicTypesSaveBtn");
+  const mechanicTypesStatus = document.getElementById("mechanicTypesStatus");
+  const mechanicSettingsWelcomeName = document.getElementById("mechanicSettingsWelcomeName");
+  const mechanicSettingsFullName = document.getElementById("mechanicSettingsFullName");
+  const mechanicSettingsPhone = document.getElementById("mechanicSettingsPhone");
+  const mechanicSettingsUsername = document.getElementById("mechanicSettingsUsername");
+  const mechanicSettingsEmail = document.getElementById("mechanicSettingsEmail");
+  const mechanicSettingsAddress = document.getElementById("mechanicSettingsAddress");
+  const mechanicResolutionOverview = document.getElementById("mechanicResolutionOverview");
+  const mechanicResolutionMessageView = document.getElementById("mechanicResolutionMessageView");
+  const mechanicResolutionBackBtn = document.getElementById("mechanicResolutionBackBtn");
+  const mechanicResolutionDetailTitle = document.getElementById("mechanicResolutionDetailTitle");
+  const mechanicResolutionCasesTable = document.getElementById("mechanicResolutionCasesTable");
+  const mechanicResolutionBookings = document.getElementById("mechanicResolutionBookings");
+  const mechanicResolutionNotice = document.getElementById("mechanicResolutionNotice");
+  const mechanicResolutionGoToCase = document.getElementById("mechanicResolutionGoToCase");
+  const mechanicResolutionCaseListTitle = document.getElementById("mechanicResolutionCaseListTitle");
+  const mechanicResolutionBookingCasesTable = document.getElementById("mechanicResolutionBookingCasesTable");
+  const mechanicResolutionIssue = document.getElementById("mechanicResolutionIssue");
+  const mechanicResolutionCaseView = document.getElementById("mechanicResolutionCaseView");
+  const mechanicResolutionCaseBackBtn = document.getElementById("mechanicResolutionCaseBackBtn");
+  const mechanicResolutionCaseTitle = document.getElementById("mechanicResolutionCaseTitle");
+  const mechanicResolutionMessages = document.getElementById("mechanicResolutionMessages");
+  const mechanicResolutionMessageInput = document.getElementById("mechanicResolutionMessageInput");
+  const mechanicResolutionSendBtn = document.getElementById("mechanicResolutionSendBtn");
+  const mechanicResolutionSidebarTitle = document.getElementById("mechanicResolutionSidebarTitle");
+  const mechanicResolutionSidebarCustomer = document.getElementById("mechanicResolutionSidebarCustomer");
+  const mechanicResolutionSidebarCar = document.getElementById("mechanicResolutionSidebarCar");
+  const mechanicResolutionSidebarAddress = document.getElementById("mechanicResolutionSidebarAddress");
+  const mechanicResolutionSidebarWork = document.getElementById("mechanicResolutionSidebarWork");
+  const mechanicResolutionSidebarTotal = document.getElementById("mechanicResolutionSidebarTotal");
+  const mechanicSettingsSubnavLinks = mechanicDashboard.querySelectorAll("[data-mechanic-settings-subview]");
+  const mechanicSettingsGeneral = document.getElementById("mechanicSettingsGeneral");
+  const mechanicSettingsNotifications = document.getElementById("mechanicSettingsNotifications");
+  const mechanicSettingsSecurity = document.getElementById("mechanicSettingsSecurity");
+  const mechanicSecurity2faEnable = document.getElementById("mechanicSecurity2faEnable");
   const editLink = document.getElementById("mechanicEditProfile");
   const viewLink = document.getElementById("mechanicViewProfile");
   const passwordCard = document.getElementById("mechanicSetPasswordCard");
@@ -2913,6 +3538,11 @@ if (mechanicDashboard) {
   const passwordEmail = document.getElementById("mechanicPasswordEmail");
   const passwordError = document.getElementById("mechanicPasswordError");
   const profile = sessionStorage.getItem("userProfile");
+  let latestMechanicCoverage = [];
+  let latestMechanicResolutionCases = [];
+  let latestMechanicAssignedBookings = [];
+  let pendingResolutionBookingId = null;
+  let pendingResolutionCaseId = null;
   if (profile) {
     try {
       const user = JSON.parse(profile);
@@ -2926,16 +3556,51 @@ if (mechanicDashboard) {
       const roles = Array.isArray(user?.roles) && user.roles.length ? user.roles : [user?.role_name || "MECHANIC"];
       const activeRole = roles.includes("MECHANIC") ? "MECHANIC" : roles[0];
       if (nameEl) nameEl.textContent = name;
+      if (mechanicAccountName) mechanicAccountName.textContent = name;
       if (idEl) {
         const base = (user.uuid_public || user.id || "0000").toString().slice(-4).toUpperCase();
         idEl.textContent = `AG${base}`;
       }
       if (mechanicAccountAvatar) mechanicAccountAvatar.textContent = initials;
+      if (mechanicAccountAvatarSecondary) mechanicAccountAvatarSecondary.textContent = initials;
       if (mechanicAccountPhone) mechanicAccountPhone.textContent = `Phone: ${user?.phone || "-"}`;
+      if (mechanicAccountPhoneSecondary) mechanicAccountPhoneSecondary.textContent = `Phone: ${user?.phone || "-"}`;
       if (mechanicAccountEmail) mechanicAccountEmail.textContent = `Email: ${user?.email || "-"}`;
+      if (mechanicAccountEmailSecondary) mechanicAccountEmailSecondary.textContent = `Email: ${user?.email || "-"}`;
       if (mechanicAccountUsername) mechanicAccountUsername.textContent = `Username: ${user?.username || "-"}`;
+      if (mechanicAccountUsernameSecondary) mechanicAccountUsernameSecondary.textContent = `Username: ${user?.username || "-"}`;
       if (mechanicAccountAddress) mechanicAccountAddress.textContent = `Address: ${user?.address || "-"}`;
+      if (mechanicAccountAddressSecondary) mechanicAccountAddressSecondary.textContent = `Address: ${user?.address || "-"}`;
       if (mechanicAccountRole) mechanicAccountRole.textContent = activeRole;
+      if (mechanicAccountRoleSecondary) mechanicAccountRoleSecondary.textContent = activeRole;
+      if (mechanicSettingsWelcomeName) mechanicSettingsWelcomeName.textContent = name;
+      if (mechanicSettingsFullName) mechanicSettingsFullName.textContent = name;
+      if (mechanicSettingsPhone) mechanicSettingsPhone.textContent = user?.phone || "-";
+      if (mechanicSettingsUsername) mechanicSettingsUsername.textContent = user?.username || "-";
+      if (mechanicSettingsEmail) mechanicSettingsEmail.textContent = user?.email || "-";
+      if (mechanicSettingsAddress) mechanicSettingsAddress.textContent = user?.address || "-";
+      if (mechanicProfileHeading) {
+        const location = user?.address_details?.city || user?.address || "Surrey";
+        mechanicProfileHeading.textContent = `${name}, ${location}`;
+      }
+      if (mechanicProfileRatings) mechanicProfileRatings.textContent = "(0 ratings)";
+      if (mechanicProfileExperience) mechanicProfileExperience.textContent = "5 years professional experience";
+      if (mechanicProfileActiveSince) mechanicProfileActiveSince.textContent = "Active since February 2026";
+      if (mechanicProfileJobsCompleted) mechanicProfileJobsCompleted.textContent = "0 jobs completed";
+      if (mechanicProfileBaseLocation) mechanicProfileBaseLocation.textContent = user?.address_details?.city || user?.address || "Surrey";
+      if (mechanicProfilePostcode) mechanicProfilePostcode.textContent = user?.address_details?.postal_code || "-";
+      if (mechanicProfileRadius) mechanicProfileRadius.textContent = "5 miles";
+      if (mechanicProfileServiceType) mechanicProfileServiceType.textContent = "Mobile mechanic";
+      if (mechanicProfileAvatar) mechanicProfileAvatar.textContent = initials || "ME";
+      if (mechanicProfileQualifications) {
+        mechanicProfileQualifications.innerHTML = "<li>NVQ Level 3 Qualified</li>";
+      }
+      if (mechanicProfileMemberships) {
+        mechanicProfileMemberships.innerHTML = "<li>No memberships added yet</li>";
+      }
+      if (mechanicEditContactCity) mechanicEditContactCity.value = user?.address_details?.city || "";
+      if (mechanicEditContactPostcode) mechanicEditContactPostcode.value = user?.address_details?.postal_code || "";
+      if (mechanicEditMobileService) mechanicEditMobileService.checked = true;
       if (editLink) {
         const userId = user.id || "0";
         editLink.href = `/mechanic/${userId}/profile`;
@@ -2991,6 +3656,793 @@ if (mechanicDashboard) {
     sessionStorage.removeItem("activeRole");
     window.location.replace("/");
   });
+
+  const mechanicToken = sessionStorage.getItem("userToken");
+  let mechanicProfileMap = null;
+  let latestMechanicProfile = null;
+  const formatMonthYear = (value) => {
+    if (!value) return "February 2026";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "February 2026";
+    return date.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+  };
+  const formatMechanicCurrency = (value) =>
+    new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(Number(value || 0));
+  const formatMechanicAddress = (address) =>
+    [address?.line1, address?.line2, address?.city, address?.postal_code].filter(Boolean).join(", ");
+  const formatMechanicLabour = (minutes) => {
+    const totalMinutes = Number(minutes || 0);
+    if (!totalMinutes) return "Estimated labour not available";
+    const hours = totalMinutes / 60;
+    return `Estimated labour: ${Number.isInteger(hours) ? hours : hours.toFixed(1)} hours`;
+  };
+  const formatMechanicDateTime = (value) => {
+    if (!value) return "-";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "-";
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+  };
+	  const renderMechanicOffers = (offers) => {
+    if (!mechanicBookingsList) return;
+    mechanicBookingsList.innerHTML = "";
+    if (!Array.isArray(offers) || !offers.length) {
+      const empty = document.createElement("p");
+      empty.className = "mechanic-bookings-empty";
+      empty.textContent = "No booking offers received yet.";
+      mechanicBookingsList.appendChild(empty);
+      return;
+    }
+
+	    offers.forEach((offer) => {
+	      const card = document.createElement("article");
+	      card.className = "mechanic-booking-card";
+	      const topStatus = offer.status === "accepted" ? "ACCEPTED" : offer.status === "pending" ? "PENDING" : String(offer.status || "").toUpperCase();
+	      const customerName = offer.customer?.name || "Customer";
+	      const itemsMarkup = (offer.items || [])
+        .map(
+          (item) => `
+            <div class="mechanic-booking-item">
+              <strong>${item.name}</strong>
+              <span>${formatMechanicLabour(item.labour_minutes)}</span>
+            </div>
+          `
+        )
+        .join("");
+	      const canRespond = offer.status === "pending";
+	      card.innerHTML = `
+	        <div class="mechanic-booking-topbar">
+	          <span class="mechanic-booking-topbar-status" data-status="${offer.status}">${topStatus}</span>
+	          <span class="mechanic-booking-topbar-reference">Reference: ${offer.booking?.reference || offer.booking?.id || "-"}</span>
+	            <div class="mechanic-booking-topbar-menu">
+	              <button class="mechanic-booking-topbar-actions" type="button" data-booking-actions-toggle>Actions</button>
+	              <div class="mechanic-booking-actions-panel is-hidden">
+	                <button class="mechanic-booking-actions-item" type="button" data-resolution-message="${offer.booking?.reference || offer.booking?.id || "-"}">Message to Customer</button>
+	              </div>
+	            </div>
+	        </div>
+	        <div class="mechanic-booking-card-head">
+	          <div class="mechanic-booking-meta">
+	            <h4>${offer.customer?.name || "Customer"}</h4>
+	          </div>
+	        </div>
+        <div class="mechanic-booking-grid">
+          <div><strong>Vehicle</strong><div>${[offer.vehicle?.registrationNumber, offer.vehicle?.make, offer.vehicle?.model].filter(Boolean).join(" · ") || "-"}</div></div>
+          <div><strong>Total</strong><div>${formatMechanicCurrency(offer.booking?.total_eur)}</div></div>
+          <div><strong>Address</strong><div>${formatMechanicAddress(offer.address) || "-"}</div></div>
+          <div><strong>Customer</strong><div>${offer.customer?.email || "-"}</div></div>
+        </div>
+        <div class="mechanic-booking-items">${itemsMarkup || '<div class="mechanic-booking-item"><strong>No work items</strong></div>'}</div>
+        <div class="mechanic-booking-actions">
+          ${canRespond ? `<button class="primary" type="button" data-offer-action="accept" data-offer-id="${offer.offer_id}">Accept</button>
+          <button class="secondary" type="button" data-offer-action="decline" data-offer-id="${offer.offer_id}">Decline</button>` : ""}
+        </div>
+      `;
+      mechanicBookingsList.appendChild(card);
+    });
+  };
+  const syncMechanicOffers = async () => {
+    if (!mechanicToken || !mechanicBookingsList) return;
+    try {
+      const offers = await apiAuth("/api/users/me/mechanic-offers", mechanicToken);
+      renderMechanicOffers(offers);
+    } catch {
+      renderMechanicOffers([]);
+    }
+  };
+
+  const renderMechanicProfileMap = (profileData) => {
+    if (!mechanicProfileMapEl) return;
+    const lat = Number(profileData?.address?.lat);
+    const lng = Number(profileData?.address?.lng);
+    const radiusMiles = Number(profileData?.travel_radius_miles || 5);
+    const geoapifyKey = String(mechanicProfileMapEl.dataset.geoapifyKey || "").trim();
+    const geoapifyStyle = String(mechanicProfileMapEl.dataset.geoapifyStyle || "osm-carto").trim() || "osm-carto";
+
+    if (!window.L || !Number.isFinite(lat) || !Number.isFinite(lng) || (lat === 0 && lng === 0)) {
+      mechanicProfileMapEl.innerHTML =
+        '<div class="map-placeholder">Map unavailable. Save a valid address to generate your coverage area.</div>';
+      return;
+    }
+
+    if (mechanicProfileMap) {
+      mechanicProfileMap.remove();
+      mechanicProfileMap = null;
+    }
+
+    mechanicProfileMapEl.innerHTML = "";
+    mechanicProfileMap = window.L.map(mechanicProfileMapEl, {
+      zoomControl: true,
+      scrollWheelZoom: false
+    });
+
+    const tileUrl = geoapifyKey
+      ? `https://maps.geoapify.com/v1/tile/${encodeURIComponent(geoapifyStyle)}/{z}/{x}/{y}.png?apiKey=${encodeURIComponent(geoapifyKey)}`
+      : "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+    const tileOptions = geoapifyKey
+      ? {
+          attribution: "&copy; OpenStreetMap contributors &copy; Geoapify",
+          maxZoom: 20
+        }
+      : {
+          attribution: "&copy; OpenStreetMap contributors &copy; CARTO",
+          subdomains: "abcd",
+          maxZoom: 20
+        };
+    const tileLayer = window.L.tileLayer(tileUrl, tileOptions);
+    tileLayer.on("tileerror", () => {
+      mechanicProfileMapEl.insertAdjacentHTML(
+        "beforeend",
+        '<div class="map-placeholder map-placeholder--overlay">Map tiles failed to load.</div>'
+      );
+    });
+    tileLayer.addTo(mechanicProfileMap);
+
+    const center = [lat, lng];
+    const radiusMeters = Math.max(radiusMiles, 1) * 1609.34;
+    mechanicProfileMap.setView(center, 11);
+    window.L.marker(center).addTo(mechanicProfileMap);
+    window.L.circle(center, {
+      radius: radiusMeters,
+      color: "#4da3ff",
+      weight: 2,
+      fillColor: "#4da3ff",
+      fillOpacity: 0.2
+    }).addTo(mechanicProfileMap);
+    setTimeout(() => mechanicProfileMap?.invalidateSize(), 80);
+  };
+
+  const syncMechanicProfile = async () => {
+    if (!mechanicToken) return;
+    try {
+      const profileData = await apiAuth("/api/users/me/mechanic-profile", mechanicToken);
+      latestMechanicProfile = profileData;
+      if (mechanicProfileHeading) {
+        mechanicProfileHeading.textContent = `${profileData.name || "Mechanic"}, ${profileData.location || "Surrey"}`;
+      }
+      if (mechanicProfileRatings) {
+        const rating = Number(profileData.rating || 0);
+        mechanicProfileRatings.textContent = rating > 0 ? `(${rating.toFixed(1)} rating)` : "(0 ratings)";
+      }
+      if (mechanicProfileExperience) {
+        const years = Number(profileData.years_experience || 0);
+        mechanicProfileExperience.textContent = years
+          ? `${years} ${years === 1 ? "year" : "years"} professional experience`
+          : "Professional experience not added yet";
+      }
+      if (mechanicProfileActiveSince) {
+        mechanicProfileActiveSince.textContent = `Active since ${formatMonthYear(profileData.created_at)}`;
+      }
+      if (mechanicProfileJobsCompleted) {
+        const jobsDone = Number(profileData.jobs_done || 0);
+        mechanicProfileJobsCompleted.textContent = `${jobsDone} ${jobsDone === 1 ? "job" : "jobs"} completed`;
+      }
+      if (mechanicProfileBaseLocation) {
+        mechanicProfileBaseLocation.textContent = profileData.location || "Surrey";
+      }
+      if (mechanicProfilePostcode) {
+        mechanicProfilePostcode.textContent = profileData.address?.postal_code || "-";
+      }
+      if (mechanicProfileRadius) {
+        const radius = Number(profileData.travel_radius_miles || 0);
+        mechanicProfileRadius.textContent = radius ? `${radius} miles` : "Not set";
+      }
+      if (mechanicProfileServiceType) {
+        mechanicProfileServiceType.textContent = profileData.is_mobile ? "Mobile mechanic" : "Workshop service";
+      }
+      if (mechanicProfileAvatar) {
+        if (profileData.avatar_url) {
+          mechanicProfileAvatar.innerHTML = `<img src="${profileData.avatar_url}" alt="Profile photo">`;
+        } else {
+          const initials = String(profileData.name || "ME")
+            .split(/\s+/)
+            .slice(0, 2)
+            .map((part) => part[0] || "")
+            .join("")
+            .toUpperCase() || "ME";
+          mechanicProfileAvatar.textContent = initials;
+        }
+      }
+      if (mechanicProfileQualifications) {
+        const qualifications = Array.isArray(profileData.qualifications) && profileData.qualifications.length
+          ? profileData.qualifications
+          : ["Qualifications not added yet"];
+        mechanicProfileQualifications.innerHTML = qualifications.map((item) => `<li>${item}</li>`).join("");
+      }
+      if (mechanicProfileMemberships) {
+        const memberships = Array.isArray(profileData.memberships) && profileData.memberships.length
+          ? profileData.memberships
+          : ["No memberships added yet"];
+        mechanicProfileMemberships.innerHTML = memberships.map((item) => `<li>${item}</li>`).join("");
+      }
+      if (mechanicEditYears) mechanicEditYears.value = profileData.years_experience || "";
+      if (mechanicEditWorkHistory) mechanicEditWorkHistory.value = profileData.work_history || "";
+      if (mechanicEditContactLine1) mechanicEditContactLine1.value = profileData.address?.line1 || "";
+      if (mechanicEditContactLine2) mechanicEditContactLine2.value = profileData.address?.line2 || "";
+      if (mechanicEditContactCity) mechanicEditContactCity.value = profileData.address?.city || "";
+      if (mechanicEditContactPostcode) mechanicEditContactPostcode.value = profileData.address?.postal_code || "";
+      if (mechanicEditPremisesLine1) mechanicEditPremisesLine1.value = profileData.premises_address?.line1 || "";
+      if (mechanicEditPremisesLine2) mechanicEditPremisesLine2.value = profileData.premises_address?.line2 || "";
+      if (mechanicEditPremisesCity) mechanicEditPremisesCity.value = profileData.premises_address?.city || "";
+      if (mechanicEditPremisesPostcode) mechanicEditPremisesPostcode.value = profileData.premises_address?.postal_code || "";
+      if (mechanicEditTravelRadius) mechanicEditTravelRadius.value = profileData.travel_radius_miles || "";
+      if (mechanicEditMobileService) mechanicEditMobileService.checked = Boolean(profileData.is_mobile);
+      if (mechanicEditCustomerDropoff) {
+        mechanicEditCustomerDropoff.checked = (profileData.services_offered || []).includes("customer_drop_off");
+      }
+      if (mechanicEditCollectionDelivery) {
+        mechanicEditCollectionDelivery.checked = (profileData.services_offered || []).includes("collection_and_delivery");
+      }
+      renderMechanicProfileMap(profileData);
+    } catch {}
+  };
+
+  const flattenCoverageSelection = () => {
+    if (!Array.isArray(latestMechanicCoverage)) return [];
+    return latestMechanicCoverage.flatMap((group) =>
+      (group.subcategories || []).flatMap((subcategory) =>
+        (subcategory.services || []).filter((service) => service.selected).map((service) => service.id)
+      )
+    );
+  };
+
+  const renderMechanicCoverage = (coverageTree) => {
+    latestMechanicCoverage = Array.isArray(coverageTree) ? coverageTree : [];
+    if (!mechanicTypesTree) return;
+    mechanicTypesTree.innerHTML = "";
+
+    latestMechanicCoverage.forEach((group, groupIndex) => {
+      const groupSelected = (group.subcategories || []).every((subcategory) =>
+        (subcategory.services || []).every((service) => service.selected)
+      );
+
+      const details = document.createElement("details");
+      details.className = "mechanic-types-group";
+      if (groupIndex < 4) details.open = true;
+
+      const summary = document.createElement("summary");
+      summary.className = "mechanic-types-row";
+      summary.innerHTML = `
+        <span class="mechanic-types-row-left">
+          <span class="mechanic-types-check">
+            <input type="checkbox" ${groupSelected ? "checked" : ""} data-group-key="${group.key}">
+          </span>
+          <span>${group.label}</span>
+        </span>
+        <span class="mechanic-types-arrow">›</span>
+      `;
+      details.appendChild(summary);
+
+      const groupBody = document.createElement("div");
+      groupBody.className = "mechanic-types-group-body";
+
+      (group.subcategories || []).forEach((subcategory) => {
+        const subWrap = document.createElement("div");
+        subWrap.className = "mechanic-types-subcategory";
+
+        const isGeneral = subcategory.key === "general" || subcategory.key === group.key;
+        if (!isGeneral) {
+          const subSummary = document.createElement("div");
+          subSummary.className = "mechanic-types-subtitle";
+          subSummary.textContent = subcategory.label;
+          subWrap.appendChild(subSummary);
+        }
+
+        (subcategory.services || []).forEach((service) => {
+          const row = document.createElement("label");
+          row.className = "mechanic-types-service";
+          row.innerHTML = `
+            <input type="checkbox" data-service-id="${service.id}" ${service.selected ? "checked" : ""}>
+            <span>${service.name}</span>
+          `;
+          subWrap.appendChild(row);
+        });
+
+        groupBody.appendChild(subWrap);
+      });
+
+      details.appendChild(groupBody);
+      mechanicTypesTree.appendChild(details);
+    });
+  };
+
+  const syncMechanicCoverage = async () => {
+    if (!mechanicToken || !mechanicTypesTree) return;
+    try {
+      const coverage = await apiAuth("/api/users/me/mechanic-service-coverage", mechanicToken);
+      renderMechanicCoverage(coverage);
+    } catch {
+      if (mechanicTypesStatus) mechanicTypesStatus.textContent = "Unable to load work types.";
+    }
+  };
+
+  const renderMechanicResolutionCaseRows = (target, cases) => {
+    if (!target) return;
+    target.querySelectorAll(".mechanic-resolution-table-row").forEach((row) => row.remove());
+    if (!Array.isArray(cases) || !cases.length) {
+      const empty = document.createElement("p");
+      empty.className = "mechanic-bookings-empty";
+      empty.textContent = "No cases created yet.";
+      target.appendChild(empty);
+      return;
+    }
+    cases.forEach((entry) => {
+      const row = document.createElement("div");
+      row.className = "mechanic-resolution-table-row";
+      row.innerHTML = `
+        <span class="mechanic-resolution-status">${String(entry.subject || entry.type || "General enquiry").toUpperCase()}</span>
+        <span>${entry.reference || "-"}</span>
+        <span>${formatMechanicDateTime(entry.updated_at)}</span>
+        <span>${entry.subject || "-"}</span>
+        <button class="mechanic-resolution-link" type="button" data-resolution-case-id="${entry.id}">View</button>
+      `;
+      target.appendChild(row);
+    });
+  };
+
+  const renderMechanicResolutionBookings = (bookings) => {
+    if (!mechanicResolutionBookings) return;
+    mechanicResolutionBookings.innerHTML = "";
+    if (!Array.isArray(bookings) || !bookings.length) {
+      const empty = document.createElement("p");
+      empty.className = "mechanic-bookings-empty";
+      empty.textContent = "No accepted bookings available.";
+      mechanicResolutionBookings.appendChild(empty);
+      return;
+    }
+    bookings.forEach((entry) => {
+      const item = (entry.items || [])[0];
+      const card = document.createElement("div");
+      card.className = "mechanic-resolution-booking";
+      card.innerHTML = `
+        <div class="mechanic-resolution-booking-head">Booking #${entry.booking?.reference || entry.booking?.id || "-"}</div>
+        <div class="mechanic-resolution-booking-body">
+          <div class="mechanic-resolution-booking-row">
+            <strong>Vehicle</strong>
+            <span>${[entry.vehicle?.make, entry.vehicle?.model, entry.vehicle?.yearOfManufacture].filter(Boolean).join(" ") || "-"}</span>
+          </div>
+          <div class="mechanic-resolution-booking-row">
+            <strong>Labour</strong>
+            <span>${item?.name || "-"}</span>
+          </div>
+          <div class="mechanic-resolution-booking-row">
+            <strong>Location</strong>
+            <span>${formatMechanicAddress(entry.address) || "-"}</span>
+          </div>
+          <div class="mechanic-resolution-booking-row">
+            <strong>Arrival Time</strong>
+            <span>${formatMechanicDateTime(entry.booking?.created_at)}</span>
+          </div>
+        </div>
+        <button class="primary" type="button" data-resolution-booking-id="${entry.booking?.id}" data-booking-reference="${entry.booking?.reference || entry.booking?.id}">Send message</button>
+      `;
+      mechanicResolutionBookings.appendChild(card);
+    });
+  };
+
+  const syncMechanicResolutionOverview = async () => {
+    if (!mechanicToken) return;
+    try {
+      const [cases, bookings] = await Promise.all([
+        apiAuth("/api/users/me/mechanic-resolution-cases", mechanicToken),
+        apiAuth("/api/users/me/mechanic-bookings", mechanicToken)
+      ]);
+      latestMechanicResolutionCases = Array.isArray(cases) ? cases : [];
+      latestMechanicAssignedBookings = Array.isArray(bookings) ? bookings : [];
+      renderMechanicResolutionCaseRows(mechanicResolutionCasesTable, latestMechanicResolutionCases);
+      renderMechanicResolutionBookings(latestMechanicAssignedBookings);
+    } catch {
+      renderMechanicResolutionCaseRows(mechanicResolutionCasesTable, []);
+      renderMechanicResolutionBookings([]);
+    }
+  };
+
+  const openMechanicResolutionMessage = async (bookingId, type = "general") => {
+    if (!bookingId) return;
+    pendingResolutionBookingId = Number(bookingId);
+    pendingResolutionCaseId = null;
+    const bookingEntry = latestMechanicAssignedBookings.find((entry) => Number(entry.booking?.id) === Number(bookingId));
+    const bookingReference = bookingEntry?.booking?.reference || bookingId;
+    if (mechanicResolutionDetailTitle) {
+      mechanicResolutionDetailTitle.textContent = `Message customer regarding Booking #${bookingReference}`;
+    }
+    if (mechanicResolutionCaseListTitle) {
+      mechanicResolutionCaseListTitle.textContent = `Resolution cases already created for booking #${bookingReference}`;
+    }
+    const bookingCases = latestMechanicResolutionCases.filter((entry) => entry.booking_id === pendingResolutionBookingId);
+    renderMechanicResolutionCaseRows(mechanicResolutionBookingCasesTable, bookingCases);
+    if (mechanicResolutionNotice) {
+      const hasMatching = bookingCases.some((entry) => String(entry.type || "general") === String(type));
+      mechanicResolutionNotice.textContent = hasMatching
+        ? "You already have an open dialog for this issue type."
+        : "No case exists yet for this issue type. Use Go to case to create it.";
+    }
+    if (mechanicResolutionIssue) {
+      mechanicResolutionIssue.value = type;
+    }
+    setMechanicResolutionSubview("message", bookingReference);
+  };
+  const renderMechanicResolutionCaseDetail = (detail) => {
+    pendingResolutionCaseId = Number(detail?.id || 0) || null;
+    pendingResolutionBookingId = Number(detail?.booking_id || detail?.booking?.id || 0) || null;
+    if (mechanicResolutionCaseTitle) {
+      mechanicResolutionCaseTitle.textContent = detail?.subject || "General Enquiry";
+    }
+    if (mechanicResolutionSidebarTitle) {
+      mechanicResolutionSidebarTitle.textContent = `Current status of booking #${detail?.booking?.reference || detail?.booking_id || "-"}`;
+    }
+    if (mechanicResolutionSidebarCustomer) {
+      mechanicResolutionSidebarCustomer.textContent = detail?.customer?.name || "-";
+    }
+    if (mechanicResolutionSidebarCar) {
+      mechanicResolutionSidebarCar.textContent = [detail?.vehicle?.make, detail?.vehicle?.model, detail?.vehicle?.yearOfManufacture, detail?.vehicle?.registrationNumber]
+        .filter(Boolean)
+        .join(" ");
+    }
+    if (mechanicResolutionSidebarAddress) {
+      mechanicResolutionSidebarAddress.textContent = formatMechanicAddress(detail?.address) || "-";
+    }
+    if (mechanicResolutionSidebarWork) {
+      mechanicResolutionSidebarWork.textContent = (detail?.items || []).map((item) => item.name).join(", ") || "-";
+    }
+    if (mechanicResolutionSidebarTotal) {
+      mechanicResolutionSidebarTotal.textContent = formatMechanicCurrency(detail?.booking?.total_eur);
+    }
+    if (mechanicResolutionMessages) {
+      mechanicResolutionMessages.innerHTML = "";
+      const messages = Array.isArray(detail?.messages) ? detail.messages : [];
+      if (!messages.length) {
+        mechanicResolutionMessages.innerHTML = '<p class="mechanic-bookings-empty">No messages yet.</p>';
+      } else {
+        messages.forEach((message) => {
+          const item = document.createElement("div");
+          item.className = `mechanic-resolution-message ${message.sender_role === "mechanic" ? "is-mechanic" : "is-customer"}`;
+          item.innerHTML = `
+            <div class="mechanic-resolution-bubble">
+              <p>${String(message.body || "").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+            </div>
+            <span class="mechanic-resolution-message-meta">${message.sender_name || "User"}, ${formatMechanicDateTime(message.created_at)}</span>
+          `;
+          mechanicResolutionMessages.appendChild(item);
+        });
+      }
+    }
+  };
+  mechanicBookingsList?.addEventListener("click", async (event) => {
+	    const actionsToggle = event.target.closest("[data-booking-actions-toggle]");
+	    if (actionsToggle) {
+	      const menu = actionsToggle.closest(".mechanic-booking-topbar-menu");
+	      const panel = menu?.querySelector(".mechanic-booking-actions-panel");
+	      mechanicBookingsList.querySelectorAll(".mechanic-booking-actions-panel").forEach((item) => {
+	        if (item !== panel) item.classList.add("is-hidden");
+	      });
+	      panel?.classList.toggle("is-hidden");
+	      return;
+	    }
+	    const resolutionMessage = event.target.closest("[data-resolution-message]");
+	    if (resolutionMessage) {
+	      syncMechanicNavState("resolution");
+	      setMechanicView("resolution");
+	      const ref = resolutionMessage.dataset.resolutionMessage || "16334274";
+	      const bookingEntry = latestMechanicAssignedBookings.find((entry) => String(entry.booking?.reference || entry.booking?.id) === String(ref));
+	      await openMechanicResolutionMessage(bookingEntry?.booking?.id, "general");
+	      mechanicBookingsList.querySelectorAll(".mechanic-booking-actions-panel").forEach((item) => {
+	        item.classList.add("is-hidden");
+	      });
+	      return;
+	    }
+	    const button = event.target.closest("[data-offer-action]");
+	    if (!button || !mechanicToken) return;
+    const offerId = button.dataset.offerId;
+    const action = button.dataset.offerAction;
+    try {
+      button.disabled = true;
+      await apiAuth(`/api/users/me/mechanic-offers/${encodeURIComponent(offerId)}/respond`, mechanicToken, {
+        method: "POST",
+        body: JSON.stringify({ action })
+      });
+      await syncMechanicOffers();
+    } catch {
+      button.disabled = false;
+    }
+  });
+
+  mechanicTypesTree?.addEventListener("change", (event) => {
+    const groupToggle = event.target.closest("input[data-group-key]");
+    if (groupToggle) {
+      const groupKey = groupToggle.dataset.groupKey;
+      const group = latestMechanicCoverage.find((item) => item.key === groupKey);
+      if (!group) return;
+      (group.subcategories || []).forEach((subcategory) => {
+        (subcategory.services || []).forEach((service) => {
+          service.selected = Boolean(groupToggle.checked);
+        });
+      });
+      renderMechanicCoverage(latestMechanicCoverage);
+      return;
+    }
+
+    const serviceToggle = event.target.closest("input[data-service-id]");
+    if (!serviceToggle) return;
+    const serviceId = Number(serviceToggle.dataset.serviceId);
+    latestMechanicCoverage.forEach((group) => {
+      (group.subcategories || []).forEach((subcategory) => {
+        (subcategory.services || []).forEach((service) => {
+          if (service.id === serviceId) service.selected = Boolean(serviceToggle.checked);
+        });
+      });
+    });
+    renderMechanicCoverage(latestMechanicCoverage);
+  });
+
+  mechanicTypesSaveBtn?.addEventListener("click", async () => {
+    if (!mechanicToken) return;
+    if (mechanicTypesStatus) mechanicTypesStatus.textContent = "";
+    try {
+      mechanicTypesSaveBtn.disabled = true;
+      const coverage = await apiAuth("/api/users/me/mechanic-service-coverage", mechanicToken, {
+        method: "PATCH",
+        body: JSON.stringify({ service_ids: flattenCoverageSelection() })
+      });
+      renderMechanicCoverage(coverage);
+      if (mechanicTypesStatus) mechanicTypesStatus.textContent = "Types of work updated.";
+    } catch {
+      if (mechanicTypesStatus) mechanicTypesStatus.textContent = "Unable to save work types.";
+    } finally {
+      mechanicTypesSaveBtn.disabled = false;
+    }
+  });
+
+  const setMechanicSettingsSubview = (subview) => {
+    mechanicSettingsGeneral?.classList.toggle("is-hidden", subview !== "general");
+    mechanicSettingsNotifications?.classList.toggle("is-hidden", subview !== "notifications");
+    mechanicSettingsSecurity?.classList.toggle("is-hidden", subview !== "security");
+    mechanicSettingsSubnavLinks.forEach((btn) => btn.classList.toggle("active", btn.dataset.mechanicSettingsSubview === subview));
+  };
+
+  const setMechanicResolutionSubview = (subview, bookingReference = "16334274") => {
+    mechanicResolutionOverview?.classList.toggle("is-hidden", subview !== "overview");
+    mechanicResolutionMessageView?.classList.toggle("is-hidden", subview !== "message");
+    mechanicResolutionCaseView?.classList.toggle("is-hidden", subview !== "case");
+    if (subview === "message" && mechanicResolutionDetailTitle) {
+      mechanicResolutionDetailTitle.textContent = `Message customer regarding Booking #${bookingReference}`;
+    }
+  };
+
+  mechanicSettingsSubnavLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      setMechanicSettingsSubview(link.dataset.mechanicSettingsSubview || "general");
+    });
+  });
+
+  mechanicSecurity2faEnable?.addEventListener("click", () => {
+    mechanicSecurity2faEnable.classList.toggle("is-active");
+    mechanicSecurity2faEnable.textContent = mechanicSecurity2faEnable.classList.contains("is-active")
+      ? "2FA Enabled"
+      : "Enable 2FA";
+  });
+
+  mechanicResolutionBackBtn?.addEventListener("click", () => {
+    setMechanicResolutionSubview("overview");
+  });
+  mechanicResolutionCaseBackBtn?.addEventListener("click", () => {
+    if (pendingResolutionBookingId) {
+      const bookingEntry = latestMechanicAssignedBookings.find((entry) => Number(entry.booking?.id) === pendingResolutionBookingId);
+      openMechanicResolutionMessage(pendingResolutionBookingId, "general");
+      setMechanicResolutionSubview("message", bookingEntry?.booking?.reference || pendingResolutionBookingId);
+      return;
+    }
+    setMechanicResolutionSubview("overview");
+  });
+
+  mechanicResolutionBookings?.addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-resolution-booking-id]");
+    if (!button) return;
+    syncMechanicNavState("resolution");
+    setMechanicView("resolution");
+    await openMechanicResolutionMessage(button.dataset.resolutionBookingId, "general");
+  });
+
+  mechanicResolutionBookingCasesTable?.addEventListener("click", async (event) => {
+    const viewButton = event.target.closest("[data-resolution-case-id]");
+    if (!viewButton || !mechanicToken) return;
+    const detail = await apiAuth(`/api/users/me/mechanic-resolution-cases/${encodeURIComponent(viewButton.dataset.resolutionCaseId)}`, mechanicToken);
+    renderMechanicResolutionCaseDetail(detail);
+    setMechanicResolutionSubview("case", detail.booking?.reference || detail.booking_id);
+  });
+
+  mechanicResolutionCasesTable?.addEventListener("click", async (event) => {
+    const viewButton = event.target.closest("[data-resolution-case-id]");
+    if (!viewButton || !mechanicToken) return;
+    const detail = await apiAuth(`/api/users/me/mechanic-resolution-cases/${encodeURIComponent(viewButton.dataset.resolutionCaseId)}`, mechanicToken);
+    pendingResolutionBookingId = Number(detail.booking_id);
+    renderMechanicResolutionCaseRows(
+      mechanicResolutionBookingCasesTable,
+      latestMechanicResolutionCases.filter((entry) => entry.booking_id === pendingResolutionBookingId)
+    );
+    if (mechanicResolutionDetailTitle) {
+      mechanicResolutionDetailTitle.textContent = `${detail.subject || "General enquiry"} regarding Booking #${detail.booking?.reference || detail.booking_id}`;
+    }
+    if (mechanicResolutionCaseListTitle) {
+      mechanicResolutionCaseListTitle.textContent = `Resolution cases already created for booking #${detail.booking?.reference || detail.booking_id}`;
+    }
+    renderMechanicResolutionCaseDetail(detail);
+    setMechanicResolutionSubview("case", detail.booking?.reference || detail.booking_id);
+  });
+
+  mechanicResolutionGoToCase?.addEventListener("click", async () => {
+    if (!pendingResolutionBookingId || !mechanicToken) return;
+    const detail = await apiAuth("/api/users/me/mechanic-resolution-cases", mechanicToken, {
+      method: "POST",
+      body: JSON.stringify({ booking_id: pendingResolutionBookingId, type: mechanicResolutionIssue?.value || "general" })
+    });
+    await syncMechanicResolutionOverview();
+    renderMechanicResolutionCaseDetail(detail);
+    setMechanicResolutionSubview("case", detail.booking?.reference || detail.booking_id);
+  });
+  mechanicResolutionSendBtn?.addEventListener("click", async () => {
+    if (!pendingResolutionCaseId || !mechanicToken) return;
+    const body = mechanicResolutionMessageInput?.value?.trim();
+    if (!body) return;
+    const detail = await apiAuth(`/api/users/me/mechanic-resolution-cases/${encodeURIComponent(pendingResolutionCaseId)}/messages`, mechanicToken, {
+      method: "POST",
+      body: JSON.stringify({ body })
+    });
+    if (mechanicResolutionMessageInput) mechanicResolutionMessageInput.value = "";
+    renderMechanicResolutionCaseDetail(detail);
+    await syncMechanicResolutionOverview();
+  });
+
+  document.addEventListener("click", (event) => {
+    if (event.target.closest(".mechanic-booking-topbar-menu")) return;
+    mechanicBookingsList?.querySelectorAll(".mechanic-booking-actions-panel").forEach((item) => {
+      item.classList.add("is-hidden");
+    });
+  });
+
+  const setMechanicView = (view) => {
+    mechanicDashboardView?.classList.toggle("is-hidden", view !== "dashboard");
+    mechanicResolutionCenterView?.classList.toggle("is-hidden", view !== "resolution");
+    mechanicProcedureView?.classList.toggle("is-hidden", view !== "procedure");
+    mechanicPaymentsView?.classList.toggle("is-hidden", view !== "payments");
+    mechanicProfileView?.classList.toggle("is-hidden", view !== "profile");
+    mechanicEditProfileView?.classList.toggle("is-hidden", view !== "edit-profile");
+    mechanicAccountView?.classList.toggle("is-hidden", view !== "account");
+    mechanicPictureView?.classList.toggle("is-hidden", view !== "picture");
+    mechanicCertificationsView?.classList.toggle("is-hidden", view !== "certifications");
+    mechanicTaxView?.classList.toggle("is-hidden", view !== "tax");
+    mechanicDocumentsView?.classList.toggle("is-hidden", view !== "documents");
+    mechanicPreferencesView?.classList.toggle("is-hidden", view !== "preferences");
+    mechanicTypesView?.classList.toggle("is-hidden", view !== "types");
+    mechanicSettingsView?.classList.toggle("is-hidden", view !== "settings");
+    if (view === "profile" && latestMechanicProfile) {
+      setTimeout(() => renderMechanicProfileMap(latestMechanicProfile), 80);
+    }
+  };
+
+  const syncMechanicNavState = (view) => {
+    const railViews = new Set(["profile", "edit-profile", "picture", "certifications", "tax", "documents", "preferences", "types", "settings"]);
+    mechanicNavLinks.forEach((btn) => {
+      const isActive = btn.dataset.view === view && railViews.has(view);
+      btn.classList.toggle("active", isActive);
+    });
+    mechanicSubnavLinks.forEach((btn) => btn.classList.toggle("active", btn.dataset.view === view));
+  };
+
+  mechanicNavLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      const view = link.dataset.view || "account";
+      syncMechanicNavState(view);
+      setMechanicView(view);
+    });
+  });
+
+  mechanicEditSameAddress?.addEventListener("change", () => {
+    const isSame = mechanicEditSameAddress.checked;
+    if (mechanicEditPremisesFields) {
+      mechanicEditPremisesFields.classList.toggle("is-hidden", isSame);
+    }
+    if (!isSame) return;
+    if (mechanicEditPremisesLine1) mechanicEditPremisesLine1.value = mechanicEditContactLine1?.value || "";
+    if (mechanicEditPremisesLine2) mechanicEditPremisesLine2.value = mechanicEditContactLine2?.value || "";
+    if (mechanicEditPremisesCity) mechanicEditPremisesCity.value = mechanicEditContactCity?.value || "";
+    if (mechanicEditPremisesPostcode) mechanicEditPremisesPostcode.value = mechanicEditContactPostcode?.value || "";
+  });
+
+  mechanicEditProfileForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!mechanicToken) return;
+    if (mechanicEditProfileError) mechanicEditProfileError.textContent = "";
+    const payload = {
+      years_experience: mechanicEditYears?.value?.trim() || "",
+      work_history: mechanicEditWorkHistory?.value?.trim() || "",
+      travel_radius_miles: mechanicEditTravelRadius?.value?.trim() || "",
+      is_mobile: Boolean(mechanicEditMobileService?.checked),
+      same_as_contact_address: Boolean(mechanicEditSameAddress?.checked),
+      contact_address: {
+        line1: mechanicEditContactLine1?.value?.trim() || "",
+        line2: mechanicEditContactLine2?.value?.trim() || "",
+        city: mechanicEditContactCity?.value?.trim() || "",
+        postal_code: mechanicEditContactPostcode?.value?.trim() || "",
+        country: "GB"
+      },
+      premises_address: {
+        line1: mechanicEditPremisesLine1?.value?.trim() || "",
+        line2: mechanicEditPremisesLine2?.value?.trim() || "",
+        city: mechanicEditPremisesCity?.value?.trim() || "",
+        postal_code: mechanicEditPremisesPostcode?.value?.trim() || "",
+        country: "GB"
+      },
+      services_offered: [
+        mechanicEditMobileService?.checked ? "mobile_mechanic_service" : "",
+        mechanicEditCustomerDropoff?.checked ? "customer_drop_off" : "",
+        mechanicEditCollectionDelivery?.checked ? "collection_and_delivery" : ""
+      ].filter(Boolean)
+    };
+
+    apiAuth("/api/users/me/mechanic-profile", mechanicToken, {
+      method: "PATCH",
+      body: JSON.stringify(payload)
+    })
+      .then((profileData) => {
+        latestMechanicProfile = profileData;
+        if (mechanicEditProfileError) mechanicEditProfileError.textContent = "Profile updated.";
+        syncMechanicProfile();
+      })
+      .catch((err) => {
+        if (mechanicEditProfileError) {
+          mechanicEditProfileError.textContent =
+            err?.error?.message || err?.message || "Unable to save profile.";
+        }
+      });
+  });
+
+  mechanicSubnavLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      const view = link.dataset.view || "dashboard";
+      syncMechanicNavState(view);
+      setMechanicView(view);
+    });
+  });
+  const pendingMechanicView = sessionStorage.getItem("mechanicHeaderTargetView");
+  const initialMechanicView =
+    pendingMechanicView && ["dashboard", "resolution", "procedure", "payments", "profile", "account", "settings"].includes(pendingMechanicView)
+      ? pendingMechanicView
+      : "dashboard";
+  sessionStorage.removeItem("mechanicHeaderTargetView");
+  syncMechanicNavState(initialMechanicView);
+  setMechanicView(initialMechanicView);
+  syncMechanicOffers();
+  syncMechanicProfile();
+  syncMechanicCoverage();
+  syncMechanicResolutionOverview();
+  setMechanicSettingsSubview("general");
+  setMechanicResolutionSubview("overview");
 }
 
 const mechanicEditNav = document.querySelector(".mechanic-edit-nav");

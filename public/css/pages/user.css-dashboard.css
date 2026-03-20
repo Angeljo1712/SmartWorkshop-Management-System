@@ -37,18 +37,18 @@ body.admin-body .user-layout::after {
   z-index: 0;
 }
 
-body.admin-body .user-layout > .admin-rail,
+body.admin-body .user-layout > .user-rail,
 body.admin-body .user-layout > .admin-content,
 body.admin-body .user-layout > .is-hidden {
   position: relative;
   z-index: 1;
 }
 
-body.admin-body .user-layout > .admin-rail {
+body.admin-body .user-layout > .user-rail {
   min-width: 150px;
 }
 
-body.admin-body .user-layout > .admin-rail,
+body.admin-body .user-layout > .user-rail,
 body.admin-body .user-layout > .admin-content {
   border: 2px solid #ffffff;
   border-radius: 14px;
@@ -558,6 +558,43 @@ body.admin-body #userBookingsView .user-booking-empty {
   min-width: 92px;
 }
 
+.user-booking-actions-wrap {
+  position: relative;
+  justify-self: end;
+}
+
+.user-booking-actions-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  min-width: 220px;
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background: #171c24;
+  box-shadow: 0 18px 32px rgba(0, 0, 0, 0.28);
+  z-index: 20;
+}
+
+.user-booking-actions-item {
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #ffffff;
+  text-align: left;
+  padding: 10px 12px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.user-booking-actions-item:hover,
+.user-booking-actions-item:focus-visible {
+  background: rgba(37, 99, 235, 0.22);
+  outline: none;
+}
+
 .user-booking-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -612,6 +649,225 @@ body.admin-body #userBookingsView .user-booking-empty {
 
 .user-booking-empty {
   margin: 0;
+}
+
+body.admin-body #userBookingsView .bookings-section--resolution {
+  padding: 0 20px 20px;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-card,
+body.admin-body #userBookingsView .mechanic-resolution-detail,
+body.admin-body #userBookingsView .mechanic-resolution-case,
+body.admin-body #userBookingsView .mechanic-resolution-sidebar-card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  background: #171c24;
+  color: #eaf0fb;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-layout {
+  display: grid;
+  gap: 20px;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-card {
+  overflow: hidden;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-card-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-weight: 700;
+  color: #ffffff;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-table {
+  display: grid;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-table-head,
+body.admin-body #userBookingsView .mechanic-resolution-table-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 20px;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-table-head {
+  color: rgba(234, 240, 251, 0.82);
+  font-weight: 700;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-table-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #2b8f57;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-link {
+  border: 0;
+  background: transparent;
+  color: #4ea3ff;
+  font: inherit;
+  cursor: pointer;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-detail,
+body.admin-body #userBookingsView .mechanic-resolution-case-view {
+  display: grid;
+  gap: 18px;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-detail {
+  padding: 20px;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-detail-head h3 {
+  margin: 0;
+  color: #ffffff;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-back {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: transparent;
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-field {
+  display: grid;
+  gap: 10px;
+  padding: 20px;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-field label,
+body.admin-body #userBookingsView .mechanic-resolution-sidebar-row strong {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-field select,
+body.admin-body #userBookingsView .mechanic-resolution-compose textarea {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  background: #ffffff;
+  color: #171c24;
+  padding: 14px 16px;
+  font: inherit;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-notice {
+  margin: 0 20px 20px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: rgba(182, 139, 23, 0.32);
+  color: #ffe08a;
+}
+
+body.admin-body #userBookingsView #userResolutionGoToCase {
+  margin: 0 20px 20px;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-case-view {
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.9fr);
+  align-items: start;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-case {
+  padding: 20px;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-thread {
+  display: grid;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-message {
+  display: grid;
+  gap: 6px;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-message.is-customer {
+  justify-items: end;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-bubble {
+  max-width: 80%;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #eaf0fb;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-message.is-customer .mechanic-resolution-bubble {
+  background: rgba(37, 99, 235, 0.25);
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-message-meta {
+  color: rgba(234, 240, 251, 0.62);
+  font-size: 0.85rem;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-compose {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-compose-actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-sidebar-card {
+  padding: 20px;
+  display: grid;
+  gap: 14px;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-sidebar-card h4 {
+  margin: 0;
+  color: #ffffff;
+}
+
+body.admin-body #userBookingsView .mechanic-resolution-sidebar-row {
+  display: grid;
+  gap: 6px;
+}
+
+@media (max-width: 900px) {
+  body.admin-body #userBookingsView .mechanic-resolution-case-view {
+    grid-template-columns: 1fr;
+  }
+
+  body.admin-body #userBookingsView .mechanic-resolution-table-head,
+  body.admin-body #userBookingsView .mechanic-resolution-table-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 body.admin-body #userAccountView .settings-header h2,

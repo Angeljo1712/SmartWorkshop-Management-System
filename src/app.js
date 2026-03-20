@@ -14,6 +14,7 @@ const catalogRouter = require("./routes/catalog");
 const contactRouter = require("./routes/contact");
 const { errorHandler } = require("./middlewares/error");
 const { cors } = require("./middlewares/cors");
+const { env } = require("./config/env");
 const mechanicService = require("./services/mechanicService");
 const { createContactMessage } = require("./services/contactService");
 
@@ -147,7 +148,12 @@ app.get("/mechanic", (req, res) => {
 });
 
 app.get("/mechanic/dashboard", (req, res) => {
-  res.render("pages/mechanic/dashboard");
+  res.render("pages/mechanic/dashboard", {
+    geoapify: {
+      apiKey: env.geoapify.apiKey || "",
+      mapStyle: env.geoapify.mapStyle || "osm-carto"
+    }
+  });
 });
 
 app.get("/mechanic/:id/profile", (req, res) => {

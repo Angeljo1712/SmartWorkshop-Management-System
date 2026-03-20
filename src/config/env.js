@@ -33,6 +33,10 @@ const env = {
     pass: process.env.SMTP_PASS || "",
     from: process.env.SMTP_FROM || ""
   },
+  geoapify: {
+    apiKey: process.env.GEOAPIFY_API_KEY || "",
+    mapStyle: process.env.GEOAPIFY_MAP_STYLE || "osm-carto"
+  },
   appBaseUrl: process.env.APP_BASE_URL || "http://localhost:3000",
   seedOnStart: process.env.SEED_ON_START === "true"
 };

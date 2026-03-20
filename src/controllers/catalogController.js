@@ -7,4 +7,10 @@ const listServicesHandler = async (req, res) => {
   res.json(services);
 };
 
-module.exports = { listServicesHandler };
+const listServiceTreeHandler = async (req, res) => {
+  const region = String(req.query.region || "UK-default").trim();
+  const services = await catalogService.listServiceTree({ region });
+  res.json(services);
+};
+
+module.exports = { listServicesHandler, listServiceTreeHandler };
