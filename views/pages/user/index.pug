@@ -19,8 +19,8 @@ block content
 
   main.primari-shell#userPage
     .page-shell-content
-      section.user-layout
-          aside.user-rail
+      section.user-layout.Layer1
+          aside.user-rail.Layer2
             .rail-brand
               span.logo SW
             nav.rail-nav
@@ -69,8 +69,8 @@ block content
             span#userProfileRole ADMIN
             select#userRoleSwitcher.role-switcher
 
-          .admin-content
-            section.admin-view#userDashboardView
+          .user-content.Layer2
+            section.user-view#userDashboardView
               .settings-card.user-dashboard-card
                 .user-dashboard-layout
                   .dashboard-section.dashboard-section--welcome
@@ -134,7 +134,7 @@ block content
                           option(value="inspection") Pre-purchase inspections
                       button.primary#userQuickQuoteBtn(type="button") Compare Prices Instantly
 
-            section.admin-view.is-hidden#userAccountView
+            section.user-view.is-hidden#userAccountView
               .settings-card.user-account-card
                 .user-account-layout
                   .dashboard-section.dashboard-section--welcome.account-section--welcome
@@ -192,7 +192,7 @@ block content
                       h4 Integration
                       p No integrations connected
 
-            section.admin-view.is-hidden#userVehicleView
+            section.user-view.is-hidden#userVehicleView
               .settings-card.user-vehicle-card
                 .user-vehicle-layout
                   .dashboard-section.dashboard-section--welcome.vehicle-section--welcome
@@ -244,7 +244,7 @@ block content
                         p View your vehicle's information
                       .user-vehicle-info-arrow ›
 
-            section.admin-view.is-hidden#userBookingsView
+            section.user-view.is-hidden#userBookingsView
               .settings-card.user-bookings-card
                 .user-bookings-layout
                   .dashboard-section.dashboard-section--welcome.bookings-section--welcome
@@ -331,7 +331,7 @@ block content
                             strong Total Price
                             span#userResolutionSidebarTotal -
 
-            section.admin-view.is-hidden#userSettingsView
+            section.user-view.is-hidden#userSettingsView
               .settings-card.user-settings-card
                 .user-settings-layout
                   .dashboard-section.dashboard-section--welcome.settings-section--welcome

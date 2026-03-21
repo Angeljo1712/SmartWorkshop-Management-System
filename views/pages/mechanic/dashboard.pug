@@ -35,8 +35,8 @@ block content
 
   main.primari-shell#mechanicPage
     .page-shell-content
-      section.mechanic-layout
-        aside.mechanic-rail
+      section.mechanic-layout.Layer1
+          aside.mechanic-rail.Layer2
           .rail-brand
             span.logo SW
           nav.rail-nav
@@ -136,7 +136,7 @@ block content
                 circle(cx="17" cy="17" r="2")
             | Payments
 
-        section.mechanic-content#mechanicDashboardView
+            section.mechanic-content#mechanicDashboardView
           .settings-card.mechanic-dashboard-card
             .mechanic-dashboard-layout
               .settings-header
@@ -167,7 +167,7 @@ block content
               p.form-error#mechanicPasswordError(role="alert" aria-live="polite")
               button.primary(type="submit") Save password
 
-        section.mechanic-content.is-hidden#mechanicResolutionCenterView
+            section.mechanic-content.is-hidden#mechanicResolutionCenterView
           .settings-card.mechanic-dashboard-card
             .settings-header
               div
@@ -247,21 +247,21 @@ block content
                       strong Total Price
                       span#mechanicResolutionSidebarTotal -
 
-        section.mechanic-content.is-hidden#mechanicProcedureView
+            section.mechanic-content.is-hidden#mechanicProcedureView
           .settings-card.mechanic-dashboard-card
             .settings-header
               div
                 h2 Procedure
                 p Review your mechanic procedures and workflow.
 
-        section.mechanic-content.is-hidden#mechanicPaymentsView
+            section.mechanic-content.is-hidden#mechanicPaymentsView
           .settings-card.mechanic-dashboard-card
             .settings-header
               div
                 h2 Payments
                 p Review payouts and payment activity.
 
-        section.mechanic-content.is-hidden#mechanicProfileView
+            section.mechanic-content.is-hidden#mechanicProfileView
           .settings-card.mechanic-dashboard-card
             .mechanic-profile-layout
               aside.mechanic-profile-sidebar
@@ -302,7 +302,7 @@ block content
                 .mechanic-profile-map
                   #mechanicProfileMap(data-geoapify-key=(geoapify && geoapify.apiKey) || "" data-geoapify-style=(geoapify && geoapify.mapStyle) || "osm-carto")
 
-        section.mechanic-content.is-hidden#mechanicEditProfileView
+            section.mechanic-content.is-hidden#mechanicEditProfileView
           form.settings-card.mechanic-dashboard-card.mechanic-edit-profile-layout#mechanicEditProfileForm
             .mechanic-edit-profile-card.mechanic-edit-profile-card--tip
               h3 SmartWorkshop tip
@@ -379,7 +379,7 @@ block content
               p.form-error#mechanicEditProfileError(role="alert" aria-live="polite")
               button.primary.mechanic-edit-profile-submit(type="submit") Save
 
-        section.mechanic-content.is-hidden#mechanicAccountView
+            section.mechanic-content.is-hidden#mechanicAccountView
           .settings-card.mechanic-dashboard-card
             .settings-header
               div
@@ -414,14 +414,14 @@ block content
                 h4 Integration
                 p No integrations connected
 
-        section.mechanic-content.is-hidden#mechanicPictureView
+            section.mechanic-content.is-hidden#mechanicPictureView
           .settings-card.mechanic-dashboard-card
             .settings-header
               div
                 h2 Profile picture
                 p Manage your profile picture.
 
-        section.mechanic-content.is-hidden#mechanicCertificationsView
+            section.mechanic-content.is-hidden#mechanicCertificationsView
           .settings-card.mechanic-dashboard-card
             .settings-header
               div
@@ -458,7 +458,7 @@ block content
               .mechanic-cert-actions
                 button.primary(type="button") Save
 
-        section.mechanic-content.is-hidden#mechanicTaxView
+            section.mechanic-content.is-hidden#mechanicTaxView
           .settings-card.mechanic-dashboard-card
             .settings-header
               div
@@ -473,7 +473,7 @@ block content
               .mechanic-tax-actions
                 button.primary(type="button") Save
 
-        section.mechanic-content.is-hidden#mechanicDocumentsView
+            section.mechanic-content.is-hidden#mechanicDocumentsView
           .settings-card.mechanic-dashboard-card
             .settings-header
               div
@@ -493,14 +493,14 @@ block content
                   input#mechanicDocumentsUpload(type="file" multiple)
                   button.primary(type="button") Submit
 
-        section.mechanic-content.is-hidden#mechanicPreferencesView
+            section.mechanic-content.is-hidden#mechanicPreferencesView
           .settings-card.mechanic-dashboard-card
             .settings-header
               div
                 h2 Preferences
                 p Manage your mechanic preferences.
 
-        section.mechanic-content.is-hidden#mechanicTypesView
+            section.mechanic-content.is-hidden#mechanicTypesView
           .settings-card.mechanic-dashboard-card
             .settings-header
               div
@@ -519,7 +519,7 @@ block content
                 p#mechanicTypesStatus
                 button.primary#mechanicTypesSaveBtn(type="button") Save changes
 
-        section.mechanic-content.is-hidden#mechanicSettingsView
+            section.mechanic-content.is-hidden#mechanicSettingsView
           .settings-card.mechanic-dashboard-card
             .mechanic-settings-layout
               .dashboard-section.dashboard-section--welcome.settings-section--welcome
