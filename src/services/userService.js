@@ -464,7 +464,7 @@ const listUserBookings = async (userId) => {
     return {
       id: row.id,
       uuid_public: row.uuid_public,
-      reference: row.uuid_public || String(row.id),
+      reference: String(row.id),
       status: row.status,
       notes: row.notes || "",
       totals: {

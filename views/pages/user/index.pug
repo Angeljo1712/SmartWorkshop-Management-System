@@ -256,15 +256,56 @@ block content
                         h2.user-welcome-corner Your bookings
                         p.user-welcome-corner-subtitle Review of your bookings
 
+                  .settings-divider.bookings-section--divider
+
                   .bookings-section.bookings-section--card
                     #userBookingsList.user-bookings-list
 
-                  .bookings-section.bookings-section--photos
-                    .user-booking-photos#userBookingsPhotos
-                      h4 Photos
-                      p.user-booking-empty#userBookingsPhotosEmpty No booking photos available.
+            section.user-view.is-hidden#userResolutionView
+              .settings-card.user-resolution-card#userResolutionOverview
+                .user-resolution-layout
+                  .dashboard-section.dashboard-section--welcome.resolution-section--welcome
+                    .settings-header
+                      div
+                        h2 Welcome back
+                        p.user-welcome-name User
+                      .user-welcome-corner-wrap
+                        h2.user-welcome-corner Resolution center
+                        p.user-welcome-corner-subtitle Manage mechanic issues and active resolutions.
 
-                  .bookings-section.bookings-section--resolution.is-hidden#userResolutionMessageView
+                  .settings-divider.resolution-section--divider
+
+                  .resolution-section.resolution-section--card
+                    .mechanic-resolution-layout
+                      .mechanic-resolution-card
+                        h3 Current cases
+                        .mechanic-resolution-card-body
+                          .mechanic-resolution-tabs
+                            button.mechanic-resolution-tab.is-active(type="button") All
+                            button.mechanic-resolution-tab(type="button") Complaint
+                            button.mechanic-resolution-tab(type="button") General
+                          .mechanic-resolution-table
+                            .mechanic-resolution-table-head
+                              span Status
+                              span Reference
+                              span Updated at
+                              span Subject
+                              span
+                            #userResolutionCasesTable
+              .settings-card.user-resolution-card.is-hidden#userResolutionMessageView
+                .user-resolution-layout
+                  .dashboard-section.dashboard-section--welcome.resolution-section--welcome
+                    .settings-header
+                      div
+                        h2 Welcome back
+                        p.user-welcome-name User
+                      .user-welcome-corner-wrap
+                        h2.user-welcome-corner Resolution center
+                        p.user-welcome-corner-subtitle Manage mechanic issues and active resolutions.
+
+                  .settings-divider.resolution-section--divider
+
+                  .resolution-section.resolution-section--card
                     .mechanic-resolution-detail
                       .mechanic-resolution-detail-head
                         button.mechanic-resolution-back#userResolutionBackBtn(type="button") Back
@@ -288,7 +329,20 @@ block content
                             span
                           #userResolutionBookingCasesTable
 
-                  .bookings-section.bookings-section--resolution.is-hidden#userResolutionCaseView
+              .settings-card.user-resolution-card.is-hidden#userResolutionCaseView
+                .user-resolution-layout
+                  .dashboard-section.dashboard-section--welcome.resolution-section--welcome
+                    .settings-header
+                      div
+                        h2 Welcome back
+                        p.user-welcome-name User
+                      .user-welcome-corner-wrap
+                        h2.user-welcome-corner Resolution center
+                        p.user-welcome-corner-subtitle Manage mechanic issues and active resolutions.
+
+                  .settings-divider.resolution-section--divider
+
+                  .resolution-section.resolution-section--card
                     .mechanic-resolution-case-view
                       .mechanic-resolution-case
                         .mechanic-resolution-detail-head
@@ -317,19 +371,6 @@ block content
                           .mechanic-resolution-sidebar-row
                             strong Total Price
                             span#userResolutionSidebarTotal -
-
-            section.user-view.is-hidden#userResolutionView
-              .settings-card.user-resolution-card#userResolutionOverview
-                .mechanic-resolution-card
-                  .mechanic-resolution-card-header Current cases
-                  .mechanic-resolution-table
-                    .mechanic-resolution-table-head
-                      span Status
-                      span Reference
-                      span Updated at
-                      span Subject
-                      span
-                    #userResolutionCasesTable
 
             section.user-view.is-hidden#userSettingsView
               .settings-card.user-settings-card

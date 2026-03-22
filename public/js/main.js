@@ -2512,11 +2512,8 @@ if (userPage) {
   const userBookingsView = document.getElementById("userBookingsView");
   const userResolutionView = document.getElementById("userResolutionView");
   const userBookingsList = document.getElementById("userBookingsList");
-  const userBookingsPhotos = document.getElementById("userBookingsPhotos");
-  const userBookingsPhotosEmpty = document.getElementById("userBookingsPhotosEmpty");
   const userBookingsWelcomeSection = document.querySelector("#userBookingsView .bookings-section--welcome");
   const userBookingsCardSection = document.querySelector("#userBookingsView .bookings-section--card");
-  const userBookingsPhotosSection = document.querySelector("#userBookingsView .bookings-section--photos");
   const userResolutionOverview = document.getElementById("userResolutionOverview");
   const userResolutionCasesTable = document.getElementById("userResolutionCasesTable");
   const userResolutionMessageView = document.getElementById("userResolutionMessageView");
@@ -2763,7 +2760,6 @@ if (userPage) {
     } else if (view === "bookings") {
       userBookingsWelcomeSection?.classList.remove("is-hidden");
       userBookingsCardSection?.classList.remove("is-hidden");
-      userBookingsPhotosSection?.classList.remove("is-hidden");
     }
   };
 
@@ -3045,12 +3041,8 @@ if (userPage) {
       emptyState.className = "user-booking-empty";
       emptyState.textContent = "No bookings to show yet.";
       userBookingsList.appendChild(emptyState);
-      if (userBookingsPhotos) userBookingsPhotos.classList.add("is-hidden");
       return;
     }
-
-    if (userBookingsPhotos) userBookingsPhotos.classList.remove("is-hidden");
-    if (userBookingsPhotosEmpty) userBookingsPhotosEmpty.textContent = "No booking photos available.";
 
     bookings.forEach((booking) => {
       const addressLines = [booking.address?.line1, booking.address?.line2, booking.address?.city, booking.address?.postal_code].filter(Boolean);
@@ -3067,8 +3059,8 @@ if (userPage) {
           <div class="user-booking-actions-wrap">
             <button class="primary user-booking-actions" type="button" data-booking-actions-toggle="${booking.id}">Actions</button>
             <div class="user-booking-actions-panel is-hidden">
-              <button class="user-booking-actions-item" type="button" data-user-resolution-message="${booking.id}" ${booking.mechanic ? "" : "disabled"}>
-                Message to Mechanic
+              <button class="user-booking-actions-item" type="button" data-user-resolution-message="${booking.id}">
+                Resolution center
               </button>
             </div>
           </div>
@@ -3103,6 +3095,10 @@ if (userPage) {
             <h4>Documents</h4>
             <p>${booking.payment?.provider_ref ? `Payment ref: ${booking.payment.provider_ref}` : "No documents available"}</p>
           </div>
+        </div>
+        <div class="user-booking-photos-inline">
+          <h4>Photos</h4>
+          <p>No booking photos available.</p>
         </div>
       `;
       userBookingsList.appendChild(card);
@@ -3145,6 +3141,7 @@ if (userPage) {
   let latestUserResolutionCases = [];
   let pendingUserResolutionBookingId = null;
   let pendingUserResolutionCaseId = null;
+  let pendingUserResolutionOrigin = "bookings";
 
   const formatUserResolutionDateTime = (value) => {
     if (!value) return "-";
@@ -3164,7 +3161,6 @@ if (userPage) {
     const isMessage = view === "message";
     const isCase = view === "case";
     userBookingsCardSection?.classList.toggle("is-hidden", isMessage || isCase);
-    userBookingsPhotosSection?.classList.toggle("is-hidden", isMessage || isCase);
     userResolutionOverview?.classList.toggle("is-hidden", !isOverview);
     userResolutionMessageView?.classList.toggle("is-hidden", !isMessage);
     userResolutionCaseView?.classList.toggle("is-hidden", !isCase);
@@ -3206,6 +3202,7 @@ if (userPage) {
   };
 
   const openUserResolutionMessage = async (bookingId, type = "general") => {
+    pendingUserResolutionOrigin = "bookings";
     pendingUserResolutionBookingId = Number(bookingId);
     pendingUserResolutionCaseId = null;
     if (userResolutionIssue) userResolutionIssue.value = type;
@@ -3340,6 +3337,9 @@ if (userPage) {
       const bookingId = Number(resolutionMessage.dataset.userResolutionMessage);
       if (!bookingId) return;
       userBookingsList.querySelectorAll(".user-booking-actions-panel").forEach((item) => item.classList.add("is-hidden"));
+      pendingUserResolutionOrigin = "resolution";
+      setUserView("resolution");
+      setActiveUserNav("resolution");
       await openUserResolutionMessage(bookingId, "general");
     }
   });
@@ -3456,10 +3456,22 @@ if (userPage) {
   syncUserBookingsFromApi();
 
   userResolutionBackBtn?.addEventListener("click", () => {
+    if (pendingUserResolutionOrigin === "resolution") {
+      setUserView("resolution");
+      setActiveUserNav("resolution");
+      setUserResolutionSubview("overview");
+      return;
+    }
     setUserResolutionSubview("overview");
   });
 
   userResolutionCaseBackBtn?.addEventListener("click", async () => {
+    if (pendingUserResolutionOrigin === "resolution") {
+      setUserView("resolution");
+      setActiveUserNav("resolution");
+      setUserResolutionSubview("overview");
+      return;
+    }
     if (pendingUserResolutionBookingId) {
       await openUserResolutionMessage(pendingUserResolutionBookingId, userResolutionIssue?.value || "general");
       return;
@@ -3485,6 +3497,9 @@ if (userPage) {
     const viewButton = event.target.closest("[data-user-resolution-case-id]");
     if (!viewButton || !userToken) return;
     const detail = await apiAuth(`/api/users/me/resolution-cases/${encodeURIComponent(viewButton.dataset.userResolutionCaseId)}`, userToken);
+    pendingUserResolutionOrigin = "resolution";
+    setUserView("resolution");
+    setActiveUserNav("resolution");
     renderUserResolutionCaseDetail(detail);
     setUserResolutionSubview("case");
   });
