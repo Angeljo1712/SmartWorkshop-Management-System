@@ -23,28 +23,200 @@ const api = (path, options = {}) =>
     return payload;
   });
 
-const apiAuth = (path, token, options = {}) =>
-  api(path, {
-    ...options,
-    headers: {
-      ...(options.headers || {}),
-      Authorization: `Bearer ${token}`
+const AUTH_STORAGE_KEYS = ["userToken", "userProfile", "activeRole"];
+
+const syncAuthStateFromLocalStorage = () => {
+  AUTH_STORAGE_KEYS.forEach((key) => {
+    const localValue = localStorage.getItem(key);
+    const sessionValue = sessionStorage.getItem(key);
+    if (localValue !== null && sessionValue !== localValue) {
+      sessionStorage.setItem(key, localValue);
     }
   });
+};
+
+const getStoredAuthValue = (key) => {
+  const localValue = localStorage.getItem(key);
+  if (localValue !== null) {
+    if (sessionStorage.getItem(key) !== localValue) {
+      sessionStorage.setItem(key, localValue);
+    }
+    return localValue;
+  }
+  return sessionStorage.getItem(key);
+};
+
+const setStoredAuthValue = (key, value) => {
+  localStorage.setItem(key, value);
+  sessionStorage.setItem(key, value);
+};
+
+const removeStoredAuthValue = (key) => {
+  localStorage.removeItem(key);
+  sessionStorage.removeItem(key);
+};
+
+syncAuthStateFromLocalStorage();
+
+const clearStoredSessionData = () => {
+  AUTH_STORAGE_KEYS.forEach(removeStoredAuthValue);
+};
+
+let sessionExpiryTimer = null;
+
+const isProtectedAppPage = () => /^\/(user|mechanic|admin)(\/|$)/.test(window.location.pathname);
+
+const decodeJwtPayload = (tokenValue) => {
+  try {
+    const segment = String(tokenValue || "").split(".")[1];
+    if (!segment) return null;
+    const normalized = segment.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = normalized.padEnd(normalized.length + ((4 - (normalized.length % 4)) % 4), "=");
+    return JSON.parse(atob(padded));
+  } catch {
+    return null;
+  }
+};
+
+const isTokenExpired = (tokenValue) => {
+  const payload = decodeJwtPayload(tokenValue);
+  const exp = Number(payload?.exp || 0);
+  if (!exp) return false;
+  return Date.now() >= exp * 1000;
+};
+
+const handleExpiredSession = () => {
+  clearStoredSessionData();
+  if (isProtectedAppPage()) {
+    window.location.replace("/auth/login");
+    return;
+  }
+  window.location.reload();
+};
+
+const scheduleSessionExpiry = (tokenValue) => {
+  if (sessionExpiryTimer) {
+    clearTimeout(sessionExpiryTimer);
+    sessionExpiryTimer = null;
+  }
+
+  const payload = decodeJwtPayload(tokenValue);
+  const exp = Number(payload?.exp || 0);
+  if (!exp) return;
+
+  const delay = exp * 1000 - Date.now();
+  if (delay <= 0) {
+    handleExpiredSession();
+    return;
+  }
+
+  sessionExpiryTimer = window.setTimeout(() => {
+    handleExpiredSession();
+  }, delay);
+};
+
+const apiAuth = async (path, tokenValue, options = {}) => {
+  if (!tokenValue || isTokenExpired(tokenValue)) {
+    clearStoredSessionData();
+    if (isProtectedAppPage()) {
+      window.location.replace("/auth/login");
+    }
+    throw { error: { code: "AUTH_INVALID", message: "Invalid or expired token" } };
+  }
+
+  try {
+    return await api(path, {
+      ...options,
+      headers: {
+        ...(options.headers || {}),
+        Authorization: `Bearer ${tokenValue}`
+      }
+    });
+  } catch (err) {
+    const authCode = err?.error?.code;
+    if (authCode === "AUTH_INVALID" || authCode === "AUTH_REQUIRED") {
+      clearStoredSessionData();
+      if (isProtectedAppPage()) {
+        window.location.replace("/auth/login");
+      }
+    }
+    throw err;
+  }
+};
 
 const getStoredUserSession = () => {
-  const rawProfile = sessionStorage.getItem("userProfile");
+  const tokenValue = getStoredAuthValue("userToken");
+  if (tokenValue && isTokenExpired(tokenValue)) {
+    clearStoredSessionData();
+    return null;
+  }
+  const rawProfile = getStoredAuthValue("userProfile");
   if (!rawProfile) return null;
   try {
     const user = JSON.parse(rawProfile);
     const roles = Array.isArray(user?.roles) && user.roles.length ? user.roles : [user?.role_name || user?.role || "CUSTOMER"];
-    const activeRole = sessionStorage.getItem("activeRole") || (roles.includes("MECHANIC") ? "MECHANIC" : roles.includes("ADMIN") ? "ADMIN" : "CUSTOMER");
+    const activeRole = getStoredAuthValue("activeRole") || (roles.includes("MECHANIC") ? "MECHANIC" : roles.includes("ADMIN") ? "ADMIN" : "CUSTOMER");
     const firstName = String(user?.name || "").trim() || String(user?.email || "Account").trim().split("@")[0];
     return { user, activeRole, firstName };
   } catch {
     return null;
   }
 };
+
+const syncStoredProfileFromToken = async () => {
+  const tokenValue = getStoredAuthValue("userToken");
+  if (!tokenValue) return null;
+  if (isTokenExpired(tokenValue)) {
+    clearStoredSessionData();
+    return null;
+  }
+  scheduleSessionExpiry(tokenValue);
+  try {
+    const user = await apiAuth("/api/users/me", tokenValue);
+    setStoredAuthValue("userProfile", JSON.stringify(user));
+    const roles = Array.isArray(user?.roles) && user.roles.length ? user.roles : [user?.role_name || user?.role || "CUSTOMER"];
+    const storedRole = getStoredAuthValue("activeRole");
+    const normalizedRoles = roles.map((role) => String(role || "").toUpperCase());
+    const resolvedRole =
+      storedRole && normalizedRoles.includes(storedRole)
+        ? storedRole
+        : normalizedRoles.includes("MECHANIC")
+          ? "MECHANIC"
+          : normalizedRoles.includes("ADMIN")
+            ? "ADMIN"
+            : "CUSTOMER";
+    setStoredAuthValue("activeRole", resolvedRole);
+    return getStoredUserSession();
+  } catch (_err) {
+    return null;
+  }
+};
+
+scheduleSessionExpiry(getStoredAuthValue("userToken"));
+
+window.addEventListener("storage", (event) => {
+  if (!AUTH_STORAGE_KEYS.includes(event.key)) return;
+
+  syncAuthStateFromLocalStorage();
+  const tokenValue = getStoredAuthValue("userToken");
+  if (tokenValue && !isTokenExpired(tokenValue)) {
+    scheduleSessionExpiry(tokenValue);
+    return;
+  }
+
+  if (sessionExpiryTimer) {
+    clearTimeout(sessionExpiryTimer);
+    sessionExpiryTimer = null;
+  }
+
+  if (!tokenValue) {
+    if (isProtectedAppPage()) {
+      window.location.replace("/auth/login");
+      return;
+    }
+    window.location.reload();
+  }
+});
 
 const resolveDashboardHref = (activeRole) =>
   activeRole === "MECHANIC"
@@ -54,7 +226,7 @@ const resolveDashboardHref = (activeRole) =>
       : "/user";
 
 const buildMechanicHeaderMenuMarkup = () => `
-  <div class="mechanic-header-menu">
+  <div class="mechanic-header-menu generated-session-menu">
     <button class="mechanic-header-menu-btn" type="button" aria-expanded="false">
       <span class="mechanic-header-first-name"></span>
       <span class="mechanic-header-menu-arrow">▾</span>
@@ -74,7 +246,7 @@ const buildMechanicHeaderMenuMarkup = () => `
 `;
 
 const buildCustomerHeaderMenuMarkup = () => `
-  <div class="customer-header-menu">
+  <div class="customer-header-menu generated-session-menu">
     <button class="customer-header-menu-btn" type="button" aria-expanded="false">
       <span class="customer-header-first-name"></span>
       <span class="customer-header-menu-arrow">▾</span>
@@ -85,14 +257,15 @@ const buildCustomerHeaderMenuMarkup = () => `
       <button class="customer-header-menu-item" type="button" data-view="vehicle">Vehicle</button>
       <button class="customer-header-menu-item" type="button" data-view="bookings">Bookings</button>
       <button class="customer-header-menu-item" type="button" data-view="settings">Settings</button>
+      <button class="customer-header-menu-item" type="button" data-action="logout">Logout</button>
     </div>
   </div>
 `;
 
-document.querySelectorAll(".main-header.general-header").forEach((header) => {
+const syncGeneralHeaderSessionMenus = () => document.querySelectorAll(".main-header.general-header").forEach((header) => {
   const container = header.querySelector(".body-content, .header-content");
   if (!container) return;
-  if (container.querySelector(".header-session-link, .mechanic-header-menu, .customer-header-menu")) return;
+  container.querySelectorAll(".generated-session-menu, .header-session-link.generated-session-link").forEach((node) => node.remove());
   const session = getStoredUserSession();
   if (!session) return;
   if (session.activeRole === "MECHANIC") {
@@ -114,16 +287,14 @@ document.querySelectorAll(".main-header.general-header").forEach((header) => {
     return;
   }
   const link = document.createElement("a");
-  link.className = "header-session-link";
+  link.className = "header-session-link generated-session-link";
   link.href = resolveDashboardHref(session.activeRole);
   link.textContent = session.firstName;
   container.appendChild(link);
 });
 
 const clearStoredSessionAndGoHome = () => {
-  sessionStorage.removeItem("userToken");
-  sessionStorage.removeItem("userProfile");
-  sessionStorage.removeItem("activeRole");
+  clearStoredSessionData();
   window.location.replace("/");
 };
 
@@ -138,7 +309,9 @@ const openMechanicTargetPage = (page, user) => {
   }
 };
 
-document.querySelectorAll(".mechanic-header-menu").forEach((menu) => {
+const bindMechanicHeaderMenus = () => document.querySelectorAll(".mechanic-header-menu").forEach((menu) => {
+  if (menu.dataset.bound === "true") return;
+  menu.dataset.bound = "true";
   const session = getStoredUserSession();
   if (!session || session.activeRole !== "MECHANIC") return;
   const button = menu.querySelector(".mechanic-header-menu-btn");
@@ -187,7 +360,9 @@ document.querySelectorAll(".mechanic-header-menu").forEach((menu) => {
   });
 });
 
-document.querySelectorAll(".customer-header-menu").forEach((menu) => {
+const bindCustomerHeaderMenus = () => document.querySelectorAll(".customer-header-menu").forEach((menu) => {
+  if (menu.dataset.bound === "true") return;
+  menu.dataset.bound = "true";
   const session = getStoredUserSession();
   if (!session || session.activeRole !== "CUSTOMER") return;
   const button = menu.querySelector(".customer-header-menu-btn");
@@ -206,6 +381,11 @@ document.querySelectorAll(".customer-header-menu").forEach((menu) => {
     item.addEventListener("click", () => {
       panel?.classList.add("is-hidden");
       button?.setAttribute("aria-expanded", "false");
+      const action = item.dataset.action || "";
+      if (action === "logout") {
+        clearStoredSessionAndGoHome();
+        return;
+      }
       const targetView = item.dataset.view || "dashboard";
       sessionStorage.setItem("userHeaderTargetView", targetView);
       window.location.href = "/user";
@@ -217,6 +397,17 @@ document.querySelectorAll(".customer-header-menu").forEach((menu) => {
     panel.classList.add("is-hidden");
     button.setAttribute("aria-expanded", "false");
   });
+});
+
+const initHeaderSessionMenus = () => {
+  syncGeneralHeaderSessionMenus();
+  bindMechanicHeaderMenus();
+  bindCustomerHeaderMenus();
+};
+
+initHeaderSessionMenus();
+const sessionRefreshPromise = syncStoredProfileFromToken().then(() => {
+  initHeaderSessionMenus();
 });
 
 const postcodeRegex = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
@@ -290,40 +481,69 @@ if (homeHeader && homeHero) {
     homeHeader.classList.toggle("is-light", !isHero);
   };
 
-  const session = getStoredUserSession();
-  if (homeSessionLink && session) {
+  const syncHomeSessionControls = () => {
+    const session = getStoredUserSession();
+    if (!homeSessionLink) return;
+    if (!session) {
+      homeSessionLink.classList.remove("is-hidden");
+      if (homeSessionMenu) homeSessionMenu.classList.add("is-hidden");
+      homeSessionLink.textContent = "Sign in";
+      homeSessionLink.href = "/auth/login";
+      return;
+    }
     if (session.activeRole === "CUSTOMER" && homeSessionMenu) {
       homeSessionLink.classList.add("is-hidden");
       homeSessionMenu.classList.remove("is-hidden");
       if (homeSessionMenuName) homeSessionMenuName.textContent = session.firstName.toUpperCase();
-      homeSessionMenuBtn?.addEventListener("click", () => {
-        const isHidden = homeSessionMenuPanel?.classList.contains("is-hidden");
-        homeSessionMenuPanel?.classList.toggle("is-hidden", !isHidden);
-        homeSessionMenuBtn.setAttribute("aria-expanded", isHidden ? "true" : "false");
-      });
-      homeSessionMenu.querySelectorAll(".home-session-menu-item").forEach((item) => {
-        item.addEventListener("click", () => {
-          const targetView = item.dataset.view || "dashboard";
-          homeSessionMenuPanel?.classList.add("is-hidden");
-          homeSessionMenuBtn?.setAttribute("aria-expanded", "false");
-          homeSessionMenu
-            .querySelectorAll(".home-session-menu-item")
-            .forEach((btn) => btn.classList.toggle("is-active", btn === item));
-          sessionStorage.setItem("homeUserTargetView", targetView);
-          window.location.href = "/user";
-        });
-      });
-      document.addEventListener("click", (event) => {
-        if (!homeSessionMenu.contains(event.target)) {
-          homeSessionMenuPanel?.classList.add("is-hidden");
-          homeSessionMenuBtn?.setAttribute("aria-expanded", "false");
-        }
-      });
     } else {
+      homeSessionLink.classList.remove("is-hidden");
+      if (homeSessionMenu) homeSessionMenu.classList.add("is-hidden");
       homeSessionLink.textContent = session.firstName;
       homeSessionLink.href = resolveDashboardHref(session.activeRole);
     }
+  };
+
+  if (homeSessionMenuBtn && !homeSessionMenuBtn.dataset.bound) {
+    homeSessionMenuBtn.dataset.bound = "true";
+    homeSessionMenuBtn.addEventListener("click", () => {
+      const isHidden = homeSessionMenuPanel?.classList.contains("is-hidden");
+      homeSessionMenuPanel?.classList.toggle("is-hidden", !isHidden);
+      homeSessionMenuBtn.setAttribute("aria-expanded", isHidden ? "true" : "false");
+    });
   }
+
+  if (homeSessionMenu && !homeSessionMenu.dataset.bound) {
+    homeSessionMenu.dataset.bound = "true";
+    homeSessionMenu.querySelectorAll(".home-session-menu-item").forEach((item) => {
+      item.addEventListener("click", () => {
+        const action = item.dataset.action || "";
+        if (action === "logout") {
+          homeSessionMenuPanel?.classList.add("is-hidden");
+          homeSessionMenuBtn?.setAttribute("aria-expanded", "false");
+          clearStoredSessionData();
+          window.location.replace("/");
+          return;
+        }
+        const targetView = item.dataset.view || "dashboard";
+        homeSessionMenuPanel?.classList.add("is-hidden");
+        homeSessionMenuBtn?.setAttribute("aria-expanded", "false");
+        homeSessionMenu
+          .querySelectorAll(".home-session-menu-item")
+          .forEach((btn) => btn.classList.toggle("is-active", btn === item));
+        sessionStorage.setItem("homeUserTargetView", targetView);
+        window.location.href = "/user";
+      });
+    });
+    document.addEventListener("click", (event) => {
+      if (!homeSessionMenu.contains(event.target)) {
+        homeSessionMenuPanel?.classList.add("is-hidden");
+        homeSessionMenuBtn?.setAttribute("aria-expanded", "false");
+      }
+    });
+  }
+
+  syncHomeSessionControls();
+  sessionRefreshPromise.then(syncHomeSessionControls);
 
   if (homeSessionMenu) {
     homeSessionMenu.querySelectorAll(".home-session-menu-item").forEach((item) => {
@@ -440,6 +660,23 @@ if (vehicleForm) {
   const postcodeInput = document.getElementById("postcode");
   const errorEl = document.getElementById("vehicleLookupError");
 
+  try {
+    const storedVehicle = sessionStorage.getItem("vehicleEnquiry");
+    const storedData = storedVehicle ? JSON.parse(storedVehicle) : null;
+    const params = new URLSearchParams(window.location.search);
+    const storedReg = storedData?.registrationNumber || params.get("reg") || "";
+    const storedPostcode = storedData?.postcode || params.get("postcode") || "";
+
+    if (regInput && storedReg && !regInput.value) {
+      regInput.value = String(storedReg).toUpperCase();
+    }
+    if (postcodeInput && storedPostcode && !postcodeInput.value) {
+      postcodeInput.value = String(storedPostcode).toUpperCase();
+    }
+  } catch (_error) {
+    // Ignore malformed stored vehicle data and let the user enter details manually.
+  }
+
   vehicleForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const registrationNumber = regInput.value.trim().toUpperCase().replace(/\s+/g, "");
@@ -541,7 +778,7 @@ if (authVehicleForm) {
 const getInstantQuotes = document.getElementById("getInstantQuotes");
 if (getInstantQuotes) {
   getInstantQuotes.addEventListener("click", () => {
-    window.location.href = "/bookings/work/";
+    window.location.href = "/bookings/vehicle";
   });
 }
 
@@ -640,6 +877,7 @@ const getSessionId = () => {
 
 let bookingDraftWork = { items: [], total: 0 };
 let bookingCatalogServices = [];
+let bookingCatalogSearchTerm = "";
 
 const bookingTypeStorageKey = "bookingWorkType";
 const currentBookingType = new URLSearchParams(window.location.search).get("type");
@@ -653,7 +891,7 @@ document.querySelectorAll(".bookings-stepper .stepper").forEach((stepper) => {
 
   const storedType = sessionStorage.getItem(bookingTypeStorageKey) || "repair";
   const routes = [
-    "/bookings",
+    "/bookings/vehicle",
     `/bookings/work?type=${encodeURIComponent(storedType)}`,
     "/bookings/details",
     "/bookings/payment"
@@ -797,8 +1035,16 @@ const renderServices = (category, services) => {
     bookingCatalogServices = services;
   }
 
+  const normalizedSearch = bookingCatalogSearchTerm.trim().toLowerCase();
+  const sortedServices = [...(services || bookingCatalogServices || [])].sort((a, b) =>
+    String(a?.name || "").localeCompare(String(b?.name || ""))
+  );
+  const filteredServices = normalizedSearch
+    ? sortedServices.filter((service) => String(service?.name || "").toLowerCase().includes(normalizedSearch))
+    : sortedServices;
+
   list.innerHTML = "";
-  if (!services || services.length === 0) {
+  if (!filteredServices || filteredServices.length === 0) {
     if (empty) empty.classList.remove("is-hidden");
     return;
   }
@@ -806,7 +1052,7 @@ const renderServices = (category, services) => {
 
   const selectedIds = getSelectedServiceIds();
 
-  services.forEach((service) => {
+  filteredServices.forEach((service) => {
     const li = document.createElement("li");
     li.className = "work-row";
 
@@ -857,6 +1103,13 @@ const renderServices = (category, services) => {
 const workLayout = document.querySelector(".work-layout");
 if (workLayout) {
   const category = workLayout.dataset.serviceCategory;
+  const searchInput = document.getElementById("serviceSearch");
+  if (searchInput) {
+    searchInput.addEventListener("input", (event) => {
+      bookingCatalogSearchTerm = String(event.target.value || "");
+      renderServices(null, bookingCatalogServices);
+    });
+  }
   if (category) {
     fetch(`/api/catalog/services?category=${encodeURIComponent(category)}&region=UK-default`)
       .then((res) => res.json())
@@ -1015,7 +1268,77 @@ if (workSummary) {
     .catch(() => {});
 
   const completeBtn = paymentPage.querySelector(".details-submit");
+  const cardNameInput = document.getElementById("paymentCardName");
+  const cardNumberInput = document.getElementById("paymentCardNumber");
+  const expiryInput = document.getElementById("paymentExpiry");
+  const cvcInput = document.getElementById("paymentCvc");
+  const paymentFormError = document.getElementById("paymentFormError");
+
+  cardNumberInput?.addEventListener("input", () => {
+    const digitsOnly = String(cardNumberInput.value || "").replace(/\D+/g, "").slice(0, 16);
+    const grouped = digitsOnly.replace(/(.{4})/g, "$1 ").trim();
+    cardNumberInput.value = grouped;
+  });
+
+  cardNameInput?.addEventListener("input", () => {
+    const lettersOnly = String(cardNameInput.value || "").replace(/[^A-Za-z\s]/g, "");
+    cardNameInput.value = lettersOnly.replace(/\s{2,}/g, " ");
+  });
+
+  expiryInput?.addEventListener("input", () => {
+    const digitsOnly = String(expiryInput.value || "").replace(/\D+/g, "").slice(0, 4);
+    if (digitsOnly.length <= 2) {
+      expiryInput.value = digitsOnly;
+      return;
+    }
+    expiryInput.value = `${digitsOnly.slice(0, 2)} / ${digitsOnly.slice(2)}`;
+  });
+
+  cvcInput?.addEventListener("input", () => {
+    cvcInput.value = String(cvcInput.value || "").replace(/\D+/g, "").slice(0, 4);
+  });
+
   completeBtn?.addEventListener("click", async () => {
+    const cardName = String(cardNameInput?.value || "").trim();
+    const rawCardNumber = String(cardNumberInput?.value || "");
+    const cardNumber = rawCardNumber.replace(/\s+/g, "");
+    const expiry = String(expiryInput?.value || "").trim();
+    const cvc = String(cvcInput?.value || "").trim();
+
+    if (paymentFormError) paymentFormError.textContent = "";
+
+    if (!cardName || !cardNumber || !expiry || !cvc) {
+      if (paymentFormError) paymentFormError.textContent = "Please complete all payment fields.";
+      return;
+    }
+
+    if (!/^[A-Za-z]+(?:\s+[A-Za-z]+)*$/.test(cardName)) {
+      if (paymentFormError) paymentFormError.textContent = "Name on card must contain letters only.";
+      return;
+    }
+
+    if (!/^\d{16}$/.test(cardNumber)) {
+      if (paymentFormError) paymentFormError.textContent = "Please enter a valid card number.";
+      return;
+    }
+
+    if (!/^\d{2}\s*\/\s*\d{2}$/.test(expiry)) {
+      if (paymentFormError) paymentFormError.textContent = "Please enter expiry date as MM / YY.";
+      return;
+    }
+
+    const [monthText] = expiry.split("/").map((value) => value.trim());
+    const month = Number(monthText);
+    if (!Number.isInteger(month) || month < 1 || month > 12) {
+      if (paymentFormError) paymentFormError.textContent = "Please enter a valid expiry month.";
+      return;
+    }
+
+    if (!/^\d{3,4}$/.test(cvc)) {
+      if (paymentFormError) paymentFormError.textContent = "Please enter a 3 or 4 digit security code.";
+      return;
+    }
+
     try {
       const result = await api("/api/bookings/draft/pay", {
         method: "POST",
@@ -1149,9 +1472,9 @@ if (confirmPage) {
         body: JSON.stringify({ identifier: setPasswordResult.email, password })
       });
 
-      sessionStorage.setItem("userToken", loginResult.token);
-      sessionStorage.setItem("userProfile", JSON.stringify(loginResult.user));
-      sessionStorage.setItem("activeRole", "CUSTOMER");
+      setStoredAuthValue("userToken", loginResult.token);
+      setStoredAuthValue("userProfile", JSON.stringify(loginResult.user));
+      setStoredAuthValue("activeRole", "CUSTOMER");
       sessionStorage.removeItem("bookingCreatedAccountPending");
       sessionStorage.removeItem("bookingCreatedAccountEmail");
       window.location.href = "/user/dashboard";
@@ -1186,7 +1509,7 @@ if (bookingDetailsForm) {
   const initialAvailabilityDate = new Date();
   initialAvailabilityDate.setHours(0, 0, 0, 0);
   const minimumAvailabilityDate = new Date(initialAvailabilityDate);
-  minimumAvailabilityDate.setMonth(minimumAvailabilityDate.getMonth() + 1);
+  minimumAvailabilityDate.setDate(minimumAvailabilityDate.getDate() + 1);
   let currentAvailabilityStartDate = new Date(minimumAvailabilityDate);
   const availabilitySelections = new Map();
 
@@ -1331,13 +1654,13 @@ if (bookingDetailsForm) {
   const bookingSession = getStoredUserSession();
   if (bookingSession?.activeRole === "CUSTOMER") {
     applyBookingDetailsUserData(bookingSession.user);
-    const bookingUserToken = sessionStorage.getItem("userToken");
+    const bookingUserToken = getStoredAuthValue("userToken");
     if (bookingUserToken) {
       apiAuth("/api/users/me", bookingUserToken)
         .then((freshUser) => {
-          const storedProfile = sessionStorage.getItem("userProfile");
+          const storedProfile = getStoredAuthValue("userProfile");
           if (storedProfile) {
-            sessionStorage.setItem("userProfile", JSON.stringify(freshUser));
+            setStoredAuthValue("userProfile", JSON.stringify(freshUser));
           }
           applyBookingDetailsUserData(freshUser);
         })
@@ -1485,15 +1808,13 @@ if (adminPage) {
   let pageSize = Number(adminRowsPerPage?.value || 10);
   let currentPage = 1;
 
-  const getAdminToken = () => sessionStorage.getItem("userToken");
+  const getAdminToken = () => getStoredAuthValue("userToken");
   const getAdminProfile = () => {
-    const stored = sessionStorage.getItem("userProfile");
+    const stored = getStoredAuthValue("userProfile");
     return stored ? JSON.parse(stored) : null;
   };
   const clearAdminSession = () => {
-    sessionStorage.removeItem("userToken");
-    sessionStorage.removeItem("userProfile");
-    sessionStorage.removeItem("activeRole");
+    clearStoredSessionData();
   };
 
   const setAdminHeader = (user) => {
@@ -1948,8 +2269,8 @@ if (signInForm) {
         method: "POST",
         body: JSON.stringify({ identifier, password })
       });
-      sessionStorage.setItem("userToken", result.token);
-      sessionStorage.setItem("userProfile", JSON.stringify(result.user));
+      setStoredAuthValue("userToken", result.token);
+      setStoredAuthValue("userProfile", JSON.stringify(result.user));
       const rawRoles = Array.isArray(result.user?.roles) && result.user.roles.length
         ? result.user.roles
         : [result.user?.role_name || "CUSTOMER"];
@@ -1958,7 +2279,7 @@ if (signInForm) {
       const hasMechanicRole = roles.includes("MECHANIC");
 
       if (roles.includes("ADMIN")) {
-        sessionStorage.setItem("activeRole", "ADMIN");
+        setStoredAuthValue("activeRole", "ADMIN");
         window.location.href = "/admin";
         return;
       }
@@ -1967,11 +2288,11 @@ if (signInForm) {
         return;
       }
       if (hasMechanicRole) {
-        sessionStorage.setItem("activeRole", "MECHANIC");
+        setStoredAuthValue("activeRole", "MECHANIC");
         window.location.href = "/mechanic/dashboard";
         return;
       }
-      sessionStorage.setItem("activeRole", "CUSTOMER");
+      setStoredAuthValue("activeRole", "CUSTOMER");
       window.location.href = "/user/dashboard";
     } catch (err) {
       signInError.textContent = err?.error?.message || "Login failed. Check your credentials.";
@@ -1981,7 +2302,7 @@ if (signInForm) {
 
 const rolePickerButtons = document.querySelectorAll("[data-role-target]");
 if (rolePickerButtons.length) {
-  const storedProfile = sessionStorage.getItem("userProfile");
+  const storedProfile = getStoredAuthValue("userProfile");
   let roles = [];
   try {
     const parsed = storedProfile ? JSON.parse(storedProfile) : null;
@@ -1998,10 +2319,10 @@ if (rolePickerButtons.length) {
 
   if (!hasCustomerRole || !hasMechanicRole) {
     if (hasMechanicRole) {
-      sessionStorage.setItem("activeRole", "MECHANIC");
+      setStoredAuthValue("activeRole", "MECHANIC");
       window.location.replace("/mechanic/dashboard");
     } else {
-      sessionStorage.setItem("activeRole", "CUSTOMER");
+      setStoredAuthValue("activeRole", "CUSTOMER");
       window.location.replace("/user/dashboard");
     }
   }
@@ -2010,11 +2331,11 @@ if (rolePickerButtons.length) {
     button.addEventListener("click", () => {
       const targetRole = String(button.getAttribute("data-role-target") || "").toUpperCase();
       if (targetRole === "MECHANIC") {
-        sessionStorage.setItem("activeRole", "MECHANIC");
+        setStoredAuthValue("activeRole", "MECHANIC");
         window.location.href = "/mechanic/dashboard";
         return;
       }
-      sessionStorage.setItem("activeRole", "CUSTOMER");
+      setStoredAuthValue("activeRole", "CUSTOMER");
       window.location.href = "/user/dashboard";
     });
   });
@@ -2189,9 +2510,11 @@ if (userPage) {
   const userVehicleTaxStatus = document.getElementById("userVehicleTaxStatus");
   const userVehicleMileageStatus = document.getElementById("userVehicleMileageStatus");
   const userBookingsView = document.getElementById("userBookingsView");
+  const userResolutionView = document.getElementById("userResolutionView");
   const userBookingsList = document.getElementById("userBookingsList");
   const userBookingsPhotos = document.getElementById("userBookingsPhotos");
   const userBookingsPhotosEmpty = document.getElementById("userBookingsPhotosEmpty");
+  const userBookingsWelcomeSection = document.querySelector("#userBookingsView .bookings-section--welcome");
   const userBookingsCardSection = document.querySelector("#userBookingsView .bookings-section--card");
   const userBookingsPhotosSection = document.querySelector("#userBookingsView .bookings-section--photos");
   const userResolutionOverview = document.getElementById("userResolutionOverview");
@@ -2226,14 +2549,12 @@ if (userPage) {
   };
 
   const getUserProfile = () => {
-    const stored = sessionStorage.getItem("userProfile");
+    const stored = getStoredAuthValue("userProfile");
     return stored ? JSON.parse(stored) : null;
   };
 
   const clearUserSession = () => {
-    sessionStorage.removeItem("userToken");
-    sessionStorage.removeItem("userProfile");
-    sessionStorage.removeItem("activeRole");
+    clearStoredSessionData();
   };
 
   const setAvatar = (el, initials, url) => {
@@ -2251,7 +2572,7 @@ if (userPage) {
   };
 
   const resolveActiveRole = (roles) => {
-    const stored = sessionStorage.getItem("activeRole");
+    const stored = getStoredAuthValue("activeRole");
     if (stored && roles.includes(stored)) return stored;
     if (roles.includes("CUSTOMER")) return "CUSTOMER";
     return roles[0] || "CUSTOMER";
@@ -2306,7 +2627,7 @@ if (userPage) {
       });
       userRoleSwitcher.classList.toggle("is-hidden", roles.length <= 1);
       userRoleSwitcher.onchange = () => {
-        sessionStorage.setItem("activeRole", userRoleSwitcher.value);
+        setStoredAuthValue("activeRole", userRoleSwitcher.value);
         const selectedRole = userRoleSwitcher.value;
         setUserHeader({ ...user, roles });
         if (selectedRole === "MECHANIC") {
@@ -2413,14 +2734,14 @@ if (userPage) {
   };
 
   const profile = getUserProfile();
-  const userToken = sessionStorage.getItem("userToken");
+  const userToken = getStoredAuthValue("userToken");
   if (profile) {
-    sessionStorage.setItem("activeRole", "CUSTOMER");
+    setStoredAuthValue("activeRole", "CUSTOMER");
     setUserHeader(profile);
     if (userToken) {
       apiAuth("/api/users/me", userToken)
         .then((freshProfile) => {
-          sessionStorage.setItem("userProfile", JSON.stringify(freshProfile));
+          setStoredAuthValue("userProfile", JSON.stringify(freshProfile));
           setUserHeader(freshProfile);
         })
         .catch(() => {});
@@ -2434,7 +2755,16 @@ if (userPage) {
     userAccountView.classList.toggle("is-hidden", view !== "account");
     userVehicleView.classList.toggle("is-hidden", view !== "vehicle");
     userBookingsView.classList.toggle("is-hidden", view !== "bookings");
+    userResolutionView?.classList.toggle("is-hidden", view !== "resolution");
     userSettingsView.classList.toggle("is-hidden", view !== "settings");
+
+    if (view === "resolution") {
+      setUserResolutionSubview("overview");
+    } else if (view === "bookings") {
+      userBookingsWelcomeSection?.classList.remove("is-hidden");
+      userBookingsCardSection?.classList.remove("is-hidden");
+      userBookingsPhotosSection?.classList.remove("is-hidden");
+    }
   };
 
   const setActiveUserNav = (view) => {
@@ -3060,7 +3390,7 @@ if (userPage) {
   });
 
   const initialUserView = sessionStorage.getItem("userHeaderTargetView") || sessionStorage.getItem("homeUserTargetView");
-  if (initialUserView && ["dashboard", "account", "vehicle", "bookings", "settings"].includes(initialUserView)) {
+  if (initialUserView && ["dashboard", "account", "vehicle", "bookings", "resolution", "settings"].includes(initialUserView)) {
     setUserView(initialUserView);
     setActiveUserNav(initialUserView);
     sessionStorage.removeItem("userHeaderTargetView");
@@ -3207,7 +3537,7 @@ if (userPage) {
 
   userSecurityPasswordForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const token = sessionStorage.getItem("userToken");
+    const token = getStoredAuthValue("userToken");
     const oldPassword = userSecurityOldPassword?.value || "";
     const newPassword = userSecurityNewPassword?.value || "";
     const confirmPassword = userSecurityConfirmPassword?.value || "";
@@ -3262,7 +3592,7 @@ if (userPage) {
   userSettingsEditClose?.addEventListener("click", closeSettingsEditModal);
 
   userSettingsEditSave?.addEventListener("click", async () => {
-    const token = sessionStorage.getItem("userToken");
+    const token = getStoredAuthValue("userToken");
     const field = activeSettingsField;
     const config = settingsFieldConfig[field];
     const value = userSettingsEditInput?.value?.trim() || "";
@@ -3284,7 +3614,7 @@ if (userPage) {
             lastname: [middleName, lastName].filter(Boolean).join(" ")
           })
         });
-        sessionStorage.setItem("userProfile", JSON.stringify(payload));
+        setStoredAuthValue("userProfile", JSON.stringify(payload));
         setUserHeader(payload);
         closeSettingsEditModal();
         return;
@@ -3304,7 +3634,7 @@ if (userPage) {
             address: { line1, line2, city, postal_code }
           })
         });
-        sessionStorage.setItem("userProfile", JSON.stringify(payload));
+        setStoredAuthValue("userProfile", JSON.stringify(payload));
         setUserHeader(payload);
         closeSettingsEditModal();
         return;
@@ -3330,7 +3660,7 @@ if (userPage) {
         method: "PATCH",
         body: JSON.stringify(patchPayload)
       });
-      sessionStorage.setItem("userProfile", JSON.stringify(payload));
+      setStoredAuthValue("userProfile", JSON.stringify(payload));
       setUserHeader(payload);
       closeSettingsEditModal();
     } catch (err) {
@@ -3342,7 +3672,7 @@ if (userPage) {
 
   userSettingsContactSave?.addEventListener("click", async () => {
     if (!userSettingsPhoneInput || !userSettingsEmailInput || !userSettingsAddressInput) return;
-    const token = sessionStorage.getItem("userToken");
+    const token = getStoredAuthValue("userToken");
     if (!token) return;
 
     const phone = userSettingsPhoneInput.value.trim();
@@ -3364,7 +3694,7 @@ if (userPage) {
         });
         const payload = await response.json();
         if (!response.ok) throw payload;
-        sessionStorage.setItem("userProfile", JSON.stringify(payload));
+        setStoredAuthValue("userProfile", JSON.stringify(payload));
         setUserHeader(payload);
       }
 
@@ -3392,7 +3722,7 @@ if (userPage) {
   userSettingsPhotoInput?.addEventListener("change", async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    const token = sessionStorage.getItem("userToken");
+    const token = getStoredAuthValue("userToken");
     if (!token) return;
 
     const formData = new FormData();
@@ -3408,7 +3738,7 @@ if (userPage) {
       if (!response.ok) {
         throw payload;
       }
-      sessionStorage.setItem("userProfile", JSON.stringify(payload));
+      setStoredAuthValue("userProfile", JSON.stringify(payload));
       setUserHeader(payload);
     } catch (err) {
       console.error("Upload failed", err);
@@ -3537,7 +3867,7 @@ if (mechanicDashboard) {
   const passwordForm = document.getElementById("setMechanicPasswordForm");
   const passwordEmail = document.getElementById("mechanicPasswordEmail");
   const passwordError = document.getElementById("mechanicPasswordError");
-  const profile = sessionStorage.getItem("userProfile");
+  const profile = getStoredAuthValue("userProfile");
   let latestMechanicCoverage = [];
   let latestMechanicResolutionCases = [];
   let latestMechanicAssignedBookings = [];
@@ -3651,13 +3981,11 @@ if (mechanicDashboard) {
   });
 
   mechanicLogoutBtn?.addEventListener("click", () => {
-    sessionStorage.removeItem("userToken");
-    sessionStorage.removeItem("userProfile");
-    sessionStorage.removeItem("activeRole");
+    clearStoredSessionData();
     window.location.replace("/");
   });
 
-  const mechanicToken = sessionStorage.getItem("userToken");
+  const mechanicToken = getStoredAuthValue("userToken");
   let mechanicProfileMap = null;
   let latestMechanicProfile = null;
   const formatMonthYear = (value) => {
@@ -4447,7 +4775,7 @@ if (mechanicDashboard) {
 
 const mechanicEditNav = document.querySelector(".mechanic-edit-nav");
 if (mechanicEditNav) {
-  const profile = sessionStorage.getItem("userProfile");
+  const profile = getStoredAuthValue("userProfile");
   if (profile) {
     try {
       const user = JSON.parse(profile);
@@ -4503,7 +4831,7 @@ if (confirmEmailPage) {
           throw payload;
         }
         if (payload.user) {
-          sessionStorage.setItem("userProfile", JSON.stringify(payload.user));
+          setStoredAuthValue("userProfile", JSON.stringify(payload.user));
         }
         setStatus("Email confirmed. You can sign in with the new email.");
       })
@@ -4512,3 +4840,4 @@ if (confirmEmailPage) {
       });
   }
 }
+

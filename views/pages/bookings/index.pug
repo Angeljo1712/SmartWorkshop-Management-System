@@ -8,22 +8,23 @@ block head
   link(rel="stylesheet", href="/css/pages/bookings.css")
 
 block content
-  header.main-header.general-header
+  header.main-header.booking-header
     .body-content
       a.main-brand(href="/")
         span.main-logo SW
         div
           strong SmartWorkshop
           span Vehicle Service Marketplace
+      a.bookings-header-help(href="#") Need help?
   main.primari-shell
     .page-shell-content
       .bookings-layout
         .bookings-stepper
-          .stepper.stepper--progress-0(aria-label="Booking steps")
-            .step.is-active
+          .stepper.stepper--progress-1(aria-label="Booking steps")
+            .step.is-complete
               span.step-dot 1
               span.step-label Car
-            .step
+            .step.is-active
               span.step-dot 2
               span.step-label Select work
             .step

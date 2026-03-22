@@ -8,13 +8,14 @@ block head
   link(rel="stylesheet", href="/css/pages/bookings.css")
 
 block content
-  header.main-header.general-header
+  header.main-header.booking-header
     .body-content
       a.main-brand(href="/")
         span.main-logo SW
         div
           strong SmartWorkshop
           span Vehicle Service Marketplace
+      a.bookings-header-help(href="#") Need help?
   main.primari-shell
     .page-shell-content
       .work-layout1
@@ -198,13 +199,20 @@ block content
                   button.primary.compare-service-toggle(type="button" data-service-code="inspection_basic" data-selected="false") Add
                   button.primary.compare-service-toggle(type="button" data-service-code="inspection_standard" data-selected="false") Add
                   button.primary.compare-service-toggle(type="button" data-service-code="inspection_premium" data-selected="false") Add
+            else if type === "tyres"
+              h2 Choose from popular tyre services
+              ul.work-list#serviceList
+              p.form-error#serviceListEmpty No services found.
             else
               h2 Search for your repair
               .work-search
-                input(type="text" placeholder="Search available repairs" aria-label="Search available repairs")
+                input#serviceSearch(type="text" placeholder="Search available repairs" aria-label="Search available repairs")
               h3 Choose from popular repairs
               ul.work-list#serviceList
               p.form-error#serviceListEmpty No services found.
+              a.work-browse-category(href="/bookings/work" aria-label="Browse repairs by category")
+                span Or browse by category
+                span.work-browse-category-arrow(aria-hidden="true") ›
           aside.work-summary
             .price-card
               .price-head
@@ -214,7 +222,7 @@ block content
                 span.price-note Quote includes VAT where applicable
               .price-vehicle
                 span Toyota Corolla 1.4L Petrol 2005 · KT10 0QR
-                a(href="#") Edit
+                a(href="/bookings/vehicle") Edit
             .summary-section.is-hidden#workSummarySection
               h3 Selected work
               p.form-error.is-hidden#selectedWorkEmptyWork No items selected yet.

@@ -105,11 +105,15 @@ app.get("/profile", (req, res) => {
 });
 
 app.get("/shop", (_req, res) => {
-  res.redirect(301, "/bookings/work");
+  res.redirect(301, "/bookings/vehicle");
 });
 
 app.get("/bookings", (_req, res) => {
-  res.redirect(301, "/bookings/work");
+  res.redirect(301, "/bookings/vehicle");
+});
+
+app.get("/bookings/vehicle", (_req, res) => {
+  res.render("pages/bookings/vehicle");
 });
 
 const renderBookingsWork = (req, res) => {

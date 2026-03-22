@@ -864,8 +864,6 @@ body.admin-body #userAccountView .settings-meta h4 {
     "contacts"
     "divider-bottom"
     "role"
-    "divider-lower"
-    "theme"
     "divider-final"
     "integration";
   gap: 30px;
@@ -896,10 +894,6 @@ body.admin-body #userAccountView .settings-meta h4 {
 }
 
 .user-account-layout > .settings-divider:nth-of-type(5) {
-  grid-area: divider-lower;
-}
-
-.user-account-layout > .settings-divider:nth-of-type(6) {
   grid-area: divider-final;
 }
 
@@ -914,10 +908,6 @@ body.admin-body #userAccountView .settings-meta h4 {
 .account-section--role .settings-row {
   border-bottom: none;
   padding-bottom: 0;
-}
-
-.account-section--theme {
-  grid-area: theme;
 }
 
 .account-section--integration {
