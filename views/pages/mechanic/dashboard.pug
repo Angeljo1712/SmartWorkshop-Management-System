@@ -2,7 +2,7 @@ extends ../../layouts/main
 
 block vars
   - var title = "SmartWorkshop - Mechanic Dashboard"
-  - var bodyClass = "admin-body"
+  - var bodyClass = "admin-body app-shell-body"
 
 block head
   link(rel="stylesheet", href="/css/pages/dashboard-layout.css")
@@ -619,4 +619,5 @@ block content
                           button.secondary#mechanicSecurity2faEnable(type="button") Enable 2FA
 
   include ../../partials/general-footer
+
 

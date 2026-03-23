@@ -242,7 +242,7 @@ body {
   justify-content: space-between;
 }
 
-header.main-header:not(.home-header):not(.general-header):not(.booking-header) {
+header.main-header:not(.home-header):not(.general-header):not(.basic-header) {
   padding: 14px 48px;
   border-bottom: 1px solid var(--border);
   position: sticky;
@@ -479,6 +479,20 @@ header.main-header:not(.home-header):not(.general-header):not(.booking-header) {
 .primari-shell {
   max-width: none;
   margin: 0;
+  min-height: 100%;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  width: 100%;
+}
+
+.app-shell-body {
+  background: var(--bg-app-dark);
+  color: #e7ebf4;
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
 }
 
 .admin-signout {
@@ -1365,11 +1379,6 @@ pre {
 
 /* Admin dashboard v2 (reference-inspired) */
 body.admin-body {
-  background: var(--bg-app-dark);
-  color: #e7ebf4;
-  min-height: 100vh;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
   overflow-x: hidden;
 }
 

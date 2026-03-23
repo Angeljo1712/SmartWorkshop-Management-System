@@ -2,13 +2,13 @@ extends ../../layouts/main
 
 block vars
   - var title = "SmartWorkshop - Repair Type"
-  - var bodyClass = "bookings-body"
+  - var bodyClass = "bookings-body app-shell-body"
 
 block head
   link(rel="stylesheet", href="/css/pages/bookings.css")
 
 block content
-  header.main-header.booking-header
+  header.main-header.basic-header
     .body-content
       a.main-brand(href="/")
         span.main-logo SW
@@ -21,3 +21,4 @@ block content
       h1 Repair Type
       p This is the new page for the Repairs flow.
   include ../../partials/general-footer
+

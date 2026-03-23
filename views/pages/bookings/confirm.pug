@@ -2,13 +2,13 @@ extends ../../layouts/main
 
 block vars
   - var title = "SmartWorkshop - Booking Confirmed"
-  - var bodyClass = "bookings-body"
+  - var bodyClass = "bookings-body app-shell-body"
 
 block head
   link(rel="stylesheet", href="/css/pages/bookings.css")
 
 block content
-  header.main-header.booking-header
+  header.main-header.basic-header
     .body-content
       a.main-brand(href="/")
         span.main-logo SW
@@ -33,7 +33,7 @@ block content
             .step.is-complete
               span.step-dot 4
               span.step-label Book
-        .details-layout
+        .confirm-layout2
           aside.details-summary
             .price-card
               .price-head
@@ -80,3 +80,4 @@ block content
               p.form-error#confirmAccountError(role="alert" aria-live="polite")
               button.primary#confirmAccountSubmit(type="button") Create account access
   include ../../partials/general-footer
+

@@ -2,13 +2,13 @@ extends ../../layouts/main
 
 block vars
   - var title = "SmartWorkshop - Payment"
-  - var bodyClass = "bookings-body"
+  - var bodyClass = "bookings-body app-shell-body"
 
 block head
   link(rel="stylesheet", href="/css/pages/bookings.css")
 
 block content
-  header.main-header.booking-header
+  header.main-header.basic-header
     .body-content
       a.main-brand(href="/")
         span.main-logo SW
@@ -20,7 +20,7 @@ block content
     .page-shell-content
       .payment-layout1
         .bookings-stepper
-          .stepper.stepper--progress-3(aria-label="Booking steps")
+          .stepper.stepper--progress-4(aria-label="Booking steps")
             .step.is-complete
               span.step-dot 1
               span.step-label Car
@@ -33,7 +33,7 @@ block content
             .step.is-active
               span.step-dot 4
               span.step-label Book
-        .details-layout
+        .payment-layout2
           aside.details-summary
             .price-card
               .price-head
@@ -76,3 +76,4 @@ block content
               p.form-error#paymentFormError(role="alert" aria-live="polite")
               button.primary.details-submit(type="button") Complete booking
   include ../../partials/general-footer
+

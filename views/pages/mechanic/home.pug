@@ -2,37 +2,58 @@ extends ../../layouts/main
 
 block vars
   - var title = "SmartWorkshop - Mechanic Partner"
-  - var bodyClass = "mechanic-body"
+  - var bodyClass = "application-body app-shell-body"
 
 block head
   link(rel="stylesheet" href="/css/pages/mechanic-home.css")
+  link(rel="stylesheet" href="/css/pages/bookings.css")
 
 block content
-  header.mechanic-topbar
-    .main-brand
-      span.main-logo SW
-      strong SmartWorkshop
-    nav.mechanic-links
-      a(href="#how") How it works
-      a(href="#support") Support
-      a(href="#apply") Get started
-    .mechanic-user Angel ?
+  header.main-header.basic-header
+    .body-content
+      a.main-brand(href="/")
+        span.main-logo SW
+        span
+          strong SmartWorkshop
+          span.main-brand-subtitle Vehicle Service Marketplace
+      a.bookings-header-help(href="/application/join") Need help?
 
-  main.mechanic-hero.primari-shell#apply
-    .mechanic-overlay
-    .mechanic-content
-      .mechanic-copy
-        h1 Earn more with flexible mechanic work
-        ul
-          li Free to join & no monthly fees
-          li Great for new and established workshops
-          li Ideal for mobile mechanics and MOT testers
-      form.mechanic-form(method="get" action="/application/join")
-        .row
-          input(type="text" name="first_name" placeholder="First name")
-          input(type="text" name="last_name" placeholder="Last name")
-        input(type="email" name="email" placeholder="Email")
-        input(type="text" name="phone" placeholder="Mobile number")
-        input(type="text" name="postcode" placeholder="Postcode")
-        p.form-error#mechanicLeadError(role="alert" aria-live="polite")
-        button.primary(type="submit") Join free
+  main.primari-shell
+    .page-shell-content
+      .application-layout#apply
+        .mechanic-copy-card
+          .mechanic-copy-header
+            a.main-brand(href="/")
+              span.main-logo SW
+              span
+                strong SmartWorkshop
+                span.main-brand-subtitle Vehicle Service Marketplace
+          h1 Earn more with flexible mechanic work
+          p Work with local drivers, keep control of your diary, and grow your workshop without monthly platform fees.
+          ul.mechanic-benefits
+            li Free to join and no monthly subscription
+            li Work for mobile mechanics, workshops and MOT specialists
+            li Real bookings, clear payouts, practical support
+          .mechanic-hero-meta
+            .mechanic-stat-card
+              strong 0%
+              span Monthly fee
+            .mechanic-stat-card
+              strong 24/7
+              span Driver demand
+            .mechanic-stat-card
+              strong Fast
+              span Resolution support
+        form.mechanic-form(method="get" action="/application/join")
+          h2 Start your application
+          p Tell us a few details and continue your registration.
+          .row
+            input(type="text" name="first_name" placeholder="First name")
+            input(type="text" name="last_name" placeholder="Last name")
+          input(type="email" name="email" placeholder="Email")
+          input(type="text" name="phone" placeholder="Mobile number")
+          input(type="text" name="postcode" placeholder="Postcode")
+          p.form-error#mechanicLeadError(role="alert" aria-live="polite")
+          button.primary(type="submit") Join free
+
+  include ../../partials/general-footer

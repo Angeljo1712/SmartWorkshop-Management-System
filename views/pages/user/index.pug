@@ -2,7 +2,7 @@ extends ../../layouts/main
 
 block vars
   - var title = "SmartWorkshop - User"
-  - var bodyClass = "admin-body"
+  - var bodyClass = "admin-body app-shell-body"
 
 block head
   link(rel="stylesheet", href="/css/pages/dashboard-layout.css")
@@ -281,9 +281,9 @@ block content
                         h3 Current cases
                         .mechanic-resolution-card-body
                           .mechanic-resolution-tabs
-                            button.mechanic-resolution-tab.is-active(type="button") All
-                            button.mechanic-resolution-tab(type="button") Complaint
-                            button.mechanic-resolution-tab(type="button") General
+                            button.mechanic-resolution-tab.is-active(type="button" data-user-resolution-filter="all") All
+                            button.mechanic-resolution-tab(type="button" data-user-resolution-filter="complaint") Complaint
+                            button.mechanic-resolution-tab(type="button" data-user-resolution-filter="general") General
                           .mechanic-resolution-table
                             .mechanic-resolution-table-head
                               span Status
@@ -314,10 +314,22 @@ block content
                         .mechanic-resolution-field
                           label(for="userResolutionIssue") Please select your issue from the list below:
                           select#userResolutionIssue
-                            option(value="general" selected) Message mechanic
-                            option(value="complaint") Complaint
+                            option(value="message_mechanic" data-case-type="general" selected) Message my mechanic
+                            option(value="mechanic_late" data-case-type="complaint") My mechanic is late
+                            option(value="workmanship_problem" data-case-type="complaint") Problem with workmanship
+                            option(value="charged_more_than_agreed" data-case-type="complaint") I've been charged more than agreed
+                            option(value="charged_for_unagreed_work" data-case-type="complaint") I've been charged for work that I didn't agree to
+                            option(value="mechanic_cancelled" data-case-type="complaint") Mechanic has cancelled my booking
+                            option(value="other_problem" data-case-type="complaint") Other problem
                         p.mechanic-resolution-notice#userResolutionNotice No case has been created for this booking yet.
                         button.primary#userResolutionGoToCase(type="button") Go to case
+                        .mechanic-resolution-complaint.is-hidden#userResolutionComplaintComposer
+                          p.mechanic-resolution-complaint-copy#userResolutionComplaintCopy
+                          textarea#userResolutionComplaintInput(rows="5" placeholder="Write your message here")
+                          .mechanic-resolution-complaint-actions
+                            button.primary#userResolutionComplaintSendBtn(type="button") Send
+                          .mechanic-resolution-complaint-footer
+                            button.secondary#userResolutionComplaintAttachBtn(type="button") Attach file(s)
                       .mechanic-resolution-card
                         .mechanic-resolution-card-header#userResolutionCaseListTitle Resolution cases already created for booking
                         .mechanic-resolution-table
@@ -526,3 +538,4 @@ block content
                     button.secondary#userSettingsEditCancel(type="button") Cancel
                     button.ghost#userSettingsEditSave(type="button") Update
   include ../../partials/general-footer
+

@@ -1100,7 +1100,7 @@ const renderServices = (category, services) => {
   syncCompareButtons();
 };
 
-const workLayout = document.querySelector(".work-layout");
+const workLayout = document.querySelector(".workType-layout2[data-service-category]");
 if (workLayout) {
   const category = workLayout.dataset.serviceCategory;
   const searchInput = document.getElementById("serviceSearch");
@@ -2515,6 +2515,7 @@ if (userPage) {
   const userBookingsWelcomeSection = document.querySelector("#userBookingsView .bookings-section--welcome");
   const userBookingsCardSection = document.querySelector("#userBookingsView .bookings-section--card");
   const userResolutionOverview = document.getElementById("userResolutionOverview");
+  const userResolutionFilterTabs = document.querySelectorAll("#userResolutionOverview [data-user-resolution-filter]");
   const userResolutionCasesTable = document.getElementById("userResolutionCasesTable");
   const userResolutionMessageView = document.getElementById("userResolutionMessageView");
   const userResolutionBackBtn = document.getElementById("userResolutionBackBtn");
@@ -2522,6 +2523,10 @@ if (userPage) {
   const userResolutionIssue = document.getElementById("userResolutionIssue");
   const userResolutionNotice = document.getElementById("userResolutionNotice");
   const userResolutionGoToCase = document.getElementById("userResolutionGoToCase");
+  const userResolutionComplaintComposer = document.getElementById("userResolutionComplaintComposer");
+  const userResolutionComplaintCopy = document.getElementById("userResolutionComplaintCopy");
+  const userResolutionComplaintInput = document.getElementById("userResolutionComplaintInput");
+  const userResolutionComplaintSendBtn = document.getElementById("userResolutionComplaintSendBtn");
   const userResolutionCaseListTitle = document.getElementById("userResolutionCaseListTitle");
   const userResolutionBookingCasesTable = document.getElementById("userResolutionBookingCasesTable");
   const userResolutionCaseView = document.getElementById("userResolutionCaseView");
@@ -3137,11 +3142,26 @@ if (userPage) {
     }
   };
 
+  const formatBookingReference = (value) => String(Number(value) || 0).padStart(8, "0");
+  const formatResolutionReference = (value, bookingId) => {
+    if (value) {
+      const rawValue = String(value).trim();
+      const parts = rawValue.split("/");
+      if (parts.length === 2) {
+        return `${formatBookingReference(parts[0])}/${parts[1]}`;
+      }
+      return rawValue;
+    }
+    if (!bookingId) return "-";
+    return `${formatBookingReference(bookingId)}/1`;
+  };
+
   let latestUserBookings = [];
   let latestUserResolutionCases = [];
   let pendingUserResolutionBookingId = null;
   let pendingUserResolutionCaseId = null;
   let pendingUserResolutionOrigin = "bookings";
+  let activeUserResolutionFilter = "all";
 
   const formatUserResolutionDateTime = (value) => {
     if (!value) return "-";
@@ -3154,6 +3174,39 @@ if (userPage) {
       hour: "2-digit",
       minute: "2-digit"
     }).format(date);
+  };
+
+  const getUserResolutionCaseType = () => {
+    const selectedOption = userResolutionIssue?.selectedOptions?.[0];
+    return selectedOption?.dataset.caseType || "general";
+  };
+
+  const getUserResolutionIssueValue = () => String(userResolutionIssue?.value || "message_mechanic");
+
+  const getUserResolutionComplaintCopy = (issueValue, mechanicName) => {
+    const safeMechanicName = mechanicName || "your mechanic";
+    const messages = {
+      mechanic_late: `We're sorry to hear that ${safeMechanicName} is late for the arranged arrival time. Please give us details of any correspondence you have had with ${safeMechanicName} until now.`,
+      workmanship_problem: `Please tell us what problem you have experienced with the workmanship and include any details that will help us review the issue.`,
+      charged_more_than_agreed: `Please explain why you believe you have been charged more than agreed and include any quote or amount you were originally given.`,
+      charged_for_unagreed_work: `Please describe the work you believe was carried out without your agreement and include any relevant details or messages.`,
+      mechanic_cancelled: `Please tell us how the mechanic cancelled your booking and include any messages or calls you have received.`,
+      other_problem: "Please describe the problem in as much detail as possible so we can review it."
+    };
+    return messages[issueValue] || "";
+  };
+
+  const syncUserResolutionIssueUi = () => {
+    const issueValue = getUserResolutionIssueValue();
+    const isComplaint = getUserResolutionCaseType() === "complaint";
+    const booking = latestUserBookings.find((entry) => Number(entry.id) === Number(pendingUserResolutionBookingId));
+    const mechanicName = booking?.mechanic || "your mechanic";
+    userResolutionNotice?.classList.toggle("is-hidden", isComplaint);
+    userResolutionGoToCase?.classList.toggle("is-hidden", isComplaint);
+    userResolutionComplaintComposer?.classList.toggle("is-hidden", !isComplaint);
+    if (userResolutionComplaintCopy) {
+      userResolutionComplaintCopy.textContent = isComplaint ? getUserResolutionComplaintCopy(issueValue, mechanicName) : "";
+    }
   };
 
   const setUserResolutionSubview = (view) => {
@@ -3178,7 +3231,7 @@ if (userPage) {
       row.className = "mechanic-resolution-table-row";
       row.innerHTML = `
         <span class="mechanic-resolution-status">${String(entry.subject || entry.type || "General enquiry").toUpperCase()}</span>
-        <span>${entry.reference || "-"}</span>
+        <span>${formatResolutionReference(entry.reference, entry.booking_id)}</span>
         <span>${formatUserResolutionDateTime(entry.updated_at)}</span>
         <span>${entry.subject || "-"}</span>
         <button class="mechanic-resolution-link" type="button" data-user-resolution-case-id="${entry.id}">View</button>
@@ -3187,12 +3240,19 @@ if (userPage) {
     });
   };
 
+  const applyUserResolutionFilter = () => {
+    const filteredCases = activeUserResolutionFilter === "all"
+      ? latestUserResolutionCases
+      : latestUserResolutionCases.filter((entry) => String(entry.type || "").toLowerCase() === activeUserResolutionFilter);
+    renderUserResolutionCaseRows(userResolutionCasesTable, filteredCases);
+  };
+
   const syncUserResolutionOverview = async () => {
     if (!userToken || !userResolutionCasesTable) return;
     try {
       const cases = await apiAuth("/api/users/me/resolution-cases", userToken);
       latestUserResolutionCases = Array.isArray(cases) ? cases : [];
-      renderUserResolutionCaseRows(userResolutionCasesTable, latestUserResolutionCases);
+      applyUserResolutionFilter();
       userResolutionOverview?.classList.toggle("is-hidden", !latestUserResolutionCases.length);
     } catch (_err) {
       latestUserResolutionCases = [];
@@ -3205,9 +3265,12 @@ if (userPage) {
     pendingUserResolutionOrigin = "bookings";
     pendingUserResolutionBookingId = Number(bookingId);
     pendingUserResolutionCaseId = null;
-    if (userResolutionIssue) userResolutionIssue.value = type;
+    if (userResolutionIssue) {
+      const matchingOption = Array.from(userResolutionIssue.options).find((option) => (option.dataset.caseType || "general") === type);
+      userResolutionIssue.value = matchingOption?.value || userResolutionIssue.value;
+    }
     const booking = latestUserBookings.find((entry) => Number(entry.id) === Number(bookingId));
-    const reference = booking?.reference || bookingId;
+    const reference = booking?.reference || formatBookingReference(bookingId);
     if (userResolutionDetailTitle) {
       userResolutionDetailTitle.textContent = `Message mechanic regarding booking #${reference}`;
     }
@@ -3222,6 +3285,8 @@ if (userPage) {
         ? "You already have an open dialog for this issue type."
         : "No case has been created for this booking yet.";
     }
+    if (userResolutionComplaintInput) userResolutionComplaintInput.value = "";
+    syncUserResolutionIssueUi();
     setUserResolutionSubview("message");
   };
 
@@ -3230,7 +3295,7 @@ if (userPage) {
     pendingUserResolutionBookingId = detail?.booking?.id || detail?.booking_id || null;
     if (userResolutionCaseTitle) userResolutionCaseTitle.textContent = detail?.subject || "General Enquiry";
     if (userResolutionSidebarTitle) {
-      userResolutionSidebarTitle.textContent = `Current status of booking #${detail?.booking?.reference || detail?.booking_id || "-"}`;
+      userResolutionSidebarTitle.textContent = `Current status of booking #${detail?.booking?.reference || (detail?.booking_id ? formatBookingReference(detail.booking_id) : "-")}`;
     }
     if (userResolutionSidebarMechanic) userResolutionSidebarMechanic.textContent = detail?.mechanic?.name || "-";
     if (userResolutionSidebarCar) {
@@ -3473,7 +3538,7 @@ if (userPage) {
       return;
     }
     if (pendingUserResolutionBookingId) {
-      await openUserResolutionMessage(pendingUserResolutionBookingId, userResolutionIssue?.value || "general");
+      await openUserResolutionMessage(pendingUserResolutionBookingId, getUserResolutionCaseType());
       return;
     }
     setUserResolutionSubview("overview");
@@ -3485,11 +3550,35 @@ if (userPage) {
       method: "POST",
       body: JSON.stringify({
         booking_id: pendingUserResolutionBookingId,
-        type: userResolutionIssue?.value || "general"
+        type: getUserResolutionCaseType()
       })
     });
     await syncUserResolutionOverview();
     renderUserResolutionCaseDetail(detail);
+    setUserResolutionSubview("case");
+  });
+
+  userResolutionIssue?.addEventListener("change", () => {
+    syncUserResolutionIssueUi();
+  });
+
+  userResolutionComplaintSendBtn?.addEventListener("click", async () => {
+    const body = String(userResolutionComplaintInput?.value || "").trim();
+    if (!body || !pendingUserResolutionBookingId || !userToken) return;
+    const detail = await apiAuth("/api/users/me/resolution-cases", userToken, {
+      method: "POST",
+      body: JSON.stringify({
+        booking_id: pendingUserResolutionBookingId,
+        type: getUserResolutionCaseType()
+      })
+    });
+    const updatedDetail = await apiAuth(`/api/users/me/resolution-cases/${encodeURIComponent(detail.id)}/messages`, userToken, {
+      method: "POST",
+      body: JSON.stringify({ body })
+    });
+    if (userResolutionComplaintInput) userResolutionComplaintInput.value = "";
+    await syncUserResolutionOverview();
+    renderUserResolutionCaseDetail(updatedDetail);
     setUserResolutionSubview("case");
   });
 
@@ -3502,6 +3591,14 @@ if (userPage) {
     setActiveUserNav("resolution");
     renderUserResolutionCaseDetail(detail);
     setUserResolutionSubview("case");
+  });
+
+  userResolutionFilterTabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      activeUserResolutionFilter = tab.dataset.userResolutionFilter || "all";
+      userResolutionFilterTabs.forEach((item) => item.classList.toggle("is-active", item === tab));
+      applyUserResolutionFilter();
+    });
   });
 
   userResolutionBookingCasesTable?.addEventListener("click", async (event) => {
@@ -4339,7 +4436,7 @@ if (mechanicDashboard) {
       row.className = "mechanic-resolution-table-row";
       row.innerHTML = `
         <span class="mechanic-resolution-status">${String(entry.subject || entry.type || "General enquiry").toUpperCase()}</span>
-        <span>${entry.reference || "-"}</span>
+        <span>${formatResolutionReference(entry.reference, entry.booking_id)}</span>
         <span>${formatMechanicDateTime(entry.updated_at)}</span>
         <span>${entry.subject || "-"}</span>
         <button class="mechanic-resolution-link" type="button" data-resolution-case-id="${entry.id}">View</button>

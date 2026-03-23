@@ -788,6 +788,46 @@ body.admin-body :is(#userBookingsView, #userResolutionView) #userResolutionGoToC
   margin: 0 20px 20px;
 }
 
+body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-complaint {
+  display: grid;
+  gap: 14px;
+  margin: 0 20px 20px;
+}
+
+body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-complaint-copy {
+  margin: 0;
+  color: #eaf0fb;
+  line-height: 1.55;
+}
+
+body.admin-body :is(#userBookingsView, #userResolutionView) #userResolutionComplaintInput {
+  width: 100%;
+  min-height: 120px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  background: #ffffff;
+  color: #171c24;
+  padding: 14px 16px;
+  font: inherit;
+  resize: vertical;
+}
+
+body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-complaint-actions {
+  display: flex;
+  justify-content: center;
+}
+
+body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-complaint-footer {
+  display: flex;
+  justify-content: flex-start;
+}
+
+body.admin-body :is(#userBookingsView, #userResolutionView) #userResolutionComplaintAttachBtn.secondary {
+  background: #4f627b;
+  border-color: #4f627b;
+  color: #ffffff;
+}
+
 body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case-view {
   grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.9fr);
   align-items: start;
@@ -928,8 +968,8 @@ body.admin-body #userResolutionView .mechanic-resolution-tab {
   min-height: 42px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.06);
-  color: #d6dfef;
+  background: #5f7593;
+  color: #ffffff;
   font: inherit;
   cursor: pointer;
 }
@@ -937,7 +977,7 @@ body.admin-body #userResolutionView .mechanic-resolution-tab {
 body.admin-body #userResolutionView .mechanic-resolution-tab.is-active {
   background: #0d1220;
   color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.18);
+  border-color: #ffffff;
 }
 
 body.admin-body #userResolutionView .mechanic-resolution-table {

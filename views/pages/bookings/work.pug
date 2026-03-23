@@ -2,13 +2,13 @@ extends ../../layouts/main
 
 block vars
   - var title = "SmartWorkshop - Bookings"
-  - var bodyClass = "bookings-body"
+  - var bodyClass = "bookings-body app-shell-body"
 
 block head
   link(rel="stylesheet", href="/css/pages/bookings.css")
 
 block content
-  header.main-header.booking-header
+  header.main-header.basic-header
     .body-content
       a.main-brand(href="/")
         span.main-logo SW
@@ -18,9 +18,11 @@ block content
       a.bookings-header-help(href="#") Need help?
   main.primari-shell
     .page-shell-content
-      .work-layout1
+      .workType-layout1
+        - const workTitle = type === "diagnostics" ? "In-person diagnostic" : type === "service" ? "Servicing & MOT" : type === "inspection" ? "Pre-purchase inspections" : type === "tyres" ? "Choose from popular tyre services" : "Search for your repair";
+        - const workSubtitle = type === "diagnostics" ? "Get a mechanic to diagnose the issue and give you a no-obligation quote for any required repairs." : type === "service" ? "Compare service levels and choose the right option for your vehicle." : type === "inspection" ? "Choose the inspection depth that matches the vehicle you are checking." : type === "tyres" ? "Pick a tyre service and continue with your booking." : "Find the repair you need or browse the available categories.";
         .bookings-stepper
-          .stepper(aria-label="Booking steps")
+          .stepper.stepper--progress-2(aria-label="Booking steps")
             .step.is-complete
               span.step-dot 1
               span.step-label Car
@@ -33,7 +35,7 @@ block content
             .step
               span.step-dot 4
               span.step-label Book
-        .work-layout(data-service-category=type)
+        .workType-layout2(data-service-category=type)
           nav.work-tabs(aria-label="Service types")
             a.work-tab(class=(type === "repair" ? "is-active" : "") href="/bookings/work?type=repair") Repairs
             a.work-tab(class=(type === "diagnostics" ? "is-active" : "") href="/bookings/work?type=diagnostics") Diagnostics
@@ -54,151 +56,151 @@ block content
               ul.work-list#serviceList
               p.form-error#serviceListEmpty No services found.
               .compare-table
-                .compare-header
-                  span Compare
-                  span Interim
-                  span Full
-                  span Major
-                .compare-row
-                  span Number of checks
-                  span 50
-                  span 70
-                  span 71
-                .compare-row
-                  span Parts included
-                  span
-                  span
-                  span
-                .compare-row
-                  span Engine oil
-                  span ✓
-                  span ✓
-                  span ✓
-                .compare-row
-                  span Oil filter
-                  span ✓
-                  span ✓
-                  span ✓
-                .compare-row
-                  span Air filter
-                  span ✕
-                  span ✓
-                  span ✓
-                .compare-row
-                  span Pollen filter
-                  span ✕
-                  span ✕
-                  span ✓
-                .compare-row
-                  span Spark plugs
-                  span ✕
-                  span ✕
-                  span ✓
-                .compare-row
-                  span Fuel filter
-                  span ✕
-                  span ✕
-                  span ✓
-                .compare-row
-                  span Top-ups included
-                  span ✓
-                  span ✓
-                  span ✓
-                .compare-row
-                  span Screen wash
-                  span ✓
-                  span ✓
-                  span ✓
-                .compare-row
-                  span Antifreeze
-                  span ✓
-                  span ✓
-                  span ✓
-                .compare-row
-                  span Brake fluid
-                  span ✓
-                  span ✓
-                  span ✓
-                .compare-row
-                  span Power steering fluid
-                  span ✓
-                  span ✓
-                  span ✓
-                .compare-row
-                  span Battery fluid
-                  span ✓
-                  span ✓
-                  span ✓
-                .compare-row
-                  span Transfer box oil
-                  span ✕
-                  span ✕
-                  span ✓
-                .compare-row
-                  span Manual trans. oil
-                  span ✕
-                  span ✓
-                  span ✓
-                .compare-footer
-                  span Price
-                  span £123.45
-                  span £152.86
-                  span £208.25
-                .compare-actions
-                  span
-                  button.primary.compare-service-toggle(type="button" data-service-code="service_interim" data-selected="false") Add
-                  button.primary.compare-service-toggle(type="button" data-service-code="service_full" data-selected="false") Add
-                  button.primary.compare-service-toggle(type="button" data-service-code="service_major" data-selected="false") Add
+                  .compare-header
+                    span Compare
+                    span Interim
+                    span Full
+                    span Major
+                  .compare-row
+                    span Number of checks
+                    span 50
+                    span 70
+                    span 71
+                  .compare-row
+                    span Parts included
+                    span
+                    span
+                    span
+                  .compare-row
+                    span Engine oil
+                    span ✓
+                    span ✓
+                    span ✓
+                  .compare-row
+                    span Oil filter
+                    span ✓
+                    span ✓
+                    span ✓
+                  .compare-row
+                    span Air filter
+                    span ✕
+                    span ✓
+                    span ✓
+                  .compare-row
+                    span Pollen filter
+                    span ✕
+                    span ✕
+                    span ✓
+                  .compare-row
+                    span Spark plugs
+                    span ✕
+                    span ✕
+                    span ✓
+                  .compare-row
+                    span Fuel filter
+                    span ✕
+                    span ✕
+                    span ✓
+                  .compare-row
+                    span Top-ups included
+                    span ✓
+                    span ✓
+                    span ✓
+                  .compare-row
+                    span Screen wash
+                    span ✓
+                    span ✓
+                    span ✓
+                  .compare-row
+                    span Antifreeze
+                    span ✓
+                    span ✓
+                    span ✓
+                  .compare-row
+                    span Brake fluid
+                    span ✓
+                    span ✓
+                    span ✓
+                  .compare-row
+                    span Power steering fluid
+                    span ✓
+                    span ✓
+                    span ✓
+                  .compare-row
+                    span Battery fluid
+                    span ✓
+                    span ✓
+                    span ✓
+                  .compare-row
+                    span Transfer box oil
+                    span ✕
+                    span ✕
+                    span ✓
+                  .compare-row
+                    span Manual trans. oil
+                    span ✕
+                    span ✓
+                    span ✓
+                  .compare-footer
+                    span Price
+                    span £123.45
+                    span £152.86
+                    span £208.25
+                  .compare-actions
+                    span
+                    button.primary.compare-service-toggle(type="button" data-service-code="service_interim" data-selected="false") Add
+                    button.primary.compare-service-toggle(type="button" data-service-code="service_full" data-selected="false") Add
+                    button.primary.compare-service-toggle(type="button" data-service-code="service_major" data-selected="false") Add
             else if type === "inspection"
               h2 Pre-purchase inspections
               ul.work-list#serviceList
               p.form-error#serviceListEmpty No services found.
               .compare-table
-                .compare-header
-                  span Compare
-                  span Basic
-                  span Standard
-                  span Premium
-                .compare-row
-                  span Number of checks
-                  span 86
-                  span 136
-                  span 185
-                .compare-row
-                  span Emailed report
-                  span ✓
-                  span ✓
-                  span ✓
-                .compare-row
-                  span Road test (10 min)
-                  span ✓
-                  span ✓
-                  span ✓
-                .compare-row
-                  span Follow-up call
-                  span ✕
-                  span ✓
-                  span ✓
-                .compare-row
-                  span Plug in check
-                  span ✕
-                  span ✕
-                  span ✓
-                .compare-row
-                  span Photos
-                  span ✕
-                  span ✕
-                  span ✓
-                .compare-footer
-                  span Price
-                  span £94.87
-                  span £114.29
-                  span £163.95
-                .compare-actions
-                  span
-                  button.primary.compare-service-toggle(type="button" data-service-code="inspection_basic" data-selected="false") Add
-                  button.primary.compare-service-toggle(type="button" data-service-code="inspection_standard" data-selected="false") Add
-                  button.primary.compare-service-toggle(type="button" data-service-code="inspection_premium" data-selected="false") Add
+                  .compare-header
+                    span Compare
+                    span Basic
+                    span Standard
+                    span Premium
+                  .compare-row
+                    span Number of checks
+                    span 86
+                    span 136
+                    span 185
+                  .compare-row
+                    span Emailed report
+                    span ✓
+                    span ✓
+                    span ✓
+                  .compare-row
+                    span Road test (10 min)
+                    span ✓
+                    span ✓
+                    span ✓
+                  .compare-row
+                    span Follow-up call
+                    span ✕
+                    span ✓
+                    span ✓
+                  .compare-row
+                    span Plug in check
+                    span ✕
+                    span ✕
+                    span ✓
+                  .compare-row
+                    span Photos
+                    span ✕
+                    span ✕
+                    span ✓
+                  .compare-footer
+                    span Price
+                    span £94.87
+                    span £114.29
+                    span £163.95
+                  .compare-actions
+                    span
+                    button.primary.compare-service-toggle(type="button" data-service-code="inspection_basic" data-selected="false") Add
+                    button.primary.compare-service-toggle(type="button" data-service-code="inspection_standard" data-selected="false") Add
+                    button.primary.compare-service-toggle(type="button" data-service-code="inspection_premium" data-selected="false") Add
             else if type === "tyres"
               h2 Choose from popular tyre services
               ul.work-list#serviceList
@@ -232,6 +234,7 @@ block content
               h3 Need help?
               p Tell us what you need and compare fixed-price quotes before you book.
   include ../../partials/general-footer
+
 
 
 

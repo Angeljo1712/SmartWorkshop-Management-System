@@ -1,12 +1,7 @@
 .bookings-body {
-  background: var(--bg-app-dark);
-  color: #e7ebf4;
-  min-height: 100vh;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
 }
 
-.main-header.booking-header {
+.main-header.basic-header {
   background: var(--bg-surface-dark);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   color: #f0f3f9;
@@ -18,17 +13,17 @@
   box-shadow: none;
 }
 
-.main-header.booking-header .main-brand strong,
-.main-header.booking-header .main-brand span {
+.main-header.basic-header .main-brand strong,
+.main-header.basic-header .main-brand span {
   color: #f0f3f9;
 }
 
-.main-header.booking-header .main-logo {
+.main-header.basic-header .main-logo {
   background: var(--surface-light-12);
   color: #f0f3f9;
 }
 
-.main-header.booking-header .body-content {
+.main-header.basic-header .body-content {
   width: min(1280px, 100%);
   margin: 0 auto;
   padding: 0;
@@ -39,7 +34,7 @@
   background: transparent;
 }
 
-.main-header.booking-header .main-brand {
+.main-header.basic-header .main-brand {
   display: inline-flex;
   align-items: center;
   gap: 12px;
@@ -47,12 +42,12 @@
   transform-origin: left center;
 }
 
-.main-header.booking-header .main-logo {
+.main-header.basic-header .main-logo {
   transition: transform 0.2s ease;
   transform-origin: center;
 }
 
-.main-header.booking-header .main-brand:hover {
+.main-header.basic-header .main-brand:hover {
   transform: scale(1.12);
 }
 
@@ -76,33 +71,73 @@
   border-color: var(--brand-blue);
 }
 
-.bookings-body .primari-shell {
-  padding: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0;
-}
-
 .bookings-body .page-shell-content {
-  min-height: 100%;
-  padding: 48px;
-  align-content: start;
+  min-height: calc(100vh - 176px);
+  padding: clamp(24px, 6vh, 50px) 48px;
+  align-content: center;
 }
 
 /* Index */
 
-.bookings-layout {
+.work-layout1 {
   display: grid;
   grid-template-areas:
     "stepper"
+    "content";
+  gap: 24px;
+}
+
+.work-layout2 {
+  grid-area: content;
+  display: grid;
+  grid-template-areas:
     "headline"
     "grid";
+  gap: 24px;
+  align-items: start;
+  background: #344154;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 30px;
+}
+
+.work-layout1 > .work-layout2 {
+  grid-area: content;
+  display: grid;
+  grid-template-areas:
+    "headline"
+    "grid";
+  position: relative;
   gap: 32px;
 }
 
-.bookings-layout--vehicle {
-  justify-items: center;
+
+.vehicle-layout1 {
+  display: grid;
+  grid-template-areas:
+    "stepper"
+    "content";
+  gap: 32px;
 }
+
+.vehicle-layout2 {
+  grid-area: content;
+  display: grid;
+  grid-template-areas:
+    "headline"
+    "grid";
+  gap: 24px;
+  align-items: start;
+  justify-items: center;
+  width: fit-content;
+  max-width: 100%;
+  justify-self: center;
+  background: #344154;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 30px;
+}
+
 
 .bookings-stepper {
   grid-area: stepper;
@@ -511,7 +546,7 @@
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
 }
 
-.work-layout1 {
+.workType-layout1 {
   display: grid;
   grid-template-areas:
     "stepper"
@@ -519,15 +554,15 @@
   gap: 24px;
 }
 
-.work-layout1 > .bookings-stepper {
+.workType-layout1 > .bookings-stepper {
   grid-area: stepper;
 }
 
-.work-layout1 > .work-layout {
+.workType-layout1 > .workType-layout2 {
   grid-area: content;
 }
 
-.work-layout {
+.workType-layout1 > .workType-layout2 {
   display: grid;
   grid-template-areas:
     "tabs tabs"
@@ -535,21 +570,21 @@
   grid-template-columns: minmax(0, 1fr) 320px;
   gap: 24px;
   align-items: start;
-  background: #2f3b4d;
+  background: #344154;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
-  padding: 20px;
+  padding: 30px;
 }
 
-.work-layout > .work-tabs {
+.workType-layout1 > .workType-layout2 > .work-tabs {
   grid-area: tabs;
 }
 
-.work-layout > .bookings-work {
+.workType-layout1 > .workType-layout2 > .bookings-work {
   grid-area: main;
 }
 
-.work-layout > .work-summary {
+.workType-layout1 > .workType-layout2 > .work-summary {
   grid-area: summary;
 }
 
@@ -941,7 +976,22 @@
 
 /* Details / Payment / Confirm */
 
-.details-layout {
+.details-layout2 {
+  display: grid;
+  grid-template-areas:
+    "summary"
+    "content";
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+  background: #344154;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.24);
+}
+
+.payment-layout2 {
   display: grid;
   grid-template-areas:
     "summary"
@@ -952,7 +1002,22 @@
   background: #344154;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 15px;
-  padding: 28px;
+  padding: 30px;
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.24);
+}
+
+.confirm-layout2 {
+  display: grid;
+  grid-template-areas:
+    "summary"
+    "content";
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: start;
+  background: #344154;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 30px;
   box-shadow: 0 18px 38px rgba(0, 0, 0, 0.24);
 }
 
@@ -968,7 +1033,7 @@
   grid-area: stepper;
 }
 
-.details-layout1 > .details-layout {
+.details-layout1 > .details-layout2 {
   grid-area: content;
 }
 
@@ -984,7 +1049,7 @@
   grid-area: stepper;
 }
 
-.payment-layout1 > .details-layout {
+.payment-layout1 > .payment-layout2 {
   grid-area: content;
 }
 
@@ -1000,11 +1065,11 @@
   grid-area: stepper;
 }
 
-.confirm-layout1 > .details-layout {
+.confirm-layout1 > .confirm-layout2 {
   grid-area: content;
 }
 
-#bookingPaymentPage .details-layout {
+#bookingPaymentPage .payment-layout2 {
   grid-template-areas:
     "summary"
     "content";
@@ -1533,7 +1598,7 @@
 /* Responsive */
 
 @media (max-width: 1024px) {
-  .work-layout {
+  .workType-layout1 > .workType-layout2 {
     grid-template-areas:
       "tabs"
       "main"
@@ -1547,7 +1612,9 @@
 }
 
 @media (max-width: 980px) {
-  .details-layout {
+  .details-layout2,
+  .payment-layout2,
+  .confirm-layout2 {
     grid-template-columns: 1fr;
   }
 
@@ -1559,7 +1626,7 @@
     width: 100%;
   }
 
-  #bookingPaymentPage .details-layout {
+  #bookingPaymentPage .payment-layout2 {
     grid-template-areas:
       "summary"
       "content";

@@ -108,12 +108,12 @@ app.get("/shop", (_req, res) => {
   res.redirect(301, "/bookings/vehicle");
 });
 
-app.get("/bookings", (_req, res) => {
-  res.redirect(301, "/bookings/vehicle");
-});
-
 app.get("/bookings/vehicle", (_req, res) => {
   res.render("pages/bookings/vehicle");
+});
+
+app.get("/bookings", (_req, res) => {
+  res.render("pages/bookings/index");
 });
 
 const renderBookingsWork = (req, res) => {
@@ -143,8 +143,12 @@ app.get("/bookings/confirm", (req, res) => {
   res.render("pages/bookings/confirm");
 });
 
-app.get("/mechanic/home", (req, res) => {
+app.get("/application", (req, res) => {
   res.render("pages/mechanic/home");
+});
+
+app.get("/mechanic/home", (_req, res) => {
+  res.redirect("/application");
 });
 
 app.get("/mechanic", (req, res) => {

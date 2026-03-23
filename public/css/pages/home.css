@@ -10,12 +10,6 @@
   padding: 0 48px;
 }
 
-.home-main.primari-shell {
-  padding: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-}
-
 .home-body .main-header {
   position: sticky;
   top: 0;

@@ -17,6 +17,8 @@ const formatAddressRow = (row) =>
     .filter((value) => String(value || "").trim())
     .join(", ");
 
+const formatBookingReference = (value) => String(Number(value) || 0).padStart(8, "0");
+
 const getLatestAddress = async (userId) => {
   const [rows] = await pool.query(
     `SELECT line1, line2, city, postal_code, country,
@@ -464,7 +466,7 @@ const listUserBookings = async (userId) => {
     return {
       id: row.id,
       uuid_public: row.uuid_public,
-      reference: String(row.id),
+      reference: formatBookingReference(row.id),
       status: row.status,
       notes: row.notes || "",
       totals: {
@@ -582,7 +584,7 @@ const listMechanicBookingOffers = async (mechanicId) => {
     booking: {
       id: row.booking_id,
       uuid_public: row.booking_uuid_public,
-      reference: String(row.booking_id),
+      reference: formatBookingReference(row.booking_id),
       status: row.booking_status,
       notes: row.notes || "",
       total_eur: Number(row.total_eur || 0),
@@ -662,7 +664,7 @@ const listMechanicAssignedBookings = async (mechanicId) => {
   return rows.map((row) => ({
     booking: {
       id: row.booking_id,
-      reference: String(row.booking_id),
+      reference: formatBookingReference(row.booking_id),
       uuid_public: row.booking_uuid_public,
       status: row.booking_status,
       total_eur: Number(row.total_eur || 0),
@@ -722,7 +724,7 @@ const listMechanicResolutionCases = async (mechanicId, { bookingId } = {}) => {
     updated_at: row.updated_at,
     booking: {
       id: row.booking_id,
-      reference: String(row.booking_id),
+      reference: formatBookingReference(row.booking_id),
       total_eur: Number(row.total_eur || 0)
     },
     customer: {
@@ -778,7 +780,7 @@ const listUserResolutionCases = async (userId, { bookingId } = {}) => {
     updated_at: row.updated_at,
     booking: {
       id: row.booking_id,
-      reference: String(row.booking_id),
+      reference: formatBookingReference(row.booking_id),
       total_eur: Number(row.total_eur || 0)
     },
     mechanic: {
@@ -840,7 +842,7 @@ const openUserResolutionCase = async (userId, { booking_id, type }) => {
     [bookingId]
   );
   const nextSequence = Number(countRows[0]?.max_sequence || 0) + 1;
-  const reference = `${bookingId}/${nextSequence}`;
+  const reference = `${formatBookingReference(bookingId)}/${nextSequence}`;
   const subject = caseType === "complaint" ? "Complaint" : "General Enquiry";
 
   const [result] = await pool.query(
@@ -906,7 +908,7 @@ const getUserResolutionCaseDetail = async (userId, caseId) => {
     updated_at: row.updated_at,
     booking: {
       id: row.booking_id,
-      reference: String(row.booking_id),
+      reference: formatBookingReference(row.booking_id),
       total_eur: Number(row.total_eur || 0),
       created_at: row.created_at
     },
@@ -994,7 +996,7 @@ const openMechanicResolutionCase = async (mechanicId, { booking_id, type }) => {
     [bookingId]
   );
   const nextSequence = Number(countRows[0]?.max_sequence || 0) + 1;
-  const reference = `${bookingId}/${nextSequence}`;
+  const reference = `${formatBookingReference(bookingId)}/${nextSequence}`;
   const subject = caseType === "complaint" ? "Complaint" : "General Enquiry";
 
   const [result] = await pool.query(
@@ -1060,7 +1062,7 @@ const getMechanicResolutionCaseDetail = async (mechanicId, caseId) => {
     updated_at: row.updated_at,
     booking: {
       id: row.booking_id,
-      reference: String(row.booking_id),
+      reference: formatBookingReference(row.booking_id),
       total_eur: Number(row.total_eur || 0),
       created_at: row.created_at
     },

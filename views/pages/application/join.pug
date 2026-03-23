@@ -2,48 +2,51 @@ extends ../../layouts/main
 
 block vars
   - var title = "SmartWorkshop - Join as a Mechanic"
-  - var bodyClass = "application-body"
+  - var bodyClass = "application-body app-shell-body"
 
 block head
   link(rel="stylesheet" href="/css/pages/application.css")
+  link(rel="stylesheet" href="/css/pages/bookings.css")
 
 block content
-  header.application-topbar
-    .main-brand
-      span.main-logo SW
-      strong SmartWorkshop
-    nav.application-links
-      a(href="/mechanic/home#how") How it works
-      a(href="/mechanic/home#support") Support
-      a(href="/mechanic/home#apply") Resume quote
+  header.main-header.basic-header
+    .body-content
+      a.main-brand(href="/")
+        span.main-logo SW
+        strong SmartWorkshop
+      nav.application-links
+        a(href="/application#how") How it works
+        a(href="/application#support") Support
+        a(href="/application#apply") Resume quote
 
-  main.application-hero#applicationJoin
-    h1 What type of mechanic are you?
-    .application-grid
-      article.application-card
-        a.application-link(href="#applicationForm" data-mechanic-type="business_owner")
-          .application-icon
-            svg(viewBox="0 0 48 48" aria-hidden="true")
-              rect(x="9" y="8" width="30" height="32" rx="4")
-              path(d="M16 16h16M16 24h16M16 32h10")
-          h3 Business Owner
-          p I own or represent an independent garage or mobile mechanic business with full equipment and insurance.
-      article.application-card
-        a.application-link(href="#applicationForm" data-mechanic-type="employed_mechanic")
-          .application-icon
-            svg(viewBox="0 0 48 48" aria-hidden="true")
-              path(d="M14 10h8l2 10-6 6-6-6 2-10z")
-              path(d="M30 14h8l-2 12-6 6-6-6 6-12z")
-          h3 Employed Mechanic
-          p I work as a mechanic for another business but am interested in starting my own mobile business or garage.
-      article.application-card
-        a.application-link(href="#applicationForm" data-mechanic-type="other")
-          .application-icon
-            svg(viewBox="0 0 48 48" aria-hidden="true")
-              circle(cx="24" cy="24" r="16")
-              path(d="M24 16v8l6 6")
-          h3 Other
-          p I don't fit into either of the other two categories.
+  main.primari-shell
+    .application-hero#applicationJoin
+      h1 What type of mechanic are you?
+      .application-grid
+        article.application-card
+          a.application-link(href="#applicationForm" data-mechanic-type="business_owner")
+            .application-icon
+              svg(viewBox="0 0 48 48" aria-hidden="true")
+                rect(x="9" y="8" width="30" height="32" rx="4")
+                path(d="M16 16h16M16 24h16M16 32h10")
+            h3 Business Owner
+            p I own or represent an independent garage or mobile mechanic business with full equipment and insurance.
+        article.application-card
+          a.application-link(href="#applicationForm" data-mechanic-type="employed_mechanic")
+            .application-icon
+              svg(viewBox="0 0 48 48" aria-hidden="true")
+                path(d="M14 10h8l2 10-6 6-6-6 2-10z")
+                path(d="M30 14h8l-2 12-6 6-6-6 6-12z")
+            h3 Employed Mechanic
+            p I work as a mechanic for another business but am interested in starting my own mobile business or garage.
+        article.application-card
+          a.application-link(href="#applicationForm" data-mechanic-type="other")
+            .application-icon
+              svg(viewBox="0 0 48 48" aria-hidden="true")
+                circle(cx="24" cy="24" r="16")
+                path(d="M24 16v8l6 6")
+            h3 Other
+            p I don't fit into either of the other two categories.
 
   section.application-form-wrap#applicationForm(class="is-hidden")
     h2#applicationHeading Congratulations!
@@ -178,3 +181,6 @@ block content
             option(value="social") Social media
             option(value="other") Other
       button.primary(type="submit") Apply
+
+  include ../../partials/general-footer
+

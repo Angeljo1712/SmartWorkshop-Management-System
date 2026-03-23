@@ -2,7 +2,7 @@ extends ../../layouts/main
 
 block vars
   - var title = "SmartWorkshop - Admin"
-  - var bodyClass = "admin-body"
+  - var bodyClass = "admin-body app-shell-body"
 
 block head
   link(rel="stylesheet", href="/css/pages/dashboard-layout.css")
@@ -206,3 +206,4 @@ block content
                 input#adminNewPassword(type="password" placeholder="Temp password" required)
             p.form-error#adminAddUserError(role="alert" aria-live="polite")
             button.primary(type="submit") Create user
+
