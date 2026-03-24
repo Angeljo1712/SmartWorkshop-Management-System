@@ -1,6 +1,21 @@
 .application-body {
 }
 
+.application-body .primari-shell {
+  min-height: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.application-body .page-shell-content {
+  min-height: calc(100vh - 176px);
+  display: grid;
+  align-content: center;
+  gap: min(50px, 5vh);
+  padding-top: 25px;
+  padding-bottom: 25px;
+}
+
 .application-topbar {
   display: flex;
   align-items: center;
@@ -32,10 +47,16 @@
   text-transform: uppercase;
 }
 
-.application-hero {
-  padding: 60px 40px 80px;
+.applicationJoin-layout {
+  width: min(1120px, 100%);
+  margin: 0 auto;
   display: grid;
-  gap: 32px;
+  gap: 24px;
+  align-items: start;
+  background: #344154;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 30px;
   justify-items: center;
   text-align: center;
 }
@@ -59,9 +80,9 @@
   z-index: 0;
 }
 
-.application-hero h1 {
+.applicationJoin-layout h1 {
   font-size: clamp(2rem, 3.6vw, 2.8rem);
-  color: #0b1220;
+  color: #ffffff;
 }
 
 .application-grid {
@@ -118,29 +139,54 @@
   stroke-width: 2;
 }
 
-.application-form-wrap {
+.applicationForm-layout {
   width: min(760px, 92vw);
-  margin: 0 auto 80px;
-  background: #ffffff;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 32px 28px;
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+  margin: 0 auto;
+  background: #344154;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 30px;
   display: grid;
   gap: 18px;
 }
 
-.application-form-wrap h2 {
-  font-size: 22px;
+.application-form-header {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  text-align: center;
 }
 
-.application-form {
+.application-form-header h2,
+.application-form-header p {
+  margin: 0;
+}
+
+.applicationForm-layout h2 {
+  font-size: 22px;
+  color: #ffffff;
+}
+
+.applicationForm-layout p,
+.applicationForm-layout h3,
+.applicationForm-layout h4,
+.applicationForm-layout label,
+.applicationForm-layout label span,
+.applicationForm-layout .subtle,
+.applicationForm-layout .form-row > span,
+.applicationForm-layout label.checkbox,
+.applicationForm-layout label.radio {
+  color: #ffffff;
+}
+
+.applicationForm-layout2 {
   display: grid;
   gap: 20px;
 }
 
 .form-section {
-  border: 1px solid var(--border);
+  background: #1a202b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 18px;
   display: grid;
@@ -151,20 +197,29 @@
   font-size: 14px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #0b5fff;
+  color: #ffffff;
+  padding-bottom: 12px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .form-section h4 {
   font-size: 13px;
-  color: var(--muted);
+  color: #ffffff;
   margin-top: 6px;
+}
+
+.form-section .form-subsection-title {
+  padding-bottom: 12px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
 }
 
 .form-section label {
   display: grid;
   gap: 6px;
   font-size: 13px;
-  color: var(--muted);
+  color: #ffffff;
 }
 
 .form-section input,
@@ -174,7 +229,50 @@
   padding: 10px 12px;
 }
 
+.section-business .business-question {
+  display: grid;
+  gap: 8px;
+}
+
+.section-business .business-question h4,
+.section-business .business-question p {
+  margin: 0;
+}
+
+.section-business .business-radio-stack {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.section-business .business-premises {
+  display: grid;
+  gap: 12px;
+}
+
+.section-business .business-premises .business-question {
+  margin-top: 6px;
+}
+
+.section-business .business-specialist-other {
+  margin-top: 2px;
+}
+
 .form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  align-items: center;
+}
+
+.form-certification {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  align-items: center;
+}
+
+.form-memberships {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 10px;
@@ -207,7 +305,7 @@ label.radio {
     justify-content: center;
   }
 
-  .application-hero {
-    padding: 48px 20px 60px;
+  .applicationJoin-layout {
+    padding: 24px;
   }
 }

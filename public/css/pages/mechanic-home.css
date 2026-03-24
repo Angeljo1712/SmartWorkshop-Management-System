@@ -19,24 +19,11 @@
   gap: 28px;
   align-items: start;
   height: fit-content;
-}
-
-.application-layout {
   position: relative;
-}
-
-.application-layout::before {
-  content: "";
-  position: absolute;
-  inset: -30px;
-  border-radius: 30px;
-  background:
-    linear-gradient(180deg, rgba(88, 105, 136, 0.18) 0%, rgba(45, 57, 76, 0.34) 100%);
-  box-shadow:
-    inset 1px 0 0 rgba(255, 255, 255, 0.06),
-    inset -1px 0 0 rgba(255, 255, 255, 0.03);
-  pointer-events: none;
-  z-index: 0;
+  background: #344154;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 30px;
 }
 
 .application-layout > * {

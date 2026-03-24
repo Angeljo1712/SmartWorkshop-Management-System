@@ -4,7 +4,9 @@ const multer = require("multer");
 const { AppError } = require("../utils/appError");
 
 const uploadRoot = path.join(__dirname, "../uploads/avatars");
+const documentsUploadRoot = path.join(__dirname, "../uploads/mechanic-documents");
 fs.mkdirSync(uploadRoot, { recursive: true });
+fs.mkdirSync(documentsUploadRoot, { recursive: true });
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {
@@ -30,4 +32,31 @@ const uploadAvatar = multer({
   limits: { fileSize: 5 * 1024 * 1024 }
 });
 
-module.exports = { uploadAvatar };
+const documentsStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, documentsUploadRoot);
+  },
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname || "").toLowerCase();
+    const safeExt = ext && ext.length <= 8 ? ext : "";
+    cb(null, `mechanic-doc-${Date.now()}-${Math.round(Math.random() * 1e9)}${safeExt}`);
+  }
+});
+
+const documentsFileFilter = (_req, file, cb) => {
+  const allowedMimeTypes = new Set([
+    "application/pdf"
+  ]);
+  if (!allowedMimeTypes.has(file.mimetype)) {
+    return cb(new AppError("INVALID_FILE", "Formato incorrecto", 400));
+  }
+  return cb(null, true);
+};
+
+const uploadMechanicDocuments = multer({
+  storage: documentsStorage,
+  fileFilter: documentsFileFilter,
+  limits: { fileSize: 10 * 1024 * 1024, files: 10 }
+});
+
+module.exports = { uploadAvatar, uploadMechanicDocuments };

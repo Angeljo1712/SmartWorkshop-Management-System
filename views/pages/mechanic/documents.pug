@@ -2,31 +2,64 @@ extends ../../layouts/main
 
 block vars
   - var title = "SmartWorkshop - Documents"
-  - var bodyClass = "mechanic-edit-body"
+  - var bodyClass = "documents-body application-body app-shell-body"
   - var activePage = "documents"
 
 block head
   link(rel="stylesheet" href="/css/pages/mechanic-edit.css")
+  link(rel="stylesheet" href="/css/pages/mechanic-home.css")
+  link(rel="stylesheet" href="/css/pages/bookings.css")
 
 block content
-  header.main-header.general-header
-    .header-content
+  header.main-header.basic-header
+    .body-content
       a.main-brand(href="/")
         span.main-logo SW
-        div
+        span
           strong SmartWorkshop
-          span Vehicle Service Marketplace
+          span.main-brand-subtitle Vehicle Service Marketplace
+      a.bookings-header-help(href="/application/join") Need help?
 
-  main.mechanic-edit-shell.primari-shell#mechanicDocumentsShell
-    include ./partials/edit-nav.pug
+  main.primari-shell#mechanicDocumentsShell
+    .page-shell-content
+      .documents-layout1
+        section.documents-main
+          .documents-intro-card
+            h2 Key Documents
+            p Please upload these documents to set up your account:
+            ul.documents-checklist
+              li Public liability insurance schedule
+                strong  PDF only
+                |  no photos, scans, or screenshots
+              li Motor trade insurance schedule
+                strong  PDF only
+                |  no photos, scans, or screenshots
+              li Qualifications or certificates
+                |  PDF, photo, or scan is fine.
+            p.documents-important
+              strong Important:
+              |  Your name, business name, and address on your documents must match the details you used to sign up. We can only accept genuine, unedited documents for security reasons. If the details don’t match, we can’t approve your application.
+            h3 Need help or missing something?
+            p
+              | Email us at 
+              a(href="mailto:documents@smartworkshop.com") documents@smartworkshop.com
+              |  and we'll help you out.
+            if uploadStatus === "success"
+              p.documents-status Upload completed successfully.
+            else if uploadStatus === "error"
+              p.documents-status.documents-status--error= uploadMessage || "Formato incorrecto"
 
-    section.mechanic-edit-main
-      .edit-card
-        h3 Documents
-        p.subtle Upload documents required for approval.
-        .upload-row
-          input(type="file")
-          button.primary(type="button") Upload
-      form(method="post" action="/mechanic/documents/complete")
-        input(type="hidden" name="email" id="docsEmail")
-        button.primary(type="submit") Next step
+          .documents-upload-card
+            .documents-upload-head
+              h3 Upload document(s)
+            form.documents-upload-form#documentsUploadForm(method="post" action="/mechanic/documents/upload" enctype="multipart/form-data")
+              input(type="hidden" name="email" id="docsUploadEmail")
+              input#documentsUploadInput(type="file" name="documents" multiple accept=".pdf")
+              .documents-upload-list#documentsUploadList
+              button.primary(type="submit") Submit
+
+          form.documents-next-step(method="post" action="/mechanic/documents/complete")
+            input(type="hidden" name="email" id="docsEmail")
+            button.primary(type="submit") Next step
+
+  include ../../partials/general-footer

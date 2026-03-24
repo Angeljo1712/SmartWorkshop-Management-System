@@ -94,6 +94,56 @@ const updateProfile = async ({ userId, years_experience, work_history, membershi
   }
 };
 
+const ensureMechanicDocumentsTable = async () => {
+  await pool.query(
+    `CREATE TABLE IF NOT EXISTS mechanic_documents (
+      id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+      user_id BIGINT UNSIGNED NOT NULL,
+      original_name VARCHAR(255) NOT NULL,
+      file_path VARCHAR(255) NOT NULL,
+      mime_type VARCHAR(100) NOT NULL,
+      file_size INT UNSIGNED NOT NULL,
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      KEY idx_md_user (user_id),
+      CONSTRAINT fk_md_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB`
+  );
+};
+
+const savePremisesAddress = async ({ userId, line1, city, postalCode }) => {
+  const street = String(line1 || "").trim();
+  const locality = String(city || "").trim();
+  const postcode = String(postalCode || "").trim();
+  if (!street || !locality || !postcode) return;
+
+  const [rows] = await pool.query(
+    `SELECT id
+     FROM addresses
+     WHERE user_id = ? AND label = 'Premises'
+     ORDER BY id DESC
+     LIMIT 1`,
+    [userId]
+  );
+
+  if (rows[0]) {
+    await pool.query(
+      `UPDATE addresses
+       SET line1 = ?, city = ?, postal_code = ?, country = 'GB',
+           location = ST_SRID(POINT(0, 0), 4326)
+       WHERE id = ?`,
+      [street, locality, postcode, rows[0].id]
+    );
+    return;
+  }
+
+  await pool.query(
+    `INSERT INTO addresses
+     (uuid_public, user_id, label, line1, line2, city, postal_code, country, location)
+     VALUES (UUID_TO_BIN(UUID()), ?, 'Premises', ?, NULL, ?, ?, 'GB', ST_SRID(POINT(0, 0), 4326))`,
+    [userId, street, locality, postcode]
+  );
+};
+
 const saveApplication = async (payload) => {
   const {
     first_name,
@@ -104,13 +154,18 @@ const saveApplication = async (payload) => {
     work_history,
     certifications,
     memberships,
+    has_website,
     website,
-    no_website,
     trade_insurance,
     public_liability,
     vat_registered,
     services,
+    specialist_services,
+    specialist_services_other,
     business_type,
+    premises_address,
+    premises_city,
+    premises_postcode,
     travel_radius,
     availability,
     referral
@@ -127,7 +182,9 @@ const saveApplication = async (payload) => {
     phone
   });
 
-  const websiteValue = no_website ? null : String(website || "").trim() || null;
+  const websiteValue = String(has_website || "").toLowerCase() === "yes"
+    ? (String(website || "").trim() || null)
+    : null;
   const historyList = Array.isArray(work_history) ? work_history : work_history ? [work_history] : [];
   const historyText = historyList.map((value) => String(value || "").trim()).filter(Boolean).join(", ");
   const trade = String(trade_insurance || "").toLowerCase() === "yes" ? 1 : 0;
@@ -167,6 +224,13 @@ const saveApplication = async (payload) => {
     ]
   );
 
+  await savePremisesAddress({
+    userId,
+    line1: premises_address,
+    city: premises_city,
+    postalCode: premises_postcode
+  });
+
   await pool.query("DELETE FROM mechanic_qualifications WHERE user_id = ?", [userId]);
   const certList = Array.isArray(certifications) ? certifications : certifications ? [certifications] : [];
   for (const name of certList) {
@@ -185,7 +249,18 @@ const saveApplication = async (payload) => {
 
   await pool.query("DELETE FROM mechanic_services_offered WHERE user_id = ?", [userId]);
   const serviceList = Array.isArray(services) ? services : services ? [services] : [];
-  for (const svc of serviceList) {
+  const specialistList = Array.isArray(specialist_services)
+    ? specialist_services
+    : specialist_services
+      ? [specialist_services]
+      : [];
+  const specialistOther = String(specialist_services_other || "").trim();
+  const allServices = [...new Set([
+    ...serviceList,
+    ...specialistList,
+    ...(specialistOther ? [`other:${specialistOther}`] : [])
+  ])];
+  for (const svc of allServices) {
     const trimmed = String(svc || "").trim();
     if (!trimmed) continue;
     await pool.query("INSERT INTO mechanic_services_offered (user_id, service_type) VALUES (?, ?)", [
@@ -195,6 +270,33 @@ const saveApplication = async (payload) => {
   }
 
   return { userId };
+};
+
+const saveUploadedDocumentsByEmail = async ({ email, files }) => {
+  const normalizedEmail = String(email || "").trim().toLowerCase();
+  if (!normalizedEmail) {
+    throw new AppError("VALIDATION_ERROR", "email is required", 400);
+  }
+  if (!Array.isArray(files) || !files.length) {
+    throw new AppError("VALIDATION_ERROR", "At least one document is required", 400);
+  }
+
+  const [rows] = await pool.query("SELECT id FROM users WHERE email = ?", [normalizedEmail]);
+  const user = rows[0];
+  if (!user) {
+    throw new AppError("NOT_FOUND", "User not found", 404);
+  }
+
+  await ensureMechanicDocumentsTable();
+  for (const file of files) {
+    await pool.query(
+      `INSERT INTO mechanic_documents (user_id, original_name, file_path, mime_type, file_size)
+       VALUES (?, ?, ?, ?, ?)`,
+      [user.id, file.originalname, `/uploads/mechanic-documents/${file.filename}`, file.mimetype, file.size]
+    );
+  }
+
+  return { userId: user.id, count: files.length };
 };
 
 const completeApplication = async ({ email }) => {
@@ -301,4 +403,12 @@ const getProfile = async (userId) => {
   };
 };
 
-module.exports = { getProfile, addQualification, updateProfile, saveApplication, completeApplication, setPasswordByEmail };
+module.exports = {
+  getProfile,
+  addQualification,
+  updateProfile,
+  saveApplication,
+  saveUploadedDocumentsByEmail,
+  completeApplication,
+  setPasswordByEmail
+};

@@ -787,7 +787,7 @@ renderVehicleSummary();
 const applicationJoin = document.getElementById("applicationJoin");
 if (applicationJoin) {
   const formWrap = document.getElementById("applicationForm");
-  const hero = document.querySelector(".application-hero");
+  const hero = document.querySelector(".applicationJoin-layout");
   const headingEl = document.getElementById("applicationHeading");
   if (formWrap) formWrap.classList.add("is-hidden");
   if (hero) hero.classList.remove("is-hidden");
@@ -806,7 +806,7 @@ if (applicationJoin) {
       }
       formWrap?.classList.remove("is-hidden");
       hero?.classList.add("is-hidden");
-      formWrap?.scrollIntoView({ behavior: "smooth", block: "start" });
+      formWrap?.scrollIntoView({ behavior: "smooth", block: "center" });
     });
   });
 }
@@ -844,22 +844,65 @@ if (mechanicLeadForm) {
   });
 }
 
-const applicationForm = document.querySelector(".application-form");
+const applicationForm = document.querySelector(".applicationForm-layout2");
 if (applicationForm) {
+  const websiteRadios = applicationForm.querySelectorAll('input[name="has_website"]');
+  const websiteField = applicationForm.querySelector(".business-website-field");
+  const businessTypeRadios = applicationForm.querySelectorAll('input[name="business_type"]');
+  const serviceCheckboxes = applicationForm.querySelectorAll('input[name="services"]');
+  const specialistCheckboxes = applicationForm.querySelectorAll('input[name="specialist_services"]');
+  const premisesField = applicationForm.querySelector(".business-premises");
+  const specialistOtherField = applicationForm.querySelector(".business-specialist-other");
+  const syncWebsiteField = () => {
+    const selected = applicationForm.querySelector('input[name="has_website"]:checked')?.value;
+    websiteField?.classList.toggle("is-hidden", selected !== "yes");
+  };
+  const syncPremisesField = () => {
+    const selectedBusinessType = applicationForm.querySelector('input[name="business_type"]:checked')?.value;
+    const selectedServices = Array.from(serviceCheckboxes)
+      .filter((checkbox) => checkbox.checked)
+      .map((checkbox) => checkbox.value);
+    const hasGarageType =
+      selectedBusinessType === "garage_based_mechanic" ||
+      selectedBusinessType === "garage_and_mobile_mechanic";
+    const hasPremisesService =
+      selectedServices.includes("customer_drop") ||
+      selectedServices.includes("collection_delivery");
+    const shouldShow = hasGarageType || hasPremisesService;
+    premisesField?.classList.toggle("is-hidden", !shouldShow);
+  };
+  const syncSpecialistOtherField = () => {
+    const hasOther = Array.from(specialistCheckboxes).some((checkbox) => checkbox.checked && checkbox.value === "other");
+    specialistOtherField?.classList.toggle("is-hidden", !hasOther);
+  };
+  websiteRadios.forEach((radio) => radio.addEventListener("change", syncWebsiteField));
+  businessTypeRadios.forEach((radio) => radio.addEventListener("change", syncPremisesField));
+  serviceCheckboxes.forEach((checkbox) => checkbox.addEventListener("change", syncPremisesField));
+  specialistCheckboxes.forEach((checkbox) => checkbox.addEventListener("change", syncSpecialistOtherField));
+  syncWebsiteField();
+  syncPremisesField();
+  syncSpecialistOtherField();
+
   applicationForm.addEventListener("submit", () => {
     sessionStorage.setItem("fromApplication", "1");
+    const ensureHiddenInput = (name, value) => {
+      let input = applicationForm.querySelector(`input[type="hidden"][name="${name}"]`);
+      if (!input) {
+        input = document.createElement("input");
+        input.type = "hidden";
+        input.name = name;
+        applicationForm.prepend(input);
+      }
+      input.value = value || "";
+    };
     const stored = sessionStorage.getItem("mechanicLead");
     if (stored) {
       try {
         const lead = JSON.parse(stored);
-        const first = document.getElementById("applyFirstName");
-        const last = document.getElementById("applyLastName");
-        const email = document.getElementById("applyEmail");
-        const phoneVisible = document.getElementById("applyPhoneVisible");
-        if (first) first.value = lead.first_name || "";
-        if (last) last.value = lead.last_name || "";
-        if (email) email.value = lead.email || "";
-        if (phoneVisible) phoneVisible.value = lead.phone || "";
+        ensureHiddenInput("first_name", lead.first_name);
+        ensureHiddenInput("last_name", lead.last_name);
+        ensureHiddenInput("email", lead.email);
+        ensureHiddenInput("phone", lead.phone);
       } catch {}
     }
   });
@@ -4916,9 +4959,68 @@ if (documentsShell) {
     try {
       const lead = JSON.parse(stored);
       const emailInput = document.getElementById("docsEmail");
+      const uploadEmailInput = document.getElementById("docsUploadEmail");
       if (emailInput) emailInput.value = lead.email || "";
+      if (uploadEmailInput) uploadEmailInput.value = lead.email || "";
     } catch {}
   }
+
+  const uploadForm = document.getElementById("documentsUploadForm");
+  const uploadInput = document.getElementById("documentsUploadInput");
+  const uploadList = document.getElementById("documentsUploadList");
+  let uploadFiles = [];
+
+  const syncUploadInputFiles = () => {
+    if (!uploadInput) return;
+    const dataTransfer = new DataTransfer();
+    uploadFiles.forEach((file) => dataTransfer.items.add(file));
+    uploadInput.files = dataTransfer.files;
+  };
+
+  const renderUploadList = () => {
+    if (!uploadList) return;
+    uploadList.innerHTML = "";
+    uploadFiles.forEach((file, index) => {
+      const item = document.createElement("div");
+      item.className = "documents-upload-item";
+
+      const name = document.createElement("span");
+      name.className = "documents-upload-name";
+      name.textContent = file.name;
+
+      const state = document.createElement("span");
+      const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+      state.className = `documents-upload-state ${isPdf ? "is-valid" : "is-invalid"}`;
+      state.textContent = isPdf ? "Formato correcto" : "Formato incorrecto";
+
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "documents-upload-remove";
+      remove.setAttribute("aria-label", `Remove ${file.name}`);
+      remove.textContent = "X";
+      remove.addEventListener("click", () => {
+        uploadFiles = uploadFiles.filter((_, currentIndex) => currentIndex !== index);
+        syncUploadInputFiles();
+        renderUploadList();
+      });
+
+      item.append(name, state, remove);
+      uploadList.appendChild(item);
+    });
+  };
+
+  uploadInput?.addEventListener("change", () => {
+    uploadFiles = Array.from(uploadInput.files || []);
+    renderUploadList();
+  });
+
+  uploadForm?.addEventListener("submit", (event) => {
+    const hasInvalidFile = uploadFiles.some((file) => !(file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")));
+    if (hasInvalidFile || !uploadFiles.length) {
+      event.preventDefault();
+      renderUploadList();
+    }
+  });
 }
 
 const confirmEmailPage = document.getElementById("confirmEmailPage");

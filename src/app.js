@@ -14,6 +14,7 @@ const catalogRouter = require("./routes/catalog");
 const contactRouter = require("./routes/contact");
 const { errorHandler } = require("./middlewares/error");
 const { cors } = require("./middlewares/cors");
+const { uploadMechanicDocuments } = require("./middlewares/upload");
 const { env } = require("./config/env");
 const mechanicService = require("./services/mechanicService");
 const { createContactMessage } = require("./services/contactService");
@@ -215,7 +216,20 @@ app.get("/mechanic/:id/preferences", (req, res) => {
 });
 
 app.get("/mechanic/documents", (req, res) => {
-  res.render("pages/mechanic/documents", { mechanicId: null });
+  const uploadStatus = req.query.upload === "success" ? "success" : req.query.upload === "error" ? "error" : null;
+  const uploadMessage = typeof req.query.message === "string" ? req.query.message : null;
+  res.render("pages/mechanic/documents", { mechanicId: null, uploadStatus, uploadMessage });
+});
+
+app.post("/mechanic/documents/upload", uploadMechanicDocuments.array("documents", 10), (req, res, next) => {
+  const { email } = req.body || {};
+  mechanicService
+    .saveUploadedDocumentsByEmail({ email, files: req.files || [] })
+    .then(() => res.redirect(302, "/mechanic/documents?upload=success"))
+    .catch((err) => {
+      const message = encodeURIComponent(err?.message || "Upload failed");
+      res.redirect(302, `/mechanic/documents?upload=error&message=${message}`);
+    });
 });
 
 app.post("/mechanic/documents/complete", (req, res, next) => {

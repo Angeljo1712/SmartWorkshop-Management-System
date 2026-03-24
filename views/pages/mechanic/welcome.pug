@@ -2,19 +2,22 @@ extends ../../layouts/main
 
 block vars
   - var title = "SmartWorkshop - Welcome"
-  - var bodyClass = "mechanic-view-body"
+- var bodyClass = "mechanic-welcome application-body app-shell-body"
 
 block head
   link(rel="stylesheet" href="/css/pages/mechanic-view.css")
+  link(rel="stylesheet" href="/css/pages/mechanic-home.css")
+  link(rel="stylesheet" href="/css/pages/bookings.css")
 
 block content
-  header.main-header.general-header
-    .header-content
+  header.main-header.basic-header
+    .body-content
       a.main-brand(href="/")
         span.main-logo SW
-        div
+        span
           strong SmartWorkshop
-          span Vehicle Service Marketplace
+          span.main-brand-subtitle Vehicle Service Marketplace
+      a.bookings-header-help(href="/application/join") Need help?
 
   main.mechanic-view-shell.primari-shell
     section.mechanic-view-main
@@ -26,3 +29,5 @@ block content
       p.subtle
         | The first step is to set a password to finish creating your account.
       a.primary.ghost-link(href="/mechanic/dashboard") Get started
+
+  include ../../partials/general-footer
