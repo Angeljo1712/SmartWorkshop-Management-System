@@ -683,6 +683,8 @@ header.main-header:not(.home-header):not(.general-header):not(.basic-header) {
   gap: 18px;
 }
 
+body.user-body .settings-card,
+body.mechanic-body .settings-card,
 body.admin-body .settings-card {
   background: rgba(8, 13, 23, 0.94);
   border: 1px solid var(--border-light-08);
@@ -1378,26 +1380,38 @@ pre {
 }
 
 /* Admin dashboard v2 (reference-inspired) */
+body.user-body,
+body.mechanic-body,
 body.admin-body {
   overflow-x: hidden;
 }
 
+body.user-body .main-header.general-header,
+body.mechanic-body .main-header.general-header,
 body.admin-body .main-header.general-header {
   background: var(--bg-surface-dark);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   color: #f0f3f9;
 }
 
+body.user-body .main-header.general-header .main-brand strong,
+body.user-body .main-header.general-header .main-brand span,
+body.mechanic-body .main-header.general-header .main-brand strong,
+body.mechanic-body .main-header.general-header .main-brand span,
 body.admin-body .main-header.general-header .main-brand strong,
 body.admin-body .main-header.general-header .main-brand span {
   color: #f0f3f9;
 }
 
+body.user-body .main-header.general-header .main-logo,
+body.mechanic-body .main-header.general-header .main-logo,
 body.admin-body .main-header.general-header .main-logo {
   background: var(--surface-light-12);
   color: #f0f3f9;
 }
 
+body.user-body .customer-header-menu-btn:hover,
+body.mechanic-body .customer-header-menu-btn:hover,
 body.admin-body .customer-header-menu-btn:hover {
   background: var(--brand-blue);
   border-color: var(--brand-blue);

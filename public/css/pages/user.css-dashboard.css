@@ -1,4 +1,4 @@
-body.admin-body .user-layout {
+body.user-body .user-layout {
   position: relative;
   display: grid;
   grid-template-columns: minmax(150px, 150px) minmax(0, 1fr);
@@ -6,44 +6,44 @@ body.admin-body .user-layout {
   gap: 18px;
 }
 
-body.admin-body .user-layout > .user-rail,
-body.admin-body .user-layout > .user-content,
-body.admin-body .user-layout > .is-hidden {
+body.user-body .user-layout > .user-rail,
+body.user-body .user-layout > .user-content,
+body.user-body .user-layout > .is-hidden {
   position: relative;
   z-index: 1;
 }
 
-body.admin-body .user-layout > .user-rail {
+body.user-body .user-layout > .user-rail {
   min-width: 150px;
 }
 
-body.admin-body .user-layout > .user-rail,
-body.admin-body .user-layout > .user-content {
+body.user-body .user-layout > .user-rail,
+body.user-body .user-layout > .user-content {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
 
-body.admin-body .user-layout > .user-content {
+body.user-body .user-layout > .user-content {
   border: 2px solid #ffffff;
   border-radius: 14px;
   background: #0d1220;
 }
 
-body.admin-body .main-header.general-header {
+body.user-body .main-header.general-header {
   display: block;
 }
 
-body.admin-body .user-layout .rail-item.active,
-body.admin-body .user-layout .rail-item:focus-visible {
+body.user-body .user-layout .rail-item.active,
+body.user-body .user-layout .rail-item:focus-visible {
   background: #1b212b;
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.72);
 }
 
-body.admin-body #userPage .settings-card {
+body.user-body #userPage .settings-card {
   min-height: auto;
 }
 
-body.admin-body #userBookingsView .settings-card {
+body.user-body #userBookingsView .settings-card {
   display: block;
 }
 
@@ -93,7 +93,7 @@ body.admin-body #userBookingsView .settings-card {
   grid-area: card;
 }
 
-body.admin-body #userSettingsView .settings-card {
+body.user-body #userSettingsView .settings-card {
   gap: 0;
 }
 
@@ -125,20 +125,20 @@ body.admin-body #userSettingsView .settings-card {
   display: contents;
 }
 
-body.admin-body #userSettingsView .settings-layout {
+body.user-body #userSettingsView .settings-layout {
   display: contents;
 }
 
-body.admin-body #userSettingsView .settings-panel {
+body.user-body #userSettingsView .settings-panel {
   grid-area: panel;
   display: grid;
 }
 
-body.admin-body #userSettingsView .settings-subview {
+body.user-body #userSettingsView .settings-subview {
   display: grid;
 }
 
-body.admin-body #userSettingsView .settings-subnav {
+body.user-body #userSettingsView .settings-subnav {
   grid-area: subnav;
   background: linear-gradient(180deg, #425369 0%, #3a4a5f 100%);
   border: 2px solid #ffffff;
@@ -149,105 +149,105 @@ body.admin-body #userSettingsView .settings-subnav {
   height: 100%;
 }
 
-body.admin-body #userSettingsView .settings-subnav-link {
+body.user-body #userSettingsView .settings-subnav-link {
   color: #e8edf6;
   border-radius: 8px;
 }
 
-body.admin-body #userSettingsView .settings-subnav-link:hover {
+body.user-body #userSettingsView .settings-subnav-link:hover {
   background: rgba(255, 255, 255, 0.1);
 }
 
-body.admin-body #userSettingsView .settings-subnav-link.active {
+body.user-body #userSettingsView .settings-subnav-link.active {
   background: #0d1220;
   border-color: rgba(255, 255, 255, 0.28);
   color: #ffffff;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
-body.admin-body #userSettingsView .settings-divider {
+body.user-body #userSettingsView .settings-divider {
   background: #ffffff;
   opacity: 1;
 }
 
-body.admin-body #userSettingsView .settings-header h2,
-body.admin-body #userSettingsView .settings-header p,
-body.admin-body #userSettingsView .user-welcome-corner,
-body.admin-body #userSettingsView .user-welcome-corner-subtitle {
+body.user-body #userSettingsView .settings-header h2,
+body.user-body #userSettingsView .settings-header p,
+body.user-body #userSettingsView .user-welcome-corner,
+body.user-body #userSettingsView .user-welcome-corner-subtitle {
   color: #ffffff;
 }
 
-body.admin-body #userSettingsView .settings-photo-row {
+body.user-body #userSettingsView .settings-photo-row {
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
   gap: 16px;
 }
 
-body.admin-body #userSettingsView .settings-photo-row .ghost {
+body.user-body #userSettingsView .settings-photo-row .ghost {
   justify-self: end;
   background: #4f627b;
   border-color: #4f627b;
   color: #ffffff;
 }
 
-body.admin-body #userSettingsView .secondary {
+body.user-body #userSettingsView .secondary {
   background: #4f627b;
   border-color: #4f627b;
   color: #ffffff;
 }
 
-body.admin-body #userSettingsView .settings-field,
-body.admin-body #userSettingsView .settings-field h4,
-body.admin-body #userSettingsView .settings-row h4,
-body.admin-body #userSettingsView .settings-profile h4,
-body.admin-body #userSettingsView .settings-profile p,
-body.admin-body #userSettingsView .settings-row p,
-body.admin-body #userSettingsView .form-error {
+body.user-body #userSettingsView .settings-field,
+body.user-body #userSettingsView .settings-field h4,
+body.user-body #userSettingsView .settings-row h4,
+body.user-body #userSettingsView .settings-profile h4,
+body.user-body #userSettingsView .settings-profile p,
+body.user-body #userSettingsView .settings-row p,
+body.user-body #userSettingsView .form-error {
   color: #ffffff;
 }
 
-body.admin-body #userSettingsView .settings-contact-list {
+body.user-body #userSettingsView .settings-contact-list {
   display: grid;
   gap: 14px;
 }
 
-body.admin-body #userSettingsView .settings-contact-item {
+body.user-body #userSettingsView .settings-contact-item {
   display: block;
   min-height: 44px;
 }
 
-body.admin-body #userSettingsView .settings-contact-copy {
+body.user-body #userSettingsView .settings-contact-copy {
   display: grid;
   gap: 6px;
 }
 
-body.admin-body #userSettingsView .settings-contact-label {
+body.user-body #userSettingsView .settings-contact-label {
   color: #ffffff;
   font-weight: 600;
 }
 
-body.admin-body #userSettingsView .settings-contact-copy p {
+body.user-body #userSettingsView .settings-contact-copy p {
   margin: 0;
   color: #ffffff;
 }
 
-body.admin-body #userSettingsView .settings-contact-actions {
+body.user-body #userSettingsView .settings-contact-actions {
   display: grid;
   gap: 14px;
   align-content: start;
   justify-items: end;
 }
 
-body.admin-body #userSettingsView .settings-contact-actions .secondary {
+body.user-body #userSettingsView .settings-contact-actions .secondary {
   min-height: 44px;
 }
 
-body.admin-body #userSettingsSecurity {
+body.user-body #userSettingsSecurity {
   gap: 26px;
 }
 
-body.admin-body #userSettingsSecurity .security-card {
+body.user-body #userSettingsSecurity .security-card {
   display: grid;
   gap: 26px;
   padding: 24px;
@@ -257,31 +257,31 @@ body.admin-body #userSettingsSecurity .security-card {
   background: rgba(255, 255, 255, 0.02);
 }
 
-body.admin-body #userSettingsSecurity .security-card-head h3 {
+body.user-body #userSettingsSecurity .security-card-head h3 {
   margin: 0;
   color: #ffffff;
   font-size: 1.25rem;
 }
 
-body.admin-body #userSettingsSecurity .security-form {
+body.user-body #userSettingsSecurity .security-form {
   width: min(500px, 100%);
   margin: 0 auto;
   display: grid;
   gap: 18px;
 }
 
-body.admin-body #userSettingsSecurity .security-field {
+body.user-body #userSettingsSecurity .security-field {
   display: grid;
   gap: 8px;
 }
 
-body.admin-body #userSettingsSecurity .security-field span {
+body.user-body #userSettingsSecurity .security-field span {
   color: #ffffff;
   font-size: 1rem;
   font-weight: 600;
 }
 
-body.admin-body #userSettingsSecurity .security-field input {
+body.user-body #userSettingsSecurity .security-field input {
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 12px;
@@ -290,42 +290,42 @@ body.admin-body #userSettingsSecurity .security-field input {
   color: #0f172a;
 }
 
-body.admin-body #userSettingsSecurity .security-actions {
+body.user-body #userSettingsSecurity .security-actions {
   display: flex;
   justify-content: flex-end;
 }
 
-body.admin-body #userSettingsSecurity .security-actions .ghost {
+body.user-body #userSettingsSecurity .security-actions .ghost {
   background: #4f627b;
   border-color: #4f627b;
   color: #ffffff;
 }
 
-body.admin-body #userSecurity2faEnable {
+body.user-body #userSecurity2faEnable {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.12);
   color: rgba(255, 255, 255, 0.62);
 }
 
-body.admin-body #userSecurity2faEnable:disabled {
+body.user-body #userSecurity2faEnable:disabled {
   cursor: not-allowed;
   opacity: 0.7;
 }
 
-body.admin-body #userSecurity2faEnable.is-active {
+body.user-body #userSecurity2faEnable.is-active {
   background: #4f627b;
   border-color: #4f627b;
   color: #ffffff;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
 }
 
-body.admin-body #userSettingsSecurity .security-2fa-grid {
+body.user-body #userSettingsSecurity .security-2fa-grid {
   display: flex;
   gap: 28px;
   align-items: center;
 }
 
-body.admin-body #userSettingsSecurity .security-check {
+body.user-body #userSettingsSecurity .security-check {
   display: inline-flex;
   align-items: center;
   gap: 12px;
@@ -333,12 +333,12 @@ body.admin-body #userSettingsSecurity .security-check {
   font-size: 1rem;
 }
 
-body.admin-body #userSettingsSecurity .security-check input {
+body.user-body #userSettingsSecurity .security-check input {
   width: 20px;
   height: 20px;
 }
 
-body.admin-body #userSettingsNotifications .notifications-card {
+body.user-body #userSettingsNotifications .notifications-card {
   display: grid;
   gap: 28px;
   padding: 24px;
@@ -348,13 +348,13 @@ body.admin-body #userSettingsNotifications .notifications-card {
   background: #0d1220;
 }
 
-body.admin-body #userSettingsNotifications .notifications-card-head h3 {
+body.user-body #userSettingsNotifications .notifications-card-head h3 {
   margin: 0;
   color: #ffffff;
   font-size: 1.25rem;
 }
 
-body.admin-body #userSettingsNotifications .notifications-check {
+body.user-body #userSettingsNotifications .notifications-check {
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: start;
@@ -364,24 +364,24 @@ body.admin-body #userSettingsNotifications .notifications-check {
   line-height: 1.45;
 }
 
-body.admin-body #userSettingsNotifications .notifications-check input {
+body.user-body #userSettingsNotifications .notifications-check input {
   width: 20px;
   height: 20px;
   margin-top: 3px;
 }
 
-body.admin-body #userSettingsNotifications .notifications-actions {
+body.user-body #userSettingsNotifications .notifications-actions {
   display: flex;
   justify-content: flex-end;
 }
 
-body.admin-body #userSettingsNotifications .notifications-actions .ghost {
+body.user-body #userSettingsNotifications .notifications-actions .ghost {
   background: #4f627b;
   border-color: #4f627b;
   color: #ffffff;
 }
 
-body.admin-body .settings-edit-modal {
+body.user-body .settings-edit-modal {
   position: fixed;
   inset: 0;
   z-index: 80;
@@ -389,14 +389,14 @@ body.admin-body .settings-edit-modal {
   place-items: center;
 }
 
-body.admin-body .settings-edit-backdrop {
+body.user-body .settings-edit-backdrop {
   position: absolute;
   inset: 0;
   background: rgba(4, 8, 16, 0.72);
   backdrop-filter: blur(6px);
 }
 
-body.admin-body .settings-edit-dialog {
+body.user-body .settings-edit-dialog {
   position: relative;
   z-index: 1;
   width: min(520px, calc(100vw - 32px));
@@ -409,7 +409,7 @@ body.admin-body .settings-edit-dialog {
   box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
 }
 
-body.admin-body .settings-edit-head {
+body.user-body .settings-edit-head {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -417,18 +417,18 @@ body.admin-body .settings-edit-head {
   position: relative;
 }
 
-body.admin-body .settings-edit-head h3,
-body.admin-body .settings-edit-dialog p,
-body.admin-body .settings-edit-field span {
+body.user-body .settings-edit-head h3,
+body.user-body .settings-edit-dialog p,
+body.user-body .settings-edit-field span {
   color: #ffffff;
   margin: 0;
 }
 
-body.admin-body #userSettingsEditDescription {
+body.user-body #userSettingsEditDescription {
   text-align: center;
 }
 
-body.admin-body .settings-edit-close {
+body.user-body .settings-edit-close {
   appearance: none;
   border: 0;
   background: transparent;
@@ -441,16 +441,16 @@ body.admin-body .settings-edit-close {
   right: 0;
 }
 
-body.admin-body .settings-edit-field {
+body.user-body .settings-edit-field {
   display: grid;
   gap: 8px;
 }
 
-body.admin-body .settings-edit-name-grid .settings-edit-field span {
+body.user-body .settings-edit-name-grid .settings-edit-field span {
   text-align: center;
 }
 
-body.admin-body .settings-edit-field input {
+body.user-body .settings-edit-field input {
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 12px;
@@ -459,54 +459,54 @@ body.admin-body .settings-edit-field input {
   color: #0f172a;
 }
 
-body.admin-body .settings-edit-name-grid {
+body.user-body .settings-edit-name-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
 }
 
-body.admin-body .settings-edit-address-grid {
+body.user-body .settings-edit-address-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
 }
 
-body.admin-body .settings-edit-actions {
+body.user-body .settings-edit-actions {
   display: flex;
   justify-content: center;
   gap: 12px;
 }
 
-body.admin-body .settings-edit-actions .secondary,
-body.admin-body .settings-edit-actions .ghost {
+body.user-body .settings-edit-actions .secondary,
+body.user-body .settings-edit-actions .ghost {
   color: #ffffff;
 }
 
-body.admin-body #userSettingsEditCancel.secondary {
+body.user-body #userSettingsEditCancel.secondary {
   background: transparent;
   border-color: transparent;
   box-shadow: none;
 }
 
-body.admin-body #userSettingsEditCancel.secondary:hover,
-body.admin-body #userSettingsEditSave.ghost:hover {
+body.user-body #userSettingsEditCancel.secondary:hover,
+body.user-body #userSettingsEditSave.ghost:hover {
   background: #4f627b;
   border-color: #4f627b;
   color: #ffffff;
 }
 
-body.admin-body #userBookingsView .settings-header h2,
-body.admin-body #userBookingsView .settings-header p,
-body.admin-body #userBookingsView .user-booking-column h4,
-body.admin-body #userBookingsView .user-booking-photos h4,
-body.admin-body #userBookingsView .user-booking-reference {
+body.user-body #userBookingsView .settings-header h2,
+body.user-body #userBookingsView .settings-header p,
+body.user-body #userBookingsView .user-booking-column h4,
+body.user-body #userBookingsView .user-booking-photos h4,
+body.user-body #userBookingsView .user-booking-reference {
   color: #eaf0fb;
 }
 
-body.admin-body #userBookingsView .user-booking-column p,
-body.admin-body #userBookingsView .user-booking-column li,
-body.admin-body #userBookingsView .user-booking-column a,
-body.admin-body #userBookingsView .user-booking-empty {
+body.user-body #userBookingsView .user-booking-column p,
+body.user-body #userBookingsView .user-booking-column li,
+body.user-body #userBookingsView .user-booking-column a,
+body.user-body #userBookingsView .user-booking-empty {
   color: #c8d4e8;
 }
 
@@ -648,42 +648,42 @@ body.admin-body #userBookingsView .user-booking-empty {
   margin: 0;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .bookings-section--resolution {
+body.user-body :is(#userBookingsView, #userResolutionView) .bookings-section--resolution {
   padding: 0 20px 20px;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-card,
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-detail,
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case,
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-sidebar-card {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-card,
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-detail,
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case,
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-sidebar-card {
   border: 1px solid #ffffff;
   border-radius: 24px;
   background: #0d1220;
   color: #eaf0fb;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-layout {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-layout {
   display: grid;
   gap: 20px;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-card {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-card {
   overflow: hidden;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-card-header {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-card-header {
   padding: 18px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   font-weight: 700;
   color: #ffffff;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table {
   display: grid;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-head,
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-row {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-head,
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-row {
   display: grid;
   grid-template-columns: 1.2fr 1fr 1fr 1fr auto;
   gap: 16px;
@@ -691,16 +691,16 @@ body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution
   padding: 16px 20px;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-head {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-head {
   color: rgba(234, 240, 251, 0.82);
   font-weight: 700;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-row {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-row {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-status {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-status {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -715,7 +715,7 @@ body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution
   text-transform: uppercase;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-link {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-link {
   border: 0;
   background: transparent;
   color: #4ea3ff;
@@ -723,28 +723,28 @@ body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution
   cursor: pointer;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-detail,
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case-view {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-detail,
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case-view {
   display: grid;
   gap: 18px;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-detail {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-detail {
   padding: 20px;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-detail-head {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-detail-head {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-detail-head h3 {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-detail-head h3 {
   margin: 0;
   color: #ffffff;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-back {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-back {
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: transparent;
   color: #ffffff;
@@ -753,20 +753,20 @@ body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution
   cursor: pointer;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-field {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-field {
   display: grid;
   gap: 10px;
   padding: 20px;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-field label,
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-sidebar-row strong {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-field label,
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-sidebar-row strong {
   color: #ffffff;
   font-weight: 700;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-field select,
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-compose textarea {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-field select,
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-compose textarea {
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 16px;
@@ -776,7 +776,7 @@ body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution
   font: inherit;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-notice {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-notice {
   margin: 0 20px 20px;
   padding: 16px 18px;
   border-radius: 16px;
@@ -784,23 +784,23 @@ body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution
   color: #ffe08a;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) #userResolutionGoToCase {
+body.user-body :is(#userBookingsView, #userResolutionView) #userResolutionGoToCase {
   margin: 0 20px 20px;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-complaint {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-complaint {
   display: grid;
   gap: 14px;
   margin: 0 20px 20px;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-complaint-copy {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-complaint-copy {
   margin: 0;
   color: #eaf0fb;
   line-height: 1.55;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) #userResolutionComplaintInput {
+body.user-body :is(#userBookingsView, #userResolutionView) #userResolutionComplaintInput {
   width: 100%;
   min-height: 120px;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -812,47 +812,47 @@ body.admin-body :is(#userBookingsView, #userResolutionView) #userResolutionCompl
   resize: vertical;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-complaint-actions {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-complaint-actions {
   display: flex;
   justify-content: center;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-complaint-footer {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-complaint-footer {
   display: flex;
   justify-content: flex-start;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) #userResolutionComplaintAttachBtn.secondary {
+body.user-body :is(#userBookingsView, #userResolutionView) #userResolutionComplaintAttachBtn.secondary {
   background: #4f627b;
   border-color: #4f627b;
   color: #ffffff;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case-view {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case-view {
   grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.9fr);
   align-items: start;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case {
   padding: 20px;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-thread {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-thread {
   display: grid;
   gap: 14px;
   margin-top: 10px;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message {
   display: grid;
   gap: 6px;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message.is-customer {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message.is-customer {
   justify-items: end;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-bubble {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-bubble {
   max-width: 80%;
   padding: 14px 16px;
   border-radius: 18px;
@@ -860,91 +860,91 @@ body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution
   color: #eaf0fb;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message.is-customer .mechanic-resolution-bubble {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message.is-customer .mechanic-resolution-bubble {
   background: rgba(37, 99, 235, 0.25);
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message-meta {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message-meta {
   color: rgba(234, 240, 251, 0.62);
   font-size: 0.85rem;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-compose {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-compose {
   display: grid;
   gap: 12px;
   margin-top: 18px;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-compose-actions {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-compose-actions {
   display: flex;
   justify-content: flex-start;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-sidebar-card {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-sidebar-card {
   padding: 20px;
   display: grid;
   gap: 14px;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-sidebar-card h4 {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-sidebar-card h4 {
   margin: 0;
   color: #ffffff;
 }
 
-body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-sidebar-row {
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-sidebar-row {
   display: grid;
   gap: 6px;
 }
 
 @media (max-width: 900px) {
-  body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case-view {
+  body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case-view {
     grid-template-columns: 1fr;
   }
 
-  body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-head,
-  body.admin-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-row {
+  body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-head,
+  body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-row {
     grid-template-columns: 1fr;
   }
 }
 
-body.admin-body #userAccountView .settings-header h2,
-body.admin-body #userAccountView .settings-row h4,
-body.admin-body #userAccountView .settings-meta h4 {
+body.user-body #userAccountView .settings-header h2,
+body.user-body #userAccountView .settings-row h4,
+body.user-body #userAccountView .settings-meta h4 {
   color: #eaf0fb;
 }
 
-body.admin-body #userResolutionView .settings-header h2,
-body.admin-body #userResolutionView .settings-header p {
+body.user-body #userResolutionView .settings-header h2,
+body.user-body #userResolutionView .settings-header p {
   color: #eaf0fb;
 }
 
-body.admin-body #userResolutionOverview {
+body.user-body #userResolutionOverview {
   background: #0d1220;
 }
 
-body.admin-body #userResolutionView .mechanic-resolution-layout {
+body.user-body #userResolutionView .mechanic-resolution-layout {
   display: grid;
   grid-template-columns: 1fr;
   gap: 22px;
 }
 
-body.admin-body #userResolutionView .mechanic-resolution-card {
+body.user-body #userResolutionView .mechanic-resolution-card {
   border: 1px solid #ffffff;
   border-radius: 22px;
   background: #0d1220;
   overflow: hidden;
 }
 
-body.admin-body #userResolutionMessageView .mechanic-resolution-card,
-body.admin-body #userResolutionCaseView .mechanic-resolution-card,
-body.admin-body #userResolutionCaseView .mechanic-resolution-case,
-body.admin-body #userResolutionCaseView .mechanic-resolution-sidebar-card {
+body.user-body #userResolutionMessageView .mechanic-resolution-card,
+body.user-body #userResolutionCaseView .mechanic-resolution-card,
+body.user-body #userResolutionCaseView .mechanic-resolution-case,
+body.user-body #userResolutionCaseView .mechanic-resolution-sidebar-card {
   border: 0;
   background: transparent;
   box-shadow: none;
 }
 
-body.admin-body #userResolutionView .mechanic-resolution-card h3 {
+body.user-body #userResolutionView .mechanic-resolution-card h3 {
   margin: 0;
   padding: 18px 22px;
   font-size: 1.05rem;
@@ -952,19 +952,19 @@ body.admin-body #userResolutionView .mechanic-resolution-card h3 {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-body.admin-body #userResolutionView .mechanic-resolution-card-body {
+body.user-body #userResolutionView .mechanic-resolution-card-body {
   padding: 22px;
   display: grid;
   gap: 18px;
 }
 
-body.admin-body #userResolutionView .mechanic-resolution-tabs {
+body.user-body #userResolutionView .mechanic-resolution-tabs {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
-body.admin-body #userResolutionView .mechanic-resolution-tab {
+body.user-body #userResolutionView .mechanic-resolution-tab {
   min-height: 42px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
@@ -974,39 +974,39 @@ body.admin-body #userResolutionView .mechanic-resolution-tab {
   cursor: pointer;
 }
 
-body.admin-body #userResolutionView .mechanic-resolution-tab.is-active {
+body.user-body #userResolutionView .mechanic-resolution-tab.is-active {
   background: #0d1220;
   color: #ffffff;
   border-color: #ffffff;
 }
 
-body.admin-body #userResolutionView .mechanic-resolution-table {
+body.user-body #userResolutionView .mechanic-resolution-table {
   display: grid;
   gap: 12px;
 }
 
-body.admin-body #userResolutionView .mechanic-resolution-table-head,
-body.admin-body #userResolutionView .mechanic-resolution-table-row {
+body.user-body #userResolutionView .mechanic-resolution-table-head,
+body.user-body #userResolutionView .mechanic-resolution-table-row {
   display: grid;
   grid-template-columns: 150px 150px 160px minmax(0, 1fr) 80px;
   gap: 16px;
   align-items: center;
 }
 
-body.admin-body #userResolutionView .mechanic-resolution-table-head {
+body.user-body #userResolutionView .mechanic-resolution-table-head {
   color: #d6dfef;
   font-weight: 700;
   font-size: 0.95rem;
 }
 
-body.admin-body #userResolutionView .mechanic-resolution-table-row {
+body.user-body #userResolutionView .mechanic-resolution-table-row {
   min-height: 56px;
   padding: 12px 0 0;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   color: #ffffff;
 }
 
-body.admin-body #userResolutionView .mechanic-resolution-status {
+body.user-body #userResolutionView .mechanic-resolution-status {
   justify-self: start;
   padding: 7px 12px;
   border-radius: 999px;
@@ -1017,7 +1017,7 @@ body.admin-body #userResolutionView .mechanic-resolution-status {
   letter-spacing: 0.08em;
 }
 
-body.admin-body #userResolutionView .mechanic-resolution-link {
+body.user-body #userResolutionView .mechanic-resolution-link {
   border: 0;
   background: transparent;
   color: #1e93f2;
@@ -1026,8 +1026,8 @@ body.admin-body #userResolutionView .mechanic-resolution-link {
 }
 
 @media (max-width: 900px) {
-  body.admin-body #userResolutionView .mechanic-resolution-table-head,
-  body.admin-body #userResolutionView .mechanic-resolution-table-row {
+  body.user-body #userResolutionView .mechanic-resolution-table-head,
+  body.user-body #userResolutionView .mechanic-resolution-table-row {
     grid-template-columns: 1fr;
   }
 }
@@ -1098,40 +1098,40 @@ body.admin-body #userResolutionView .mechanic-resolution-link {
   grid-area: integration;
 }
 
-body.admin-body #userAccountView .settings-header p,
-body.admin-body #userAccountView .settings-row p,
-body.admin-body #userAccountView .settings-meta p,
-body.admin-body #userAccountView .account-section p,
-body.admin-body #userAccountView .account-section h4,
-body.admin-body #userAccountView .account-section span {
+body.user-body #userAccountView .settings-header p,
+body.user-body #userAccountView .settings-row p,
+body.user-body #userAccountView .settings-meta p,
+body.user-body #userAccountView .account-section p,
+body.user-body #userAccountView .account-section h4,
+body.user-body #userAccountView .account-section span {
   color: #ffffff;
 }
 
-body.admin-body #userAccountView .settings-divider {
+body.user-body #userAccountView .settings-divider {
   height: 3px;
   background: #ffffff;
 }
 
-body.admin-body #userAccountView .settings-row {
+body.user-body #userAccountView .settings-row {
   border-bottom: 3px solid #ffffff;
   padding-bottom: 14px;
 }
 
-body.admin-body #userAccountView .settings-avatar {
+body.user-body #userAccountView .settings-avatar {
   background: #d5def7;
   color: #334085;
 }
 
 @media (max-width: 980px) {
-  body.admin-body #userAccountView .settings-card {
+  body.user-body #userAccountView .settings-card {
     padding: 20px;
   }
 }
 
-body.admin-body #userDashboardView .settings-header h2,
-body.admin-body #userDashboardView .settings-header p,
-body.admin-body #userDashboardView .user-section-title,
-body.admin-body #userDashboardView .user-verify-title {
+body.user-body #userDashboardView .settings-header h2,
+body.user-body #userDashboardView .settings-header p,
+body.user-body #userDashboardView .user-section-title,
+body.user-body #userDashboardView .user-verify-title {
   color: #eaf0fb;
 }
 
@@ -1151,50 +1151,50 @@ body.admin-body #userDashboardView .user-verify-title {
   color: #a9b6cb;
 }
 
-body.admin-body #userDashboardView .settings-divider {
+body.user-body #userDashboardView .settings-divider {
   height: 3px;
   background: #ffffff;
 }
 
-body.admin-body #userDashboardView .user-verify-text,
-body.admin-body #userDashboardView .user-car-meta span,
-body.admin-body #userDashboardView .form-error {
+body.user-body #userDashboardView .user-verify-text,
+body.user-body #userDashboardView .user-car-meta span,
+body.user-body #userDashboardView .form-error {
   color: #a9b6cb;
 }
 
-body.admin-body #userDashboardView .user-quick-quote label {
+body.user-body #userDashboardView .user-quick-quote label {
   color: #ffffff;
 }
 
-body.admin-body #userSettingsView .settings-panel {
+body.user-body #userSettingsView .settings-panel {
   grid-area: panel;
 }
 
 
-body.admin-body #userDashboardView .user-car-summary,
-body.admin-body #userDashboardView .user-verify-card,
-body.admin-body #userDashboardView .user-add-vehicle input,
-body.admin-body #userDashboardView .user-quick-quote input,
-body.admin-body #userDashboardView .user-quick-quote select {
+body.user-body #userDashboardView .user-car-summary,
+body.user-body #userDashboardView .user-verify-card,
+body.user-body #userDashboardView .user-add-vehicle input,
+body.user-body #userDashboardView .user-quick-quote input,
+body.user-body #userDashboardView .user-quick-quote select {
   border-color: rgba(15, 23, 42, 0.18);
 }
 
-body.admin-body #userDashboardView .user-car-summary,
-body.admin-body #userDashboardView .user-verify-card {
+body.user-body #userDashboardView .user-car-summary,
+body.user-body #userDashboardView .user-verify-card {
   background: rgba(255, 255, 255, 0.03);
   border-color: #ffffff;
   color: #eaf0fb;
 }
 
-body.admin-body #userDashboardView .user-add-vehicle input,
-body.admin-body #userDashboardView .user-quick-quote input,
-body.admin-body #userDashboardView .user-quick-quote select {
+body.user-body #userDashboardView .user-add-vehicle input,
+body.user-body #userDashboardView .user-quick-quote input,
+body.user-body #userDashboardView .user-quick-quote select {
   background: #ffffff;
   color: #0f172a;
 }
 
-body.admin-body #userDashboardView .user-add-vehicle input::placeholder,
-body.admin-body #userDashboardView .user-quick-quote input::placeholder {
+body.user-body #userDashboardView .user-add-vehicle input::placeholder,
+body.user-body #userDashboardView .user-quick-quote input::placeholder {
   color: #6b7280;
 }
 
@@ -1483,25 +1483,25 @@ body.admin-body #userDashboardView .user-quick-quote input::placeholder {
   grid-area: divider-top;
 }
 
-body.admin-body #userVehicleView .settings-divider {
+body.user-body #userVehicleView .settings-divider {
   height: 3px;
   background: #ffffff;
 }
 
-body.admin-body #userVehicleView .settings-header h2,
-body.admin-body #userVehicleView .settings-header p,
-body.admin-body #userVehicleView .user-welcome-corner,
-body.admin-body #userVehicleView .user-welcome-corner-subtitle,
-body.admin-body #userVehicleView .user-vehicle-pills span,
-body.admin-body #userVehicleView .user-vehicle-info-copy strong,
-body.admin-body #userVehicleView .user-vehicle-info-copy p,
-body.admin-body #userVehicleView .user-vehicle-info-arrow,
-body.admin-body #userVehicleView .user-vehicle-dropdown-btn,
-body.admin-body #userVehicleView .user-vehicle-dropdown-arrow {
+body.user-body #userVehicleView .settings-header h2,
+body.user-body #userVehicleView .settings-header p,
+body.user-body #userVehicleView .user-welcome-corner,
+body.user-body #userVehicleView .user-welcome-corner-subtitle,
+body.user-body #userVehicleView .user-vehicle-pills span,
+body.user-body #userVehicleView .user-vehicle-info-copy strong,
+body.user-body #userVehicleView .user-vehicle-info-copy p,
+body.user-body #userVehicleView .user-vehicle-info-arrow,
+body.user-body #userVehicleView .user-vehicle-dropdown-btn,
+body.user-body #userVehicleView .user-vehicle-dropdown-arrow {
   color: #ffffff;
 }
 
-body.admin-body #userVehicleView .user-reg-badge {
+body.user-body #userVehicleView .user-reg-badge {
   color: #000000;
 }
 
@@ -1981,11 +1981,11 @@ body.admin-body #userVehicleView .user-reg-badge {
 
 /* Responsive matrix for user dashboard */
 @media (max-width: 1440px) {
-  body.admin-body .primari-shell {
+  body.user-body .primari-shell {
     padding: 24px 28px;
   }
 
-  body.admin-body .user-layout {
+  body.user-body .user-layout {
     grid-template-columns: minmax(150px, 150px) minmax(0, 1fr);
     gap: 14px;
   }
@@ -2002,32 +2002,32 @@ body.admin-body #userVehicleView .user-reg-badge {
     grid-template-columns: 1fr;
   }
 
-  body.admin-body .main-header.general-header {
+  body.user-body .main-header.general-header {
     padding: 14px 16px;
   }
 
-  body.admin-body .main-header.general-header .header-content {
+  body.user-body .main-header.general-header .header-content {
     width: 100%;
   }
 
-  body.admin-body #userPage {
+  body.user-body #userPage {
     width: 100%;
   }
 
-  body.admin-body .main-header.general-header .main-brand span {
+  body.user-body .main-header.general-header .main-brand span {
     display: none;
   }
 
-  body.admin-body .primari-shell {
+  body.user-body .primari-shell {
     padding: 16px;
     gap: 14px;
   }
 
-  body.admin-body .user-layout {
+  body.user-body .user-layout {
     grid-template-columns: 1fr;
   }
 
-  body.admin-body .user-layout .rail-nav {
+  body.user-body .user-layout .rail-nav {
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: minmax(110px, 1fr);
@@ -2035,11 +2035,11 @@ body.admin-body #userVehicleView .user-reg-badge {
     padding-bottom: 4px;
   }
 
-  body.admin-body .user-layout .rail-footer {
+  body.user-body .user-layout .rail-footer {
     display: none;
   }
 
-  body.admin-body .user-content .settings-card {
+  body.user-body .user-content .settings-card {
     padding: 16px;
     gap: 12px;
     border-radius: 12px;
@@ -2047,24 +2047,24 @@ body.admin-body #userVehicleView .user-reg-badge {
 }
 
 @media (max-width: 425px) {
-  body.admin-body .main-header.general-header {
+  body.user-body .main-header.general-header {
     padding: 12px;
   }
 
-  body.admin-body .main-header.general-header .main-brand {
+  body.user-body .main-header.general-header .main-brand {
     gap: 8px;
   }
 
-  body.admin-body .main-header.general-header .main-brand strong {
+  body.user-body .main-header.general-header .main-brand strong {
     font-size: 1rem;
   }
 
-  body.admin-body .user-layout .rail-nav {
+  body.user-body .user-layout .rail-nav {
     grid-auto-columns: minmax(100px, 1fr);
     gap: 4px;
   }
 
-  body.admin-body .user-layout .rail-item {
+  body.user-body .user-layout .rail-item {
     font-size: 0.8rem;
     padding: 8px 8px;
   }
@@ -2080,11 +2080,11 @@ body.admin-body #userVehicleView .user-reg-badge {
 }
 
 @media (max-width: 375px) {
-  body.admin-body .primari-shell {
+  body.user-body .primari-shell {
     padding: 12px;
   }
 
-  body.admin-body .user-content .settings-card {
+  body.user-body .user-content .settings-card {
     padding: 12px;
   }
 
@@ -2099,11 +2099,11 @@ body.admin-body #userVehicleView .user-reg-badge {
 }
 
 @media (max-width: 320px) {
-  body.admin-body .main-header.general-header .main-brand strong {
+  body.user-body .main-header.general-header .main-brand strong {
     font-size: 0.92rem;
   }
 
-  body.admin-body .user-layout .rail-item {
+  body.user-body .user-layout .rail-item {
     font-size: 0.74rem;
     padding: 7px 6px;
   }

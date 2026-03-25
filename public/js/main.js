@@ -1821,9 +1821,18 @@ if (adminPage) {
   const adminApp = document.getElementById("adminApp");
   const adminLogoutBtn = document.getElementById("adminLogoutBtn");
   const adminLoginError = document.getElementById("adminLoginError");
+  const adminSideTitle = document.getElementById("adminSideTitle");
+  const adminSearchSection = document.getElementById("adminSearchSection");
+  const adminSearchLabel = document.getElementById("adminSearchLabel");
   const adminSearch = document.getElementById("adminSearch");
+  const adminRoleSection = document.getElementById("adminRoleSection");
+  const adminRoleLabel = document.getElementById("adminRoleLabel");
   const adminRoleFilter = document.getElementById("adminRoleFilter");
+  const adminStatusSection = document.getElementById("adminStatusSection");
+  const adminStatusLabel = document.getElementById("adminStatusLabel");
   const adminStatusFilter = document.getElementById("adminStatusFilter");
+  const adminDateSection = document.getElementById("adminDateSection");
+  const adminDateLabel = document.getElementById("adminDateLabel");
   const adminDateFilter = document.getElementById("adminDateFilter");
   const adminUserRows = document.getElementById("adminUserRows");
   const adminEmptyState = document.getElementById("adminEmptyState");
@@ -1839,9 +1848,41 @@ if (adminPage) {
   const adminAddUserError = document.getElementById("adminAddUserError");
   const filterSections = document.querySelectorAll("[data-filter-section]");
   const adminNavLinks = document.querySelectorAll(".admin-nav-link");
+  const adminSide = adminPage.querySelector(".admin-side");
+  const adminDashboardView = document.getElementById("adminDashboardView");
+  const adminApplicationsView = document.getElementById("adminApplicationsView");
+  const adminBookingsView = document.getElementById("adminBookingsView");
+  const adminResolutionView = document.getElementById("adminResolutionView");
+  const adminPaymentsView = document.getElementById("adminPaymentsView");
+  const adminCatalogView = document.getElementById("adminCatalogView");
   const adminProfileView = document.getElementById("adminProfileView");
   const adminUsersView = document.getElementById("adminUsersView");
   const adminSettingsView = document.getElementById("adminSettingsView");
+  const adminApplicationsSearch = document.getElementById("adminApplicationsSearch");
+  const adminApplicationsRows = document.getElementById("adminApplicationsRows");
+  const adminApplicationsCount = document.getElementById("adminApplicationsCount");
+  const adminApplicationsEmptyState = document.getElementById("adminApplicationsEmptyState");
+  const adminMetricBookingsToday = document.getElementById("adminMetricBookingsToday");
+  const adminMetricOpenCases = document.getElementById("adminMetricOpenCases");
+  const adminMetricPendingApplications = document.getElementById("adminMetricPendingApplications");
+  const adminMetricPendingPayouts = document.getElementById("adminMetricPendingPayouts");
+  const adminBookingsSearch = document.getElementById("adminBookingsSearch");
+  const adminBookingsRows = document.getElementById("adminBookingsRows");
+  const adminBookingsCount = document.getElementById("adminBookingsCount");
+  const adminBookingsEmptyState = document.getElementById("adminBookingsEmptyState");
+  const adminResolutionSearch = document.getElementById("adminResolutionSearch");
+  const adminResolutionRows = document.getElementById("adminResolutionRows");
+  const adminResolutionCount = document.getElementById("adminResolutionCount");
+  const adminResolutionEmptyState = document.getElementById("adminResolutionEmptyState");
+  const adminPaymentsSearch = document.getElementById("adminPaymentsSearch");
+  const adminPaymentsRows = document.getElementById("adminPaymentsRows");
+  const adminPaymentsCount = document.getElementById("adminPaymentsCount");
+  const adminPaymentsEmptyState = document.getElementById("adminPaymentsEmptyState");
+  const adminCatalogSearch = document.getElementById("adminCatalogSearch");
+  const adminCatalogRows = document.getElementById("adminCatalogRows");
+  const adminCatalogCount = document.getElementById("adminCatalogCount");
+  const adminCatalogEmptyState = document.getElementById("adminCatalogEmptyState");
+  const adminActionFeedback = document.getElementById("adminActionFeedback");
   const adminProfileAvatar = document.getElementById("adminProfileAvatar");
   const adminProfileName = document.getElementById("adminProfileName");
   const adminProfileRole = document.getElementById("adminProfileRole");
@@ -1852,10 +1893,21 @@ if (adminPage) {
   const adminSettingsRole = document.getElementById("adminSettingsRole");
   const adminSettingsPhone = document.getElementById("adminSettingsPhone");
 
+  if (adminSide) {
+    adminSide.classList.add("is-hidden");
+  }
+
   let adminUsers = [];
   let filteredUsers = [];
+  let adminApplications = [];
+  let adminBookings = [];
+  let adminResolutionCases = [];
+  let adminPayments = [];
+  let adminCatalog = [];
   let pageSize = Number(adminRowsPerPage?.value || 10);
   let currentPage = 1;
+  let activeAdminView = "dashboard";
+  let adminFeedbackTimer = null;
 
   const getAdminToken = () => getStoredAuthValue("userToken");
   const getAdminProfile = () => {
@@ -1966,6 +2018,78 @@ if (adminPage) {
     return initials.toUpperCase();
   };
 
+  const escapeHtml = (value) =>
+    String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+
+  const normaliseFilterToken = (value) =>
+    String(value ?? "")
+      .trim()
+      .toLowerCase();
+
+  const getUniqueOptions = (items, selector) => {
+    const seen = new Map();
+    items.forEach((item) => {
+      const rawValue = selector(item);
+      if (rawValue == null || rawValue === "") return;
+      const value = String(rawValue);
+      const key = normaliseFilterToken(value);
+      if (!seen.has(key)) {
+        seen.set(key, value);
+      }
+    });
+    return Array.from(seen.values()).sort((a, b) => String(a).localeCompare(String(b)));
+  };
+
+  const setFilterOptions = (select, options, selectedValue = "all") => {
+    if (!select) return;
+    const values = options.some((option) => option.value === "all")
+      ? options
+      : [{ value: "all", label: "All" }, ...options];
+    const safeSelected = values.some((option) => option.value === selectedValue) ? selectedValue : "all";
+    select.innerHTML = values
+      .map((option) => `<option value="${escapeHtml(option.value)}">${escapeHtml(option.label)}</option>`)
+      .join("");
+    select.value = safeSelected;
+  };
+
+  const getViewSearchInput = (view) => {
+    const inputs = {
+      users: null,
+      applications: adminApplicationsSearch,
+      bookings: adminBookingsSearch,
+      resolution: adminResolutionSearch,
+      payments: adminPaymentsSearch,
+      catalog: adminCatalogSearch
+    };
+    return inputs[view] || null;
+  };
+
+  const getCombinedSearchTerms = (view) => {
+    const sideTerm = String(adminSearch?.value || "").trim().toLowerCase();
+    const viewTerm = String(getViewSearchInput(view)?.value || "").trim().toLowerCase();
+    return [sideTerm, viewTerm].filter(Boolean);
+  };
+
+  const matchesSearchTerms = (fields, terms) => {
+    if (!terms.length) return true;
+    const haystack = fields.join(" ").toLowerCase();
+    return terms.every((term) => haystack.includes(term));
+  };
+
+  const matchesDateFilter = (value, dateFilterValue) => {
+    if (!dateFilterValue || dateFilterValue === "all") return true;
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return false;
+    const now = new Date();
+    const diffDays = (now - date) / (1000 * 60 * 60 * 24);
+    return diffDays <= Number(dateFilterValue);
+  };
+
   const getUsername = (email) => {
     if (!email) return "-";
     const [local] = email.split("@");
@@ -2006,6 +2130,545 @@ if (adminPage) {
 
     currentPage = 1;
     renderPage();
+  };
+
+  const titleCase = (value) =>
+    String(value || "")
+      .split(/[_\s-]+/)
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+
+  const syncAdminSideSearchFromView = () => {
+    if (!adminSearch) return;
+    const currentInput = getViewSearchInput(activeAdminView);
+    if (!currentInput) {
+      return;
+    }
+    if (adminSearch.value !== currentInput.value) {
+      adminSearch.value = currentInput.value;
+    }
+  };
+
+  const syncAdminViewSearchFromSide = () => {
+    const currentInput = getViewSearchInput(activeAdminView);
+    if (!currentInput) {
+      return;
+    }
+    if (currentInput.value !== adminSearch.value) {
+      currentInput.value = adminSearch.value;
+    }
+  };
+
+  const getAdminSideConfig = (view) => {
+    const baseDateOptions = [
+      { value: "all", label: "All time" },
+      { value: "30", label: "Last 30 days" },
+      { value: "90", label: "Last 90 days" },
+      { value: "365", label: "Last year" }
+    ];
+    const configs = {
+      dashboard: { showSide: false },
+      profile: { showSide: false },
+      settings: { showSide: false },
+      users: {
+        showSide: true,
+        title: "User filters",
+        searchLabel: "User",
+        searchPlaceholder: "Search users",
+        showRole: true,
+        roleLabel: "Role",
+        roleOptions: [
+          { value: "all", label: "All" },
+          { value: "ADMIN", label: "Admin" },
+          { value: "MECHANIC", label: "Mechanic" },
+          { value: "CUSTOMER", label: "Customer" }
+        ],
+        showStatus: true,
+        statusLabel: "Status",
+        statusOptions: [
+          { value: "all", label: "All" },
+          { value: "Active", label: "Active" },
+          { value: "Pending", label: "Pending" },
+          { value: "Suspended", label: "Suspended" },
+          { value: "Banned", label: "Banned" }
+        ],
+        showDate: true,
+        dateLabel: "Date",
+        dateOptions: baseDateOptions
+      },
+      applications: {
+        showSide: true,
+        title: "Application filters",
+        searchLabel: "Application",
+        searchPlaceholder: "Search applications",
+        showRole: true,
+        roleLabel: "Type",
+        roleOptions: getUniqueOptions(adminApplications, (item) => item.application_type || item.business_type).map((value) => ({
+          value,
+          label: titleCase(value)
+        })),
+        showStatus: true,
+        statusLabel: "Status",
+        statusOptions: getUniqueOptions(adminApplications, (item) => item.application_status).map((value) => ({
+          value,
+          label: titleCase(value)
+        })),
+        showDate: true,
+        dateLabel: "Created",
+        dateOptions: baseDateOptions
+      },
+      bookings: {
+        showSide: true,
+        title: "Booking filters",
+        searchLabel: "Booking",
+        searchPlaceholder: "Search bookings",
+        showRole: false,
+        showStatus: true,
+        statusLabel: "Status",
+        statusOptions: getUniqueOptions(adminBookings, (item) => item.status).map((value) => ({
+          value,
+          label: titleCase(value)
+        })),
+        showDate: true,
+        dateLabel: "Created",
+        dateOptions: baseDateOptions
+      },
+      resolution: {
+        showSide: true,
+        title: "Case filters",
+        searchLabel: "Case",
+        searchPlaceholder: "Search cases",
+        showRole: true,
+        roleLabel: "Type",
+        roleOptions: getUniqueOptions(adminResolutionCases, (item) => item.type).map((value) => ({
+          value,
+          label: titleCase(value)
+        })),
+        showStatus: true,
+        statusLabel: "Status",
+        statusOptions: getUniqueOptions(adminResolutionCases, (item) => item.status).map((value) => ({
+          value,
+          label: titleCase(value)
+        })),
+        showDate: true,
+        dateLabel: "Updated",
+        dateOptions: baseDateOptions
+      },
+      payments: {
+        showSide: true,
+        title: "Payment filters",
+        searchLabel: "Payment",
+        searchPlaceholder: "Search payments",
+        showRole: true,
+        roleLabel: "Kind",
+        roleOptions: getUniqueOptions(adminPayments, (item) => item.kind).map((value) => ({
+          value,
+          label: titleCase(value)
+        })),
+        showStatus: true,
+        statusLabel: "Status",
+        statusOptions: getUniqueOptions(adminPayments, (item) => item.status).map((value) => ({
+          value,
+          label: titleCase(value)
+        })),
+        showDate: true,
+        dateLabel: "Created",
+        dateOptions: baseDateOptions
+      },
+      catalog: {
+        showSide: true,
+        title: "Catalog filters",
+        searchLabel: "Service",
+        searchPlaceholder: "Search catalog",
+        showRole: true,
+        roleLabel: "Group",
+        roleOptions: getUniqueOptions(adminCatalog, (item) => item.group).map((value) => ({
+          value,
+          label: value
+        })),
+        showStatus: false,
+        showDate: false
+      }
+    };
+    return configs[view] || { showSide: false };
+  };
+
+  const configureAdminSide = (view) => {
+    const config = getAdminSideConfig(view);
+    adminSide?.classList.toggle("is-hidden", !config.showSide);
+    if (!config.showSide) {
+      return;
+    }
+
+    if (adminSideTitle) adminSideTitle.textContent = config.title || "Filters";
+    if (adminSearchSection) adminSearchSection.classList.remove("is-hidden");
+    if (adminSearchLabel) adminSearchLabel.textContent = config.searchLabel || "Search";
+    if (adminSearch) {
+      adminSearch.placeholder = config.searchPlaceholder || "Search";
+    }
+
+    adminRoleSection?.classList.toggle("is-hidden", !config.showRole);
+    if (adminRoleLabel) adminRoleLabel.textContent = config.roleLabel || "Role";
+    if (config.showRole) {
+      setFilterOptions(adminRoleFilter, config.roleOptions || [], adminRoleFilter?.value);
+    } else if (adminRoleFilter) {
+      adminRoleFilter.value = "all";
+    }
+
+    adminStatusSection?.classList.toggle("is-hidden", !config.showStatus);
+    if (adminStatusLabel) adminStatusLabel.textContent = config.statusLabel || "Status";
+    if (config.showStatus) {
+      setFilterOptions(adminStatusFilter, config.statusOptions || [], adminStatusFilter?.value);
+    } else if (adminStatusFilter) {
+      adminStatusFilter.value = "all";
+    }
+
+    adminDateSection?.classList.toggle("is-hidden", !config.showDate);
+    if (adminDateLabel) adminDateLabel.textContent = config.dateLabel || "Date";
+    if (config.showDate) {
+      setFilterOptions(adminDateFilter, config.dateOptions || [], adminDateFilter?.value);
+    } else if (adminDateFilter) {
+      adminDateFilter.value = "all";
+    }
+
+    syncAdminSideSearchFromView();
+  };
+
+  const showAdminFeedback = (message, type = "success") => {
+    if (!adminActionFeedback) return;
+    if (adminFeedbackTimer) {
+      clearTimeout(adminFeedbackTimer);
+      adminFeedbackTimer = null;
+    }
+    adminActionFeedback.textContent = message;
+    adminActionFeedback.classList.remove("is-hidden", "is-error");
+    adminActionFeedback.classList.toggle("is-error", type === "error");
+    adminFeedbackTimer = window.setTimeout(() => {
+      adminActionFeedback.classList.add("is-hidden");
+      adminActionFeedback.classList.remove("is-error");
+    }, 3500);
+  };
+
+  const renderApplications = () => {
+    if (!adminApplicationsRows) return;
+    const terms = getCombinedSearchTerms("applications");
+    const typeValue = adminRoleFilter?.value || "all";
+    const statusValue = adminStatusFilter?.value || "all";
+    const dateValue = adminDateFilter?.value || "all";
+    const rows = adminApplications.filter((item) => {
+      const matchesTerm = matchesSearchTerms([
+        item.full_name,
+        item.email,
+        item.lead_postcode,
+        item.application_type,
+        item.application_status,
+        item.account_status
+      ], terms);
+      const matchesType =
+        typeValue === "all" ||
+        normaliseFilterToken(item.application_type || item.business_type) === normaliseFilterToken(typeValue);
+      const matchesStatus =
+        statusValue === "all" ||
+        normaliseFilterToken(item.application_status) === normaliseFilterToken(statusValue);
+      const matchesDate = matchesDateFilter(item.created_at, dateValue);
+      return matchesTerm && matchesType && matchesStatus && matchesDate;
+    });
+
+    if (adminApplicationsCount) {
+      adminApplicationsCount.textContent = `${rows.length} applications`;
+    }
+    adminApplicationsRows.innerHTML = "";
+    adminApplicationsEmptyState?.classList.toggle("is-hidden", rows.length > 0);
+    if (!rows.length) return;
+
+    adminApplicationsRows.innerHTML = rows
+      .map(
+        (item) => `
+          <tr>
+            <td>
+              <div class="user-cell">
+                <div class="avatar">${getInitials(item.full_name)}</div>
+                <div class="user-meta">
+                  <strong>${escapeHtml(item.full_name)}</strong>
+                  <span>${escapeHtml(item.email)}</span>
+                </div>
+              </div>
+            </td>
+            <td>${escapeHtml(titleCase(item.application_type || item.business_type || "-"))}</td>
+            <td>${escapeHtml(item.lead_postcode || "-")}</td>
+            <td>${escapeHtml(String(item.documents_count || 0))}</td>
+            <td>${escapeHtml(titleCase(item.application_status || "-"))}</td>
+            <td>${escapeHtml(titleCase(item.account_status || "-"))}</td>
+            <td>${escapeHtml(formatDate(item.created_at))}</td>
+            <td>
+              <div class="admin-actions-cell">
+                <button class="icon-btn" type="button" data-application-action="approve" data-application-user-id="${escapeHtml(String(item.user_id))}" title="Approve">
+                  Approve
+                </button>
+                <button class="icon-btn" type="button" data-application-action="request_info" data-application-user-id="${escapeHtml(String(item.user_id))}" title="Request info">
+                  Info
+                </button>
+                <button class="icon-btn danger" type="button" data-application-action="reject" data-application-user-id="${escapeHtml(String(item.user_id))}" title="Reject">
+                  Reject
+                </button>
+              </div>
+            </td>
+          </tr>`
+      )
+      .join("");
+  };
+
+  const renderBookings = () => {
+    if (!adminBookingsRows) return;
+    const terms = getCombinedSearchTerms("bookings");
+    const statusValue = adminStatusFilter?.value || "all";
+    const dateValue = adminDateFilter?.value || "all";
+    const rows = adminBookings.filter((item) => {
+      const matchesTerm = matchesSearchTerms([
+        item.reference,
+        item.status,
+        item.customer_name,
+        item.mechanic_name,
+        item.vehicle,
+        item.location,
+        item.services
+      ], terms);
+      const matchesStatus =
+        statusValue === "all" ||
+        normaliseFilterToken(item.status) === normaliseFilterToken(statusValue);
+      const matchesDate = matchesDateFilter(item.created_at, dateValue);
+      return matchesTerm && matchesStatus && matchesDate;
+    });
+
+    if (adminBookingsCount) {
+      adminBookingsCount.textContent = `${rows.length} bookings`;
+    }
+    adminBookingsRows.innerHTML = "";
+    adminBookingsEmptyState?.classList.toggle("is-hidden", rows.length > 0);
+    if (!rows.length) return;
+
+    adminBookingsRows.innerHTML = rows
+      .map(
+        (item) => {
+          const status = normaliseFilterToken(item.status);
+          const actions = [];
+          if (["requested", "accepted"].includes(status)) {
+            actions.push(`<button class="icon-btn" type="button" data-booking-action="start" data-booking-id="${escapeHtml(String(item.booking_id))}" title="Start">Start</button>`);
+          }
+          if (["accepted", "in_progress"].includes(status)) {
+            actions.push(`<button class="icon-btn" type="button" data-booking-action="complete" data-booking-id="${escapeHtml(String(item.booking_id))}" title="Complete">Complete</button>`);
+          }
+          if (!["completed", "cancelled", "refunded"].includes(status)) {
+            actions.push(`<button class="icon-btn danger" type="button" data-booking-action="cancel" data-booking-id="${escapeHtml(String(item.booking_id))}" title="Cancel">Cancel</button>`);
+          }
+          return `
+          <tr>
+            <td>${escapeHtml(item.reference)}</td>
+            <td>${escapeHtml(titleCase(item.status))}</td>
+            <td>${escapeHtml(item.customer_name)}</td>
+            <td>${escapeHtml(item.mechanic_name)}</td>
+            <td>${escapeHtml(item.vehicle)}</td>
+            <td>${escapeHtml(item.location)}</td>
+            <td>£${escapeHtml(Number(item.total || 0).toFixed(2))}</td>
+            <td>${escapeHtml(formatDate(item.created_at))}</td>
+            <td>
+              <div class="admin-actions-cell">
+                ${actions.join("") || '<span class="admin-empty-inline">No actions</span>'}
+              </div>
+            </td>
+          </tr>`
+        }
+      )
+      .join("");
+  };
+
+  const renderResolutionCases = () => {
+    if (!adminResolutionRows) return;
+    const terms = getCombinedSearchTerms("resolution");
+    const typeValue = adminRoleFilter?.value || "all";
+    const statusValue = adminStatusFilter?.value || "all";
+    const dateValue = adminDateFilter?.value || "all";
+    const rows = adminResolutionCases.filter((item) => {
+      const matchesTerm = matchesSearchTerms([
+        item.reference,
+        item.type,
+        item.subject,
+        item.status,
+        item.customer_name,
+        item.mechanic_name
+      ], terms);
+      const matchesType =
+        typeValue === "all" ||
+        normaliseFilterToken(item.type) === normaliseFilterToken(typeValue);
+      const matchesStatus =
+        statusValue === "all" ||
+        normaliseFilterToken(item.status) === normaliseFilterToken(statusValue);
+      const matchesDate = matchesDateFilter(item.updated_at, dateValue);
+      return matchesTerm && matchesType && matchesStatus && matchesDate;
+    });
+
+    if (adminResolutionCount) {
+      adminResolutionCount.textContent = `${rows.length} cases`;
+    }
+    adminResolutionRows.innerHTML = "";
+    adminResolutionEmptyState?.classList.toggle("is-hidden", rows.length > 0);
+    if (!rows.length) return;
+
+    adminResolutionRows.innerHTML = rows
+      .map(
+        (item) => {
+          const status = normaliseFilterToken(item.status);
+          const actions = status === "open"
+            ? [`<button class="icon-btn" type="button" data-resolution-action="close" data-resolution-case-id="${escapeHtml(String(item.case_id))}" title="Close">Close</button>`]
+            : [`<button class="icon-btn" type="button" data-resolution-action="reopen" data-resolution-case-id="${escapeHtml(String(item.case_id))}" title="Reopen">Reopen</button>`];
+          return `
+          <tr>
+            <td>${escapeHtml(item.reference)}</td>
+            <td>${escapeHtml(titleCase(item.type))}</td>
+            <td>${escapeHtml(item.subject)}</td>
+            <td>${escapeHtml(titleCase(item.status))}</td>
+            <td>${escapeHtml(item.customer_name)}</td>
+            <td>${escapeHtml(item.mechanic_name)}</td>
+            <td>${escapeHtml(formatDate(item.updated_at))}</td>
+            <td>
+              <div class="admin-actions-cell">
+                ${actions.join("")}
+              </div>
+            </td>
+          </tr>`
+        }
+      )
+      .join("");
+  };
+
+  const renderPayments = () => {
+    if (!adminPaymentsRows) return;
+    const terms = getCombinedSearchTerms("payments");
+    const kindValue = adminRoleFilter?.value || "all";
+    const statusValue = adminStatusFilter?.value || "all";
+    const dateValue = adminDateFilter?.value || "all";
+    const rows = adminPayments.filter((item) => {
+      const matchesTerm = matchesSearchTerms([
+        item.reference,
+        item.kind,
+        item.booking_reference,
+        item.party,
+        item.provider,
+        item.status
+      ], terms);
+      const matchesKind =
+        kindValue === "all" ||
+        normaliseFilterToken(item.kind) === normaliseFilterToken(kindValue);
+      const matchesStatus =
+        statusValue === "all" ||
+        normaliseFilterToken(item.status) === normaliseFilterToken(statusValue);
+      const matchesDate = matchesDateFilter(item.created_at, dateValue);
+      return matchesTerm && matchesKind && matchesStatus && matchesDate;
+    });
+
+    if (adminPaymentsCount) {
+      adminPaymentsCount.textContent = `${rows.length} movements`;
+    }
+    adminPaymentsRows.innerHTML = "";
+    adminPaymentsEmptyState?.classList.toggle("is-hidden", rows.length > 0);
+    if (!rows.length) return;
+
+    adminPaymentsRows.innerHTML = rows
+      .map(
+        (item) => {
+          const kind = normaliseFilterToken(item.kind);
+          const status = normaliseFilterToken(item.status);
+          const actions = [];
+
+          if (kind === "customer_payment") {
+            if (status === "authorized") {
+              actions.push(`<button class="icon-btn" type="button" data-payment-action="capture" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}" title="Capture">Capture</button>`);
+            }
+            if (!["refunded", "failed"].includes(status)) {
+              actions.push(`<button class="icon-btn" type="button" data-payment-action="refund" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}" title="Refund">Refund</button>`);
+            }
+            if (status !== "failed") {
+              actions.push(`<button class="icon-btn danger" type="button" data-payment-action="fail" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}" title="Fail">Fail</button>`);
+            }
+          }
+
+          if (kind === "mechanic_payout") {
+            if (status === "requested") {
+              actions.push(`<button class="icon-btn" type="button" data-payment-action="process" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}" title="Process">Process</button>`);
+            }
+            if (["requested", "processing"].includes(status)) {
+              actions.push(`<button class="icon-btn" type="button" data-payment-action="pay" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}" title="Pay">Pay</button>`);
+            }
+            if (status !== "failed") {
+              actions.push(`<button class="icon-btn danger" type="button" data-payment-action="fail" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}" title="Fail">Fail</button>`);
+            }
+          }
+
+          return `
+          <tr>
+            <td>${escapeHtml(item.reference)}</td>
+            <td>${escapeHtml(titleCase(item.kind))}</td>
+            <td>${escapeHtml(item.booking_reference || "-")}</td>
+            <td>${escapeHtml(item.party)}</td>
+            <td>${escapeHtml(item.provider)}</td>
+            <td>${escapeHtml(titleCase(item.status))}</td>
+            <td>€${escapeHtml(Number(item.amount || 0).toFixed(2))}</td>
+            <td>${escapeHtml(formatDate(item.created_at))}</td>
+            <td>
+              <div class="admin-actions-cell">
+                ${actions.join("") || '<span class="admin-empty-inline">No actions</span>'}
+              </div>
+            </td>
+          </tr>`
+        }
+      )
+      .join("");
+  };
+
+  const renderCatalog = () => {
+    if (!adminCatalogRows) return;
+    const terms = getCombinedSearchTerms("catalog");
+    const groupValue = adminRoleFilter?.value || "all";
+    const rows = adminCatalog.filter((item) => {
+      const matchesTerm = matchesSearchTerms([
+        item.group,
+        item.subcategory,
+        item.name,
+        item.code
+      ], terms);
+      const matchesGroup =
+        groupValue === "all" ||
+        normaliseFilterToken(item.group) === normaliseFilterToken(groupValue);
+      return matchesTerm && matchesGroup;
+    });
+
+    if (adminCatalogCount) {
+      adminCatalogCount.textContent = `${rows.length} services`;
+    }
+    adminCatalogRows.innerHTML = "";
+    adminCatalogEmptyState?.classList.toggle("is-hidden", rows.length > 0);
+    if (!rows.length) return;
+
+    adminCatalogRows.innerHTML = rows
+      .map(
+        (item) => `
+          <tr>
+            <td>${escapeHtml(item.group)}</td>
+            <td>${escapeHtml(item.subcategory)}</td>
+            <td>${escapeHtml(item.name)}</td>
+            <td>${escapeHtml(item.code)}</td>
+            <td>${escapeHtml(String(item.base_labour_minutes ?? "-"))}</td>
+            <td>${item.price == null ? "-" : `€${escapeHtml(Number(item.price).toFixed(2))}`}</td>
+            <td>
+              <div class="admin-actions-cell">
+                <button class="icon-btn" type="button" data-catalog-direction="up" data-catalog-service-id="${escapeHtml(String(item.service_id))}" title="Move up">Up</button>
+                <button class="icon-btn" type="button" data-catalog-direction="down" data-catalog-service-id="${escapeHtml(String(item.service_id))}" title="Move down">Down</button>
+              </div>
+            </td>
+          </tr>`
+      )
+      .join("");
   };
 
   const renderUsers = (users) => {
@@ -2172,6 +2835,188 @@ if (adminPage) {
     return false;
   };
 
+  const fetchApplications = async () => {
+    const token = getAdminToken();
+    if (!token) return;
+    try {
+      adminApplications = await apiAuth("/api/admin/applications", token);
+      configureAdminSide(activeAdminView);
+      renderApplications();
+    } catch (err) {
+      console.error("Unable to load admin applications", err);
+    }
+  };
+
+  const updateAdminApplicationStatus = async (userId, action) => {
+    const token = getAdminToken();
+    if (!token) return;
+    const updated = await apiAuth(`/api/admin/applications/${encodeURIComponent(userId)}/status`, token, {
+      method: "PATCH",
+      body: JSON.stringify({ action })
+    });
+    adminApplications = adminApplications.map((item) =>
+      Number(item.user_id) === Number(userId) ? { ...item, ...updated } : item
+    );
+    configureAdminSide(activeAdminView);
+    renderApplications();
+    fetchDashboardSummary();
+    showAdminFeedback(`Application updated: ${titleCase(action)}.`);
+  };
+
+  const fetchBookings = async () => {
+    const token = getAdminToken();
+    if (!token) return;
+    try {
+      adminBookings = await apiAuth("/api/admin/bookings", token);
+      configureAdminSide(activeAdminView);
+      renderBookings();
+    } catch (err) {
+      console.error("Unable to load admin bookings", err);
+    }
+  };
+
+  const updateAdminBookingStatus = async (bookingId, action) => {
+    const token = getAdminToken();
+    if (!token) return;
+    const updated = await apiAuth(`/api/admin/bookings/${encodeURIComponent(bookingId)}/status`, token, {
+      method: "PATCH",
+      body: JSON.stringify({ action })
+    });
+    adminBookings = adminBookings.map((item) =>
+      Number(item.booking_id) === Number(bookingId) ? { ...item, ...updated } : item
+    );
+    configureAdminSide(activeAdminView);
+    renderBookings();
+    fetchDashboardSummary();
+    showAdminFeedback(`Booking updated: ${titleCase(action)}.`);
+  };
+
+  const fetchResolutionCases = async () => {
+    const token = getAdminToken();
+    if (!token) return;
+    try {
+      adminResolutionCases = await apiAuth("/api/admin/resolution-cases", token);
+      configureAdminSide(activeAdminView);
+      renderResolutionCases();
+    } catch (err) {
+      console.error("Unable to load admin resolution cases", err);
+    }
+  };
+
+  const updateAdminResolutionCaseStatus = async (caseId, action) => {
+    const token = getAdminToken();
+    if (!token) return;
+    const updated = await apiAuth(`/api/admin/resolution-cases/${encodeURIComponent(caseId)}/status`, token, {
+      method: "PATCH",
+      body: JSON.stringify({ action })
+    });
+    adminResolutionCases = adminResolutionCases.map((item) =>
+      Number(item.case_id) === Number(caseId) ? { ...item, ...updated } : item
+    );
+    configureAdminSide(activeAdminView);
+    renderResolutionCases();
+    fetchDashboardSummary();
+    showAdminFeedback(`Case updated: ${titleCase(action)}.`);
+  };
+
+  const fetchDashboardSummary = async () => {
+    const token = getAdminToken();
+    if (!token) return;
+    try {
+      const summary = await apiAuth("/api/admin/dashboard-summary", token);
+      if (adminMetricBookingsToday) adminMetricBookingsToday.textContent = String(summary.bookings_today ?? 0);
+      if (adminMetricOpenCases) adminMetricOpenCases.textContent = String(summary.open_cases ?? 0);
+      if (adminMetricPendingApplications) {
+        adminMetricPendingApplications.textContent = String(summary.pending_applications ?? 0);
+      }
+      if (adminMetricPendingPayouts) adminMetricPendingPayouts.textContent = String(summary.pending_payouts ?? 0);
+    } catch (err) {
+      console.error("Unable to load admin dashboard summary", err);
+    }
+  };
+
+  const fetchPayments = async () => {
+    const token = getAdminToken();
+    if (!token) return;
+    try {
+      adminPayments = await apiAuth("/api/admin/payments", token);
+      configureAdminSide(activeAdminView);
+      renderPayments();
+    } catch (err) {
+      console.error("Unable to load admin payments", err);
+    }
+  };
+
+  const updateAdminPaymentStatus = async (recordId, kind, action) => {
+    const token = getAdminToken();
+    if (!token) return;
+    const updated = await apiAuth(`/api/admin/payments/${encodeURIComponent(recordId)}/status`, token, {
+      method: "PATCH",
+      body: JSON.stringify({ kind, action })
+    });
+    adminPayments = adminPayments.map((item) =>
+      String(item.kind) === String(kind) && Number(item.record_id) === Number(recordId) ? { ...item, ...updated } : item
+    );
+    configureAdminSide(activeAdminView);
+    renderPayments();
+    fetchDashboardSummary();
+    showAdminFeedback(`Payment updated: ${titleCase(action)}.`);
+  };
+
+  const fetchCatalog = async () => {
+    try {
+      const tree = await api("/api/catalog/services-tree?region=UK-default");
+      adminCatalog = [];
+      (tree || []).forEach((group) => {
+        (group.subcategories || []).forEach((subcategory) => {
+          (subcategory.services || []).forEach((service) => {
+            adminCatalog.push({
+              service_id: service.id,
+              group: group.label || group.key || "-",
+              subcategory: subcategory.label || subcategory.key || "-",
+              name: service.name || "-",
+              code: service.code || "-",
+              base_labour_minutes: service.base_labour_minutes,
+              display_order: service.display_order,
+              price: service.price
+            });
+          });
+        });
+      });
+      configureAdminSide(activeAdminView);
+      renderCatalog();
+    } catch (err) {
+      console.error("Unable to load admin catalog", err);
+    }
+  };
+
+  const updateAdminCatalogOrder = async (serviceId, direction) => {
+    const token = getAdminToken();
+    if (!token) return;
+    const updated = await apiAuth(`/api/admin/catalog/${encodeURIComponent(serviceId)}/order`, token, {
+      method: "PATCH",
+      body: JSON.stringify({ direction })
+    });
+    adminCatalog = adminCatalog
+      .map((item) =>
+        Number(item.service_id) === Number(serviceId)
+          ? { ...item, ...updated }
+          : item
+      )
+      .sort((a, b) => {
+        const groupSort = String(a.group).localeCompare(String(b.group));
+        if (groupSort !== 0) return groupSort;
+        const subSort = String(a.subcategory).localeCompare(String(b.subcategory));
+        if (subSort !== 0) return subSort;
+        const orderSort = Number(a.display_order || 0) - Number(b.display_order || 0);
+        if (orderSort !== 0) return orderSort;
+        return String(a.name).localeCompare(String(b.name));
+      });
+    configureAdminSide(activeAdminView);
+    renderCatalog();
+    showAdminFeedback(`Catalog order updated: moved ${titleCase(direction)}.`);
+  };
+
   adminLogoutBtn?.addEventListener("click", () => {
     clearAdminSession();
     window.location.replace("/");
@@ -2180,7 +3025,15 @@ if (adminPage) {
   adminNavLinks.forEach((link) => {
     link.addEventListener("click", () => {
       const view = link.dataset.view;
+      activeAdminView = view;
       adminNavLinks.forEach((btn) => btn.classList.toggle("active", btn === link));
+      configureAdminSide(view);
+      adminDashboardView?.classList.toggle("is-hidden", view !== "dashboard");
+      adminApplicationsView?.classList.toggle("is-hidden", view !== "applications");
+      adminBookingsView?.classList.toggle("is-hidden", view !== "bookings");
+      adminResolutionView?.classList.toggle("is-hidden", view !== "resolution");
+      adminPaymentsView?.classList.toggle("is-hidden", view !== "payments");
+      adminCatalogView?.classList.toggle("is-hidden", view !== "catalog");
       adminProfileView.classList.toggle("is-hidden", view !== "profile");
       adminUsersView.classList.toggle("is-hidden", view !== "users");
       adminSettingsView?.classList.toggle("is-hidden", view !== "settings");
@@ -2188,10 +3041,137 @@ if (adminPage) {
   });
 
   adminExportBtn?.addEventListener("click", exportUsers);
-  adminSearch?.addEventListener("input", applyFilters);
-  adminRoleFilter?.addEventListener("change", applyFilters);
-  adminStatusFilter?.addEventListener("change", applyFilters);
-  adminDateFilter?.addEventListener("change", applyFilters);
+  adminSearch?.addEventListener("input", () => {
+    syncAdminViewSearchFromSide();
+    if (activeAdminView === "users") return applyFilters();
+    if (activeAdminView === "applications") return renderApplications();
+    if (activeAdminView === "bookings") return renderBookings();
+    if (activeAdminView === "resolution") return renderResolutionCases();
+    if (activeAdminView === "payments") return renderPayments();
+    if (activeAdminView === "catalog") return renderCatalog();
+  });
+  adminApplicationsSearch?.addEventListener("input", () => {
+    syncAdminSideSearchFromView();
+    renderApplications();
+  });
+  adminApplicationsRows?.addEventListener("click", async (event) => {
+    const actionButton = event.target.closest("[data-application-action]");
+    if (!actionButton) return;
+    const userId = Number(actionButton.dataset.applicationUserId);
+    const action = actionButton.dataset.applicationAction;
+    if (!userId || !action) return;
+    actionButton.disabled = true;
+    try {
+      await updateAdminApplicationStatus(userId, action);
+    } catch (err) {
+      console.error("Unable to update application status", err);
+      showAdminFeedback(err?.error?.message || err?.message || "Unable to update application.", "error");
+    } finally {
+      actionButton.disabled = false;
+    }
+  });
+  adminBookingsSearch?.addEventListener("input", () => {
+    syncAdminSideSearchFromView();
+    renderBookings();
+  });
+  adminBookingsRows?.addEventListener("click", async (event) => {
+    const actionButton = event.target.closest("[data-booking-action]");
+    if (!actionButton) return;
+    const bookingId = Number(actionButton.dataset.bookingId);
+    const action = actionButton.dataset.bookingAction;
+    if (!bookingId || !action) return;
+    actionButton.disabled = true;
+    try {
+      await updateAdminBookingStatus(bookingId, action);
+    } catch (err) {
+      console.error("Unable to update booking status", err);
+      showAdminFeedback(err?.error?.message || err?.message || "Unable to update booking.", "error");
+    } finally {
+      actionButton.disabled = false;
+    }
+  });
+  adminResolutionSearch?.addEventListener("input", () => {
+    syncAdminSideSearchFromView();
+    renderResolutionCases();
+  });
+  adminResolutionRows?.addEventListener("click", async (event) => {
+    const actionButton = event.target.closest("[data-resolution-action]");
+    if (!actionButton) return;
+    const caseId = Number(actionButton.dataset.resolutionCaseId);
+    const action = actionButton.dataset.resolutionAction;
+    if (!caseId || !action) return;
+    actionButton.disabled = true;
+    try {
+      await updateAdminResolutionCaseStatus(caseId, action);
+    } catch (err) {
+      console.error("Unable to update resolution case status", err);
+      showAdminFeedback(err?.error?.message || err?.message || "Unable to update case.", "error");
+    } finally {
+      actionButton.disabled = false;
+    }
+  });
+  adminPaymentsSearch?.addEventListener("input", () => {
+    syncAdminSideSearchFromView();
+    renderPayments();
+  });
+  adminPaymentsRows?.addEventListener("click", async (event) => {
+    const actionButton = event.target.closest("[data-payment-action]");
+    if (!actionButton) return;
+    const recordId = Number(actionButton.dataset.paymentRecordId);
+    const kind = actionButton.dataset.paymentKind;
+    const action = actionButton.dataset.paymentAction;
+    if (!recordId || !kind || !action) return;
+    actionButton.disabled = true;
+    try {
+      await updateAdminPaymentStatus(recordId, kind, action);
+    } catch (err) {
+      console.error("Unable to update payment status", err);
+      showAdminFeedback(err?.error?.message || err?.message || "Unable to update payment.", "error");
+    } finally {
+      actionButton.disabled = false;
+    }
+  });
+  adminCatalogSearch?.addEventListener("input", () => {
+    syncAdminSideSearchFromView();
+    renderCatalog();
+  });
+  adminCatalogRows?.addEventListener("click", async (event) => {
+    const actionButton = event.target.closest("[data-catalog-direction]");
+    if (!actionButton) return;
+    const serviceId = Number(actionButton.dataset.catalogServiceId);
+    const direction = actionButton.dataset.catalogDirection;
+    if (!serviceId || !direction) return;
+    actionButton.disabled = true;
+    try {
+      await updateAdminCatalogOrder(serviceId, direction);
+    } catch (err) {
+      console.error("Unable to update catalog order", err);
+      showAdminFeedback(err?.error?.message || err?.message || "Unable to update catalog.", "error");
+    } finally {
+      actionButton.disabled = false;
+    }
+  });
+  adminRoleFilter?.addEventListener("change", () => {
+    if (activeAdminView === "users") return applyFilters();
+    if (activeAdminView === "applications") return renderApplications();
+    if (activeAdminView === "resolution") return renderResolutionCases();
+    if (activeAdminView === "payments") return renderPayments();
+    if (activeAdminView === "catalog") return renderCatalog();
+  });
+  adminStatusFilter?.addEventListener("change", () => {
+    if (activeAdminView === "users") return applyFilters();
+    if (activeAdminView === "applications") return renderApplications();
+    if (activeAdminView === "bookings") return renderBookings();
+    if (activeAdminView === "resolution") return renderResolutionCases();
+    if (activeAdminView === "payments") return renderPayments();
+  });
+  adminDateFilter?.addEventListener("change", () => {
+    if (activeAdminView === "users") return applyFilters();
+    if (activeAdminView === "applications") return renderApplications();
+    if (activeAdminView === "bookings") return renderBookings();
+    if (activeAdminView === "resolution") return renderResolutionCases();
+    if (activeAdminView === "payments") return renderPayments();
+  });
   adminRowsPerPage?.addEventListener("change", () => {
     pageSize = Number(adminRowsPerPage.value);
     currentPage = 1;
@@ -2227,15 +3207,24 @@ if (adminPage) {
       });
       adminAddUserForm.reset();
       adminAddUserPanel.classList.add("is-hidden");
+      showAdminFeedback("User created successfully.");
       fetchUsers();
     } catch (err) {
       adminAddUserError.textContent = err?.error?.message || "Unable to create user.";
+      showAdminFeedback(err?.error?.message || err?.message || "Unable to create user.", "error");
     }
   });
 
   const hasProfile = ensureAdminProfile();
   if (hasProfile) {
+    configureAdminSide(activeAdminView);
+    fetchDashboardSummary();
     fetchUsers();
+    fetchApplications();
+    fetchBookings();
+    fetchResolutionCases();
+    fetchPayments();
+    fetchCatalog();
   } else {
     adminLoginError.textContent = "Admins only. Please sign in first.";
   }

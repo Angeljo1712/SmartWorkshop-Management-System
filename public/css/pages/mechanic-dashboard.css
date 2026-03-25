@@ -1,4 +1,4 @@
-body.admin-body .mechanic-layout {
+body.mechanic-body .mechanic-layout {
   position: relative;
   display: grid;
   grid-template-columns: 150px minmax(0, 1fr);
@@ -10,18 +10,18 @@ body.admin-body .mechanic-layout {
   gap: 18px;
 }
 
-body.admin-body .mechanic-layout > .mechanic-rail,
-body.admin-body .mechanic-layout > .mechanic-content,
-body.admin-body .mechanic-layout > .is-hidden {
+body.mechanic-body .mechanic-layout > .mechanic-rail,
+body.mechanic-body .mechanic-layout > .mechanic-content,
+body.mechanic-body .mechanic-layout > .is-hidden {
   position: relative;
   z-index: 1;
 }
 
-body.admin-body .mechanic-layout > .mechanic-rail {
+body.mechanic-body .mechanic-layout > .mechanic-rail {
   grid-area: rail;
 }
 
-body.admin-body .mechanic-subnav {
+body.mechanic-body .mechanic-subnav {
   grid-area: subnav;
   position: relative;
   z-index: 1;
@@ -39,7 +39,7 @@ body.admin-body .mechanic-subnav {
   width: 100%;
 }
 
-body.admin-body .mechanic-subnav .settings-subnav-link {
+body.mechanic-body .mechanic-subnav .settings-subnav-link {
   min-width: 0;
   white-space: nowrap;
   color: #ffffff;
@@ -53,7 +53,7 @@ body.admin-body .mechanic-subnav .settings-subnav-link {
   box-shadow: none;
 }
 
-body.admin-body .mechanic-subnav .settings-subnav-link .rail-icon {
+body.mechanic-body .mechanic-subnav .settings-subnav-link .rail-icon {
   width: 18px;
   height: 18px;
   display: inline-flex;
@@ -61,7 +61,7 @@ body.admin-body .mechanic-subnav .settings-subnav-link .rail-icon {
   justify-content: center;
 }
 
-body.admin-body .mechanic-subnav .settings-subnav-link .rail-icon svg {
+body.mechanic-body .mechanic-subnav .settings-subnav-link .rail-icon svg {
   width: 16px;
   height: 16px;
   stroke: currentColor;
@@ -71,48 +71,48 @@ body.admin-body .mechanic-subnav .settings-subnav-link .rail-icon svg {
   stroke-linejoin: round;
 }
 
-body.admin-body .mechanic-subnav .settings-subnav-link.active {
+body.mechanic-body .mechanic-subnav .settings-subnav-link.active {
   background: #1f2632;
   color: #ffffff;
   border-color: #ffffff;
 }
 
-body.admin-body .mechanic-subnav .settings-subnav-link:hover {
+body.mechanic-body .mechanic-subnav .settings-subnav-link:hover {
   background: rgba(255, 255, 255, 0.1);
 }
 
-body.admin-body .mechanic-layout .mechanic-rail {
+body.mechanic-body .mechanic-layout .mechanic-rail {
   min-height: 100%;
   height: 100%;
   align-self: stretch;
 }
 
-body.admin-body .mechanic-layout .mechanic-rail .rail-item {
+body.mechanic-body .mechanic-layout .mechanic-rail .rail-item {
   border: 1px solid transparent;
   border-radius: 12px;
 }
 
-body.admin-body .mechanic-layout .mechanic-rail .rail-item:hover {
+body.mechanic-body .mechanic-layout .mechanic-rail .rail-item:hover {
   background: rgba(255, 255, 255, 0.1);
 }
 
-body.admin-body .mechanic-layout .mechanic-rail .rail-item.active {
+body.mechanic-body .mechanic-layout .mechanic-rail .rail-item.active {
   background: #1f2632;
   color: #ffffff;
   border-color: #ffffff;
 }
 
-body.admin-body .mechanic-layout > .mechanic-rail,
-body.admin-body .mechanic-layout > .mechanic-content {
+body.mechanic-body .mechanic-layout > .mechanic-rail,
+body.mechanic-body .mechanic-layout > .mechanic-content {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
 }
 
-body.admin-body .mechanic-layout > .mechanic-content {
+body.mechanic-body .mechanic-layout > .mechanic-content {
   border: 2px solid #ffffff;
   border-radius: 14px;
 }
 
-body.admin-body .mechanic-content {
+body.mechanic-body .mechanic-content {
   grid-area: content;
   position: static;
   z-index: auto;
@@ -123,26 +123,26 @@ body.admin-body .mechanic-content {
   grid-template-columns: 1fr;
 }
 
-body.admin-body .mechanic-dashboard-layout {
+body.mechanic-body .mechanic-dashboard-layout {
   display: grid;
   grid-template-columns: 1fr;
   gap: 18px;
 }
 
-body.admin-body .mechanic-certifications-layout {
+body.mechanic-body .mechanic-certifications-layout {
   display: grid;
   grid-template-columns: 1fr;
   gap: 18px;
 }
 
-body.admin-body .mechanic-cert-card {
+body.mechanic-body .mechanic-cert-card {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 22px;
   background: #171c24;
   overflow: hidden;
 }
 
-body.admin-body .mechanic-cert-card h3 {
+body.mechanic-body .mechanic-cert-card h3 {
   margin: 0;
   padding: 18px 22px;
   font-size: 1.05rem;
@@ -150,28 +150,28 @@ body.admin-body .mechanic-cert-card h3 {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-body.admin-body .mechanic-cert-copy,
-body.admin-body .mechanic-cert-empty {
+body.mechanic-body .mechanic-cert-copy,
+body.mechanic-body .mechanic-cert-empty {
   margin: 0;
   padding: 20px 22px 0;
   color: #d6dfef;
   line-height: 1.6;
 }
 
-body.admin-body .mechanic-cert-entry {
+body.mechanic-body .mechanic-cert-entry {
   margin: 18px 22px 0;
   padding: 0 0 18px;
   border-left: 4px solid #1e93f2;
 }
 
-body.admin-body .mechanic-cert-entry label {
+body.mechanic-body .mechanic-cert-entry label {
   display: block;
   margin: 0 0 8px 16px;
   color: #d6dfef;
   font-size: 0.95rem;
 }
 
-body.admin-body .mechanic-cert-entry select {
+body.mechanic-body .mechanic-cert-entry select {
   display: block;
   width: calc(100% - 16px);
   margin-left: 16px;
@@ -183,8 +183,8 @@ body.admin-body .mechanic-cert-entry select {
   color: #111827;
 }
 
-body.admin-body .mechanic-cert-remove,
-body.admin-body .mechanic-cert-link {
+body.mechanic-body .mechanic-cert-remove,
+body.mechanic-body .mechanic-cert-link {
   margin-left: 22px;
   margin-bottom: 18px;
   padding: 0;
@@ -195,33 +195,33 @@ body.admin-body .mechanic-cert-link {
   cursor: pointer;
 }
 
-body.admin-body .mechanic-cert-link {
+body.mechanic-body .mechanic-cert-link {
   margin-top: 8px;
 }
 
-body.admin-body .mechanic-cert-actions {
+body.mechanic-body .mechanic-cert-actions {
   display: flex;
   justify-content: flex-start;
 }
 
-body.admin-body .mechanic-cert-actions .primary {
+body.mechanic-body .mechanic-cert-actions .primary {
   min-width: 180px;
 }
 
-body.admin-body .mechanic-tax-layout {
+body.mechanic-body .mechanic-tax-layout {
   display: grid;
   grid-template-columns: 1fr;
   gap: 18px;
 }
 
-body.admin-body .mechanic-tax-card {
+body.mechanic-body .mechanic-tax-card {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 22px;
   background: #171c24;
   overflow: hidden;
 }
 
-body.admin-body .mechanic-tax-card h3 {
+body.mechanic-body .mechanic-tax-card h3 {
   margin: 0;
   padding: 18px 22px;
   font-size: 1.05rem;
@@ -229,18 +229,18 @@ body.admin-body .mechanic-tax-card h3 {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-body.admin-body .mechanic-tax-body {
+body.mechanic-body .mechanic-tax-body {
   padding: 22px;
 }
 
-body.admin-body .mechanic-tax-body label {
+body.mechanic-body .mechanic-tax-body label {
   display: block;
   margin: 0 0 8px;
   color: #d6dfef;
   font-size: 0.95rem;
 }
 
-body.admin-body .mechanic-tax-body input {
+body.mechanic-body .mechanic-tax-body input {
   display: block;
   width: 100%;
   min-height: 48px;
@@ -251,49 +251,49 @@ body.admin-body .mechanic-tax-body input {
   color: #111827;
 }
 
-body.admin-body .mechanic-tax-actions {
+body.mechanic-body .mechanic-tax-actions {
   display: flex;
   justify-content: flex-start;
 }
 
-body.admin-body .mechanic-tax-actions .primary {
+body.mechanic-body .mechanic-tax-actions .primary {
   min-width: 180px;
 }
 
-body.admin-body .mechanic-documents-layout {
+body.mechanic-body .mechanic-documents-layout {
   display: grid;
   grid-template-columns: 1fr;
   gap: 18px;
 }
 
-body.admin-body .mechanic-documents-copy p {
+body.mechanic-body .mechanic-documents-copy p {
   margin: 0 0 20px;
   color: #d6dfef;
   line-height: 1.6;
 }
 
-body.admin-body .mechanic-documents-copy ul {
+body.mechanic-body .mechanic-documents-copy ul {
   margin: 0;
   padding-left: 22px;
   color: #d6dfef;
 }
 
-body.admin-body .mechanic-documents-copy li + li {
+body.mechanic-body .mechanic-documents-copy li + li {
   margin-top: 16px;
 }
 
-body.admin-body .mechanic-documents-copy li::marker {
+body.mechanic-body .mechanic-documents-copy li::marker {
   color: #1e93f2;
 }
 
-body.admin-body .mechanic-documents-card {
+body.mechanic-body .mechanic-documents-card {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 22px;
   background: #171c24;
   overflow: hidden;
 }
 
-body.admin-body .mechanic-documents-card h3 {
+body.mechanic-body .mechanic-documents-card h3 {
   margin: 0;
   padding: 18px 22px;
   font-size: 1.05rem;
@@ -301,51 +301,51 @@ body.admin-body .mechanic-documents-card h3 {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-body.admin-body .mechanic-documents-body {
+body.mechanic-body .mechanic-documents-body {
   padding: 22px;
   display: grid;
   gap: 18px;
 }
 
-body.admin-body .mechanic-documents-body input[type="file"] {
+body.mechanic-body .mechanic-documents-body input[type="file"] {
   color: #d6dfef;
 }
 
-body.admin-body .mechanic-documents-body .primary {
+body.mechanic-body .mechanic-documents-body .primary {
   min-width: 180px;
 }
 
-body.admin-body .mechanic-types-layout {
+body.mechanic-body .mechanic-types-layout {
   display: grid;
   grid-template-columns: 1fr;
   gap: 18px;
 }
 
-body.admin-body .mechanic-types-copy h3 {
+body.mechanic-body .mechanic-types-copy h3 {
   margin: 0 0 24px;
   font-size: 2rem;
   color: #ffffff;
 }
 
-body.admin-body .mechanic-types-copy p {
+body.mechanic-body .mechanic-types-copy p {
   margin: 0 0 20px;
   color: #d6dfef;
   line-height: 1.65;
   max-width: 980px;
 }
 
-body.admin-body .mechanic-types-card {
+body.mechanic-body .mechanic-types-card {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 22px;
   background: #171c24;
   overflow: hidden;
 }
 
-body.admin-body .mechanic-types-group + .mechanic-types-group {
+body.mechanic-body .mechanic-types-group + .mechanic-types-group {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-body.admin-body .mechanic-types-row {
+body.mechanic-body .mechanic-types-row {
   width: 100%;
   min-height: 74px;
   padding: 0 18px;
@@ -359,15 +359,15 @@ body.admin-body .mechanic-types-row {
   cursor: pointer;
 }
 
-body.admin-body .mechanic-types-group > summary {
+body.mechanic-body .mechanic-types-group > summary {
   list-style: none;
 }
 
-body.admin-body .mechanic-types-group > summary::-webkit-details-marker {
+body.mechanic-body .mechanic-types-group > summary::-webkit-details-marker {
   display: none;
 }
 
-body.admin-body .mechanic-types-row-left {
+body.mechanic-body .mechanic-types-row-left {
   display: inline-flex;
   align-items: center;
   gap: 14px;
@@ -375,7 +375,7 @@ body.admin-body .mechanic-types-row-left {
   font-weight: 700;
 }
 
-body.admin-body .mechanic-types-check {
+body.mechanic-body .mechanic-types-check {
   width: 28px;
   height: 28px;
   border-radius: 8px;
@@ -386,42 +386,42 @@ body.admin-body .mechanic-types-check {
   justify-content: center;
 }
 
-body.admin-body .mechanic-types-check input {
+body.mechanic-body .mechanic-types-check input {
   width: 16px;
   height: 16px;
   accent-color: #1e93f2;
 }
 
-body.admin-body .mechanic-types-arrow {
+body.mechanic-body .mechanic-types-arrow {
   font-size: 2rem;
   line-height: 1;
   color: #ffffff;
   transition: transform 160ms ease;
 }
 
-body.admin-body .mechanic-types-group[open] .mechanic-types-arrow {
+body.mechanic-body .mechanic-types-group[open] .mechanic-types-arrow {
   transform: rotate(90deg);
 }
 
-body.admin-body .mechanic-types-group-body {
+body.mechanic-body .mechanic-types-group-body {
   padding: 0 18px 14px 18px;
   display: grid;
   gap: 10px;
 }
 
-body.admin-body .mechanic-types-subcategory {
+body.mechanic-body .mechanic-types-subcategory {
   display: grid;
   gap: 8px;
 }
 
-body.admin-body .mechanic-types-subtitle {
+body.mechanic-body .mechanic-types-subtitle {
   padding: 8px 10px 2px;
   color: #d6dfef;
   font-size: 0.95rem;
   font-weight: 700;
 }
 
-body.admin-body .mechanic-types-service {
+body.mechanic-body .mechanic-types-service {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -432,32 +432,32 @@ body.admin-body .mechanic-types-service {
   color: #ffffff;
 }
 
-body.admin-body .mechanic-types-service input {
+body.mechanic-body .mechanic-types-service input {
   width: 16px;
   height: 16px;
   accent-color: #ffffff;
 }
 
-body.admin-body .mechanic-types-service input:not(:checked) + span {
+body.mechanic-body .mechanic-types-service input:not(:checked) + span {
   opacity: 0.72;
 }
 
-body.admin-body .mechanic-types-service:has(input:not(:checked)) {
+body.mechanic-body .mechanic-types-service:has(input:not(:checked)) {
   background: rgba(255, 255, 255, 0.08);
 }
 
-body.admin-body .mechanic-types-actions {
+body.mechanic-body .mechanic-types-actions {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-body.admin-body #mechanicTypesStatus {
+body.mechanic-body #mechanicTypesStatus {
   margin: 0;
   color: #d6dfef;
 }
 
-body.admin-body .mechanic-types-actions .primary {
+body.mechanic-body .mechanic-types-actions .primary {
   min-width: 220px;
 }
 
@@ -472,29 +472,29 @@ body.admin-body .mechanic-types-actions .primary {
   align-items: start;
 }
 
-body.admin-body #mechanicSettingsView .settings-section--welcome {
+body.mechanic-body #mechanicSettingsView .settings-section--welcome {
   grid-area: welcome;
 }
 
-body.admin-body #mechanicSettingsView .settings-section--divider {
+body.mechanic-body #mechanicSettingsView .settings-section--divider {
   grid-area: divider;
 }
 
-body.admin-body #mechanicSettingsView .settings-section--layout,
-body.admin-body #mechanicSettingsView .settings-layout {
+body.mechanic-body #mechanicSettingsView .settings-section--layout,
+body.mechanic-body #mechanicSettingsView .settings-layout {
   display: contents;
 }
 
-body.admin-body #mechanicSettingsView .settings-panel {
+body.mechanic-body #mechanicSettingsView .settings-panel {
   grid-area: panel;
   display: grid;
 }
 
-body.admin-body #mechanicSettingsView .settings-subview {
+body.mechanic-body #mechanicSettingsView .settings-subview {
   display: grid;
 }
 
-body.admin-body #mechanicSettingsView .settings-subnav {
+body.mechanic-body #mechanicSettingsView .settings-subnav {
   grid-area: subnav;
   background: #475a72;
   border: 2px solid #ffffff;
@@ -505,69 +505,69 @@ body.admin-body #mechanicSettingsView .settings-subnav {
   height: 100%;
 }
 
-body.admin-body #mechanicSettingsView .settings-subnav-link {
+body.mechanic-body #mechanicSettingsView .settings-subnav-link {
   color: #e8edf6;
   border-radius: 8px;
 }
 
-body.admin-body #mechanicSettingsView .settings-subnav-link:hover {
+body.mechanic-body #mechanicSettingsView .settings-subnav-link:hover {
   background: rgba(255, 255, 255, 0.1);
 }
 
-body.admin-body #mechanicSettingsView .settings-subnav-link.active {
+body.mechanic-body #mechanicSettingsView .settings-subnav-link.active {
   background: #0d1220;
   border-color: rgba(255, 255, 255, 0.28);
   color: #ffffff;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
-body.admin-body #mechanicSettingsView .settings-divider {
+body.mechanic-body #mechanicSettingsView .settings-divider {
   background: #ffffff;
   opacity: 1;
 }
 
-body.admin-body #mechanicSettingsView .settings-header h2,
-body.admin-body #mechanicSettingsView .settings-header p,
-body.admin-body #mechanicSettingsView .user-welcome-corner,
-body.admin-body #mechanicSettingsView .user-welcome-corner-subtitle,
-body.admin-body #mechanicSettingsView .settings-profile h4,
-body.admin-body #mechanicSettingsView .settings-profile p,
-body.admin-body #mechanicSettingsView .settings-row h4,
-body.admin-body #mechanicSettingsView .settings-row p,
-body.admin-body #mechanicSettingsView .form-error {
+body.mechanic-body #mechanicSettingsView .settings-header h2,
+body.mechanic-body #mechanicSettingsView .settings-header p,
+body.mechanic-body #mechanicSettingsView .user-welcome-corner,
+body.mechanic-body #mechanicSettingsView .user-welcome-corner-subtitle,
+body.mechanic-body #mechanicSettingsView .settings-profile h4,
+body.mechanic-body #mechanicSettingsView .settings-profile p,
+body.mechanic-body #mechanicSettingsView .settings-row h4,
+body.mechanic-body #mechanicSettingsView .settings-row p,
+body.mechanic-body #mechanicSettingsView .form-error {
   color: #ffffff;
 }
 
-body.admin-body #mechanicSettingsView .secondary,
-body.admin-body #mechanicSettingsView .ghost {
+body.mechanic-body #mechanicSettingsView .secondary,
+body.mechanic-body #mechanicSettingsView .ghost {
   background: #4f627b;
   border-color: #4f627b;
   color: #ffffff;
 }
 
-body.admin-body #mechanicSettingsView .settings-contact-list {
+body.mechanic-body #mechanicSettingsView .settings-contact-list {
   display: grid;
   gap: 14px;
 }
 
-body.admin-body #mechanicSettingsView .settings-contact-copy {
+body.mechanic-body #mechanicSettingsView .settings-contact-copy {
   display: grid;
   gap: 6px;
 }
 
-body.admin-body #mechanicSettingsView .settings-contact-label,
-body.admin-body #mechanicSettingsView .settings-contact-copy p {
+body.mechanic-body #mechanicSettingsView .settings-contact-label,
+body.mechanic-body #mechanicSettingsView .settings-contact-copy p {
   color: #ffffff;
 }
 
-body.admin-body #mechanicSettingsView .settings-contact-actions {
+body.mechanic-body #mechanicSettingsView .settings-contact-actions {
   display: grid;
   gap: 14px;
   align-content: start;
   justify-items: end;
 }
 
-body.admin-body #mechanicSettingsNotifications .notifications-card {
+body.mechanic-body #mechanicSettingsNotifications .notifications-card {
   display: grid;
   gap: 28px;
   padding: 24px;
@@ -577,21 +577,21 @@ body.admin-body #mechanicSettingsNotifications .notifications-card {
   background: #0d1220;
 }
 
-body.admin-body #mechanicSettingsNotifications .notifications-card-head h3,
-body.admin-body #mechanicSettingsNotifications .notifications-check {
+body.mechanic-body #mechanicSettingsNotifications .notifications-card-head h3,
+body.mechanic-body #mechanicSettingsNotifications .notifications-check {
   color: #ffffff;
 }
 
-body.admin-body #mechanicSettingsNotifications .notifications-actions {
+body.mechanic-body #mechanicSettingsNotifications .notifications-actions {
   display: flex;
   justify-content: flex-end;
 }
 
-body.admin-body #mechanicSettingsSecurity {
+body.mechanic-body #mechanicSettingsSecurity {
   gap: 26px;
 }
 
-body.admin-body #mechanicSettingsSecurity .security-card {
+body.mechanic-body #mechanicSettingsSecurity .security-card {
   display: grid;
   gap: 26px;
   padding: 24px;
@@ -601,25 +601,25 @@ body.admin-body #mechanicSettingsSecurity .security-card {
   background: rgba(255, 255, 255, 0.02);
 }
 
-body.admin-body #mechanicSettingsSecurity .security-card-head h3,
-body.admin-body #mechanicSettingsSecurity .security-field span,
-body.admin-body #mechanicSettingsSecurity .security-check {
+body.mechanic-body #mechanicSettingsSecurity .security-card-head h3,
+body.mechanic-body #mechanicSettingsSecurity .security-field span,
+body.mechanic-body #mechanicSettingsSecurity .security-check {
   color: #ffffff;
 }
 
-body.admin-body #mechanicSettingsSecurity .security-form {
+body.mechanic-body #mechanicSettingsSecurity .security-form {
   width: min(500px, 100%);
   margin: 0 auto;
   display: grid;
   gap: 18px;
 }
 
-body.admin-body #mechanicSettingsSecurity .security-field {
+body.mechanic-body #mechanicSettingsSecurity .security-field {
   display: grid;
   gap: 8px;
 }
 
-body.admin-body #mechanicSettingsSecurity .security-field input {
+body.mechanic-body #mechanicSettingsSecurity .security-field input {
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 12px;
@@ -628,58 +628,58 @@ body.admin-body #mechanicSettingsSecurity .security-field input {
   color: #0f172a;
 }
 
-body.admin-body #mechanicSettingsSecurity .security-actions {
+body.mechanic-body #mechanicSettingsSecurity .security-actions {
   display: flex;
   justify-content: flex-end;
 }
 
-body.admin-body #mechanicSettingsSecurity .security-2fa-grid {
+body.mechanic-body #mechanicSettingsSecurity .security-2fa-grid {
   display: flex;
   gap: 28px;
   align-items: center;
 }
 
-body.admin-body #mechanicSecurity2faEnable {
+body.mechanic-body #mechanicSecurity2faEnable {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.12);
   color: rgba(255, 255, 255, 0.62);
 }
 
-body.admin-body #mechanicSecurity2faEnable.is-active {
+body.mechanic-body #mechanicSecurity2faEnable.is-active {
   background: #4f627b;
   border-color: #4f627b;
   color: #ffffff;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
 }
 
-body.admin-body .mechanic-resolution-layout {
+body.mechanic-body .mechanic-resolution-layout {
   display: grid;
   grid-template-columns: 1fr;
   gap: 22px;
 }
 
-body.admin-body .mechanic-resolution-detail {
+body.mechanic-body .mechanic-resolution-detail {
   display: grid;
   gap: 22px;
 }
 
-body.admin-body .mechanic-resolution-case-view {
+body.mechanic-body .mechanic-resolution-case-view {
   display: grid;
   gap: 22px;
 }
 
-body.admin-body .mechanic-resolution-detail-head {
+body.mechanic-body .mechanic-resolution-detail-head {
   display: grid;
   gap: 10px;
 }
 
-body.admin-body .mechanic-resolution-detail-head h3 {
+body.mechanic-body .mechanic-resolution-detail-head h3 {
   margin: 0;
   color: #ffffff;
   font-size: 2rem;
 }
 
-body.admin-body .mechanic-resolution-back {
+body.mechanic-body .mechanic-resolution-back {
   justify-self: start;
   min-height: 40px;
   padding: 0 14px;
@@ -691,14 +691,14 @@ body.admin-body .mechanic-resolution-back {
   cursor: pointer;
 }
 
-body.admin-body .mechanic-resolution-card {
+body.mechanic-body .mechanic-resolution-card {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 22px;
   background: #171c24;
   overflow: hidden;
 }
 
-body.admin-body .mechanic-resolution-card h3 {
+body.mechanic-body .mechanic-resolution-card h3 {
   margin: 0;
   padding: 18px 22px;
   font-size: 1.05rem;
@@ -706,19 +706,19 @@ body.admin-body .mechanic-resolution-card h3 {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-body.admin-body .mechanic-resolution-card-body {
+body.mechanic-body .mechanic-resolution-card-body {
   padding: 22px;
   display: grid;
   gap: 18px;
 }
 
-body.admin-body .mechanic-resolution-tabs {
+body.mechanic-body .mechanic-resolution-tabs {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
-body.admin-body .mechanic-resolution-tab {
+body.mechanic-body .mechanic-resolution-tab {
   min-height: 42px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
@@ -727,39 +727,39 @@ body.admin-body .mechanic-resolution-tab {
   cursor: pointer;
 }
 
-body.admin-body .mechanic-resolution-tab.is-active {
+body.mechanic-body .mechanic-resolution-tab.is-active {
   background: #0d1220;
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.18);
 }
 
-body.admin-body .mechanic-resolution-table {
+body.mechanic-body .mechanic-resolution-table {
   display: grid;
   gap: 12px;
 }
 
-body.admin-body .mechanic-resolution-table-head,
-body.admin-body .mechanic-resolution-table-row {
+body.mechanic-body .mechanic-resolution-table-head,
+body.mechanic-body .mechanic-resolution-table-row {
   display: grid;
   grid-template-columns: 150px 150px 160px minmax(0, 1fr) 80px;
   gap: 16px;
   align-items: center;
 }
 
-body.admin-body .mechanic-resolution-table-head {
+body.mechanic-body .mechanic-resolution-table-head {
   color: #d6dfef;
   font-weight: 700;
   font-size: 0.95rem;
 }
 
-body.admin-body .mechanic-resolution-table-row {
+body.mechanic-body .mechanic-resolution-table-row {
   min-height: 56px;
   padding: 12px 0 0;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   color: #ffffff;
 }
 
-body.admin-body .mechanic-resolution-status {
+body.mechanic-body .mechanic-resolution-status {
   justify-self: start;
   padding: 7px 12px;
   border-radius: 999px;
@@ -770,7 +770,7 @@ body.admin-body .mechanic-resolution-status {
   letter-spacing: 0.08em;
 }
 
-body.admin-body .mechanic-resolution-link {
+body.mechanic-body .mechanic-resolution-link {
   border: 0;
   background: transparent;
   color: #1e93f2;
@@ -778,23 +778,23 @@ body.admin-body .mechanic-resolution-link {
   cursor: pointer;
 }
 
-body.admin-body .mechanic-resolution-copy {
+body.mechanic-body .mechanic-resolution-copy {
   margin: 0;
   color: #d6dfef;
   line-height: 1.6;
 }
 
-body.admin-body .mechanic-resolution-field {
+body.mechanic-body .mechanic-resolution-field {
   display: grid;
   gap: 10px;
 }
 
-body.admin-body .mechanic-resolution-field span {
+body.mechanic-body .mechanic-resolution-field span {
   color: #ffffff;
   font-weight: 600;
 }
 
-body.admin-body .mechanic-resolution-field select {
+body.mechanic-body .mechanic-resolution-field select {
   width: 100%;
   min-height: 48px;
   padding: 0 14px;
@@ -804,50 +804,50 @@ body.admin-body .mechanic-resolution-field select {
   color: #111827;
 }
 
-body.admin-body .mechanic-resolution-notice {
+body.mechanic-body .mechanic-resolution-notice {
   padding: 18px;
   border-radius: 10px;
   background: #5d4b12;
   color: #f6e3a5;
 }
 
-body.admin-body .mechanic-resolution-case {
+body.mechanic-body .mechanic-resolution-case {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
   gap: 24px;
   align-items: start;
 }
 
-body.admin-body .mechanic-resolution-thread {
+body.mechanic-body .mechanic-resolution-thread {
   display: grid;
   gap: 18px;
 }
 
-body.admin-body .mechanic-resolution-thread-copy {
+body.mechanic-body .mechanic-resolution-thread-copy {
   margin: 0;
   color: #d6dfef;
   line-height: 1.6;
 }
 
-body.admin-body #mechanicResolutionMessages {
+body.mechanic-body #mechanicResolutionMessages {
   display: grid;
   gap: 18px;
 }
 
-body.admin-body .mechanic-resolution-message {
+body.mechanic-body .mechanic-resolution-message {
   display: grid;
   gap: 8px;
 }
 
-body.admin-body .mechanic-resolution-message.is-customer {
+body.mechanic-body .mechanic-resolution-message.is-customer {
   justify-items: start;
 }
 
-body.admin-body .mechanic-resolution-message.is-mechanic {
+body.mechanic-body .mechanic-resolution-message.is-mechanic {
   justify-items: end;
 }
 
-body.admin-body .mechanic-resolution-bubble {
+body.mechanic-body .mechanic-resolution-bubble {
   width: min(720px, 100%);
   padding: 18px;
   border-radius: 14px;
@@ -856,21 +856,21 @@ body.admin-body .mechanic-resolution-bubble {
   line-height: 1.55;
 }
 
-body.admin-body .mechanic-resolution-bubble p {
+body.mechanic-body .mechanic-resolution-bubble p {
   margin: 0;
   white-space: pre-wrap;
 }
 
-body.admin-body .mechanic-resolution-message.is-mechanic .mechanic-resolution-bubble {
+body.mechanic-body .mechanic-resolution-message.is-mechanic .mechanic-resolution-bubble {
   background: #0d1220;
 }
 
-body.admin-body .mechanic-resolution-message-meta {
+body.mechanic-body .mechanic-resolution-message-meta {
   color: #b8c5da;
   font-size: 0.9rem;
 }
 
-body.admin-body .mechanic-resolution-compose {
+body.mechanic-body .mechanic-resolution-compose {
   display: grid;
   gap: 14px;
   padding: 18px;
@@ -879,7 +879,7 @@ body.admin-body .mechanic-resolution-compose {
   background: rgba(255, 255, 255, 0.03);
 }
 
-body.admin-body .mechanic-resolution-compose textarea {
+body.mechanic-body .mechanic-resolution-compose textarea {
   width: 100%;
   min-height: 140px;
   resize: vertical;
@@ -890,12 +890,12 @@ body.admin-body .mechanic-resolution-compose textarea {
   color: #111827;
 }
 
-body.admin-body .mechanic-resolution-compose-actions {
+body.mechanic-body .mechanic-resolution-compose-actions {
   display: flex;
   gap: 12px;
 }
 
-body.admin-body .mechanic-resolution-sidebar-card {
+body.mechanic-body .mechanic-resolution-sidebar-card {
   display: grid;
   gap: 16px;
   padding: 18px;
@@ -904,26 +904,26 @@ body.admin-body .mechanic-resolution-sidebar-card {
   background: rgba(255, 255, 255, 0.03);
 }
 
-body.admin-body .mechanic-resolution-sidebar-card h4 {
+body.mechanic-body .mechanic-resolution-sidebar-card h4 {
   margin: 0;
   color: #ffffff;
 }
 
-body.admin-body .mechanic-resolution-sidebar-row {
+body.mechanic-body .mechanic-resolution-sidebar-row {
   display: grid;
   gap: 6px;
 }
 
-body.admin-body .mechanic-resolution-sidebar-row strong {
+body.mechanic-body .mechanic-resolution-sidebar-row strong {
   color: #ffffff;
 }
 
-body.admin-body .mechanic-resolution-sidebar-row span {
+body.mechanic-body .mechanic-resolution-sidebar-row span {
   color: #d6dfef;
   line-height: 1.5;
 }
 
-body.admin-body .mechanic-resolution-booking {
+body.mechanic-body .mechanic-resolution-booking {
   width: min(520px, 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
@@ -931,47 +931,47 @@ body.admin-body .mechanic-resolution-booking {
   background: #0d1220;
 }
 
-body.admin-body .mechanic-resolution-booking-head {
+body.mechanic-body .mechanic-resolution-booking-head {
   padding: 16px 18px;
   color: #ffffff;
   font-weight: 700;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-body.admin-body .mechanic-resolution-booking-body {
+body.mechanic-body .mechanic-resolution-booking-body {
   padding: 18px;
   display: grid;
   gap: 16px;
 }
 
-body.admin-body .mechanic-resolution-booking-row {
+body.mechanic-body .mechanic-resolution-booking-row {
   display: grid;
   grid-template-columns: 110px minmax(0, 1fr);
   gap: 14px;
   align-items: start;
 }
 
-body.admin-body .mechanic-resolution-booking-row strong {
+body.mechanic-body .mechanic-resolution-booking-row strong {
   color: #ffffff;
 }
 
-body.admin-body .mechanic-resolution-booking-row span {
+body.mechanic-body .mechanic-resolution-booking-row span {
   color: #d6dfef;
   line-height: 1.5;
 }
 
-body.admin-body .mechanic-resolution-booking .primary {
+body.mechanic-body .mechanic-resolution-booking .primary {
   margin: 0 18px 18px;
 }
 
 @media (max-width: 900px) {
-  body.admin-body .mechanic-resolution-table-head,
-  body.admin-body .mechanic-resolution-table-row {
+  body.mechanic-body .mechanic-resolution-table-head,
+  body.mechanic-body .mechanic-resolution-table-row {
     grid-template-columns: 1fr;
     gap: 8px;
   }
 
-  body.admin-body .mechanic-resolution-case {
+  body.mechanic-body .mechanic-resolution-case {
     grid-template-columns: 1fr;
   }
 }
@@ -986,16 +986,16 @@ body.admin-body .mechanic-resolution-booking .primary {
     grid-template-columns: 1fr;
   }
 
-  body.admin-body #mechanicSettingsView .settings-contact-actions {
+  body.mechanic-body #mechanicSettingsView .settings-contact-actions {
     justify-items: stretch;
   }
 }
 
-body.admin-body .mechanic-header-menu {
+body.mechanic-body .mechanic-header-menu {
   position: relative;
 }
 
-body.admin-body .mechanic-header-menu-btn {
+body.mechanic-body .mechanic-header-menu-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -1010,18 +1010,18 @@ body.admin-body .mechanic-header-menu-btn {
   cursor: pointer;
 }
 
-body.admin-body .mechanic-header-menu-btn:hover {
+body.mechanic-body .mechanic-header-menu-btn:hover {
   background: var(--brand-blue);
   border-color: var(--brand-blue);
   color: #ffffff;
 }
 
-body.admin-body .mechanic-header-menu-arrow {
+body.mechanic-body .mechanic-header-menu-arrow {
   font-size: 0.9rem;
   line-height: 1;
 }
 
-body.admin-body .mechanic-header-menu-panel {
+body.mechanic-body .mechanic-header-menu-panel {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
@@ -1035,7 +1035,7 @@ body.admin-body .mechanic-header-menu-panel {
   overflow: hidden;
 }
 
-body.admin-body .mechanic-header-menu-item {
+body.mechanic-body .mechanic-header-menu-item {
   border: none;
   background: transparent;
   text-align: left;
@@ -1044,31 +1044,31 @@ body.admin-body .mechanic-header-menu-item {
   cursor: pointer;
 }
 
-body.admin-body .mechanic-header-menu-item:hover {
+body.mechanic-body .mechanic-header-menu-item:hover {
   background: rgba(15, 23, 42, 0.06);
 }
 
-body.admin-body .mechanic-dashboard-layout > .settings-header {
+body.mechanic-body .mechanic-dashboard-layout > .settings-header {
   grid-row: 1;
 }
 
-body.admin-body .mechanic-dashboard-layout > .settings-divider {
+body.mechanic-body .mechanic-dashboard-layout > .settings-divider {
   grid-row: 3;
 }
 
-body.admin-body .mechanic-dashboard-layout > .mechanic-dashboard-section-title {
+body.mechanic-body .mechanic-dashboard-layout > .mechanic-dashboard-section-title {
   grid-row: 2;
   margin: 0;
   color: #eef3fc;
 }
 
-body.admin-body .mechanic-dashboard-layout > .mechanic-bookings-list {
+body.mechanic-body .mechanic-dashboard-layout > .mechanic-bookings-list {
   grid-row: 4;
   display: grid;
   gap: 14px;
 }
 
-body.admin-body .mechanic-bookings-empty {
+body.mechanic-body .mechanic-bookings-empty {
   margin: 0;
   padding: 18px;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -1077,7 +1077,7 @@ body.admin-body .mechanic-bookings-empty {
   color: #d9e3f3;
 }
 
-body.admin-body .mechanic-booking-card {
+body.mechanic-body .mechanic-booking-card {
   display: grid;
   gap: 12px;
   border: 1px solid rgba(255, 255, 255, 0.16);
@@ -1086,7 +1086,7 @@ body.admin-body .mechanic-booking-card {
   overflow: hidden;
 }
 
-body.admin-body .mechanic-booking-topbar {
+body.mechanic-body .mechanic-booking-topbar {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
@@ -1096,7 +1096,7 @@ body.admin-body .mechanic-booking-topbar {
   background: rgba(255, 255, 255, 0.03);
 }
 
-body.admin-body .mechanic-booking-topbar-status {
+body.mechanic-body .mechanic-booking-topbar-status {
   justify-self: start;
   padding: 8px 14px;
   border-radius: 8px;
@@ -1107,22 +1107,22 @@ body.admin-body .mechanic-booking-topbar-status {
   letter-spacing: 0.04em;
 }
 
-body.admin-body .mechanic-booking-topbar-status[data-status="pending"] {
+body.mechanic-body .mechanic-booking-topbar-status[data-status="pending"] {
   background: #1e93f2;
 }
 
-body.admin-body .mechanic-booking-topbar-status[data-status="declined"],
-body.admin-body .mechanic-booking-topbar-status[data-status="expired"] {
+body.mechanic-body .mechanic-booking-topbar-status[data-status="declined"],
+body.mechanic-body .mechanic-booking-topbar-status[data-status="expired"] {
   background: #6b7280;
 }
 
-body.admin-body .mechanic-booking-topbar-reference {
+body.mechanic-body .mechanic-booking-topbar-reference {
   justify-self: center;
   color: #ffffff;
   font-weight: 700;
 }
 
-body.admin-body .mechanic-booking-topbar-actions {
+body.mechanic-body .mechanic-booking-topbar-actions {
   min-height: 42px;
   padding: 0 16px;
   border: 0;
@@ -1134,15 +1134,15 @@ body.admin-body .mechanic-booking-topbar-actions {
   cursor: pointer;
 }
 
-body.admin-body .mechanic-booking-topbar-actions:hover {
+body.mechanic-body .mechanic-booking-topbar-actions:hover {
   background: #1678c9;
 }
 
-body.admin-body .mechanic-booking-topbar-menu {
+body.mechanic-body .mechanic-booking-topbar-menu {
   position: relative;
 }
 
-body.admin-body .mechanic-booking-actions-panel {
+body.mechanic-body .mechanic-booking-actions-panel {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
@@ -1155,7 +1155,7 @@ body.admin-body .mechanic-booking-actions-panel {
   z-index: 5;
 }
 
-body.admin-body .mechanic-booking-actions-item {
+body.mechanic-body .mechanic-booking-actions-item {
   width: 100%;
   min-height: 40px;
   padding: 0 12px;
@@ -1168,11 +1168,11 @@ body.admin-body .mechanic-booking-actions-item {
   cursor: pointer;
 }
 
-body.admin-body .mechanic-booking-actions-item:hover {
+body.mechanic-body .mechanic-booking-actions-item:hover {
   background: rgba(255, 255, 255, 0.08);
 }
 
-body.admin-body .mechanic-booking-card-head {
+body.mechanic-body .mechanic-booking-card-head {
   display: flex;
   align-items: start;
   justify-content: space-between;
@@ -1180,19 +1180,19 @@ body.admin-body .mechanic-booking-card-head {
   padding: 0 18px;
 }
 
-body.admin-body .mechanic-booking-card-head h4,
-body.admin-body .mechanic-booking-meta strong {
+body.mechanic-body .mechanic-booking-card-head h4,
+body.mechanic-body .mechanic-booking-meta strong {
   margin: 0;
   color: #eef3fc;
 }
 
-body.admin-body .mechanic-booking-meta {
+body.mechanic-body .mechanic-booking-meta {
   display: grid;
   gap: 4px;
   color: #b8c5da;
 }
 
-body.admin-body .mechanic-booking-status {
+body.mechanic-body .mechanic-booking-status {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1206,23 +1206,23 @@ body.admin-body .mechanic-booking-status {
   text-transform: uppercase;
 }
 
-body.admin-body .mechanic-booking-status[data-status="pending"] {
+body.mechanic-body .mechanic-booking-status[data-status="pending"] {
   background: rgba(245, 158, 11, 0.2);
   color: #fbbf24;
 }
 
-body.admin-body .mechanic-booking-status[data-status="accepted"] {
+body.mechanic-body .mechanic-booking-status[data-status="accepted"] {
   background: rgba(34, 197, 94, 0.18);
   color: #4ade80;
 }
 
-body.admin-body .mechanic-booking-status[data-status="declined"],
-body.admin-body .mechanic-booking-status[data-status="expired"] {
+body.mechanic-body .mechanic-booking-status[data-status="declined"],
+body.mechanic-body .mechanic-booking-status[data-status="expired"] {
   background: rgba(239, 68, 68, 0.18);
   color: #f87171;
 }
 
-body.admin-body .mechanic-booking-grid {
+body.mechanic-body .mechanic-booking-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px 18px;
@@ -1230,84 +1230,84 @@ body.admin-body .mechanic-booking-grid {
   padding: 0 18px;
 }
 
-body.admin-body .mechanic-booking-items {
+body.mechanic-body .mechanic-booking-items {
   display: grid;
   gap: 8px;
   padding: 0 18px;
 }
 
-body.admin-body .mechanic-booking-item {
+body.mechanic-body .mechanic-booking-item {
   color: #d9e3f3;
 }
 
-body.admin-body .mechanic-booking-item span {
+body.mechanic-body .mechanic-booking-item span {
   color: #b8c5da;
 }
 
-body.admin-body .mechanic-booking-actions {
+body.mechanic-body .mechanic-booking-actions {
   display: flex;
   gap: 10px;
   padding: 0 18px 18px;
 }
 
-body.admin-body .mechanic-booking-actions button {
+body.mechanic-body .mechanic-booking-actions button {
   min-width: 120px;
 }
 
-body.admin-body .mechanic-dashboard-layout .settings-header {
+body.mechanic-body .mechanic-dashboard-layout .settings-header {
   display: flex;
   align-items: start;
   justify-content: space-between;
   gap: 24px;
 }
 
-body.admin-body .mechanic-dashboard-layout .user-welcome-corner-wrap {
+body.mechanic-body .mechanic-dashboard-layout .user-welcome-corner-wrap {
   display: grid;
   justify-items: end;
   gap: 4px;
 }
 
-body.admin-body .mechanic-dashboard-layout .user-welcome-corner,
-body.admin-body .mechanic-dashboard-layout .user-welcome-corner-subtitle {
+body.mechanic-body .mechanic-dashboard-layout .user-welcome-corner,
+body.mechanic-body .mechanic-dashboard-layout .user-welcome-corner-subtitle {
   margin: 0;
 }
 
-body.admin-body .mechanic-content .mechanic-dashboard-card .settings-divider {
+body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-divider {
   height: 2px;
   background: rgba(255, 255, 255, 0.28);
 }
 
-body.admin-body .mechanic-content .mechanic-dashboard-card .settings-row {
+body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-row {
   border-bottom: 2px solid rgba(255, 255, 255, 0.24);
   padding-bottom: 14px;
 }
 
-body.admin-body .mechanic-content .settings-header h2,
-body.admin-body .mechanic-content .mechanic-dashboard-card .settings-row h4,
-body.admin-body .mechanic-content .mechanic-dashboard-card .settings-meta h4 {
+body.mechanic-body .mechanic-content .settings-header h2,
+body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-row h4,
+body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-meta h4 {
   color: #eaf0fb;
 }
 
-body.admin-body .mechanic-content .settings-header p,
-body.admin-body .mechanic-content .mechanic-dashboard-card .settings-row p,
-body.admin-body .mechanic-content .mechanic-dashboard-card .settings-meta p,
-body.admin-body .mechanic-content .mechanic-note,
-body.admin-body .mechanic-content .subtle,
-body.admin-body .mechanic-content label span {
+body.mechanic-body .mechanic-content .settings-header p,
+body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-row p,
+body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-meta p,
+body.mechanic-body .mechanic-content .mechanic-note,
+body.mechanic-body .mechanic-content .subtle,
+body.mechanic-body .mechanic-content label span {
   color: #a9b6cb;
 }
 
-body.admin-body .mechanic-content .mechanic-id,
-body.admin-body .mechanic-content .mechanic-id span {
+body.mechanic-body .mechanic-content .mechanic-id,
+body.mechanic-body .mechanic-content .mechanic-id span {
   color: #eef3fc;
 }
 
-body.admin-body .mechanic-content form {
+body.mechanic-body .mechanic-content form {
   display: grid;
   gap: 12px;
 }
 
-body.admin-body .mechanic-content input[type="password"] {
+body.mechanic-body .mechanic-content input[type="password"] {
   width: 100%;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -1316,38 +1316,38 @@ body.admin-body .mechanic-content input[type="password"] {
   padding: 10px 12px;
 }
 
-body.admin-body .mechanic-content .mechanic-dashboard-card .settings-avatar {
+body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-avatar {
   background: #d5def7;
   color: #334085;
 }
 
-body.admin-body .mechanic-profile-layout {
+body.mechanic-body .mechanic-profile-layout {
   display: grid;
   grid-template-columns: 320px minmax(0, 1fr);
   gap: 24px;
 }
 
-body.admin-body .mechanic-profile-sidebar {
+body.mechanic-body .mechanic-profile-sidebar {
   display: grid;
   gap: 16px;
 }
 
-body.admin-body .mechanic-profile-avatar-card,
-body.admin-body .mechanic-profile-info-card,
-body.admin-body .mechanic-profile-map {
+body.mechanic-body .mechanic-profile-avatar-card,
+body.mechanic-body .mechanic-profile-info-card,
+body.mechanic-body .mechanic-profile-map {
   background: rgba(20, 27, 41, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 16px;
 }
 
-body.admin-body .mechanic-profile-avatar-card {
+body.mechanic-body .mechanic-profile-avatar-card {
   min-height: 220px;
   display: grid;
   place-items: center;
   padding: 24px;
 }
 
-body.admin-body .mechanic-profile-avatar {
+body.mechanic-body .mechanic-profile-avatar {
   width: 120px;
   height: 120px;
   border-radius: 24px;
@@ -1359,31 +1359,31 @@ body.admin-body .mechanic-profile-avatar {
   overflow: hidden;
 }
 
-body.admin-body .mechanic-profile-avatar img {
+body.mechanic-body .mechanic-profile-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-body.admin-body .mechanic-profile-cta {
+body.mechanic-body .mechanic-profile-cta {
   width: 100%;
   min-height: 48px;
 }
 
-body.admin-body .mechanic-profile-info-card {
+body.mechanic-body .mechanic-profile-info-card {
   display: grid;
   gap: 14px;
   padding: 18px;
   color: #d7dfeb;
 }
 
-body.admin-body .mechanic-profile-info-card h4 {
+body.mechanic-body .mechanic-profile-info-card h4 {
   margin: 0;
   color: #ffffff;
   font-size: 1.1rem;
 }
 
-body.admin-body .mechanic-profile-info-card ul {
+body.mechanic-body .mechanic-profile-info-card ul {
   list-style: none;
   display: grid;
   gap: 14px;
@@ -1391,13 +1391,13 @@ body.admin-body .mechanic-profile-info-card ul {
   padding: 0;
 }
 
-body.admin-body .mechanic-profile-info-card li {
+body.mechanic-body .mechanic-profile-info-card li {
   position: relative;
   padding-left: 34px;
   line-height: 1.45;
 }
 
-body.admin-body .mechanic-profile-info-card li::before {
+body.mechanic-body .mechanic-profile-info-card li::before {
   content: "✓";
   position: absolute;
   left: 0;
@@ -1413,26 +1413,26 @@ body.admin-body .mechanic-profile-info-card li::before {
   font-weight: 700;
 }
 
-body.admin-body .mechanic-profile-main {
+body.mechanic-body .mechanic-profile-main {
   display: grid;
   gap: 16px;
   align-content: start;
 }
 
-body.admin-body .mechanic-profile-main h1 {
+body.mechanic-body .mechanic-profile-main h1 {
   margin: 0;
   color: #ffffff;
   font-size: clamp(1.9rem, 3vw, 2.6rem);
 }
 
-body.admin-body .mechanic-profile-tabs {
+body.mechanic-body .mechanic-profile-tabs {
   background: rgba(20, 27, 41, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 16px;
   padding: 14px;
 }
 
-body.admin-body .mechanic-profile-tabs button {
+body.mechanic-body .mechanic-profile-tabs button {
   border: none;
   background: rgba(77, 163, 255, 0.12);
   color: #4da3ff;
@@ -1442,13 +1442,13 @@ body.admin-body .mechanic-profile-tabs button {
   border-radius: 12px;
 }
 
-body.admin-body .mechanic-profile-coverage {
+body.mechanic-body .mechanic-profile-coverage {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
 }
 
-body.admin-body .mechanic-profile-coverage-item {
+body.mechanic-body .mechanic-profile-coverage-item {
   display: grid;
   gap: 6px;
   padding: 14px 16px;
@@ -1457,21 +1457,21 @@ body.admin-body .mechanic-profile-coverage-item {
   border-radius: 14px;
 }
 
-body.admin-body .mechanic-profile-coverage-item strong {
+body.mechanic-body .mechanic-profile-coverage-item strong {
   color: #ffffff;
   font-size: 0.9rem;
 }
 
-body.admin-body .mechanic-profile-coverage-item span {
+body.mechanic-body .mechanic-profile-coverage-item span {
   color: #c9d5e8;
 }
 
-body.admin-body .mechanic-profile-map {
+body.mechanic-body .mechanic-profile-map {
   min-height: 420px;
   overflow: hidden;
 }
 
-body.admin-body .mechanic-edit-profile-layout {
+body.mechanic-body .mechanic-edit-profile-layout {
   display: grid;
   grid-template-areas:
     "tip"
@@ -1482,7 +1482,7 @@ body.admin-body .mechanic-edit-profile-layout {
   gap: 18px;
 }
 
-body.admin-body .mechanic-edit-profile-card {
+body.mechanic-body .mechanic-edit-profile-card {
   display: grid;
   gap: 14px;
   padding: 20px;
@@ -1491,40 +1491,40 @@ body.admin-body .mechanic-edit-profile-card {
   border-radius: 16px;
 }
 
-body.admin-body .mechanic-edit-profile-card--tip {
+body.mechanic-body .mechanic-edit-profile-card--tip {
   grid-area: tip;
 }
 
-body.admin-body .mechanic-edit-profile-card--skills {
+body.mechanic-body .mechanic-edit-profile-card--skills {
   grid-area: skills;
 }
 
-body.admin-body .mechanic-edit-profile-card--coverage {
+body.mechanic-body .mechanic-edit-profile-card--coverage {
   grid-area: coverage;
 }
 
-body.admin-body .mechanic-edit-profile-card--fulfilment {
+body.mechanic-body .mechanic-edit-profile-card--fulfilment {
   grid-area: fulfilment;
 }
 
-body.admin-body .mechanic-edit-profile-card h3 {
+body.mechanic-body .mechanic-edit-profile-card h3 {
   margin: 0;
   color: #eef3fc;
   font-size: 1.05rem;
 }
 
-body.admin-body .mechanic-edit-profile-card p,
-body.admin-body .mechanic-edit-profile-card label span,
-body.admin-body .mechanic-edit-profile-card a {
+body.mechanic-body .mechanic-edit-profile-card p,
+body.mechanic-body .mechanic-edit-profile-card label span,
+body.mechanic-body .mechanic-edit-profile-card a {
   color: #c9d5e8;
 }
 
-body.admin-body .mechanic-edit-profile-card a {
+body.mechanic-body .mechanic-edit-profile-card a {
   text-decoration: underline;
 }
 
-body.admin-body .mechanic-edit-profile-card input,
-body.admin-body .mechanic-edit-profile-card textarea {
+body.mechanic-body .mechanic-edit-profile-card input,
+body.mechanic-body .mechanic-edit-profile-card textarea {
   width: 100%;
   border-radius: 10px;
   border: 1px solid rgba(15, 23, 42, 0.12);
@@ -1533,12 +1533,12 @@ body.admin-body .mechanic-edit-profile-card textarea {
   padding: 12px 14px;
 }
 
-body.admin-body .mechanic-edit-profile-card textarea {
+body.mechanic-body .mechanic-edit-profile-card textarea {
   resize: vertical;
   min-height: 120px;
 }
 
-body.admin-body .mechanic-edit-profile-section-label {
+body.mechanic-body .mechanic-edit-profile-section-label {
   margin: 6px 0 0;
   color: #ffffff;
   font-weight: 700;
@@ -1546,45 +1546,45 @@ body.admin-body .mechanic-edit-profile-section-label {
   font-size: 0.86rem;
 }
 
-body.admin-body .mechanic-edit-profile-checkbox {
+body.mechanic-body .mechanic-edit-profile-checkbox {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-body.admin-body .mechanic-edit-profile-checkbox input {
+body.mechanic-body .mechanic-edit-profile-checkbox input {
   width: 16px;
   height: 16px;
 }
 
-body.admin-body .mechanic-edit-premises-fields {
+body.mechanic-body .mechanic-edit-premises-fields {
   display: grid;
   gap: 14px;
 }
 
-body.admin-body .mechanic-edit-profile-actions {
+body.mechanic-body .mechanic-edit-profile-actions {
   grid-area: actions;
   display: grid;
   gap: 12px;
 }
 
-body.admin-body .mechanic-edit-profile-submit {
+body.mechanic-body .mechanic-edit-profile-submit {
   min-height: 50px;
 }
 
-body.admin-body #mechanicProfileMap {
+body.mechanic-body #mechanicProfileMap {
   width: 100%;
   min-height: 420px;
   height: 100%;
   position: relative;
 }
 
-body.admin-body #mechanicProfileMap .leaflet-control-attribution,
-body.admin-body #mechanicProfileMap .leaflet-control-zoom a {
+body.mechanic-body #mechanicProfileMap .leaflet-control-attribution,
+body.mechanic-body #mechanicProfileMap .leaflet-control-zoom a {
   color: #111827;
 }
 
-body.admin-body #mechanicProfileMap .map-placeholder--overlay {
+body.mechanic-body #mechanicProfileMap .map-placeholder--overlay {
   position: absolute;
   left: 16px;
   right: 16px;
@@ -1598,17 +1598,17 @@ body.admin-body #mechanicProfileMap .map-placeholder--overlay {
 }
 
 @media (max-width: 980px) {
-  body.admin-body .mechanic-profile-layout {
+  body.mechanic-body .mechanic-profile-layout {
     grid-template-columns: 1fr;
   }
 
-  body.admin-body .mechanic-profile-coverage {
+  body.mechanic-body .mechanic-profile-coverage {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 640px) {
-  body.admin-body .mechanic-profile-coverage {
+  body.mechanic-body .mechanic-profile-coverage {
     grid-template-columns: 1fr;
   }
 }

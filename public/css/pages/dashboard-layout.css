@@ -22,7 +22,7 @@
 
 #userPage .user-layout,
 #mechanicPage .mechanic-layout,
-#adminPage #adminApp.admin-app {
+#adminPage #adminApp.admin-layout {
   min-width: 0;
   min-height: auto;
   align-items: stretch;
@@ -76,7 +76,7 @@
 @media (max-width: 1100px) {
   #userPage .user-layout,
   #mechanicPage .mechanic-layout,
-  #adminPage #adminApp.admin-app {
+  #adminPage #adminApp.admin-layout {
     grid-template-columns: 1fr;
   }
 
