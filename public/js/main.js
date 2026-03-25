@@ -789,12 +789,15 @@ if (applicationJoin) {
   const formWrap = document.getElementById("applicationForm");
   const hero = document.querySelector(".applicationJoin-layout");
   const headingEl = document.getElementById("applicationHeading");
+  let selectedMechanicType = "";
   if (formWrap) formWrap.classList.add("is-hidden");
   if (hero) hero.classList.remove("is-hidden");
   const links = applicationJoin.querySelectorAll(".application-link");
   links.forEach((link) => {
     link.addEventListener("click", (event) => {
       event.preventDefault();
+      selectedMechanicType = String(link.dataset.mechanicType || "").trim();
+      sessionStorage.setItem("mechanicApplicationType", selectedMechanicType);
       const stored = sessionStorage.getItem("mechanicLead");
       if (stored && headingEl) {
         try {
@@ -903,8 +906,11 @@ if (applicationForm) {
         ensureHiddenInput("last_name", lead.last_name);
         ensureHiddenInput("email", lead.email);
         ensureHiddenInput("phone", lead.phone);
+        ensureHiddenInput("postcode", lead.postcode);
       } catch {}
     }
+    const mechanicType = selectedMechanicType || sessionStorage.getItem("mechanicApplicationType") || "";
+    ensureHiddenInput("application_type", mechanicType);
   });
 }
 
@@ -4098,6 +4104,7 @@ if (mechanicDashboard) {
   }
 
   const lead = sessionStorage.getItem("mechanicLead");
+  const mechanicWelcomeStartBtn = document.getElementById("mechanicWelcomeStartBtn");
   if (lead) {
     try {
       const leadData = JSON.parse(lead);
@@ -4105,6 +4112,11 @@ if (mechanicDashboard) {
       if (passwordCard) passwordCard.classList.remove("is-hidden");
     } catch {}
   }
+
+  mechanicWelcomeStartBtn?.addEventListener("click", () => {
+    passwordCard?.classList.remove("is-hidden");
+    passwordCard?.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
 
   if (passwordForm) {
     passwordForm.addEventListener("submit", async (event) => {
@@ -5053,5 +5065,48 @@ if (confirmEmailPage) {
         setStatus(err?.error?.message || err?.message || "Unable to confirm email.", true);
       });
   }
+}
+
+if (document.body.classList.contains("mechanic-welcome")) {
+  const mechanicWelcomeStartBtn = document.getElementById("mechanicWelcomeStartBtn");
+  const passwordCard = document.getElementById("mechanicSetPasswordCard");
+  const passwordForm = document.getElementById("setMechanicPasswordForm");
+  const passwordEmail = document.getElementById("mechanicPasswordEmail");
+  const passwordError = document.getElementById("mechanicPasswordError");
+
+  const storedLead = sessionStorage.getItem("mechanicLead");
+  if (storedLead) {
+    try {
+      const leadData = JSON.parse(storedLead);
+      if (passwordEmail) passwordEmail.value = leadData.email || "";
+    } catch {}
+  }
+
+  mechanicWelcomeStartBtn?.addEventListener("click", () => {
+    passwordCard?.classList.remove("is-hidden");
+    passwordCard?.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+
+  passwordForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (passwordError) passwordError.textContent = "";
+    const payload = {
+      email: passwordEmail?.value || "",
+      password: document.getElementById("mechanicPasswordValue")?.value || "",
+      confirm: document.getElementById("mechanicPasswordConfirm")?.value || ""
+    };
+    try {
+      await api("/mechanic/set-password", {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      sessionStorage.removeItem("mechanicLead");
+      window.location.href = "/mechanic/dashboard";
+    } catch (err) {
+      if (passwordError) {
+        passwordError.textContent = err?.error?.message || err?.message || "Unable to set password.";
+      }
+    }
+  });
 }
 

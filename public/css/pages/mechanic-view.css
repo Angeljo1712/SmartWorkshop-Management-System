@@ -77,9 +77,75 @@
   margin-right: 8px;
 }
 
-.mechanic-view-main h1 {
+.welcome-layout1 h1 {
   font-size: 22px;
   margin-bottom: 12px;
+}
+
+.welcome-layout1 {
+  display: grid;
+  gap: 24px;
+  align-items: start;
+  justify-items: center;
+  text-align: center;
+  background: #344154;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 30px;
+}
+
+.welcome-layout1 .ghost-link {
+  background: #0b5fff;
+  border-color: #0b5fff;
+  color: #ffffff;
+}
+
+.welcome-layout1 .ghost-link:hover,
+.welcome-layout1 .ghost-link:focus-visible {
+  background: #0847c7;
+  border-color: #0847c7;
+  color: #ffffff;
+}
+
+.welcome-password-card {
+  width: min(640px, 100%);
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+  background: #171c24;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  text-align: left;
+  justify-items: stretch;
+}
+
+.welcome-password-card h2 {
+  margin: 0;
+}
+
+.welcome-password-card .field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.welcome-password-card label {
+  display: grid;
+  gap: 8px;
+  color: #ffffff;
+}
+
+.welcome-password-card input {
+  min-height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  background: #ffffff;
+  color: #111827;
+  padding: 0 14px;
+}
+
+.welcome-password-card .primary {
+  justify-self: start;
 }
 
 .mechanic-view-tabs {
@@ -114,6 +180,10 @@
 
 @media (max-width: 900px) {
   .mechanic-view-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome-password-card .field-grid {
     grid-template-columns: 1fr;
   }
 }

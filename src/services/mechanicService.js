@@ -144,6 +144,48 @@ const savePremisesAddress = async ({ userId, line1, city, postalCode }) => {
   );
 };
 
+const ensureMechanicProfileOnboardingColumns = async () => {
+  const [rows] = await pool.query(
+    `SELECT COLUMN_NAME
+     FROM information_schema.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE()
+       AND TABLE_NAME = 'mechanic_profiles'
+       AND COLUMN_NAME IN ('application_type', 'lead_postcode', 'application_status', 'account_status', 'password_set_at')`
+  );
+
+  const existing = new Set(rows.map((row) => row.COLUMN_NAME));
+
+  if (!existing.has("application_type")) {
+    await pool.query(
+      "ALTER TABLE mechanic_profiles ADD COLUMN application_type VARCHAR(64) NULL AFTER business_type"
+    );
+  }
+
+  if (!existing.has("lead_postcode")) {
+    await pool.query(
+      "ALTER TABLE mechanic_profiles ADD COLUMN lead_postcode VARCHAR(16) NULL AFTER application_type"
+    );
+  }
+
+  if (!existing.has("application_status")) {
+    await pool.query(
+      "ALTER TABLE mechanic_profiles ADD COLUMN application_status VARCHAR(64) NULL AFTER lead_postcode"
+    );
+  }
+
+  if (!existing.has("account_status")) {
+    await pool.query(
+      "ALTER TABLE mechanic_profiles ADD COLUMN account_status VARCHAR(64) NULL AFTER application_status"
+    );
+  }
+
+  if (!existing.has("password_set_at")) {
+    await pool.query(
+      "ALTER TABLE mechanic_profiles ADD COLUMN password_set_at DATETIME NULL AFTER account_status"
+    );
+  }
+};
+
 const saveApplication = async (payload) => {
   const {
     first_name,
@@ -162,7 +204,9 @@ const saveApplication = async (payload) => {
     services,
     specialist_services,
     specialist_services_other,
+    application_type,
     business_type,
+    postcode,
     premises_address,
     premises_city,
     premises_postcode,
@@ -191,13 +235,18 @@ const saveApplication = async (payload) => {
   const liability = String(public_liability || "").toLowerCase() === "yes" ? 1 : 0;
   const vat = String(vat_registered || "").toLowerCase() === "yes" ? 1 : 0;
   const travel = travel_radius === "" || travel_radius === undefined ? null : Number(travel_radius);
+  const applicationTypeValue = String(application_type || "").trim() || null;
+  const leadPostcodeValue = String(postcode || "").trim().toUpperCase() || null;
+
+  await ensureMechanicProfileOnboardingColumns();
 
   await pool.query(
     `INSERT INTO mechanic_profiles
      (user_id, display_name, legal_name, years_experience, work_history, website_url,
-      has_trade_insurance, has_public_liability, vat_registered, business_type,
+      has_trade_insurance, has_public_liability, vat_registered, business_type, application_type, lead_postcode,
+      application_status, account_status,
       travel_radius_miles, availability_pref, referral_source)
-     VALUES (?, '-', '-', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     VALUES (?, '-', '-', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON DUPLICATE KEY UPDATE
        years_experience = VALUES(years_experience),
        work_history = VALUES(work_history),
@@ -206,6 +255,10 @@ const saveApplication = async (payload) => {
        has_public_liability = VALUES(has_public_liability),
        vat_registered = VALUES(vat_registered),
        business_type = VALUES(business_type),
+       application_type = VALUES(application_type),
+       lead_postcode = VALUES(lead_postcode),
+       application_status = VALUES(application_status),
+       account_status = COALESCE(mechanic_profiles.account_status, VALUES(account_status)),
        travel_radius_miles = VALUES(travel_radius_miles),
        availability_pref = VALUES(availability_pref),
        referral_source = VALUES(referral_source)`,
@@ -218,6 +271,10 @@ const saveApplication = async (payload) => {
       liability,
       vat,
       business_type || null,
+      applicationTypeValue,
+      leadPostcodeValue,
+      "application_saved",
+      "lead_created",
       travel,
       availability || null,
       referral || null
@@ -322,13 +379,18 @@ const completeApplication = async ({ email }) => {
     [user.id, "mechanic"]
   );
   await pool.query("UPDATE users SET role = 'mechanic', status = 'pending' WHERE id = ?", [user.id]);
+  await ensureMechanicProfileOnboardingColumns();
 
   const displayName = [user.name, user.lastname].filter(Boolean).join(" ") || user.email;
   await pool.query(
-    `INSERT INTO mechanic_profiles (user_id, display_name, legal_name)
-     VALUES (?, ?, ?)
-     ON DUPLICATE KEY UPDATE display_name = VALUES(display_name), legal_name = VALUES(legal_name)`,
-    [user.id, displayName, displayName]
+    `INSERT INTO mechanic_profiles (user_id, display_name, legal_name, application_status, account_status)
+     VALUES (?, ?, ?, ?, ?)
+     ON DUPLICATE KEY UPDATE
+       display_name = VALUES(display_name),
+       legal_name = VALUES(legal_name),
+       application_status = VALUES(application_status),
+       account_status = VALUES(account_status)`,
+    [user.id, displayName, displayName, "documents_uploaded", "password_pending"]
   );
 
   return { userId: user.id, fullName: displayName };
@@ -358,8 +420,15 @@ const setPasswordByEmail = async ({ email, password }) => {
     throw new AppError("NOT_FOUND", "User not found", 404);
   }
 
+  await ensureMechanicProfileOnboardingColumns();
   const passwordHash = await bcrypt.hash(password, 10);
-  await pool.query("UPDATE users SET password_hash = ? WHERE id = ?", [passwordHash, user.id]);
+  await pool.query("UPDATE users SET password_hash = ?, status = 'active' WHERE id = ?", [passwordHash, user.id]);
+  await pool.query(
+    `UPDATE mechanic_profiles
+     SET application_status = ?, account_status = ?, password_set_at = NOW()
+     WHERE user_id = ?`,
+    ["password_created", "active", user.id]
+  );
   return { userId: user.id };
 };
 
