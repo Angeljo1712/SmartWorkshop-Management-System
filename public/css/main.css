@@ -54,7 +54,7 @@ body {
 }
 
 .page-shell-content {
-  width: min(1200px, 100%);
+  width: min(1280px, 100%);
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr;
@@ -1432,7 +1432,7 @@ body.admin-body .customer-header-menu-btn:hover {
   align-items: stretch;
 }
 
-.admin-rail,
+.rail-base,
 .user-rail,
 .mechanic-rail {
   background: #475a72;
@@ -1566,7 +1566,7 @@ body.admin-body .customer-header-menu-btn:hover {
   border-radius: 8px;
 }
 
-.admin-main {
+.adminContent {
   background: rgba(25, 31, 42, 0.96);
   border: 1px solid var(--border-light-08);
   border-radius: 8px;
@@ -1574,7 +1574,7 @@ body.admin-body .customer-header-menu-btn:hover {
   overflow: hidden;
 }
 
-.admin-main .admin-table-card {
+.adminContent .admin-table-card {
   background: transparent;
   border: none;
   padding: 0;
@@ -1758,7 +1758,7 @@ body.admin-body .customer-header-menu-btn:hover {
     grid-template-columns: 1fr;
   }
 
-  .admin-rail,
+  .rail-base,
   .user-rail,
   .mechanic-rail {
     min-height: 100px;

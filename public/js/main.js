@@ -1817,10 +1817,8 @@ if (bookingDetailsForm) {
 
 const adminPage = document.getElementById("adminPage");
 if (adminPage) {
-  const adminGate = document.getElementById("adminGate");
   const adminApp = document.getElementById("adminApp");
   const adminLogoutBtn = document.getElementById("adminLogoutBtn");
-  const adminLoginError = document.getElementById("adminLoginError");
   const adminSideTitle = document.getElementById("adminSideTitle");
   const adminSearchSection = document.getElementById("adminSearchSection");
   const adminSearchLabel = document.getElementById("adminSearchLabel");
@@ -1848,7 +1846,6 @@ if (adminPage) {
   const adminAddUserError = document.getElementById("adminAddUserError");
   const filterSections = document.querySelectorAll("[data-filter-section]");
   const adminNavLinks = document.querySelectorAll(".admin-nav-link");
-  const adminSide = adminPage.querySelector(".admin-side");
   const adminDashboardView = document.getElementById("adminDashboardView");
   const adminApplicationsView = document.getElementById("adminApplicationsView");
   const adminBookingsView = document.getElementById("adminBookingsView");
@@ -1866,6 +1863,19 @@ if (adminPage) {
   const adminMetricOpenCases = document.getElementById("adminMetricOpenCases");
   const adminMetricPendingApplications = document.getElementById("adminMetricPendingApplications");
   const adminMetricPendingPayouts = document.getElementById("adminMetricPendingPayouts");
+  const adminDashboardHeroName = document.getElementById("adminDashboardHeroName");
+  const adminDashboardHeroAvatar = document.getElementById("adminDashboardHeroAvatar");
+  const adminMetricBookingsTodayCard = document.getElementById("adminMetricBookingsTodayCard");
+  const adminMetricOpenCasesCard = document.getElementById("adminMetricOpenCasesCard");
+  const adminMetricPendingApplicationsCard = document.getElementById("adminMetricPendingApplicationsCard");
+  const adminMetricPendingPayoutsCard = document.getElementById("adminMetricPendingPayoutsCard");
+  const adminQueueApplications = document.getElementById("adminQueueApplications");
+  const adminQueueResolution = document.getElementById("adminQueueResolution");
+  const adminQueuePayments = document.getElementById("adminQueuePayments");
+  const adminQueueBookings = document.getElementById("adminQueueBookings");
+  const adminDashboardRecentBookings = document.getElementById("adminDashboardRecentBookings");
+  const adminDashboardRecentApplications = document.getElementById("adminDashboardRecentApplications");
+  const adminDashboardRecentCases = document.getElementById("adminDashboardRecentCases");
   const adminBookingsSearch = document.getElementById("adminBookingsSearch");
   const adminBookingsRows = document.getElementById("adminBookingsRows");
   const adminBookingsCount = document.getElementById("adminBookingsCount");
@@ -1893,9 +1903,6 @@ if (adminPage) {
   const adminSettingsRole = document.getElementById("adminSettingsRole");
   const adminSettingsPhone = document.getElementById("adminSettingsPhone");
 
-  if (adminSide) {
-    adminSide.classList.add("is-hidden");
-  }
 
   let adminUsers = [];
   let filteredUsers = [];
@@ -1919,11 +1926,27 @@ if (adminPage) {
   };
 
   const setAdminHeader = (user) => {
-    const displayName = user?.full_name || user?.email || "Admin";
+    const joinedName = [user?.name, user?.lastname].filter(Boolean).join(" ").trim();
+    const displayName = user?.full_name || joinedName || user?.email || "Admin";
     const role = user?.role_name || "ADMIN";
     const initials = getInitials(displayName);
+    const setAdminAvatar = (el, fallbackInitials, url) => {
+      if (!el) return;
+      el.innerHTML = "";
+      if (url) {
+        const resolvedUrl = String(url).startsWith("/uploads") ? `http://localhost:3000${url}` : url;
+        const img = document.createElement("img");
+        img.src = resolvedUrl;
+        img.alt = "";
+        el.appendChild(img);
+        return;
+      }
+      el.textContent = fallbackInitials;
+    };
     if (adminProfileAvatar) adminProfileAvatar.textContent = initials;
     if (adminProfileName) adminProfileName.textContent = displayName;
+    if (adminDashboardHeroName) adminDashboardHeroName.textContent = displayName;
+    setAdminAvatar(adminDashboardHeroAvatar, initials, user?.avatar_url);
     if (adminProfileRole) adminProfileRole.textContent = role;
     if (adminSettingsAvatar) adminSettingsAvatar.textContent = initials;
     if (adminSettingsName) adminSettingsName.textContent = displayName;
@@ -1936,9 +1959,8 @@ if (adminPage) {
   };
 
   const setAdminVisibility = (loggedIn) => {
-    adminGate.classList.toggle("is-hidden", loggedIn);
-    adminApp.classList.toggle("is-hidden", !loggedIn);
-    adminLogoutBtn.disabled = !loggedIn;
+    adminApp?.classList.toggle("is-hidden", !loggedIn);
+    if (adminLogoutBtn) adminLogoutBtn.disabled = !loggedIn;
   };
 
   const statusCycle = ["Active", "Pending", "Suspended", "Banned"];
@@ -2026,6 +2048,60 @@ if (adminPage) {
       .replace(/\"/g, "&quot;")
       .replace(/'/g, "&#39;");
 
+  const renderAdminDashboardList = (container, items, formatter) => {
+    if (!container) return;
+    if (!items.length) {
+      container.innerHTML = `<div class="admin-dashboard-list-item"><strong>No data yet</strong><span>Nothing to review right now.</span></div>`;
+      return;
+    }
+    container.innerHTML = items.map(formatter).join("");
+  };
+
+  const renderAdminDashboard = () => {
+    const pendingApplications = adminApplications.filter((item) => String(item.application_status || "").toLowerCase() !== "approved").length;
+    const openCases = adminResolutionCases.filter((item) => String(item.status || "").toLowerCase() === "open").length;
+    const pendingPayouts = adminPayments.filter((item) => item.kind === "mechanic_payout" && ["requested", "processing"].includes(String(item.status || "").toLowerCase())).length;
+    const bookingsAtRisk = adminBookings.filter((item) => ["cancelled", "disputed"].includes(String(item.status || "").toLowerCase())).length;
+
+    if (adminQueueApplications) adminQueueApplications.textContent = String(pendingApplications);
+    if (adminQueueResolution) adminQueueResolution.textContent = String(openCases);
+    if (adminQueuePayments) adminQueuePayments.textContent = String(pendingPayouts);
+    if (adminQueueBookings) adminQueueBookings.textContent = String(bookingsAtRisk);
+
+    renderAdminDashboardList(
+      adminDashboardRecentBookings,
+      adminBookings.slice(0, 5),
+      (item) => `
+        <div class="admin-dashboard-list-item">
+          <strong>${escapeHtml(item.reference)} · ${escapeHtml(item.customer_name)}</strong>
+          <span>${escapeHtml(item.vehicle)} · ${escapeHtml(titleCase(item.status))}</span>
+          <span class="label">${escapeHtml(formatDate(item.created_at))}</span>
+        </div>`
+    );
+
+    renderAdminDashboardList(
+      adminDashboardRecentApplications,
+      adminApplications.slice(0, 5),
+      (item) => `
+        <div class="admin-dashboard-list-item">
+          <strong>${escapeHtml(item.full_name)}</strong>
+          <span>${escapeHtml(titleCase(item.application_type || item.business_type || "application"))} · ${escapeHtml(item.lead_postcode || "-")}</span>
+          <span class="label">${escapeHtml(titleCase(item.application_status || "unknown"))} · ${escapeHtml(formatDate(item.created_at))}</span>
+        </div>`
+    );
+
+    renderAdminDashboardList(
+      adminDashboardRecentCases,
+      adminResolutionCases.slice(0, 5),
+      (item) => `
+        <div class="admin-dashboard-list-item">
+          <strong>${escapeHtml(item.reference)} · ${escapeHtml(item.subject)}</strong>
+          <span>${escapeHtml(item.customer_name)} / ${escapeHtml(item.mechanic_name)}</span>
+          <span class="label">${escapeHtml(titleCase(item.status))} · ${escapeHtml(formatDate(item.updated_at))}</span>
+        </div>`
+    );
+  };
+
   const normaliseFilterToken = (value) =>
     String(value ?? "")
       .trim()
@@ -2097,10 +2173,10 @@ if (adminPage) {
   };
 
   const applyFilters = () => {
-    const term = adminSearch.value.trim().toLowerCase();
-    const roleValue = adminRoleFilter.value;
-    const statusValue = adminStatusFilter.value;
-    const dateValue = adminDateFilter.value;
+    const term = String(adminSearch?.value || "").trim().toLowerCase();
+    const roleValue = adminRoleFilter?.value || "all";
+    const statusValue = adminStatusFilter?.value || "all";
+    const dateValue = adminDateFilter?.value || "all";
     const now = new Date();
 
     filteredUsers = adminUsers.filter((user, index) => {
@@ -2145,14 +2221,14 @@ if (adminPage) {
     if (!currentInput) {
       return;
     }
-    if (adminSearch.value !== currentInput.value) {
+    if (adminSearch && adminSearch.value !== currentInput.value) {
       adminSearch.value = currentInput.value;
     }
   };
 
   const syncAdminViewSearchFromSide = () => {
     const currentInput = getViewSearchInput(activeAdminView);
-    if (!currentInput) {
+    if (!currentInput || !adminSearch) {
       return;
     }
     if (currentInput.value !== adminSearch.value) {
@@ -2296,8 +2372,7 @@ if (adminPage) {
 
   const configureAdminSide = (view) => {
     const config = getAdminSideConfig(view);
-    adminSide?.classList.toggle("is-hidden", !config.showSide);
-    if (!config.showSide) {
+        if (!config.showSide) {
       return;
     }
 
@@ -2793,7 +2868,6 @@ if (adminPage) {
       adminUsers = (result || []).map((user) => ({ ...user }));
       applyFilters();
     } catch (err) {
-      adminLoginError.textContent = "Access denied. Please sign in with an admin account.";
       setAdminVisibility(false);
     }
   };
@@ -2824,9 +2898,15 @@ if (adminPage) {
   };
 
   const ensureAdminProfile = () => {
+    const token = getAdminToken();
     const profile = getAdminProfile();
-    if (profile && profile.role_name === "ADMIN") {
-      setAdminHeader(profile);
+    const activeRole = String(getStoredAuthValue("activeRole") || "").toUpperCase();
+    const roles = Array.isArray(profile?.roles) && profile.roles.length
+      ? profile.roles.map((role) => String(role || "").toUpperCase())
+      : [String(profile?.role_name || profile?.role || "").toUpperCase()].filter(Boolean);
+    const isAdmin = activeRole === "ADMIN" || roles.includes("ADMIN");
+    if (token && (isAdmin || activeRole === "ADMIN")) {
+      setAdminHeader({ ...(profile || {}), role_name: "ADMIN" });
       setAdminVisibility(true);
       return true;
     }
@@ -2841,6 +2921,7 @@ if (adminPage) {
     try {
       adminApplications = await apiAuth("/api/admin/applications", token);
       configureAdminSide(activeAdminView);
+      renderAdminDashboard();
       renderApplications();
     } catch (err) {
       console.error("Unable to load admin applications", err);
@@ -2869,6 +2950,7 @@ if (adminPage) {
     try {
       adminBookings = await apiAuth("/api/admin/bookings", token);
       configureAdminSide(activeAdminView);
+      renderAdminDashboard();
       renderBookings();
     } catch (err) {
       console.error("Unable to load admin bookings", err);
@@ -2897,6 +2979,7 @@ if (adminPage) {
     try {
       adminResolutionCases = await apiAuth("/api/admin/resolution-cases", token);
       configureAdminSide(activeAdminView);
+      renderAdminDashboard();
       renderResolutionCases();
     } catch (err) {
       console.error("Unable to load admin resolution cases", err);
@@ -2924,12 +3007,21 @@ if (adminPage) {
     if (!token) return;
     try {
       const summary = await apiAuth("/api/admin/dashboard-summary", token);
-      if (adminMetricBookingsToday) adminMetricBookingsToday.textContent = String(summary.bookings_today ?? 0);
-      if (adminMetricOpenCases) adminMetricOpenCases.textContent = String(summary.open_cases ?? 0);
+      const bookingsToday = String(summary.bookings_today ?? 0);
+      const openCases = String(summary.open_cases ?? 0);
+      const pendingApplications = String(summary.pending_applications ?? 0);
+      const pendingPayouts = String(summary.pending_payouts ?? 0);
+      if (adminMetricBookingsToday) adminMetricBookingsToday.textContent = bookingsToday;
+      if (adminMetricBookingsTodayCard) adminMetricBookingsTodayCard.textContent = bookingsToday;
+      if (adminMetricOpenCases) adminMetricOpenCases.textContent = openCases;
+      if (adminMetricOpenCasesCard) adminMetricOpenCasesCard.textContent = openCases;
       if (adminMetricPendingApplications) {
-        adminMetricPendingApplications.textContent = String(summary.pending_applications ?? 0);
+        adminMetricPendingApplications.textContent = pendingApplications;
       }
-      if (adminMetricPendingPayouts) adminMetricPendingPayouts.textContent = String(summary.pending_payouts ?? 0);
+      if (adminMetricPendingApplicationsCard) adminMetricPendingApplicationsCard.textContent = pendingApplications;
+      if (adminMetricPendingPayouts) adminMetricPendingPayouts.textContent = pendingPayouts;
+      if (adminMetricPendingPayoutsCard) adminMetricPendingPayoutsCard.textContent = pendingPayouts;
+      renderAdminDashboard();
     } catch (err) {
       console.error("Unable to load admin dashboard summary", err);
     }
@@ -2941,6 +3033,7 @@ if (adminPage) {
     try {
       adminPayments = await apiAuth("/api/admin/payments", token);
       configureAdminSide(activeAdminView);
+      renderAdminDashboard();
       renderPayments();
     } catch (err) {
       console.error("Unable to load admin payments", err);
@@ -3038,6 +3131,14 @@ if (adminPage) {
       adminUsersView.classList.toggle("is-hidden", view !== "users");
       adminSettingsView?.classList.toggle("is-hidden", view !== "settings");
     });
+  });
+
+  adminDashboardView?.addEventListener("click", (event) => {
+    const targetButton = event.target.closest("[data-admin-dashboard-target]");
+    if (!targetButton) return;
+    const targetView = targetButton.dataset.adminDashboardTarget;
+    const navButton = Array.from(adminNavLinks).find((button) => button.dataset.view === targetView);
+    navButton?.click();
   });
 
   adminExportBtn?.addEventListener("click", exportUsers);
@@ -3226,7 +3327,7 @@ if (adminPage) {
     fetchPayments();
     fetchCatalog();
   } else {
-    adminLoginError.textContent = "Admins only. Please sign in first.";
+    window.location.replace("/auth/login");
   }
 
   filterSections.forEach((section) => {

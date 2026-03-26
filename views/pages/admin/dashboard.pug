@@ -19,16 +19,8 @@ block content
 
   main.primari-shell#adminPage
     .page-shell-content
-      section.admin-gate#adminGate
-        .admin-gate-card
-          h2 Admins only
-          p Sign in with an administrator account to access user management.
-          p.form-error#adminLoginError(role="alert" aria-live="polite")
-          a.ghost-link(href="/auth/login")
-            button.primary(type="button") Go to Sign in
-
-      section.admin-layout.is-hidden#adminApp
-        aside.admin-rail
+      section.mainLayout#adminApp
+        aside.mainRail.rail-base
           .rail-brand
             span.logo SW
           nav.rail-nav
@@ -39,7 +31,7 @@ block content
                   path(d="M13 3h8v5h-8z")
                   path(d="M13 10h8v11h-8z")
                   path(d="M3 13h8v8H3z")
-              | Dashboard
+              span.rail-text Dashboard
             button.admin-nav-link.rail-item(type="button" data-view="users")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
@@ -47,7 +39,7 @@ block content
                   circle(cx="8.5" cy="7" r="4")
                   path(d="M20 8v6")
                   path(d="M23 11h-6")
-              | Users
+              span.rail-text Users
             button.admin-nav-link.rail-item(type="button" data-view="applications")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
@@ -57,7 +49,7 @@ block content
                   path(d="M3 6h.01")
                   path(d="M3 12h.01")
                   path(d="M3 18h.01")
-              | Applications
+              span.rail-text Applications
             button.admin-nav-link.rail-item(type="button" data-view="bookings")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
@@ -65,123 +57,123 @@ block content
                   path(d="M8 3v4")
                   path(d="M16 3v4")
                   rect(x="3" y="7" width="18" height="14" rx="2")
-              | Bookings
+              span.rail-text Bookings
             button.admin-nav-link.rail-item(type="button" data-view="resolution")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
                   path(d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z")
-              | Resolution
+              span.rail-text Resolution
             button.admin-nav-link.rail-item(type="button" data-view="payments")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
                   rect(x="2" y="5" width="20" height="14" rx="2")
                   path(d="M2 10h20")
-              | Payments
+              span.rail-text Payments
             button.admin-nav-link.rail-item(type="button" data-view="catalog")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
                   path(d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20")
                   path(d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z")
-              | Catalog
+              span.rail-text Catalog
             button.admin-nav-link.rail-item(type="button" data-view="profile")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
                   circle(cx="12" cy="8" r="4")
                   path(d="M5 20a7 7 0 0 1 14 0")
-              | Profile
+              span.rail-text Profile
             button.admin-nav-link.rail-item(type="button" data-view="settings")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
                   circle(cx="12" cy="12" r="3")
                   path(d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 0 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.2a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3h.1a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8v.1a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.5 1z")
-              | Settings
+              span.rail-text Settings
           .rail-footer
             button.admin-signout#adminLogoutBtn(type="button") Sign out
 
-        aside.admin-side
-          .side-card
-            .side-title#adminSideTitle Filters
-            .side-section#adminSearchSection(data-filter-section)
-              .side-section-head
-                label#adminSearchLabel.side-label Search
-                button.filter-toggle(type="button" aria-expanded="true" aria-label="Toggle search filter")
-                  svg(viewBox="0 0 24 24" aria-hidden="true")
-                    path(d="M6 9l6 6 6-6")
-              .side-section-body
-                input#adminSearch.side-input(type="text" placeholder="Search")
-            .side-section#adminRoleSection(data-filter-section)
-              .side-section-head
-                label#adminRoleLabel.side-label Role
-                button.filter-toggle(type="button" aria-expanded="true" aria-label="Toggle role filter")
-                  svg(viewBox="0 0 24 24" aria-hidden="true")
-                    path(d="M6 9l6 6 6-6")
-              .side-section-body
-                select#adminRoleFilter.side-select
-                  option(value="all") All
-                  option(value="ADMIN") Admin
-                  option(value="MECHANIC") Mechanic
-                  option(value="CUSTOMER") Customer
-            .side-section#adminStatusSection(data-filter-section)
-              .side-section-head
-                label#adminStatusLabel.side-label Status
-                button.filter-toggle(type="button" aria-expanded="true" aria-label="Toggle status filter")
-                  svg(viewBox="0 0 24 24" aria-hidden="true")
-                    path(d="M6 9l6 6 6-6")
-              .side-section-body
-                select#adminStatusFilter.side-select
-                  option(value="all") All
-                  option(value="Active") Active
-                  option(value="Pending") Pending
-                  option(value="Suspended") Suspended
-                  option(value="Banned") Banned
-            .side-section#adminDateSection(data-filter-section)
-              .side-section-head
-                label#adminDateLabel.side-label Date
-                button.filter-toggle(type="button" aria-expanded="true" aria-label="Toggle date filter")
-                  svg(viewBox="0 0 24 24" aria-hidden="true")
-                    path(d="M6 9l6 6 6-6")
-              .side-section-body
-                select#adminDateFilter.side-select
-                  option(value="all") All time
-                  option(value="30") Last 30 days
-                  option(value="90") Last 90 days
-                  option(value="365") Last year
-
-        section.admin-main
-          p.admin-feedback.is-hidden#adminActionFeedback(role="alert" aria-live="polite")
-          section.admin-view#adminDashboardView
-            .admin-profile-card
-              .profile-left
-                .admin-profile-avatar SW
-                div
-                  strong Admin dashboard
-                  span Platform operations overview
-              .profile-right
-                .profile-item
-                  span.label Bookings today
-                  span#adminMetricBookingsToday 0
-                .profile-item
-                  span.label Open cases
-                  span#adminMetricOpenCases 0
-                .profile-item
-                  span.label Pending applications
-                  span#adminMetricPendingApplications 0
-                .profile-item
-                  span.label Pending payouts
-                  span#adminMetricPendingPayouts 0
-            .admin-panel
-              .admin-panel-head
-                h3 Priority queues
-              .admin-form-row
-                .profile-item
-                  span.label Applications
-                  span Review mechanic applications pending approval.
-                .profile-item
-                  span.label Resolution
-                  span Track active complaints and unresolved enquiries.
-                .profile-item
-                  span.label Payments
-                  span Check payouts and payment exceptions.
+        section.mainSection
+          section.adminContent
+            p.admin-feedback.is-hidden#adminActionFeedback(role="alert" aria-live="polite")
+            section.admin-view#adminDashboardView
+              .admin-dashboard-grid
+                .admin-dashboard-hero
+                  .settings-header
+                    .settings-header-copy
+                      .admin-dashboard-hero-copy
+                        div
+                          h2 Welcome back
+                          p#adminDashboardHeroName Ramon Garcia
+                        .admin-profile-avatar#adminDashboardHeroAvatar AU
+                    .settings-header-aside
+                      h3 Dashboard
+                      p General information
+                .settings-divider
+                .admin-panel
+                  .admin-section-head
+                    h3 Key metrics
+                    p Core platform numbers for today.
+                  .admin-dashboard-metrics
+                    .admin-dashboard-metric-card
+                      span.label Bookings today
+                      strong#adminMetricBookingsTodayCard 0
+                      span Track new work created today.
+                    .admin-dashboard-metric-card
+                      span.label Open cases
+                      strong#adminMetricOpenCasesCard 0
+                      span Resolution cases still active.
+                    .admin-dashboard-metric-card
+                      span.label Pending applications
+                      strong#adminMetricPendingApplicationsCard 0
+                      span Mechanic applications needing review.
+                    .admin-dashboard-metric-card
+                      span.label Pending payouts
+                      strong#adminMetricPendingPayoutsCard 0
+                      span Payouts not finished yet.
+                .settings-divider
+                .admin-panel
+                  .admin-panel-head
+                    h3 Priority queues
+                    p Focus on what needs action first.
+                  .admin-dashboard-queues
+                    .admin-queue-item
+                      span.label Applications pending
+                      strong#adminQueueApplications 0
+                    .admin-queue-item
+                      span.label Open complaints
+                      strong#adminQueueResolution 0
+                    .admin-queue-item
+                      span.label Pending payouts
+                      strong#adminQueuePayments 0
+                    .admin-queue-item
+                      span.label Bookings at risk
+                      strong#adminQueueBookings 0
+                .settings-divider
+                .admin-panel
+                  .admin-panel-head
+                    h3 Recent bookings
+                    p Latest bookings across the platform.
+                  .admin-dashboard-list#adminDashboardRecentBookings
+                .settings-divider
+                .admin-panel
+                  .admin-panel-head
+                    h3 Recent applications
+                    p New mechanic applications waiting in the queue.
+                  .admin-dashboard-list#adminDashboardRecentApplications
+                .settings-divider
+                .admin-panel
+                  .admin-panel-head
+                    h3 Recent resolution cases
+                    p Most recent active customer and mechanic issues.
+                  .admin-dashboard-list#adminDashboardRecentCases
+                .settings-divider
+                .admin-panel
+                  .admin-panel-head
+                    h3 Quick actions
+                    p Jump directly to the admin areas that need attention.
+                  .admin-dashboard-actions
+                    button.ghost(type="button" data-admin-dashboard-target="applications") Review applications
+                    button.ghost(type="button" data-admin-dashboard-target="resolution") Open cases
+                    button.ghost(type="button" data-admin-dashboard-target="payments") Check payouts
+                    button.ghost(type="button" data-admin-dashboard-target="users") Manage users
 
           section.admin-view.is-hidden#adminUsersView
             .admin-table-card
@@ -196,216 +188,213 @@ block content
                     option(value="10") 10 rows
                     option(value="20") 20 rows
                     option(value="50") 50 rows
+              .admin-table-wrap
+                table.admin-table
+                  thead
+                    tr
+                      th
+                      th Name
+                      th Location
+                      th Current Job
+                      th Exp.
+                      th Ready
+                      th Score
+                      th
+                  tbody#adminUserRows
+                p.admin-empty#adminEmptyState.is-hidden No users found.
+              .admin-table-footer
+                span#adminRowsMeta 0 of 0 rows
+                .admin-pagination#adminPagination
 
-            .admin-table-wrap
-              table.admin-table
-                thead
-                  tr
-                    th
-                    th Name
-                    th Location
-                    th Current Job
-                    th Exp.
-                    th Ready
-                    th Score
-                    th
-                tbody#adminUserRows
-              p.admin-empty#adminEmptyState.is-hidden No users found.
+          section.admin-view.is-hidden#adminApplicationsView
+            .admin-table-card
+              .admin-table-head
+                .head-left
+                  h3 Mechanic applications
+                  p
+                    span#adminApplicationsCount 0
+                .admin-table-actions
+                  input#adminApplicationsSearch.side-input(type="search" placeholder="Search applications")
+              .admin-table-wrap
+                table.admin-table
+                  thead
+                    tr
+                      th Name
+                      th Type
+                      th Postcode
+                      th Docs
+                      th Application
+                      th Account
+                      th Created
+                      th Actions
+                  tbody#adminApplicationsRows
+                p.admin-empty#adminApplicationsEmptyState.is-hidden No mechanic applications found.
 
-            .admin-table-footer
-              span#adminRowsMeta 0 of 0 rows
-              .admin-pagination#adminPagination
+          section.admin-view.is-hidden#adminBookingsView
+            .admin-table-card
+              .admin-table-head
+                .head-left
+                  h3 Bookings
+                  p
+                    span#adminBookingsCount 0
+                .admin-table-actions
+                  input#adminBookingsSearch.side-input(type="search" placeholder="Search bookings")
+              .admin-table-wrap
+                table.admin-table
+                  thead
+                    tr
+                      th Reference
+                      th Status
+                      th Customer
+                      th Mechanic
+                      th Vehicle
+                      th Location
+                      th Total
+                      th Created
+                      th Actions
+                  tbody#adminBookingsRows
+                p.admin-empty#adminBookingsEmptyState.is-hidden No bookings found.
 
-        section.admin-view.is-hidden#adminApplicationsView
-          .admin-table-card
-            .admin-table-head
-              .head-left
-                h3 Mechanic applications
-                p
-                  span#adminApplicationsCount 0
-              .admin-table-actions
-                input#adminApplicationsSearch.side-input(type="search" placeholder="Search applications")
-            .admin-table-wrap
-              table.admin-table
-                thead
-                  tr
-                    th Name
-                    th Type
-                    th Postcode
-                    th Docs
-                    th Application
-                    th Account
-                    th Created
-                    th Actions
-                tbody#adminApplicationsRows
-              p.admin-empty#adminApplicationsEmptyState.is-hidden No mechanic applications found.
+          section.admin-view.is-hidden#adminResolutionView
+            .admin-table-card
+              .admin-table-head
+                .head-left
+                  h3 Resolution
+                  p
+                    span#adminResolutionCount 0
+                .admin-table-actions
+                  input#adminResolutionSearch.side-input(type="search" placeholder="Search cases")
+              .admin-table-wrap
+                table.admin-table
+                  thead
+                    tr
+                      th Reference
+                      th Type
+                      th Subject
+                      th Status
+                      th Customer
+                      th Mechanic
+                      th Updated
+                      th Actions
+                  tbody#adminResolutionRows
+                p.admin-empty#adminResolutionEmptyState.is-hidden No resolution cases found.
 
-        section.admin-view.is-hidden#adminBookingsView
-          .admin-table-card
-            .admin-table-head
-              .head-left
-                h3 Bookings
-                p
-                  span#adminBookingsCount 0
-              .admin-table-actions
-                input#adminBookingsSearch.side-input(type="search" placeholder="Search bookings")
-            .admin-table-wrap
-              table.admin-table
-                thead
-                  tr
-                    th Reference
-                    th Status
-                    th Customer
-                    th Mechanic
-                    th Vehicle
-                    th Location
-                    th Total
-                    th Created
-                    th Actions
-                tbody#adminBookingsRows
-              p.admin-empty#adminBookingsEmptyState.is-hidden No bookings found.
+          section.admin-view.is-hidden#adminPaymentsView
+            .admin-table-card
+              .admin-table-head
+                .head-left
+                  h3 Payments
+                  p
+                    span#adminPaymentsCount 0
+                .admin-table-actions
+                  input#adminPaymentsSearch.side-input(type="search" placeholder="Search payments")
+              .admin-table-wrap
+                table.admin-table
+                  thead
+                    tr
+                      th Reference
+                      th Kind
+                      th Booking
+                      th Party
+                      th Provider
+                      th Status
+                      th Amount
+                      th Created
+                      th Actions
+                  tbody#adminPaymentsRows
+                p.admin-empty#adminPaymentsEmptyState.is-hidden No payments found.
 
-        section.admin-view.is-hidden#adminResolutionView
-          .admin-table-card
-            .admin-table-head
-              .head-left
-                h3 Resolution
-                p
-                  span#adminResolutionCount 0
-              .admin-table-actions
-                input#adminResolutionSearch.side-input(type="search" placeholder="Search cases")
-            .admin-table-wrap
-              table.admin-table
-                thead
-                  tr
-                    th Reference
-                    th Type
-                    th Subject
-                    th Status
-                    th Customer
-                    th Mechanic
-                    th Updated
-                    th Actions
-                tbody#adminResolutionRows
-              p.admin-empty#adminResolutionEmptyState.is-hidden No resolution cases found.
+          section.admin-view.is-hidden#adminCatalogView
+            .admin-table-card
+              .admin-table-head
+                .head-left
+                  h3 Service catalog
+                  p
+                    span#adminCatalogCount 0
+                .admin-table-actions
+                  input#adminCatalogSearch.side-input(type="search" placeholder="Search catalog")
+              .admin-table-wrap
+                table.admin-table
+                  thead
+                    tr
+                      th Group
+                      th Subcategory
+                      th Service
+                      th Code
+                      th Labour
+                      th Price
+                      th Actions
+                  tbody#adminCatalogRows
+                p.admin-empty#adminCatalogEmptyState.is-hidden No catalog services found.
 
-        section.admin-view.is-hidden#adminPaymentsView
-          .admin-table-card
-            .admin-table-head
-              .head-left
-                h3 Payments
-                p
-                  span#adminPaymentsCount 0
-              .admin-table-actions
-                input#adminPaymentsSearch.side-input(type="search" placeholder="Search payments")
-            .admin-table-wrap
-              table.admin-table
-                thead
-                  tr
-                    th Reference
-                    th Kind
-                    th Booking
-                    th Party
-                    th Provider
-                    th Status
-                    th Amount
-                    th Created
-                    th Actions
-                tbody#adminPaymentsRows
-              p.admin-empty#adminPaymentsEmptyState.is-hidden No payments found.
+          section.admin-view.is-hidden#adminProfileView
+            .admin-profile-card
+                .profile-left
+                .admin-profile-avatar#adminProfileAvatar AU
+                div
+                  strong#adminProfileName Admin User
+                  span#adminProfileRole Administrator
+                .profile-right
+                .profile-item.is-hidden
+                  span.label Avatar
+                  span#adminSettingsAvatar AU
+                .profile-item.is-hidden
+                  span.label Name
+                  span#adminSettingsName Admin User
+                .profile-item
+                  span.label Email
+                  span#adminSettingsEmail admin@smartworkshop.local
+                .profile-item.is-hidden
+                  span.label Email detail
+                  span#adminSettingsEmailDetail Email: admin@smartworkshop.local
+                .profile-item
+                  span.label Phone
+                  span#adminSettingsPhone Phone: -
+                .profile-item
+                  span.label Role
+                  span#adminSettingsRole Administrator
 
-        section.admin-view.is-hidden#adminCatalogView
-          .admin-table-card
-            .admin-table-head
-              .head-left
-                h3 Service catalog
-                p
-                  span#adminCatalogCount 0
-              .admin-table-actions
-                input#adminCatalogSearch.side-input(type="search" placeholder="Search catalog")
-            .admin-table-wrap
-              table.admin-table
-                thead
-                  tr
-                    th Group
-                    th Subcategory
-                    th Service
-                    th Code
-                    th Labour
-                    th Price
-                    th Actions
-                tbody#adminCatalogRows
-              p.admin-empty#adminCatalogEmptyState.is-hidden No catalog services found.
+          section.admin-view.is-hidden#adminSettingsView
+            .admin-profile-card
+                .profile-left
+                .admin-profile-avatar AA
+                div
+                  strong Admin Settings
+                  span Manage your workspace preferences
+                .profile-right
+                .profile-item
+                  span.label Theme
+                  span Dark
+                .profile-item
+                  span.label Notifications
+                  span Enabled
+                .profile-item
+                  span.label Access
+                  span Administrator
 
-        section.admin-view.is-hidden#adminProfileView
-          .admin-profile-card
-            .profile-left
-              .admin-profile-avatar#adminProfileAvatar AU
-              div
-                strong#adminProfileName Admin User
-                span#adminProfileRole Administrator
-            .profile-right
-              .profile-item.is-hidden
-                span.label Avatar
-                span#adminSettingsAvatar AU
-              .profile-item.is-hidden
-                span.label Name
-                span#adminSettingsName Admin User
-              .profile-item
-                span.label Email
-                span#adminSettingsEmail admin@smartworkshop.local
-              .profile-item.is-hidden
-                span.label Email detail
-                span#adminSettingsEmailDetail Email: admin@smartworkshop.local
-              .profile-item
-                span.label Phone
-                span#adminSettingsPhone Phone: -
-              .profile-item
-                span.label Role
-                span#adminSettingsRole Administrator
-
-        section.admin-view.is-hidden#adminSettingsView
-          .admin-profile-card
-            .profile-left
-              .admin-profile-avatar AA
-              div
-                strong Admin Settings
-                span Manage your workspace preferences
-            .profile-right
-              .profile-item
-                span.label Theme
-                span Dark
-              .profile-item
-                span.label Notifications
-                span Enabled
-              .profile-item
-                span.label Access
-                span Administrator
-
-        section.admin-panel.is-hidden#adminAddUserPanel
-          .admin-panel-head
-            h3 New user
-            button.ghost#adminAddUserClose(type="button") Close
-          form.admin-form#adminAddUserForm
-            .admin-form-row
-              label
-                | Full name
-                input#adminNewName(type="text" placeholder="Jane Mechanic" required)
-              label
-                | Email
-                input#adminNewEmail(type="email" placeholder="jane@shop.co.uk" required)
-            .admin-form-row
-              label
-                | Role
-                select#adminNewRole
-                  option(value="ADMIN") Admin
-                  option(value="MECHANIC") Mechanic
-                  option(value="CUSTOMER") Customer
-              label
-                | Temporary password
-                input#adminNewPassword(type="password" placeholder="Temp password" required)
-            p.form-error#adminAddUserError(role="alert" aria-live="polite")
-            button.primary(type="submit") Create user
+          section.admin-panel.is-hidden#adminAddUserPanel
+            .admin-panel-head
+              h3 New user
+              button.ghost#adminAddUserClose(type="button") Close
+            form.admin-form#adminAddUserForm
+              .admin-form-row
+                label
+                  | Full name
+                  input#adminNewName(type="text" placeholder="Jane Mechanic" required)
+                label
+                  | Email
+                  input#adminNewEmail(type="email" placeholder="jane@shop.co.uk" required)
+              .admin-form-row
+                label
+                  | Role
+                  select#adminNewRole
+                    option(value="ADMIN") Admin
+                    option(value="MECHANIC") Mechanic
+                    option(value="CUSTOMER") Customer
+                label
+                  | Temporary password
+                  input#adminNewPassword(type="password" placeholder="Temp password" required)
+              p.form-error#adminAddUserError(role="alert" aria-live="polite")
+              button.primary(type="submit") Create user
 
   include ../../partials/general-footer
-

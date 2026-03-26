@@ -1,28 +1,26 @@
 /* Shared dashboard structure: user, mechanic, admin */
 
-#userPage .page-shell-content {
+#userPage.primari-shell,
+#mechanicPage.primari-shell {
+  background: #1f2937;
+}
+
+#userPage .page-shell-content,
+#mechanicPage .page-shell-content {
   width: min(1280px, 100%);
   margin: 0 auto;
   min-height: calc(100vh - 176px);
   height: 100%;
-  padding: clamp(24px, 6vh, 50px) 48px;
-  display: grid;
-  align-content: center;
-}
-
-#mechanicPage .page-shell-content {
-  width: min(1280px, 100%);
-  margin: 0 auto;
-  min-height: calc(100vh - 154px);
-  height: 100%;
-  padding: 0 48px;
+  background: #344154;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 30px;
   display: grid;
   align-content: center;
 }
 
 #userPage .user-layout,
 #mechanicPage .mechanic-layout,
-#adminPage #adminApp.admin-layout {
+#adminPage #adminApp.mainLayout {
   min-width: 0;
   min-height: auto;
   align-items: stretch;
@@ -54,37 +52,51 @@
 
 #userPage .user-rail,
 #mechanicPage .mechanic-rail,
-#adminPage .admin-rail {
+#adminPage .rail-base {
   min-height: 100%;
   height: 100%;
   align-self: stretch;
   border-radius: 15px;
 }
 
-#adminPage .admin-rail {
-  min-height: auto;
-  height: auto;
-  align-self: start;
-}
-
 #userPage .user-content,
 #mechanicPage .admin-content,
-#adminPage .admin-main {
+#adminPage .adminContent {
   min-width: 0;
 }
 
 @media (max-width: 1100px) {
   #userPage .user-layout,
   #mechanicPage .mechanic-layout,
-  #adminPage #adminApp.admin-layout {
+  #adminPage #adminApp.mainLayout,
+  #adminPage .mainSection {
     grid-template-columns: 1fr;
   }
 
   #userPage .user-rail,
   #mechanicPage .mechanic-rail,
-  #adminPage .admin-rail {
+  #adminPage .rail-base {
     min-height: auto;
     height: auto;
     grid-template-rows: auto auto auto;
+  }
+
+  #userPage .page-shell-content,
+  #mechanicPage .page-shell-content {
+    padding: 24px 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  #userPage .page-shell-content,
+  #mechanicPage .page-shell-content {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 375px) {
+  #userPage .page-shell-content,
+  #mechanicPage .page-shell-content {
+    padding: 12px;
   }
 }

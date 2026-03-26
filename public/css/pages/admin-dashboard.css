@@ -5,72 +5,193 @@
   color: #dbe3f0;
 }
 
-#adminPage #adminApp.admin-layout {
-  display: grid;
-  grid-template-columns: 150px 260px minmax(0, 1fr);
-  gap: 12px;
-  align-items: stretch;
+#adminPage.primari-shell {
+  background: #1f2937;
+}
+
+#adminPage .page-shell-content {
   background: #344154;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 30px;
+  padding: 20px;
 }
 
-#adminPage .admin-side .side-card {
-  height: 100%;
-  background: rgba(25, 31, 42, 0.96);
-  border: 1px solid var(--border-light-08);
-  border-radius: 8px;
-  padding: 14px;
+#adminPage #adminApp.mainLayout {
   display: grid;
-  align-content: start;
-  gap: 12px;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0;
+  align-items: stretch;
+  border: 1px solid #ffffff;
+  border-radius: 15px;
+  overflow: hidden;
 }
 
-#adminPage .side-title {
-  font-size: 1.05rem;
-  color: #f3f6fd;
-}
-
-#adminPage .side-label {
-  color: #b8c0ce;
-  font-size: 0.83rem;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-#adminPage .side-input,
-#adminPage .side-select {
+#adminPage .mainSection {
+  display: grid;
   width: 100%;
-  background: #1a212f;
-  border: 1px solid var(--border-light-08);
-  color: #e5ebf6;
-  border-radius: 6px;
-  padding: 9px 10px;
-}
-
-#adminPage .side-chip {
-  border-radius: 6px;
-  background: rgba(122, 136, 186, 0.3);
-  color: #d4ddf4;
-  border: 1px solid rgba(193, 204, 242, 0.28);
-}
-
-#adminPage .side-section.actions {
-  margin-top: 8px;
-}
-
-#adminPage .side-section.actions button {
-  border-radius: 8px;
-}
-
-#adminPage .admin-main {
+  min-width: 0;
+  min-height: 100%;
+  height: 100%;
+  align-self: stretch;
   background: rgba(25, 31, 42, 0.96);
-  border: 1px solid var(--border-light-08);
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 0;
+  border-radius: 0 15px 15px 0;
+}
+
+#adminPage .adminContent {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
   padding: 10px;
   overflow: hidden;
 }
+
+#adminPage .rail-base {
+  width: 70px;
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 0;
+  border-radius: 15px 0 0 15px;
+  color: #1b2430;
+  overflow: hidden;
+  transition: width 0.22s ease;
+}
+
+#adminPage .mainRail {
+  padding: 14px 10px;
+  justify-items: center;
+}
+
+#adminPage .mainRail:hover {
+  width: 200px;
+}
+
+#adminPage .mainRail .rail-brand {
+  width: 100%;
+  padding: 0 0 10px;
+}
+
+#adminPage .mainRail .rail-brand .logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #eef2f7;
+  color: #1b2430;
+}
+
+#adminPage .mainRail .rail-nav {
+  width: 100%;
+  justify-items: center;
+  gap: 10px;
+}
+
+#adminPage .mainRail .rail-item {
+  width: 48px;
+  max-width: 48px;
+  height: 48px;
+  justify-content: center;
+  padding: 0;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #334155;
+  gap: 0;
+  transition: max-width 0.22s ease, width 0.22s ease, padding 0.22s ease, justify-content 0.22s ease, background 0.18s ease;
+}
+
+#adminPage .mainRail .rail-item:hover {
+  background: rgba(15, 23, 42, 0.06);
+}
+
+#adminPage .mainRail .rail-item.active {
+  background: #1b1f27;
+  border-color: rgba(15, 23, 42, 0.08);
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+#adminPage .mainRail .rail-text {
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: width 0.18s ease, opacity 0.18s ease;
+}
+
+#adminPage .mainRail .rail-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+}
+
+#adminPage .mainRail .rail-footer {
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(15, 23, 42, 0.12);
+}
+
+#adminPage .mainRail .admin-signout {
+  width: 48px;
+  min-width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  color: transparent;
+  font-size: 0;
+  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+#adminPage .mainRail .admin-signout::before {
+  content: "←";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #334155;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  z-index: 1;
+}
+
+#adminPage .mainRail:hover .rail-item {
+  width: 100%;
+  max-width: 100%;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 0 14px;
+}
+
+#adminPage .mainRail:hover .rail-text {
+  width: auto;
+  opacity: 1;
+}
+
+#adminPage .mainRail:hover .rail-footer {
+  justify-items: stretch;
+}
+
+#adminPage .mainRail:hover .admin-signout {
+  width: 100%;
+  color: #334155;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0 14px 0 40px;
+  justify-content: flex-start;
+}
+
+#adminPage .mainRail:hover .admin-signout::before {
+  inset: 0 auto 0 14px;
+  width: 18px;
+}
+
 
 #adminPage .admin-feedback {
   margin: 0 0 12px;
@@ -87,7 +208,133 @@
   color: #ffe7ea;
 }
 
-#adminPage .admin-main .admin-table-card {
+#adminPage .admin-dashboard-grid {
+  display: grid;
+  gap: 14px;
+}
+
+#adminPage .admin-dashboard-hero,
+#adminPage .admin-dashboard-metrics {
+  display: grid;
+  gap: 12px;
+}
+
+#adminPage .admin-dashboard-hero .settings-header {
+  margin: 0;
+  padding: 0 0 0px;
+}
+
+#adminPage .admin-dashboard-hero-copy {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#adminPage .admin-dashboard-hero .settings-header h2,
+#adminPage .admin-dashboard-hero .settings-header h3 {
+  color: #f4f7fd;
+}
+
+#adminPage .admin-dashboard-hero .settings-header p {
+  color: #c0cbdb;
+}
+
+#adminPage .admin-dashboard-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+#adminPage .admin-dashboard-metric-card,
+#adminPage .admin-queue-item,
+#adminPage .admin-dashboard-list-item {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+#adminPage .admin-dashboard-metric-card {
+  padding: 14px;
+  display: grid;
+  gap: 6px;
+}
+
+#adminPage .admin-dashboard-metric-card strong {
+  font-size: 1.8rem;
+  color: #f4f7fd;
+}
+
+#adminPage .admin-dashboard-metric-card span:last-child {
+  color: #9fabbe;
+  font-size: 0.9rem;
+}
+
+#adminPage .admin-dashboard-queues {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+#adminPage .admin-queue-item {
+  padding: 14px;
+  display: grid;
+  gap: 6px;
+}
+
+#adminPage .admin-queue-item strong {
+  font-size: 1.55rem;
+  color: #eef3fc;
+}
+
+#adminPage .admin-dashboard-list {
+  display: grid;
+  gap: 10px;
+}
+
+#adminPage .admin-dashboard-list-item {
+  padding: 14px;
+  display: grid;
+  gap: 4px;
+}
+
+#adminPage .admin-dashboard-list-item strong {
+  color: #eef3fc;
+  font-size: 0.98rem;
+}
+
+#adminPage .admin-dashboard-list-item span {
+  color: #9fabbe;
+  font-size: 0.88rem;
+}
+
+#adminPage .admin-dashboard-list-item .label {
+  color: #b9c6d8;
+  font-size: 0.8rem;
+}
+
+#adminPage .admin-dashboard-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+#adminPage .admin-dashboard-actions .ghost {
+  border-radius: 10px;
+}
+
+#adminPage .admin-section-head {
+  display: grid;
+  gap: 4px;
+}
+
+#adminPage .admin-section-head h3 {
+  color: #f4f7fd;
+}
+
+#adminPage .admin-section-head p {
+  color: #9fabbe;
+  font-size: 0.92rem;
+}
+
+#adminPage .adminContent .admin-table-card {
   background: transparent;
   border: none;
   padding: 0;
@@ -219,11 +466,18 @@
 }
 
 @media (max-width: 1100px) {
-  #adminPage #adminApp.admin-layout {
+  #adminPage #adminApp.mainLayout {
     grid-template-columns: 1fr;
   }
 
-  #adminPage .admin-rail {
+  #adminPage .admin-dashboard-metrics,
+  #adminPage .admin-dashboard-queues {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+
+
+  #adminPage .rail-base {
     min-height: auto;
     grid-template-rows: auto auto auto;
   }
@@ -240,5 +494,12 @@
   #adminPage .admin-table-actions #adminSearch {
     min-width: 180px;
     flex: 1;
+  }
+}
+
+@media (max-width: 700px) {
+  #adminPage .admin-dashboard-metrics,
+  #adminPage .admin-dashboard-queues {
+    grid-template-columns: 1fr;
   }
 }

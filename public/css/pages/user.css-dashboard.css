@@ -1981,10 +1981,6 @@ body.user-body #userVehicleView .user-reg-badge {
 
 /* Responsive matrix for user dashboard */
 @media (max-width: 1440px) {
-  body.user-body .primari-shell {
-    padding: 24px 28px;
-  }
-
   body.user-body .user-layout {
     grid-template-columns: minmax(150px, 150px) minmax(0, 1fr);
     gap: 14px;
@@ -2016,11 +2012,6 @@ body.user-body #userVehicleView .user-reg-badge {
 
   body.user-body .main-header.general-header .main-brand span {
     display: none;
-  }
-
-  body.user-body .primari-shell {
-    padding: 16px;
-    gap: 14px;
   }
 
   body.user-body .user-layout {
@@ -2080,10 +2071,6 @@ body.user-body #userVehicleView .user-reg-badge {
 }
 
 @media (max-width: 375px) {
-  body.user-body .primari-shell {
-    padding: 12px;
-  }
-
   body.user-body .user-content .settings-card {
     padding: 12px;
   }

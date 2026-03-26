@@ -40,6 +40,34 @@ const deleteWorkshop = async (workshopId) => {
   return { deleted: true };
 };
 
+const ensureMechanicProfileWorkflowColumns = async () => {
+  const [rows] = await pool.query(
+    `SELECT COLUMN_NAME
+     FROM information_schema.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE()
+       AND TABLE_NAME = 'mechanic_profiles'
+       AND COLUMN_NAME IN ('application_type', 'lead_postcode', 'application_status', 'account_status', 'password_set_at')`
+  );
+
+  const existing = new Set(rows.map((row) => row.COLUMN_NAME));
+
+  if (!existing.has('application_type')) {
+    await pool.query("ALTER TABLE mechanic_profiles ADD COLUMN application_type VARCHAR(64) NULL AFTER business_type");
+  }
+  if (!existing.has('lead_postcode')) {
+    await pool.query("ALTER TABLE mechanic_profiles ADD COLUMN lead_postcode VARCHAR(16) NULL AFTER application_type");
+  }
+  if (!existing.has('application_status')) {
+    await pool.query("ALTER TABLE mechanic_profiles ADD COLUMN application_status VARCHAR(64) NULL AFTER lead_postcode");
+  }
+  if (!existing.has('account_status')) {
+    await pool.query("ALTER TABLE mechanic_profiles ADD COLUMN account_status VARCHAR(64) NULL AFTER application_status");
+  }
+  if (!existing.has('password_set_at')) {
+    await pool.query("ALTER TABLE mechanic_profiles ADD COLUMN password_set_at DATETIME NULL AFTER account_status");
+  }
+};
+
 const roleLabel = (role) => {
   const normalized = String(role || "").toLowerCase();
   if (normalized === "user") return "CUSTOMER";
@@ -83,6 +111,7 @@ const listUsers = async () => {
 };
 
 const listApplications = async () => {
+  await ensureMechanicProfileWorkflowColumns();
   const [rows] = await pool.query(
     `SELECT u.id,
             u.email,
@@ -124,6 +153,7 @@ const listApplications = async () => {
 };
 
 const updateApplicationStatus = async ({ userId, action }) => {
+  await ensureMechanicProfileWorkflowColumns();
   const normalizedAction = String(action || "").trim().toLowerCase();
   const statesByAction = {
     approve: {
@@ -277,6 +307,7 @@ const updateResolutionCaseStatus = async ({ caseId, action }) => {
 };
 
 const getDashboardSummary = async () => {
+  await ensureMechanicProfileWorkflowColumns();
   const [[bookingsTodayRow]] = await pool.query(
     `SELECT COUNT(*) AS count
      FROM bookings
