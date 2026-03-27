@@ -544,9 +544,52 @@ if (homeHeader && homeHero) {
   const homeSessionMenuBtn = document.getElementById("homeSessionMenuBtn");
   const homeSessionMenuPanel = document.getElementById("homeSessionMenuPanel");
   const homeSessionMenuName = document.getElementById("homeSessionMenuName");
+  const homeSessionMenuItems = homeSessionMenu ? Array.from(homeSessionMenu.querySelectorAll(".home-session-menu-item")) : [];
   const applyHeaderState = (isHero) => {
     homeHeader.classList.toggle("is-hero", isHero);
     homeHeader.classList.toggle("is-light", !isHero);
+  };
+
+  const configureHomeSessionMenu = (role) => {
+    if (!homeSessionMenuItems.length) return;
+    const options =
+      role === "ADMIN"
+        ? [
+            { label: "Dashboard", view: "dashboard" },
+            { label: "Users", view: "users" },
+            { label: "Applications", view: "applications" },
+            { label: "Bookings", view: "bookings" },
+            { label: "Settings", view: "settings" },
+            { label: "Logout", action: "logout" }
+          ]
+        : [
+            { label: "Dashboard", view: "dashboard" },
+            { label: "Account", view: "account" },
+            { label: "Vehicle", view: "vehicle" },
+            { label: "Bookings", view: "bookings" },
+            { label: "Settings", view: "settings" },
+            { label: "Logout", action: "logout" }
+          ];
+
+    homeSessionMenuItems.forEach((item, index) => {
+      const option = options[index];
+      if (!option) {
+        item.classList.add("is-hidden");
+        return;
+      }
+      item.classList.remove("is-hidden");
+      item.textContent = option.label;
+      if (option.view) {
+        item.dataset.view = option.view;
+      } else {
+        delete item.dataset.view;
+      }
+      if (option.action) {
+        item.dataset.action = option.action;
+      } else {
+        delete item.dataset.action;
+      }
+    });
   };
 
   const syncHomeSessionControls = () => {
@@ -559,10 +602,11 @@ if (homeHeader && homeHero) {
       homeSessionLink.href = "/auth/login";
       return;
     }
-    if (session.activeRole === "CUSTOMER" && homeSessionMenu) {
+    if ((session.activeRole === "CUSTOMER" || session.activeRole === "ADMIN") && homeSessionMenu) {
       homeSessionLink.classList.add("is-hidden");
       homeSessionMenu.classList.remove("is-hidden");
       if (homeSessionMenuName) homeSessionMenuName.textContent = session.firstName.toUpperCase();
+      configureHomeSessionMenu(session.activeRole);
     } else {
       homeSessionLink.classList.remove("is-hidden");
       if (homeSessionMenu) homeSessionMenu.classList.add("is-hidden");
@@ -584,6 +628,7 @@ if (homeHeader && homeHero) {
     homeSessionMenu.dataset.bound = "true";
     homeSessionMenu.querySelectorAll(".home-session-menu-item").forEach((item) => {
       item.addEventListener("click", () => {
+        const session = getStoredUserSession();
         const action = item.dataset.action || "";
         if (action === "logout") {
           homeSessionMenuPanel?.classList.add("is-hidden");
@@ -598,6 +643,11 @@ if (homeHeader && homeHero) {
         homeSessionMenu
           .querySelectorAll(".home-session-menu-item")
           .forEach((btn) => btn.classList.toggle("is-active", btn === item));
+        if (session?.activeRole === "ADMIN") {
+          sessionStorage.setItem("adminHeaderTargetView", targetView);
+          window.location.href = "/admin/dashboard";
+          return;
+        }
         sessionStorage.setItem("homeUserTargetView", targetView);
         window.location.href = "/user";
       });

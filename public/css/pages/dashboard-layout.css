@@ -5,7 +5,18 @@
   background: #1f2937;
 }
 
-#userPage .page-shell-content,
+body.user-body .page-shell-content {
+  width: min(1280px, 100%);
+  margin: 0 auto;
+  min-height: calc(100vh - 176px);
+  height: 100%;
+  background: #344154;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px;
+  display: grid;
+  align-content: center;
+}
+
 #mechanicPage .page-shell-content {
   width: min(1280px, 100%);
   margin: 0 auto;
@@ -18,7 +29,7 @@
   align-content: center;
 }
 
-#userPage .user-layout,
+#userPage.mainLayout,
 #mechanicPage .mechanic-layout,
 #adminPage #adminApp.mainLayout {
   min-width: 0;
@@ -50,7 +61,7 @@
   z-index: 0;
 }
 
-#userPage .user-rail,
+#userPage .rail-base,
 #mechanicPage .mechanic-rail,
 #adminPage .rail-base {
   min-height: 100%;
@@ -66,14 +77,14 @@
 }
 
 @media (max-width: 1100px) {
-  #userPage .user-layout,
+  #userPage.mainLayout,
   #mechanicPage .mechanic-layout,
   #adminPage #adminApp.mainLayout,
   #adminPage .mainSection {
     grid-template-columns: 1fr;
   }
 
-  #userPage .user-rail,
+  #userPage .rail-base,
   #mechanicPage .mechanic-rail,
   #adminPage .rail-base {
     min-height: auto;
@@ -81,21 +92,21 @@
     grid-template-rows: auto auto auto;
   }
 
-  #userPage .page-shell-content,
+  body.user-body .page-shell-content,
   #mechanicPage .page-shell-content {
     padding: 24px 28px;
   }
 }
 
 @media (max-width: 768px) {
-  #userPage .page-shell-content,
+  body.user-body .page-shell-content,
   #mechanicPage .page-shell-content {
     padding: 16px;
   }
 }
 
 @media (max-width: 375px) {
-  #userPage .page-shell-content,
+  body.user-body .page-shell-content,
   #mechanicPage .page-shell-content {
     padding: 12px;
   }
