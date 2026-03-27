@@ -93,6 +93,10 @@ app.get("/admin", (req, res) => {
   res.render("pages/admin/dashboard");
 });
 
+app.get("/admin/dashboard", (req, res) => {
+  res.render("pages/admin/dashboard");
+});
+
 app.get("/user", (_req, res) => {
   res.redirect(302, "/user/dashboard");
 });
