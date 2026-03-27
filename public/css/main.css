@@ -395,6 +395,63 @@ header.main-header:not(.home-header):not(.general-header):not(.basic-header) {
   background: rgba(15, 23, 42, 0.06);
 }
 
+.admin-header-menu {
+  position: relative;
+}
+
+.admin-header-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: inherit;
+  padding: 10px 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.admin-header-menu-btn:hover {
+  background: var(--brand-blue);
+  border-color: var(--brand-blue);
+  color: #ffffff;
+}
+
+.admin-header-menu-arrow {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.admin-header-menu-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 240px;
+  display: grid;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 18px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+  z-index: 30;
+  overflow: hidden;
+}
+
+.admin-header-menu-item {
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 14px 18px;
+  color: #111827;
+  cursor: pointer;
+}
+
+.admin-header-menu-item:hover {
+  background: rgba(15, 23, 42, 0.06);
+}
+
 .main-brand {
   display: flex;
   align-items: center;

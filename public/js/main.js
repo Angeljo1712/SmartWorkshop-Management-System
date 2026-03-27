@@ -262,6 +262,26 @@ const buildCustomerHeaderMenuMarkup = () => `
   </div>
 `;
 
+const buildAdminHeaderMenuMarkup = () => `
+  <div class="admin-header-menu generated-session-menu">
+    <button class="admin-header-menu-btn" type="button" aria-expanded="false">
+      <span class="admin-header-first-name"></span>
+      <span class="admin-header-menu-arrow">▾</span>
+    </button>
+    <div class="admin-header-menu-panel is-hidden">
+      <button class="admin-header-menu-item" type="button" data-view="dashboard">Dashboard</button>
+      <button class="admin-header-menu-item" type="button" data-view="users">Users</button>
+      <button class="admin-header-menu-item" type="button" data-view="applications">Applications</button>
+      <button class="admin-header-menu-item" type="button" data-view="bookings">Bookings</button>
+      <button class="admin-header-menu-item" type="button" data-view="resolution">Resolution</button>
+      <button class="admin-header-menu-item" type="button" data-view="payments">Payments</button>
+      <button class="admin-header-menu-item" type="button" data-view="catalog">Catalog</button>
+      <button class="admin-header-menu-item" type="button" data-view="settings">Settings</button>
+      <button class="admin-header-menu-item" type="button" data-action="logout">Logout</button>
+    </div>
+  </div>
+`;
+
 const syncGeneralHeaderSessionMenus = () => document.querySelectorAll(".main-header.general-header").forEach((header) => {
   const container = header.querySelector(".body-content, .header-content");
   if (!container) return;
@@ -276,6 +296,14 @@ const syncGeneralHeaderSessionMenus = () => document.querySelectorAll(".main-hea
       menu.querySelector(".mechanic-header-first-name").textContent = session.firstName.toUpperCase();
       container.appendChild(menu);
     }
+    return;
+  }
+  if (session.activeRole === "ADMIN") {
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = buildAdminHeaderMenuMarkup();
+    const menu = wrapper.firstElementChild;
+    menu.querySelector(".admin-header-first-name").textContent = session.firstName.toUpperCase();
+    container.appendChild(menu);
     return;
   }
   if (session.activeRole === "CUSTOMER") {
@@ -399,10 +427,50 @@ const bindCustomerHeaderMenus = () => document.querySelectorAll(".customer-heade
   });
 });
 
+const bindAdminHeaderMenus = () => document.querySelectorAll(".admin-header-menu").forEach((menu) => {
+  if (menu.dataset.bound === "true") return;
+  menu.dataset.bound = "true";
+  const session = getStoredUserSession();
+  if (!session || session.activeRole !== "ADMIN") return;
+  const button = menu.querySelector(".admin-header-menu-btn");
+  const panel = menu.querySelector(".admin-header-menu-panel");
+  const nameEl = menu.querySelector(".admin-header-first-name");
+  const items = menu.querySelectorAll(".admin-header-menu-item");
+  if (nameEl && !nameEl.textContent.trim()) {
+    nameEl.textContent = session.firstName.toUpperCase();
+  }
+  button?.addEventListener("click", () => {
+    const isHidden = panel?.classList.contains("is-hidden");
+    panel?.classList.toggle("is-hidden", !isHidden);
+    button.setAttribute("aria-expanded", isHidden ? "true" : "false");
+  });
+  items.forEach((item) => {
+    item.addEventListener("click", () => {
+      panel?.classList.add("is-hidden");
+      button?.setAttribute("aria-expanded", "false");
+      const action = item.dataset.action || "";
+      if (action === "logout") {
+        clearStoredSessionAndGoHome();
+        return;
+      }
+      const targetView = item.dataset.view || "dashboard";
+      sessionStorage.setItem("adminHeaderTargetView", targetView);
+      window.location.href = "/admin/dashboard";
+    });
+  });
+  document.addEventListener("click", (event) => {
+    if (!panel || !button) return;
+    if (menu.contains(event.target)) return;
+    panel.classList.add("is-hidden");
+    button.setAttribute("aria-expanded", "false");
+  });
+});
+
 const initHeaderSessionMenus = () => {
   syncGeneralHeaderSessionMenus();
   bindMechanicHeaderMenus();
   bindCustomerHeaderMenus();
+  bindAdminHeaderMenus();
 };
 
 initHeaderSessionMenus();
@@ -3326,6 +3394,14 @@ if (adminPage) {
     fetchResolutionCases();
     fetchPayments();
     fetchCatalog();
+    const pendingAdminView = sessionStorage.getItem("adminHeaderTargetView");
+    if (pendingAdminView) {
+      const navButton = Array.from(adminNavLinks).find((button) => button.dataset.view === pendingAdminView);
+      if (navButton) {
+        navButton.click();
+      }
+      sessionStorage.removeItem("adminHeaderTargetView");
+    }
   } else {
     window.location.replace("/auth/login");
   }
