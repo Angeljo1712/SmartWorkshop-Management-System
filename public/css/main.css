@@ -709,7 +709,7 @@ header.main-header:not(.home-header):not(.general-header):not(.basic-header) {
 }
 
 .admin-content,
-.user-content {
+.userContent {
   display: grid;
   gap: 18px;
 }

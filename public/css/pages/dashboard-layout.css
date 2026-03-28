@@ -68,7 +68,7 @@ body.mechanic-body .primari-shell {
   border-radius: 15px;
 }
 
-#userPage.mainLayout .user-content,
+#userPage.mainLayout .userContent,
 #mechanicPage .admin-content,
 #adminPage .adminContent {
   min-width: 0;

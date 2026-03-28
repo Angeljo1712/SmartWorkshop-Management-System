@@ -69,15 +69,15 @@ block content
             .rail-footer
               button.admin-signout#userLogoutBtn(type="button") Sign out
 
-          .is-hidden
-            .admin-profile-avatar#userProfileAvatar AG
-            strong#userProfileName Angel Gomes
-            span#userProfileRole ADMIN
-            select#userRoleSwitcher.role-switcher
+          section.mainSection
+            .is-hidden
+              .admin-profile-avatar#userProfileAvatar AG
+              strong#userProfileName Angel Gomes
+              span#userProfileRole ADMIN
+              select#userRoleSwitcher.role-switcher
 
-          .user-content.Layer2
-            section.user-view#userDashboardView
-              .settings-card.user-dashboard-card
+            .userContent
+              section.user-view#userDashboardView
                 .user-dashboard-layout
                   .dashboard-section.dashboard-section--welcome
                     .settings-header
