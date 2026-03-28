@@ -1,37 +1,35 @@
 /* Shared dashboard structure: user, mechanic, admin */
 
-#userPage.primari-shell,
-#mechanicPage.primari-shell {
+body.user-body .primari-shell,
+body.mechanic-body .primari-shell {
   background: #1f2937;
 }
 
-body.user-body .page-shell-content {
-  width: min(1280px, 100%);
-  margin: 0 auto;
-  min-height: calc(100vh - 176px);
-  height: 100%;
-  background: #344154;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 20px;
-  display: grid;
-  align-content: center;
-}
+  body.user-body .page-shell-content,
+  #mechanicPage .page-shell-content,
+  body.admin-body .page-shell-content {
+    min-height: calc(100vh - 176px);
+    height: 100%;
+    background: #344154;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
 
-#mechanicPage .page-shell-content {
-  width: min(1280px, 100%);
-  margin: 0 auto;
-  min-height: calc(100vh - 176px);
-  height: 100%;
-  background: #344154;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 30px;
-  display: grid;
-  align-content: center;
-}
+  body.user-body .page-shell-content,
+  body.admin-body .page-shell-content {
+    padding: 20px;
+  }
+
+  #mechanicPage .page-shell-content {
+    align-content: center;
+  }
+
+  #mechanicPage .page-shell-content {
+    padding: 30px;
+  }
 
 #userPage.mainLayout,
 #mechanicPage .mechanic-layout,
-#adminPage #adminApp.mainLayout {
+  #adminPage.mainLayout {
   min-width: 0;
   min-height: auto;
   align-items: stretch;
@@ -61,7 +59,7 @@ body.user-body .page-shell-content {
   z-index: 0;
 }
 
-#userPage .rail-base,
+#userPage.mainLayout .rail-base,
 #mechanicPage .mechanic-rail,
 #adminPage .rail-base {
   min-height: 100%;
@@ -70,7 +68,7 @@ body.user-body .page-shell-content {
   border-radius: 15px;
 }
 
-#userPage .user-content,
+#userPage.mainLayout .user-content,
 #mechanicPage .admin-content,
 #adminPage .adminContent {
   min-width: 0;
@@ -79,12 +77,12 @@ body.user-body .page-shell-content {
 @media (max-width: 1100px) {
   #userPage.mainLayout,
   #mechanicPage .mechanic-layout,
-  #adminPage #adminApp.mainLayout,
+    #adminPage.mainLayout,
   #adminPage .mainSection {
     grid-template-columns: 1fr;
   }
 
-  #userPage .rail-base,
+  #userPage.mainLayout .rail-base,
   #mechanicPage .mechanic-rail,
   #adminPage .rail-base {
     min-height: auto;
@@ -111,3 +109,4 @@ body.user-body .page-shell-content {
     padding: 12px;
   }
 }
+

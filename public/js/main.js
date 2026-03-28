@@ -1935,7 +1935,7 @@ if (bookingDetailsForm) {
 
 const adminPage = document.getElementById("adminPage");
 if (adminPage) {
-  const adminApp = document.getElementById("adminApp");
+  const adminApp = adminPage;
   const adminLogoutBtn = document.getElementById("adminLogoutBtn");
   const adminSideTitle = document.getElementById("adminSideTitle");
   const adminSearchSection = document.getElementById("adminSearchSection");

@@ -1,22 +1,16 @@
-#adminPage.admin-ui {
+body.admin-body .admin-ui {
   min-height: 100vh;
   padding: 18px;
   background: transparent;
   color: #dbe3f0;
 }
 
-#adminPage.primari-shell {
+body.admin-body .primari-shell {
   background: #1f2937;
 }
 
-#adminPage .page-shell-content {
-  background: #344154;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 20px;
-}
-
-#adminPage #adminApp.mainLayout {
-  display: grid;
+#adminPage.mainLayout {
+    display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: 0;
   align-items: stretch;
@@ -466,9 +460,9 @@
 }
 
 @media (max-width: 1100px) {
-  #adminPage #adminApp.mainLayout {
-    grid-template-columns: 1fr;
-  }
+  #adminPage.mainLayout {
+      grid-template-columns: 1fr;
+    }
 
   #adminPage .admin-dashboard-metrics,
   #adminPage .admin-dashboard-queues {
