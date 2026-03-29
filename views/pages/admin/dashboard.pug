@@ -100,8 +100,8 @@ block content
           .admin-dashboard-hero
             .settings-header
               .settings-header-copy
-                h3 Dashboard
-                p General information
+                h3#adminHeroSectionTitle Dashboard
+                p#adminHeroSectionSubtitle General information
               .settings-header-aside
                 .admin-dashboard-hero-copy
                   .admin-profile-avatar#adminDashboardHeroAvatar AU
@@ -181,228 +181,324 @@ block content
                     button.ghost(type="button" data-admin-dashboard-target="payments") Check payouts
                     button.ghost(type="button" data-admin-dashboard-target="users") Manage users
 
-          section.admin-view.is-hidden#adminUsersView
-            .admin-table-card
-              .admin-table-head
-                .head-left
-                  h3 Users
-                  p
-                    span#adminUserCount 0
-                .admin-table-actions
-                  input#adminSearch.side-input(type="search" placeholder="Search")
-                  select#adminRowsPerPage
-                    option(value="10") 10 rows
-                    option(value="20") 20 rows
-                    option(value="50") 50 rows
-              .admin-table-wrap
-                table.admin-table
-                  thead
-                    tr
-                      th
-                      th Name
-                      th Location
-                      th Current Job
-                      th Exp.
-                      th Ready
-                      th Score
-                      th
-                  tbody#adminUserRows
-                p.admin-empty#adminEmptyState.is-hidden No users found.
-              .admin-table-footer
-                span#adminRowsMeta 0 of 0 rows
-                .admin-pagination#adminPagination
+            section.admin-view.is-hidden#adminUsersView
+              .adminUserLayout
+                .adminTableLayout
+                  .admin-table-head
+                    .admin-table-head-filters
+                      .admin-head-control.admin-head-control--search#adminSearchSection(data-filter-section)
+                        span.admin-head-label.is-hidden#adminSearchLabel Search
+                        input#adminSearch.side-input(type="search" placeholder="Search")
+                      .admin-head-control.admin-head-control--role#adminRoleSection(data-filter-section)
+                        span.admin-head-label.is-hidden#adminRoleLabel Role
+                        select#adminRoleFilter.side-select(data-all-label="Role")
+                          option(value="all") Role
+                      .admin-head-control.admin-head-control--status#adminStatusSection(data-filter-section)
+                        span.admin-head-label.is-hidden#adminStatusLabel Status
+                        select#adminStatusFilter.side-select(data-all-label="Status")
+                          option(value="all") Status
+                      .admin-head-control.admin-head-control--date#adminDateSection(data-filter-section)
+                        span.admin-head-label.is-hidden#adminDateLabel Date
+                        select#adminDateFilter.side-select(data-all-label="Date")
+                          option(value="all") Date
+                    .admin-table-head-actions
+                      span.is-hidden#adminUserCount 0
+                      button.ghost#adminExportBtn(type="button") Export
+                      button.primary#adminAddUserBtn(type="button") Add User
+                  .admin-table-wrap
+                    table.admin-table
+                      thead
+                        tr
+                          th
+                            input#adminUsersSelectAll(type="checkbox" aria-label="Select all users")
+                          th.admin-sortable(data-sort-key="full_name")
+                            button.admin-sort-button(type="button")
+                              span Full name
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-sort-key="email")
+                            button.admin-sort-button(type="button")
+                              span Email
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-sort-key="username")
+                            button.admin-sort-button(type="button")
+                              span Username
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-sort-key="status")
+                            button.admin-sort-button(type="button")
+                              span Status
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-sort-key="role")
+                            button.admin-sort-button(type="button")
+                              span Role
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-sort-key="experience")
+                            button.admin-sort-button(type="button")
+                              span Exp.
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-sort-key="readiness")
+                            button.admin-sort-button(type="button")
+                              span Ready
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-sort-key="joined_date")
+                            button.admin-sort-button(type="button")
+                              span Joined date
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-sort-key="last_active")
+                            button.admin-sort-button(type="button")
+                              span Last active
+                              span.admin-sort-icon(aria-hidden="true")
+                          th
+                      tbody#adminUserRows
+                    p.admin-empty#adminEmptyState.is-hidden No users found.
+                  .admin-table-footer
+                    .admin-table-footer-meta
+                      span Rows per page
+                      select#adminRowsPerPage
+                        option(value="10") 10
+                        option(value="20") 20
+                        option(value="50") 50
+                      span#adminRowsMeta 0 of 0 rows
+                    .admin-pagination#adminPagination
 
-          section.admin-view.is-hidden#adminApplicationsView
-            .admin-table-card
-              .admin-table-head
-                .head-left
-                  h3 Mechanic applications
-                  p
-                    span#adminApplicationsCount 0
-                .admin-table-actions
-                  input#adminApplicationsSearch.side-input(type="search" placeholder="Search applications")
-              .admin-table-wrap
-                table.admin-table
-                  thead
-                    tr
-                      th Name
-                      th Type
-                      th Postcode
-                      th Docs
-                      th Application
-                      th Account
-                      th Created
-                      th Actions
-                  tbody#adminApplicationsRows
-                p.admin-empty#adminApplicationsEmptyState.is-hidden No mechanic applications found.
+            section.admin-view.is-hidden#adminApplicationsView
+              .adminUserLayout
+                .admin-table-head
+                  .head-left
+                    h3 Mechanic applications
+                    p
+                      span#adminApplicationsCount 0
+                  .admin-table-actions
+                    input#adminApplicationsSearch.side-input(type="search" placeholder="Search applications")
+                .admin-table-wrap
+                  table.admin-table
+                    thead
+                      tr
+                        th Name
+                        th Type
+                        th Postcode
+                        th Docs
+                        th Application
+                        th Account
+                        th Created
+                        th Actions
+                    tbody#adminApplicationsRows
+                  p.admin-empty#adminApplicationsEmptyState.is-hidden No mechanic applications found.
 
-          section.admin-view.is-hidden#adminBookingsView
-            .admin-table-card
-              .admin-table-head
-                .head-left
-                  h3 Bookings
-                  p
-                    span#adminBookingsCount 0
-                .admin-table-actions
-                  input#adminBookingsSearch.side-input(type="search" placeholder="Search bookings")
-              .admin-table-wrap
-                table.admin-table
-                  thead
-                    tr
-                      th Reference
-                      th Status
-                      th Customer
-                      th Mechanic
-                      th Vehicle
-                      th Location
-                      th Total
-                      th Created
-                      th Actions
-                  tbody#adminBookingsRows
-                p.admin-empty#adminBookingsEmptyState.is-hidden No bookings found.
+            section.admin-view.is-hidden#adminBookingsView
+              .adminUserLayout
+                .admin-table-head
+                  .head-left
+                    h3 Bookings
+                    p
+                      span#adminBookingsCount 0
+                  .admin-table-actions
+                    input#adminBookingsSearch.side-input(type="search" placeholder="Search bookings")
+                .admin-table-wrap
+                  table.admin-table
+                    thead
+                      tr
+                        th Reference
+                        th Status
+                        th Customer
+                        th Mechanic
+                        th Vehicle
+                        th Location
+                        th Total
+                        th Created
+                        th Actions
+                    tbody#adminBookingsRows
+                  p.admin-empty#adminBookingsEmptyState.is-hidden No bookings found.
 
-          section.admin-view.is-hidden#adminResolutionView
-            .admin-table-card
-              .admin-table-head
-                .head-left
-                  h3 Resolution
-                  p
-                    span#adminResolutionCount 0
-                .admin-table-actions
-                  input#adminResolutionSearch.side-input(type="search" placeholder="Search cases")
-              .admin-table-wrap
-                table.admin-table
-                  thead
-                    tr
-                      th Reference
-                      th Type
-                      th Subject
-                      th Status
-                      th Customer
-                      th Mechanic
-                      th Updated
-                      th Actions
-                  tbody#adminResolutionRows
-                p.admin-empty#adminResolutionEmptyState.is-hidden No resolution cases found.
+            section.admin-view.is-hidden#adminResolutionView
+              .adminUserLayout
+                .admin-table-head
+                  .head-left
+                    h3 Resolution
+                    p
+                      span#adminResolutionCount 0
+                  .admin-table-actions
+                    input#adminResolutionSearch.side-input(type="search" placeholder="Search cases")
+                .admin-table-wrap
+                  table.admin-table
+                    thead
+                      tr
+                        th Reference
+                        th Type
+                        th Subject
+                        th Status
+                        th Customer
+                        th Mechanic
+                        th Updated
+                        th Actions
+                    tbody#adminResolutionRows
+                  p.admin-empty#adminResolutionEmptyState.is-hidden No resolution cases found.
 
-          section.admin-view.is-hidden#adminPaymentsView
-            .admin-table-card
-              .admin-table-head
-                .head-left
-                  h3 Payments
-                  p
-                    span#adminPaymentsCount 0
-                .admin-table-actions
-                  input#adminPaymentsSearch.side-input(type="search" placeholder="Search payments")
-              .admin-table-wrap
-                table.admin-table
-                  thead
-                    tr
-                      th Reference
-                      th Kind
-                      th Booking
-                      th Party
-                      th Provider
-                      th Status
-                      th Amount
-                      th Created
-                      th Actions
-                  tbody#adminPaymentsRows
-                p.admin-empty#adminPaymentsEmptyState.is-hidden No payments found.
+            section.admin-view.is-hidden#adminPaymentsView
+              .adminUserLayout
+                .admin-table-head
+                  .head-left
+                    h3 Payments
+                    p
+                      span#adminPaymentsCount 0
+                  .admin-table-actions
+                    input#adminPaymentsSearch.side-input(type="search" placeholder="Search payments")
+                .admin-table-wrap
+                  table.admin-table
+                    thead
+                      tr
+                        th Reference
+                        th Kind
+                        th Booking
+                        th Party
+                        th Provider
+                        th Status
+                        th Amount
+                        th Created
+                        th Actions
+                    tbody#adminPaymentsRows
+                  p.admin-empty#adminPaymentsEmptyState.is-hidden No payments found.
 
-          section.admin-view.is-hidden#adminCatalogView
-            .admin-table-card
-              .admin-table-head
-                .head-left
-                  h3 Service catalog
-                  p
-                    span#adminCatalogCount 0
-                .admin-table-actions
-                  input#adminCatalogSearch.side-input(type="search" placeholder="Search catalog")
-              .admin-table-wrap
-                table.admin-table
-                  thead
-                    tr
-                      th Group
-                      th Subcategory
-                      th Service
-                      th Code
-                      th Labour
-                      th Price
-                      th Actions
-                  tbody#adminCatalogRows
-                p.admin-empty#adminCatalogEmptyState.is-hidden No catalog services found.
+            section.admin-view.is-hidden#adminCatalogView
+              .adminUserLayout
+                .admin-table-head
+                  .head-left
+                    h3 Service catalog
+                    p
+                      span#adminCatalogCount 0
+                  .admin-table-actions
+                    input#adminCatalogSearch.side-input(type="search" placeholder="Search catalog")
+                .admin-table-wrap
+                  table.admin-table
+                    thead
+                      tr
+                        th Group
+                        th Subcategory
+                        th Service
+                        th Code
+                        th Labour
+                        th Price
+                        th Actions
+                    tbody#adminCatalogRows
+                  p.admin-empty#adminCatalogEmptyState.is-hidden No catalog services found.
 
-          section.admin-view.is-hidden#adminProfileView
-            .admin-profile-card
-                .profile-left
-                .admin-profile-avatar#adminProfileAvatar AU
-                div
-                  strong#adminProfileName Admin User
-                  span#adminProfileRole Administrator
-                .profile-right
-                .profile-item.is-hidden
-                  span.label Avatar
-                  span#adminSettingsAvatar AU
-                .profile-item.is-hidden
-                  span.label Name
-                  span#adminSettingsName Admin User
-                .profile-item
-                  span.label Email
-                  span#adminSettingsEmail admin@smartworkshop.local
-                .profile-item.is-hidden
-                  span.label Email detail
-                  span#adminSettingsEmailDetail Email: admin@smartworkshop.local
-                .profile-item
-                  span.label Phone
-                  span#adminSettingsPhone Phone: -
-                .profile-item
-                  span.label Role
-                  span#adminSettingsRole Administrator
+            section.admin-view.is-hidden#adminProfileView
+              .admin-profile-card
+                  .profile-left
+                  .admin-profile-avatar#adminProfileAvatar AU
+                  div
+                    strong#adminProfileName Admin User
+                    span#adminProfileRole Administrator
+                  .profile-right
+                  .profile-item.is-hidden
+                    span.label Avatar
+                    span#adminSettingsAvatar AU
+                  .profile-item.is-hidden
+                    span.label Name
+                    span#adminSettingsName Admin User
+                  .profile-item
+                    span.label Email
+                    span#adminSettingsEmail admin@smartworkshop.local
+                  .profile-item.is-hidden
+                    span.label Email detail
+                    span#adminSettingsEmailDetail Email: admin@smartworkshop.local
+                  .profile-item
+                    span.label Phone
+                    span#adminSettingsPhone Phone: -
+                  .profile-item
+                    span.label Role
+                    span#adminSettingsRole Administrator
 
-          section.admin-view.is-hidden#adminSettingsView
-            .admin-profile-card
-                .profile-left
-                .admin-profile-avatar AA
-                div
-                  strong Admin Settings
-                  span Manage your workspace preferences
-                .profile-right
-                .profile-item
-                  span.label Theme
-                  span Dark
-                .profile-item
-                  span.label Notifications
-                  span Enabled
-                .profile-item
-                  span.label Access
-                  span Administrator
+            section.admin-view.is-hidden#adminSettingsView
+              .admin-profile-card
+                  .profile-left
+                  .admin-profile-avatar AA
+                  div
+                    strong Admin Settings
+                    span Manage your workspace preferences
+                  .profile-right
+                  .profile-item
+                    span.label Theme
+                    span Dark
+                  .profile-item
+                    span.label Notifications
+                    span Enabled
+                  .profile-item
+                    span.label Access
+                    span Administrator
 
-          section.admin-panel.is-hidden#adminAddUserPanel
-            .admin-panel-head
-              h3 New user
-              button.ghost#adminAddUserClose(type="button") Close
-            form.admin-form#adminAddUserForm
-              .admin-form-row
-                label
-                  | Full name
-                  input#adminNewName(type="text" placeholder="Jane Mechanic" required)
-                label
-                  | Email
-                  input#adminNewEmail(type="email" placeholder="jane@shop.co.uk" required)
-              .admin-form-row
-                label
-                  | Role
-                  select#adminNewRole
-                    option(value="ADMIN") Admin
-                    option(value="MECHANIC") Mechanic
-                    option(value="CUSTOMER") Customer
-                label
-                  | Temporary password
-                  input#adminNewPassword(type="password" placeholder="Temp password" required)
-              p.form-error#adminAddUserError(role="alert" aria-live="polite")
-              button.primary(type="submit") Create user
+            section.admin-panel.is-hidden#adminAddUserPanel
+              .admin-panel-head
+                h3 New user
+                button.ghost#adminAddUserClose(type="button") Close
+              form.admin-form#adminAddUserForm
+                .admin-form-row
+                  label
+                    | Full name
+                    input#adminNewName(type="text" placeholder="Jane Mechanic" required)
+                  label
+                    | Email
+                    input#adminNewEmail(type="email" placeholder="jane@shop.co.uk" required)
+                .admin-form-row
+                  label
+                    | Role
+                    select#adminNewRole
+                      option(value="ADMIN") Admin
+                      option(value="MECHANIC") Mechanic
+                      option(value="CUSTOMER") Customer
+                  label
+                    | Temporary password
+                    input#adminNewPassword(type="password" placeholder="Temp password" required)
+                p.form-error#adminAddUserError(role="alert" aria-live="polite")
+                button.primary(type="submit") Create user
 
-          p.admin-feedback.is-hidden#adminActionFeedback(role="alert" aria-live="polite")
+            p.admin-feedback.is-hidden#adminActionFeedback(role="alert" aria-live="polite")
+            .settings-edit-modal.is-hidden#adminSettingsEditModal
+              .settings-edit-backdrop(data-admin-edit-close="true")
+              .settings-edit-dialog(role="dialog" aria-modal="true" aria-labelledby="adminSettingsEditTitle")
+                .settings-edit-head
+                  h3#adminSettingsEditTitle Update field
+                p#adminSettingsEditDescription Update account details.
+                label.settings-edit-field(for="adminSettingsEditInput")
+                  span#adminSettingsEditLabel Value
+                  input#adminSettingsEditInput(type="text")
+                .settings-edit-name-grid.is-hidden#adminSettingsEditNameGrid
+                  label.settings-edit-field(for="adminSettingsEditFirstName")
+                    span First name
+                    input#adminSettingsEditFirstName(type="text")
+                  label.settings-edit-field(for="adminSettingsEditMiddleName")
+                    span Middle name
+                    input#adminSettingsEditMiddleName(type="text")
+                  label.settings-edit-field(for="adminSettingsEditLastName")
+                    span Last name
+                    input#adminSettingsEditLastName(type="text")
+                .settings-edit-address-grid.is-hidden#adminSettingsEditAddressGrid
+                  label.settings-edit-field(for="adminSettingsEditAddressLine1")
+                    span Address line 1
+                    input#adminSettingsEditAddressLine1(type="text")
+                  label.settings-edit-field(for="adminSettingsEditAddressLine2")
+                    span Address line 2
+                    input#adminSettingsEditAddressLine2(type="text")
+                  label.settings-edit-field(for="adminSettingsEditCity")
+                    span City
+                    input#adminSettingsEditCity(type="text")
+                  label.settings-edit-field(for="adminSettingsEditPostcode")
+                    span Postcode
+                    input#adminSettingsEditPostcode(type="text")
+                label.settings-edit-field.is-hidden#adminSettingsEditSelectField(for="adminSettingsEditSelect")
+                  span#adminSettingsEditSelectLabel Value
+                  select#adminSettingsEditSelect
+                p.form-error#adminSettingsEditMessage(role="alert" aria-live="polite")
+                .settings-edit-actions
+                  button.secondary#adminSettingsEditCancel(type="button") Cancel
+                  button.ghost#adminSettingsEditSave(type="button") Update
+            .admin-delete-modal.is-hidden#adminDeleteModal
+              .admin-delete-backdrop(data-admin-delete-close="true")
+              .admin-delete-dialog(role="dialog" aria-modal="true" aria-labelledby="adminDeleteTitle")
+                .admin-delete-head
+                  h3#adminDeleteTitle Delete user
+                p#adminDeleteDescription Are you sure you want to delete this user?
+                .admin-delete-actions
+                  button.ghost#adminDeleteCancel(type="button") Cancel
+                  button.primary#adminDeleteConfirm(type="button") Delete
 
   include ../../partials/general-footer

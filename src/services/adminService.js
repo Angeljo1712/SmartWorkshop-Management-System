@@ -80,11 +80,28 @@ const listUsers = async () => {
   const [rows] = await pool.query(
     `SELECT u.id, u.email, u.username, u.phone, u.created_at, u.role, u.status,
             p.name, p.lastname, p.avatar_url,
-            GROUP_CONCAT(ur.role) AS roles
+            a.line1,
+            a.line2,
+            a.city,
+            a.postal_code,
+            a.country,
+            ur.roles
      FROM users u
      LEFT JOIN user_profiles p ON p.user_id = u.id
-     LEFT JOIN user_roles ur ON ur.user_id = u.id
-     GROUP BY u.id
+     LEFT JOIN (
+       SELECT user_id, GROUP_CONCAT(role) AS roles
+       FROM user_roles
+       GROUP BY user_id
+     ) ur ON ur.user_id = u.id
+     LEFT JOIN (
+       SELECT a1.user_id, a1.line1, a1.line2, a1.city, a1.postal_code, a1.country
+       FROM addresses a1
+       INNER JOIN (
+         SELECT user_id, MAX(id) AS latest_address_id
+         FROM addresses
+         GROUP BY user_id
+       ) latest_address ON latest_address.latest_address_id = a1.id
+     ) a ON a.user_id = u.id
      ORDER BY u.created_at DESC`
   );
   return rows.map((row) => {
@@ -96,6 +113,8 @@ const listUsers = async () => {
         : "CUSTOMER";
     return {
       user_id: row.id,
+      name: row.name || "",
+      lastname: row.lastname || "",
       full_name: [row.name, row.lastname].filter(Boolean).join(" ") || "-",
       email: row.email,
       username: row.username,
@@ -105,7 +124,13 @@ const listUsers = async () => {
       roles,
       created_at: row.created_at,
       avatar_url: row.avatar_url,
-      phone: row.phone
+      phone: row.phone,
+      address: [row.line1, row.line2, row.city, row.postal_code, row.country].filter(Boolean).join(", ") || "",
+      address_line_1: row.line1 || "",
+      address_line_2: row.line2 || "",
+      city: row.city || "",
+      postal_code: row.postal_code || "",
+      country: row.country || ""
     };
   });
 };
@@ -520,6 +545,157 @@ const setUserStatus = async ({ userId, status }) => {
   return { user_id: userId, status: normalizedStatus };
 };
 
+const updateUser = async ({
+  userId,
+  full_name,
+  phone,
+  username,
+  address,
+  role,
+  status
+}) => {
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    const [[existing]] = await connection.query(
+      `SELECT u.id, u.username, u.phone, u.status, u.role,
+              p.name, p.lastname,
+              GROUP_CONCAT(DISTINCT ur.role) AS roles
+       FROM users u
+       LEFT JOIN user_profiles p ON p.user_id = u.id
+       LEFT JOIN user_roles ur ON ur.user_id = u.id
+       WHERE u.id = ?
+       GROUP BY u.id`,
+      [userId]
+    );
+
+    if (!existing) {
+      throw new AppError("USER_NOT_FOUND", "User not found", 404);
+    }
+
+    const trimmedName = String(full_name || "").trim();
+    const [firstName = "", ...lastNameParts] = trimmedName.split(/\s+/).filter(Boolean);
+    const lastName = lastNameParts.join(" ");
+    const nextPhone = String(phone || "").trim() || null;
+    const nextUsername = String(username || "").trim() || null;
+    const nextAddress = String(address || "").trim();
+    const normalizedRole = String(role || "").trim().toLowerCase();
+    const normalizedStatus = String(status || "").trim().toLowerCase();
+
+    if (!trimmedName) {
+      throw new AppError("VALIDATION_ERROR", "Full name is required", 400);
+    }
+
+    if (!["user", "mechanic", "admin"].includes(normalizedRole)) {
+      throw new AppError("ROLE_INVALID", "Role not supported", 400);
+    }
+
+    if (!["pending", "active", "suspended", "banned"].includes(normalizedStatus)) {
+      throw new AppError("STATUS_INVALID", "Status not supported", 400);
+    }
+
+    if (nextUsername) {
+      const [[usernameRow]] = await connection.query("SELECT id FROM users WHERE username = ? AND id <> ?", [nextUsername, userId]);
+      if (usernameRow) {
+        throw new AppError("USERNAME_TAKEN", "Username is already in use", 409);
+      }
+    }
+
+    await connection.query("UPDATE users SET username = ?, phone = ?, status = ? WHERE id = ?", [
+      nextUsername,
+      nextPhone,
+      normalizedStatus,
+      userId
+    ]);
+
+    await connection.query(
+      `INSERT INTO user_profiles (user_id, name, lastname)
+       VALUES (?, ?, ?)
+       ON DUPLICATE KEY UPDATE name = VALUES(name), lastname = VALUES(lastname)`,
+      [userId, firstName || trimmedName, lastName || null]
+    );
+
+    await connection.query("DELETE FROM user_roles WHERE user_id = ?", [userId]);
+    await connection.query("INSERT INTO user_roles (user_id, role) VALUES (?, ?)", [userId, normalizedRole]);
+    await connection.query("UPDATE users SET role = ? WHERE id = ?", [normalizedRole, userId]);
+
+    if (nextAddress) {
+      const [addressRows] = await connection.query(
+        `SELECT id
+         FROM addresses
+         WHERE user_id = ?
+         ORDER BY id DESC
+         LIMIT 1`,
+        [userId]
+      );
+
+      if (addressRows.length) {
+        await connection.query("UPDATE addresses SET line1 = ?, line2 = '', city = '', postal_code = '', country = '' WHERE id = ?", [
+          nextAddress,
+          addressRows[0].id
+        ]);
+      } else {
+        await connection.query(
+          `INSERT INTO addresses (uuid_public, user_id, label, line1, line2, city, postal_code, country, location)
+           VALUES (UUID(), ?, 'Primary', ?, '', '', '', '', '')`,
+          [userId, nextAddress]
+        );
+      }
+    }
+
+    await connection.commit();
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
+
+  const users = await listUsers();
+  return users.find((item) => Number(item.user_id) === Number(userId)) || null;
+};
+
+const deleteUser = async ({ userId }) => {
+  const [[user]] = await pool.query(
+    `SELECT u.id, u.email, u.role,
+            GROUP_CONCAT(DISTINCT ur.role) AS roles
+     FROM users u
+     LEFT JOIN user_roles ur ON ur.user_id = u.id
+     WHERE u.id = ?
+     GROUP BY u.id`,
+    [userId]
+  );
+
+  if (!user) {
+    throw new AppError("USER_NOT_FOUND", "User not found", 404);
+  }
+
+  const roles = (user.roles ? String(user.roles).split(",") : [user.role]).map(roleLabel);
+  if (roles.includes("ADMIN")) {
+    throw new AppError("USER_DELETE_FORBIDDEN", "Admin users cannot be deleted", 403);
+  }
+
+  if (!roles.some((role) => role === "MECHANIC" || role === "CUSTOMER")) {
+    throw new AppError("USER_DELETE_FORBIDDEN", "Only mechanic or customer users can be deleted", 403);
+  }
+
+  try {
+    await pool.query("DELETE FROM users WHERE id = ?", [userId]);
+  } catch (error) {
+    if (error && (error.code === "ER_ROW_IS_REFERENCED_2" || error.code === "ER_ROW_IS_REFERENCED")) {
+      throw new AppError(
+        "USER_DELETE_BLOCKED",
+        "This user cannot be deleted because it is linked to existing bookings or protected records",
+        409
+      );
+    }
+    throw error;
+  }
+
+  return { deleted: true, user_id: userId, email: user.email };
+};
+
 module.exports = {
   listWorkshops,
   createWorkshop,
@@ -537,7 +713,9 @@ module.exports = {
   updatePaymentStatus,
   updateCatalogServiceOrder,
   setUserRole,
-  setUserStatus
+  setUserStatus,
+  updateUser,
+  deleteUser
 };
 
 

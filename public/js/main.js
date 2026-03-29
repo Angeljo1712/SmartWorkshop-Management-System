@@ -1951,6 +1951,8 @@ if (adminPage) {
   const adminDateLabel = document.getElementById("adminDateLabel");
   const adminDateFilter = document.getElementById("adminDateFilter");
   const adminUserRows = document.getElementById("adminUserRows");
+  const adminUserSortHeaders = document.querySelectorAll("#adminUsersView [data-sort-key]");
+  const adminUsersSelectAll = document.getElementById("adminUsersSelectAll");
   const adminEmptyState = document.getElementById("adminEmptyState");
   const adminUserCount = document.getElementById("adminUserCount");
   const adminRowsPerPage = document.getElementById("adminRowsPerPage");
@@ -1962,6 +1964,30 @@ if (adminPage) {
   const adminAddUserClose = document.getElementById("adminAddUserClose");
   const adminAddUserForm = document.getElementById("adminAddUserForm");
   const adminAddUserError = document.getElementById("adminAddUserError");
+  const adminSettingsEditModal = document.getElementById("adminSettingsEditModal");
+  const adminSettingsEditTitle = document.getElementById("adminSettingsEditTitle");
+  const adminSettingsEditDescription = document.getElementById("adminSettingsEditDescription");
+  const adminSettingsEditLabel = document.getElementById("adminSettingsEditLabel");
+  const adminSettingsEditInput = document.getElementById("adminSettingsEditInput");
+  const adminSettingsEditNameGrid = document.getElementById("adminSettingsEditNameGrid");
+  const adminSettingsEditFirstName = document.getElementById("adminSettingsEditFirstName");
+  const adminSettingsEditMiddleName = document.getElementById("adminSettingsEditMiddleName");
+  const adminSettingsEditLastName = document.getElementById("adminSettingsEditLastName");
+  const adminSettingsEditAddressGrid = document.getElementById("adminSettingsEditAddressGrid");
+  const adminSettingsEditAddressLine1 = document.getElementById("adminSettingsEditAddressLine1");
+  const adminSettingsEditAddressLine2 = document.getElementById("adminSettingsEditAddressLine2");
+  const adminSettingsEditCity = document.getElementById("adminSettingsEditCity");
+  const adminSettingsEditPostcode = document.getElementById("adminSettingsEditPostcode");
+  const adminSettingsEditSelectField = document.getElementById("adminSettingsEditSelectField");
+  const adminSettingsEditSelectLabel = document.getElementById("adminSettingsEditSelectLabel");
+  const adminSettingsEditSelect = document.getElementById("adminSettingsEditSelect");
+  const adminSettingsEditMessage = document.getElementById("adminSettingsEditMessage");
+  const adminSettingsEditCancel = document.getElementById("adminSettingsEditCancel");
+  const adminSettingsEditSave = document.getElementById("adminSettingsEditSave");
+  const adminDeleteModal = document.getElementById("adminDeleteModal");
+  const adminDeleteDescription = document.getElementById("adminDeleteDescription");
+  const adminDeleteCancel = document.getElementById("adminDeleteCancel");
+  const adminDeleteConfirm = document.getElementById("adminDeleteConfirm");
   const filterSections = document.querySelectorAll("[data-filter-section]");
   const adminNavLinks = document.querySelectorAll(".admin-nav-link");
   const adminDashboardView = document.getElementById("adminDashboardView");
@@ -1981,6 +2007,8 @@ if (adminPage) {
   const adminMetricOpenCases = document.getElementById("adminMetricOpenCases");
   const adminMetricPendingApplications = document.getElementById("adminMetricPendingApplications");
   const adminMetricPendingPayouts = document.getElementById("adminMetricPendingPayouts");
+  const adminHeroSectionTitle = document.getElementById("adminHeroSectionTitle");
+  const adminHeroSectionSubtitle = document.getElementById("adminHeroSectionSubtitle");
   const adminDashboardHeroName = document.getElementById("adminDashboardHeroName");
   const adminDashboardHeroRole = document.getElementById("adminDashboardHeroRole");
   const adminDashboardHeroAvatar = document.getElementById("adminDashboardHeroAvatar");
@@ -2034,6 +2062,11 @@ if (adminPage) {
   let currentPage = 1;
   let activeAdminView = "dashboard";
   let adminFeedbackTimer = null;
+  const selectedAdminUsers = new Set();
+  let activeAdminEditField = null;
+  let activeAdminEditUserId = null;
+  let pendingAdminDeleteUser = null;
+  let adminUserSort = { key: "joined_date", direction: "desc" };
 
   const getAdminToken = () => getStoredAuthValue("userToken");
   const getAdminProfile = () => {
@@ -2083,6 +2116,24 @@ if (adminPage) {
     if (adminLogoutBtn) adminLogoutBtn.disabled = !loggedIn;
   };
 
+  const setAdminHeroByView = (view) => {
+    const heroConfig = {
+      dashboard: { title: "Dashboard", subtitle: "General information" },
+      users: { title: "Users", subtitle: "Users overview" },
+      applications: { title: "Applications", subtitle: "Mechanic applications" },
+      bookings: { title: "Bookings", subtitle: "Bookings overview" },
+      resolution: { title: "Resolution", subtitle: "Resolution cases" },
+      payments: { title: "Payments", subtitle: "Payments overview" },
+      catalog: { title: "Catalog", subtitle: "Service catalog" },
+      account: { title: "Account", subtitle: "Account information" },
+      profile: { title: "Profile", subtitle: "Profile information" },
+      settings: { title: "Settings", subtitle: "Workspace settings" }
+    };
+    const current = heroConfig[view] || heroConfig.dashboard;
+    if (adminHeroSectionTitle) adminHeroSectionTitle.textContent = current.title;
+    if (adminHeroSectionSubtitle) adminHeroSectionSubtitle.textContent = current.subtitle;
+  };
+
   const statusCycle = ["Active", "Pending", "Suspended", "Banned"];
   const toStatusLabel = (value) => {
     if (!value) return null;
@@ -2100,21 +2151,36 @@ if (adminPage) {
     const options = ["1 minute ago", "4 hours ago", "2 days ago", "1 week ago", "1 month ago"];
     return options[index % options.length];
   };
-  const getAvatarUrl = (email) =>
-    email ? `https://i.pravatar.cc/80?u=${encodeURIComponent(email)}` : "";
-  const fallbackLocations = [
-    "Los Angeles, CA",
-    "Sacramento, CA",
-    "San Francisco, CA",
-    "San Diego, CA",
-    "San Jose, CA",
-    "Oakland, CA"
-  ];
-  const getLocation = (user, index) => {
-    if (user.location) return user.location;
-    const city = user.city || user.town;
-    if (city) return `${city}, CA`;
-    return fallbackLocations[index % fallbackLocations.length];
+  const getAvatarUrl = (user) => {
+    const avatarUrl = String(user?.avatar_url || "").trim();
+    if (!avatarUrl) return "";
+    return avatarUrl.startsWith("/uploads") ? `http://localhost:3000${avatarUrl}` : avatarUrl;
+  };
+  const getLocation = (user) => {
+    const fullAddress = String(user?.address || "").trim();
+    if (fullAddress) {
+      return fullAddress;
+    }
+
+    const addressParts = [
+      user?.address_line_1,
+      user?.address_line_2,
+      user?.city || user?.town,
+      user?.postcode || user?.postal_code,
+      user?.country
+    ]
+      .map((value) => String(value || "").trim())
+      .filter(Boolean);
+
+    if (addressParts.length) {
+      return addressParts.join(", ");
+    }
+
+    if (user?.location) {
+      return String(user.location).trim();
+    }
+
+    return "-";
   };
   const getCurrentJob = (user) => {
     const byRole = {
@@ -2243,14 +2309,70 @@ if (adminPage) {
 
   const setFilterOptions = (select, options, selectedValue = "all") => {
     if (!select) return;
+    const allLabel = select.dataset.allLabel || "All";
     const values = options.some((option) => option.value === "all")
       ? options
-      : [{ value: "all", label: "All" }, ...options];
-    const safeSelected = values.some((option) => option.value === selectedValue) ? selectedValue : "all";
-    select.innerHTML = values
+      : [{ value: "all", label: allLabel }, ...options];
+    const normalisedValues = values.map((option) =>
+      option.value === "all" ? { ...option, label: option.label || allLabel } : option
+    );
+    const safeSelected = normalisedValues.some((option) => option.value === selectedValue) ? selectedValue : "all";
+    select.innerHTML = normalisedValues
       .map((option) => `<option value="${escapeHtml(option.value)}">${escapeHtml(option.label)}</option>`)
       .join("");
     select.value = safeSelected;
+  };
+
+  const getUserSortValue = (user, index, key) => {
+    switch (key) {
+      case "full_name":
+        return String(user.full_name || "").toLowerCase();
+      case "email":
+        return String(user.email || "").toLowerCase();
+      case "username":
+        return String(user.username || "").toLowerCase();
+      case "status":
+        return String(getStatus(user, index) || "").toLowerCase();
+      case "role":
+        return String(user.role_name || "").toLowerCase();
+      case "experience":
+        return Number.parseFloat(String(getExperience(user) || "0").replace(/[^\d.]/g, "")) || 0;
+      case "readiness": {
+        const value = String(getReadiness(user, index) || "0/5").split("/")[0];
+        return Number.parseInt(value, 10) || 0;
+      }
+      case "joined_date":
+        return new Date(user.created_at || 0).getTime() || 0;
+      case "last_active": {
+        const direct = new Date(user.last_active || 0).getTime();
+        return Number.isNaN(direct) ? 0 : direct;
+      }
+      default:
+        return "";
+    }
+  };
+
+  const sortAdminUsers = (users) => {
+    const sorted = [...users];
+    const direction = adminUserSort.direction === "asc" ? 1 : -1;
+    sorted.sort((left, right) => {
+      const leftIndex = adminUsers.findIndex((item) => Number(item.user_id) === Number(left.user_id));
+      const rightIndex = adminUsers.findIndex((item) => Number(item.user_id) === Number(right.user_id));
+      const leftValue = getUserSortValue(left, leftIndex, adminUserSort.key);
+      const rightValue = getUserSortValue(right, rightIndex, adminUserSort.key);
+      if (leftValue < rightValue) return -1 * direction;
+      if (leftValue > rightValue) return 1 * direction;
+      return 0;
+    });
+    return sorted;
+  };
+
+  const syncAdminUserSortUi = () => {
+    adminUserSortHeaders.forEach((header) => {
+      const isActive = header.dataset.sortKey === adminUserSort.key;
+      header.dataset.sortDirection = isActive ? adminUserSort.direction : "";
+      header.classList.toggle("is-active", isActive);
+    });
   };
 
   const getViewSearchInput = (view) => {
@@ -2368,32 +2490,36 @@ if (adminPage) {
       account: { showSide: false },
       profile: { showSide: false },
       settings: { showSide: false },
-      users: {
-        showSide: true,
-        title: "User filters",
-        searchLabel: "User",
-        searchPlaceholder: "Search users",
-        showRole: true,
-        roleLabel: "Role",
-        roleOptions: [
-          { value: "all", label: "All" },
-          { value: "ADMIN", label: "Admin" },
-          { value: "MECHANIC", label: "Mechanic" },
-          { value: "CUSTOMER", label: "Customer" }
-        ],
-        showStatus: true,
-        statusLabel: "Status",
-        statusOptions: [
-          { value: "all", label: "All" },
-          { value: "Active", label: "Active" },
-          { value: "Pending", label: "Pending" },
-          { value: "Suspended", label: "Suspended" },
-          { value: "Banned", label: "Banned" }
-        ],
-        showDate: true,
-        dateLabel: "Date",
-        dateOptions: baseDateOptions
-      },
+        users: {
+          showSide: true,
+          title: "User filters",
+          searchLabel: "User",
+          searchPlaceholder: "Search",
+          showRole: true,
+          roleLabel: "Role",
+          roleOptions: getUniqueOptions(adminUsers, (item) => item.role_name).map((value) => ({
+            value,
+            label: titleCase(value)
+          })),
+          showStatus: true,
+          statusLabel: "Status",
+          statusOptions: [
+            { value: "all", label: "Status" },
+            { value: "Active", label: "Active" },
+            { value: "Inactive", label: "Inactive" },
+            { value: "Pending", label: "Pending" },
+            { value: "Suspended", label: "Suspended" },
+            { value: "Banned", label: "Banned" }
+          ],
+          showDate: true,
+          dateLabel: "Date",
+          dateOptions: [
+            { value: "all", label: "Date" },
+            { value: "30", label: "Last 30 days" },
+            { value: "90", label: "Last 90 days" },
+            { value: "365", label: "Last year" }
+          ]
+        },
       applications: {
         showSide: true,
         title: "Application filters",
@@ -2544,6 +2670,149 @@ if (adminPage) {
       adminActionFeedback.classList.add("is-hidden");
       adminActionFeedback.classList.remove("is-error");
     }, 3500);
+  };
+
+  const adminEditFieldConfig = {
+    full_name: {
+      label: "Full name",
+      description: "Update the user's full name.",
+      type: "name",
+      getValue: (user) => user.full_name || ""
+    },
+    phone: {
+      label: "Phone",
+      description: "Update the user's phone number.",
+      type: "text",
+      getValue: (user) => user.phone || ""
+    },
+    username: {
+      label: "Username",
+      description: "Update the username.",
+      type: "text",
+      getValue: (user) => user.username || ""
+    },
+    address: {
+      label: "Address",
+      description: "Update the user's address.",
+      type: "address",
+      getValue: (user) => user.address || ""
+    },
+    role: {
+      label: "Role",
+      description: "Update the account role.",
+      type: "select",
+      getValue: (user) => (String(user.role_name || "CUSTOMER").toLowerCase() === "customer" ? "user" : String(user.role_name || "").toLowerCase()),
+      options: [
+        { value: "user", label: "Customer" },
+        { value: "mechanic", label: "Mechanic" },
+        { value: "admin", label: "Admin" }
+      ]
+    },
+    status: {
+      label: "Status",
+      description: "Update the account status.",
+      type: "select",
+      getValue: (user) => String(user.status || "active").toLowerCase(),
+      options: [
+        { value: "pending", label: "Pending" },
+        { value: "active", label: "Active" },
+        { value: "suspended", label: "Suspended" },
+        { value: "banned", label: "Banned" }
+      ]
+    }
+  };
+
+  const closeAdminSettingsEditModal = () => {
+    activeAdminEditField = null;
+    activeAdminEditUserId = null;
+    adminSettingsEditModal?.classList.add("is-hidden");
+    if (adminSettingsEditInput) adminSettingsEditInput.value = "";
+    if (adminSettingsEditNameGrid) adminSettingsEditNameGrid.classList.add("is-hidden");
+    if (adminSettingsEditFirstName) adminSettingsEditFirstName.value = "";
+    if (adminSettingsEditMiddleName) adminSettingsEditMiddleName.value = "";
+    if (adminSettingsEditLastName) adminSettingsEditLastName.value = "";
+    if (adminSettingsEditAddressGrid) adminSettingsEditAddressGrid.classList.add("is-hidden");
+    if (adminSettingsEditAddressLine1) adminSettingsEditAddressLine1.value = "";
+    if (adminSettingsEditAddressLine2) adminSettingsEditAddressLine2.value = "";
+    if (adminSettingsEditCity) adminSettingsEditCity.value = "";
+    if (adminSettingsEditPostcode) adminSettingsEditPostcode.value = "";
+    if (adminSettingsEditSelect) adminSettingsEditSelect.innerHTML = "";
+    if (adminSettingsEditMessage) adminSettingsEditMessage.textContent = "";
+    if (adminSettingsEditSave) adminSettingsEditSave.disabled = false;
+  };
+
+  const openAdminSettingsEditModal = (user, field) => {
+    const config = adminEditFieldConfig[field];
+    if (!config || !user) return;
+    activeAdminEditField = field;
+    activeAdminEditUserId = user.user_id;
+    if (adminSettingsEditTitle) adminSettingsEditTitle.textContent = `Update ${config.label}`;
+    if (adminSettingsEditDescription) adminSettingsEditDescription.textContent = config.description;
+    if (adminSettingsEditNameGrid) adminSettingsEditNameGrid.classList.add("is-hidden");
+    if (adminSettingsEditAddressGrid) adminSettingsEditAddressGrid.classList.add("is-hidden");
+
+    if (config.type === "select") {
+      if (adminSettingsEditInput?.parentElement) adminSettingsEditInput.parentElement.classList.add("is-hidden");
+      adminSettingsEditSelectField?.classList.remove("is-hidden");
+      if (adminSettingsEditSelectLabel) adminSettingsEditSelectLabel.textContent = config.label;
+      if (adminSettingsEditSelect) {
+        adminSettingsEditSelect.innerHTML = config.options
+          .map((option) => `<option value="${escapeHtml(option.value)}">${escapeHtml(option.label)}</option>`)
+          .join("");
+        adminSettingsEditSelect.value = config.getValue(user) || "";
+      }
+    } else if (config.type === "name") {
+      if (adminSettingsEditDescription) {
+        adminSettingsEditDescription.textContent = "Update the full name shown in your profile.";
+      }
+      if (adminSettingsEditInput?.parentElement) adminSettingsEditInput.parentElement.classList.add("is-hidden");
+      adminSettingsEditSelectField?.classList.add("is-hidden");
+      adminSettingsEditNameGrid?.classList.remove("is-hidden");
+      const fullName = String(config.getValue(user) || "").trim();
+      const nameParts = fullName ? fullName.split(/\s+/).filter(Boolean) : [];
+      const firstName = user.name || nameParts[0] || "";
+      const lastName = user.lastname || (nameParts.length > 1 ? nameParts[nameParts.length - 1] : "");
+      const middleName = nameParts.length > 2 ? nameParts.slice(1, -1).join(" ") : "";
+      if (adminSettingsEditFirstName) adminSettingsEditFirstName.value = firstName;
+      if (adminSettingsEditMiddleName) adminSettingsEditMiddleName.value = middleName;
+      if (adminSettingsEditLastName) adminSettingsEditLastName.value = lastName;
+    } else if (config.type === "address") {
+        if (adminSettingsEditInput?.parentElement) adminSettingsEditInput.parentElement.classList.add("is-hidden");
+        adminSettingsEditSelectField?.classList.add("is-hidden");
+      adminSettingsEditAddressGrid?.classList.remove("is-hidden");
+      if (adminSettingsEditAddressLine1) adminSettingsEditAddressLine1.value = user.address_line_1 || "";
+      if (adminSettingsEditAddressLine2) adminSettingsEditAddressLine2.value = user.address_line_2 || "";
+      if (adminSettingsEditCity) adminSettingsEditCity.value = user.city || "";
+      if (adminSettingsEditPostcode) adminSettingsEditPostcode.value = user.postal_code || "";
+    } else {
+      if (adminSettingsEditInput?.parentElement) adminSettingsEditInput.parentElement.classList.remove("is-hidden");
+      adminSettingsEditSelectField?.classList.add("is-hidden");
+      if (adminSettingsEditLabel) adminSettingsEditLabel.textContent = config.label;
+      if (adminSettingsEditInput) {
+        adminSettingsEditInput.type = config.type || "text";
+        adminSettingsEditInput.value = config.getValue(user) || "";
+      }
+    }
+    if (adminSettingsEditMessage) adminSettingsEditMessage.textContent = "";
+    adminSettingsEditModal?.classList.remove("is-hidden");
+  };
+
+  const closeAdminEditMenus = () => {
+    document.querySelectorAll(".admin-edit-menu").forEach((menu) => menu.classList.add("is-hidden"));
+  };
+
+  const closeAdminDeleteModal = () => {
+    pendingAdminDeleteUser = null;
+    adminDeleteModal?.classList.add("is-hidden");
+    if (adminDeleteConfirm) adminDeleteConfirm.disabled = false;
+  };
+
+  const openAdminDeleteModal = ({ userId, name, role }) => {
+    pendingAdminDeleteUser = { userId, name, role };
+    if (adminDeleteDescription) {
+      adminDeleteDescription.textContent = `Are you sure you want to delete ${name}?`;
+    }
+    adminDeleteModal?.classList.remove("is-hidden");
   };
 
   const renderApplications = () => {
@@ -2874,6 +3143,10 @@ if (adminPage) {
 
     if (users.length === 0) {
       adminEmptyState.classList.remove("is-hidden");
+      if (adminUsersSelectAll) {
+        adminUsersSelectAll.checked = false;
+        adminUsersSelectAll.indeterminate = false;
+      }
       return;
     }
 
@@ -2882,41 +3155,67 @@ if (adminPage) {
     users.forEach((user, index) => {
       const row = document.createElement("tr");
       const readiness = getReadiness(user, index);
-      const score = getScore(user, index);
-      const location = getLocation(user, index);
-      const currentJob = getCurrentJob(user);
+      const status = getStatus(user, index);
+      const role = user.role_name || "-";
+      const canDeleteUser = role === "MECHANIC" || role === "CUSTOMER";
       const experience = getExperience(user);
-      const avatarUrl = getAvatarUrl(user.email);
-      const displayName = user.full_name || user.email || "Unknown user";
+      const joinedDate = formatDate(user.created_at);
+      const lastActive = getLastActive(user, index);
+      const avatarUrl = getAvatarUrl(user);
+      const statusClass = String(status).toLowerCase().replace(/\s+/g, "-");
+      const firstName = user.name || user.full_name?.split(" ")[0] || "";
+      const lastName = user.lastname || user.full_name?.split(" ").slice(1).join(" ") || "";
+      const fullName = `${firstName} ${lastName}`.trim() || user.full_name || user.email || "Unknown user";
+      const displayName = fullName;
+      const userId = String(user.user_id || user.id || `${index}`);
+      const isChecked = selectedAdminUsers.has(userId);
       row.innerHTML = `
         <td class="table-check">
-          <input type="checkbox" aria-label="Select ${displayName}" disabled />
+          <input type="checkbox" aria-label="Select ${displayName}" data-user-select="${userId}" ${isChecked ? "checked" : ""} />
         </td>
         <td>
           <div class="user-cell">
             <div class="avatar">
-              ${avatarUrl ? `<img src="${avatarUrl}" alt="" />` : getInitials(displayName)}
+              ${avatarUrl ? `<img src="${avatarUrl}" alt="" />` : ""}
             </div>
             <div class="user-meta">
-              <strong>${displayName}</strong>
-              <span>${user.email || `ID ${user.user_id}`}</span>
+              <strong>${fullName}</strong>
             </div>
           </div>
         </td>
-        <td>${location}</td>
-        <td>${currentJob}</td>
+        <td>${user.email || `ID ${user.user_id}`}</td>
+        <td>${user.username || "-"}</td>
+        <td><span class="admin-status-badge admin-status-badge--${statusClass}">${status}</span></td>
+        <td>${role}</td>
         <td>${experience}</td>
         <td>${readiness}</td>
-        <td><span class="score-pill">${score}</span></td>
+        <td>${joinedDate}</td>
+        <td>${lastActive}</td>
         <td class="table-actions">
           <div class="admin-actions-cell">
-            <button class="icon-btn" type="button" title="Edit (coming soon)" disabled>
+            <button class="icon-btn" type="button" title="Edit options" data-admin-edit-toggle="${userId}">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 20h9"></path>
                 <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
               </svg>
             </button>
-            <button class="icon-btn danger" type="button" title="Delete (coming soon)" disabled>
+            <div class="admin-edit-menu is-hidden" data-admin-edit-menu="${userId}">
+              <button type="button" data-admin-edit-field="full_name" data-admin-edit-user="${userId}">Full name</button>
+              <button type="button" data-admin-edit-field="phone" data-admin-edit-user="${userId}">Phone</button>
+              <button type="button" data-admin-edit-field="username" data-admin-edit-user="${userId}">Username</button>
+              <button type="button" data-admin-edit-field="address" data-admin-edit-user="${userId}">Address</button>
+              <button type="button" data-admin-edit-field="role" data-admin-edit-user="${userId}">Role</button>
+              <button type="button" data-admin-edit-field="status" data-admin-edit-user="${userId}">Status</button>
+            </div>
+            <button
+              class="icon-btn danger"
+              type="button"
+              title="${canDeleteUser ? `Delete ${displayName}` : "Admin users cannot be deleted"}"
+              data-admin-delete-user="${userId}"
+              data-admin-delete-name="${escapeHtml(displayName)}"
+              data-admin-delete-role="${escapeHtml(role)}"
+              ${canDeleteUser ? "" : "disabled"}
+            >
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <polyline points="3 6 5 6 21 6"></polyline>
                 <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
@@ -2930,6 +3229,66 @@ if (adminPage) {
       `;
       adminUserRows.appendChild(row);
     });
+
+    adminUserRows.querySelectorAll("[data-admin-edit-toggle]").forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const userId = event.currentTarget.getAttribute("data-admin-edit-toggle");
+        const menu = adminUserRows.querySelector(`[data-admin-edit-menu="${userId}"]`);
+        if (!menu) return;
+        const willOpen = menu.classList.contains("is-hidden");
+        closeAdminEditMenus();
+        menu.classList.toggle("is-hidden", !willOpen);
+      });
+    });
+
+    adminUserRows.querySelectorAll("[data-admin-edit-field]").forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const userId = event.currentTarget.getAttribute("data-admin-edit-user");
+        const field = event.currentTarget.getAttribute("data-admin-edit-field");
+        const user = adminUsers.find((item) => String(item.user_id) === String(userId));
+        closeAdminEditMenus();
+        openAdminSettingsEditModal(user, field);
+      });
+    });
+
+    adminUserRows.querySelectorAll("[data-admin-delete-user]").forEach((button) => {
+      button.addEventListener("click", (event) => {
+        const target = event.currentTarget;
+        if (target.disabled) return;
+        const userId = target.getAttribute("data-admin-delete-user");
+        const name = target.getAttribute("data-admin-delete-name") || "this user";
+        const role = target.getAttribute("data-admin-delete-role") || "";
+        if (!userId) return;
+        openAdminDeleteModal({ userId, name, role });
+      });
+    });
+
+    adminUserRows.querySelectorAll("[data-user-select]").forEach((checkbox) => {
+      checkbox.addEventListener("change", (event) => {
+        const userId = event.currentTarget.getAttribute("data-user-select");
+        if (!userId) return;
+        if (event.currentTarget.checked) {
+          selectedAdminUsers.add(userId);
+        } else {
+          selectedAdminUsers.delete(userId);
+        }
+        const visibleIds = users.map((user, index) => String(user.user_id || user.id || `${index}`));
+        const selectedVisible = visibleIds.filter((id) => selectedAdminUsers.has(id)).length;
+        if (adminUsersSelectAll) {
+          adminUsersSelectAll.checked = selectedVisible > 0 && selectedVisible === visibleIds.length;
+          adminUsersSelectAll.indeterminate = selectedVisible > 0 && selectedVisible < visibleIds.length;
+        }
+      });
+    });
+
+    if (adminUsersSelectAll) {
+      const visibleIds = users.map((user, index) => String(user.user_id || user.id || `${index}`));
+      const selectedVisible = visibleIds.filter((id) => selectedAdminUsers.has(id)).length;
+      adminUsersSelectAll.checked = selectedVisible > 0 && selectedVisible === visibleIds.length;
+      adminUsersSelectAll.indeterminate = selectedVisible > 0 && selectedVisible < visibleIds.length;
+    }
   };
 
   const renderPagination = (totalPages) => {
@@ -2961,11 +3320,13 @@ if (adminPage) {
   };
 
   const renderPage = () => {
-    const total = filteredUsers.length;
+    const sortedUsers = sortAdminUsers(filteredUsers);
+    const total = sortedUsers.length;
     if (total === 0) {
       adminRowsMeta.textContent = "0 of 0 rows";
       renderUsers([]);
       adminPagination.innerHTML = "";
+      syncAdminUserSortUi();
       return;
     }
     const pages = Math.max(1, Math.ceil(total / pageSize));
@@ -2973,25 +3334,29 @@ if (adminPage) {
     const start = (currentPage - 1) * pageSize;
     const end = Math.min(start + pageSize, total);
     adminRowsMeta.textContent = `${start + 1}-${end} of ${total} rows`;
-    renderUsers(filteredUsers.slice(start, end));
+    renderUsers(sortedUsers.slice(start, end));
     renderPagination(pages);
+    syncAdminUserSortUi();
   };
 
-  const fetchUsers = async () => {
-    const token = getAdminToken();
-    if (!token) {
-      setAdminVisibility(false);
-      return;
+    const fetchUsers = async () => {
+      const token = getAdminToken();
+      if (!token) {
+        setAdminVisibility(false);
+        return;
     }
 
-    try {
-      const result = await apiAuth("/api/admin/users", token);
-      adminUsers = (result || []).map((user) => ({ ...user }));
-      applyFilters();
-    } catch (err) {
-      setAdminVisibility(false);
-    }
-  };
+      try {
+        const result = await apiAuth("/api/admin/users", token);
+        adminUsers = (result || []).map((user) => ({ ...user }));
+        if (activeAdminView === "users") {
+          configureAdminSide("users");
+        }
+        applyFilters();
+      } catch (err) {
+        setAdminVisibility(false);
+      }
+    };
 
   const exportUsers = () => {
     if (!adminUsers.length) return;
@@ -3242,6 +3607,7 @@ if (adminPage) {
       activeAdminView = view;
       adminNavLinks.forEach((btn) => btn.classList.toggle("active", btn === link));
       configureAdminSide(view);
+      setAdminHeroByView(view);
       adminDashboardView?.classList.toggle("is-hidden", view !== "dashboard");
       adminApplicationsView?.classList.toggle("is-hidden", view !== "applications");
       adminBookingsView?.classList.toggle("is-hidden", view !== "bookings");
@@ -3399,6 +3765,122 @@ if (adminPage) {
     currentPage = 1;
     renderPage();
   });
+  adminUserSortHeaders.forEach((header) => {
+    header.addEventListener("click", () => {
+      const key = header.dataset.sortKey;
+      if (!key) return;
+      if (adminUserSort.key === key) {
+        adminUserSort.direction = adminUserSort.direction === "asc" ? "desc" : "asc";
+      } else {
+        adminUserSort = { key, direction: "asc" };
+      }
+      currentPage = 1;
+      renderPage();
+    });
+  });
+
+  adminUsersSelectAll?.addEventListener("change", () => {
+    const total = filteredUsers.length;
+    if (total === 0) return;
+    const start = (currentPage - 1) * pageSize;
+    const end = Math.min(start + pageSize, total);
+    const visibleUsers = filteredUsers.slice(start, end);
+    visibleUsers.forEach((user, index) => {
+      const userId = String(user.user_id || user.id || `${index}`);
+      if (adminUsersSelectAll.checked) {
+        selectedAdminUsers.add(userId);
+      } else {
+        selectedAdminUsers.delete(userId);
+      }
+    });
+    renderPage();
+  });
+
+  adminDeleteCancel?.addEventListener("click", closeAdminDeleteModal);
+  adminSettingsEditCancel?.addEventListener("click", closeAdminSettingsEditModal);
+  adminSettingsEditModal?.querySelectorAll("[data-admin-edit-close]").forEach((element) => {
+    element.addEventListener("click", closeAdminSettingsEditModal);
+  });
+  adminDeleteModal?.querySelectorAll("[data-admin-delete-close]").forEach((element) => {
+    element.addEventListener("click", closeAdminDeleteModal);
+  });
+  adminSettingsEditSave?.addEventListener("click", async () => {
+    if (!activeAdminEditUserId || !activeAdminEditField) return;
+    const token = getAdminToken();
+    if (!token) {
+      if (adminSettingsEditMessage) adminSettingsEditMessage.textContent = "Sign in as admin first.";
+      return;
+    }
+    const user = adminUsers.find((item) => String(item.user_id) === String(activeAdminEditUserId));
+    if (!user) return;
+      const payload = {
+        full_name: user.full_name || "",
+        phone: user.phone || "",
+        username: user.username || "",
+        address: user.address || "",
+      role: String(user.role_name || "CUSTOMER").toLowerCase() === "customer" ? "user" : String(user.role_name || "").toLowerCase(),
+      status: String(user.status || "active").toLowerCase()
+      };
+      if (activeAdminEditField === "role" || activeAdminEditField === "status") {
+        payload[activeAdminEditField] = adminSettingsEditSelect?.value || payload[activeAdminEditField];
+      } else if (activeAdminEditField === "full_name") {
+        const firstName = adminSettingsEditFirstName?.value?.trim() || "";
+        const middleName = adminSettingsEditMiddleName?.value?.trim() || "";
+        const lastName = adminSettingsEditLastName?.value?.trim() || "";
+        payload.full_name = [firstName, middleName, lastName].filter(Boolean).join(" ").trim();
+      } else if (activeAdminEditField === "address") {
+        payload.address = [
+          adminSettingsEditAddressLine1?.value?.trim() || "",
+          adminSettingsEditAddressLine2?.value?.trim() || "",
+          adminSettingsEditCity?.value?.trim() || "",
+          adminSettingsEditPostcode?.value?.trim() || ""
+        ].filter(Boolean).join(", ");
+      } else {
+        payload[activeAdminEditField] = adminSettingsEditInput?.value?.trim() || "";
+      }
+    if (adminSettingsEditSave) adminSettingsEditSave.disabled = true;
+    if (adminSettingsEditMessage) adminSettingsEditMessage.textContent = "";
+    try {
+      await apiAuth(`/api/admin/users/${encodeURIComponent(activeAdminEditUserId)}`, token, {
+        method: "PATCH",
+        body: JSON.stringify(payload)
+      });
+      closeAdminSettingsEditModal();
+      showAdminFeedback("User updated successfully.");
+      await fetchUsers();
+      await fetchDashboardSummary();
+    } catch (err) {
+      if (adminSettingsEditMessage) {
+        adminSettingsEditMessage.textContent = err?.error?.message || err?.message || "Unable to update this field.";
+      }
+      if (adminSettingsEditSave) adminSettingsEditSave.disabled = false;
+    }
+  });
+  adminDeleteConfirm?.addEventListener("click", async () => {
+    if (!pendingAdminDeleteUser?.userId) return;
+    const token = getAdminToken();
+    if (!token) {
+      showAdminFeedback("Sign in as admin first.", "error");
+      closeAdminDeleteModal();
+      return;
+    }
+    adminDeleteConfirm.disabled = true;
+    try {
+      await apiAuth(`/api/admin/users/${encodeURIComponent(pendingAdminDeleteUser.userId)}`, token, { method: "DELETE" });
+      selectedAdminUsers.delete(String(pendingAdminDeleteUser.userId));
+      closeAdminDeleteModal();
+      showAdminFeedback("User deleted successfully.");
+      await fetchUsers();
+      await fetchDashboardSummary();
+    } catch (err) {
+      closeAdminDeleteModal();
+      showAdminFeedback(err?.error?.message || err?.message || "Unable to delete user.", "error");
+    }
+  });
+
+  document.addEventListener("click", () => {
+    closeAdminEditMenus();
+  });
 
   adminAddUserBtn?.addEventListener("click", () => {
     adminAddUserPanel.classList.toggle("is-hidden");
@@ -3440,6 +3922,7 @@ if (adminPage) {
   const hasProfile = ensureAdminProfile();
   if (hasProfile) {
     configureAdminSide(activeAdminView);
+    setAdminHeroByView(activeAdminView);
     fetchDashboardSummary();
     fetchUsers();
     fetchApplications();

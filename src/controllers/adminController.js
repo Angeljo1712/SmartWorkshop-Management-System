@@ -105,6 +105,18 @@ const setUserStatusHandler = async (req, res) => {
   res.json(result);
 };
 
+const updateUserHandler = async (req, res) => {
+  const userId = Number(req.params.userId);
+  const result = await adminService.updateUser({ userId, ...req.body });
+  res.json(result);
+};
+
+const deleteUserHandler = async (req, res) => {
+  const userId = Number(req.params.userId);
+  const result = await adminService.deleteUser({ userId });
+  res.json(result);
+};
+
 module.exports = {
   listWorkshopsHandler,
   createWorkshopHandler,
@@ -123,5 +135,7 @@ module.exports = {
   updateCatalogServiceOrderHandler,
   createUserHandler,
   setUserRoleHandler,
-  setUserStatusHandler
+  setUserStatusHandler,
+  updateUserHandler,
+  deleteUserHandler
 };

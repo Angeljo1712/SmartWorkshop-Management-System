@@ -19,7 +19,9 @@ const {
   updateCatalogServiceOrderHandler,
   createUserHandler,
   setUserRoleHandler,
-  setUserStatusHandler
+  setUserStatusHandler,
+  updateUserHandler,
+  deleteUserHandler
 } = require("../controllers/adminController");
 
 const router = express.Router();
@@ -42,6 +44,8 @@ router.patch("/catalog/:serviceId/order", authenticate, authorizeRoles("ADMIN"),
 router.post("/users", authenticate, authorizeRoles("ADMIN"), asyncHandler(createUserHandler));
 router.patch("/users/:userId/roles", authenticate, authorizeRoles("ADMIN"), asyncHandler(setUserRoleHandler));
 router.patch("/users/:userId/status", authenticate, authorizeRoles("ADMIN"), asyncHandler(setUserStatusHandler));
+router.patch("/users/:userId", authenticate, authorizeRoles("ADMIN"), asyncHandler(updateUserHandler));
+router.delete("/users/:userId", authenticate, authorizeRoles("ADMIN"), asyncHandler(deleteUserHandler));
 
 module.exports = router;
 
