@@ -203,7 +203,12 @@ block content
                           option(value="all") Date
                     .admin-table-head-actions
                       span.is-hidden#adminUserCount 0
-                      button.ghost#adminExportBtn(type="button") Export
+                      button.ghost#adminExportBtn(type="button")
+                        svg.admin-button-icon(viewBox="0 0 24 24" aria-hidden="true")
+                          path(d="M12 16V5")
+                          path(d="m8 9 4-4 4 4")
+                          path(d="M5 19h14")
+                        span Export
                       button.primary#adminAddUserBtn(type="button") Add User
                   .admin-table-wrap
                     table.admin-table
@@ -262,27 +267,76 @@ block content
 
             section.admin-view.is-hidden#adminApplicationsView
               .adminUserLayout
-                .admin-table-head
-                  .head-left
-                    h3 Mechanic applications
-                    p
-                      span#adminApplicationsCount 0
-                  .admin-table-actions
-                    input#adminApplicationsSearch.side-input(type="search" placeholder="Search applications")
-                .admin-table-wrap
-                  table.admin-table
-                    thead
-                      tr
-                        th Name
-                        th Type
-                        th Postcode
-                        th Docs
-                        th Application
-                        th Account
-                        th Created
-                        th Actions
-                    tbody#adminApplicationsRows
-                  p.admin-empty#adminApplicationsEmptyState.is-hidden No mechanic applications found.
+                .adminTableLayout
+                  .admin-table-head
+                    .admin-table-head-filters
+                      .admin-head-control.admin-head-control--search
+                        span.admin-head-label.is-hidden Search
+                        input#adminApplicationsSearch.side-input(type="search" placeholder="Search")
+                      .admin-head-control.admin-head-control--role
+                        span.admin-head-label.is-hidden Type
+                        select#adminApplicationsTypeFilter.side-select(data-all-label="Type")
+                          option(value="all") Type
+                      .admin-head-control.admin-head-control--status
+                        span.admin-head-label.is-hidden Status
+                        select#adminApplicationsStatusFilter.side-select(data-all-label="Status")
+                          option(value="all") Status
+                      .admin-head-control.admin-head-control--date
+                        span.admin-head-label.is-hidden Date
+                        select#adminApplicationsDateFilter.side-select(data-all-label="Date")
+                          option(value="all") Date
+                    .admin-table-head-actions
+                      span.is-hidden#adminApplicationsCount 0
+                      button.ghost#adminApplicationsExportBtn(type="button")
+                        svg.admin-button-icon(viewBox="0 0 24 24" aria-hidden="true")
+                          path(d="M12 16V5")
+                          path(d="m8 9 4-4 4 4")
+                          path(d="M5 19h14")
+                        span Export
+                  .admin-table-wrap
+                    table.admin-table
+                      thead
+                        tr
+                          th.admin-sortable(data-app-sort-key="full_name")
+                            button.admin-sort-button(type="button")
+                              span Name
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-app-sort-key="application_type")
+                            button.admin-sort-button(type="button")
+                              span Type
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-app-sort-key="lead_postcode")
+                            button.admin-sort-button(type="button")
+                              span Postcode
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-app-sort-key="documents_count")
+                            button.admin-sort-button(type="button")
+                              span Docs
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-app-sort-key="application_status")
+                            button.admin-sort-button(type="button")
+                              span Application
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-app-sort-key="account_status")
+                            button.admin-sort-button(type="button")
+                              span Account
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-app-sort-key="created_at")
+                            button.admin-sort-button(type="button")
+                              span Created
+                              span.admin-sort-icon(aria-hidden="true")
+                          th Actions
+                      tbody#adminApplicationsRows
+                    p.admin-empty#adminApplicationsEmptyState.is-hidden No mechanic applications found.
+                  .admin-table-footer
+                    .admin-table-footer-meta
+                      span Rows per page
+                      select#adminApplicationsRowsPerPage
+                        option(value="10") 10
+                        option(value="20") 20
+                        option(value="50") 50
+                      span#adminApplicationsRowsMeta 0 of 0 rows
+                    .admin-pagination#adminApplicationsPagination
 
             section.admin-view.is-hidden#adminBookingsView
               .adminUserLayout

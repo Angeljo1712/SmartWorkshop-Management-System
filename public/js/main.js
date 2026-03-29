@@ -559,6 +559,9 @@ if (homeHeader && homeHero) {
             { label: "Users", view: "users" },
             { label: "Applications", view: "applications" },
             { label: "Bookings", view: "bookings" },
+            { label: "Resolution", view: "resolution" },
+            { label: "Payments", view: "payments" },
+            { label: "Catalog", view: "catalog" },
             { label: "Settings", view: "settings" },
             { label: "Logout", action: "logout" }
           ]
@@ -2002,6 +2005,13 @@ if (adminPage) {
   const adminApplicationsSearch = document.getElementById("adminApplicationsSearch");
   const adminApplicationsRows = document.getElementById("adminApplicationsRows");
   const adminApplicationsCount = document.getElementById("adminApplicationsCount");
+  const adminApplicationsRowsMeta = document.getElementById("adminApplicationsRowsMeta");
+  const adminApplicationsTypeFilter = document.getElementById("adminApplicationsTypeFilter");
+  const adminApplicationsStatusFilter = document.getElementById("adminApplicationsStatusFilter");
+  const adminApplicationsDateFilter = document.getElementById("adminApplicationsDateFilter");
+  const adminApplicationsRowsPerPage = document.getElementById("adminApplicationsRowsPerPage");
+  const adminApplicationsPagination = document.getElementById("adminApplicationsPagination");
+  const adminApplicationSortHeaders = document.querySelectorAll("#adminApplicationsView [data-app-sort-key]");
   const adminApplicationsEmptyState = document.getElementById("adminApplicationsEmptyState");
   const adminMetricBookingsToday = document.getElementById("adminMetricBookingsToday");
   const adminMetricOpenCases = document.getElementById("adminMetricOpenCases");
@@ -2067,6 +2077,9 @@ if (adminPage) {
   let activeAdminEditUserId = null;
   let pendingAdminDeleteUser = null;
   let adminUserSort = { key: "joined_date", direction: "desc" };
+  let adminApplicationsPageSize = Number(adminApplicationsRowsPerPage?.value || 10);
+  let adminApplicationsPage = 1;
+  let adminApplicationSort = { key: "created_at", direction: "desc" };
 
   const getAdminToken = () => getStoredAuthValue("userToken");
   const getAdminProfile = () => {
@@ -2140,15 +2153,65 @@ if (adminPage) {
     const lower = String(value).toLowerCase();
     return lower.charAt(0).toUpperCase() + lower.slice(1);
   };
-  const getStatus = (user, index) => toStatusLabel(user.status) || statusCycle[index % statusCycle.length];
+  const getStatus = (user, index) => {
+    const baseStatus = toStatusLabel(user.status) || statusCycle[index % statusCycle.length];
+    const normalizedRole = String(user.role_name || "").trim().toUpperCase();
+    const eligibleForAutoInactive = normalizedRole === "CUSTOMER" || normalizedRole === "MECHANIC";
+    const normalizedBaseStatus = String(baseStatus || "").trim().toLowerCase();
+
+    if (!eligibleForAutoInactive) return baseStatus;
+    if (normalizedBaseStatus && normalizedBaseStatus !== "active") return baseStatus;
+
+    const referenceValue = user.last_active || user.created_at;
+    if (!referenceValue) return baseStatus;
+
+    const referenceDate = new Date(referenceValue);
+    if (Number.isNaN(referenceDate.getTime())) return baseStatus;
+
+    const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+    if (Date.now() - referenceDate.getTime() > THIRTY_DAYS_MS) {
+      return "Inactive";
+    }
+
+    return baseStatus;
+  };
   const getLastActive = (user, index) => {
+    const formatRelativeTime = (date) => {
+      const diffMs = Date.now() - date.getTime();
+      if (diffMs <= 0) return "Just now";
+      const minute = 60 * 1000;
+      const hour = 60 * minute;
+      const day = 24 * hour;
+      const week = 7 * day;
+      const month = 30 * day;
+
+      if (diffMs < hour) {
+        const minutes = Math.max(1, Math.floor(diffMs / minute));
+        return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+      }
+      if (diffMs < day) {
+        const hours = Math.floor(diffMs / hour);
+        return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+      }
+      if (diffMs < week) {
+        const days = Math.floor(diffMs / day);
+        return `${days} day${days === 1 ? "" : "s"} ago`;
+      }
+      if (diffMs < month) {
+        const weeks = Math.floor(diffMs / week);
+        return `${weeks} week${weeks === 1 ? "" : "s"} ago`;
+      }
+      const months = Math.floor(diffMs / month);
+      return `${months} month${months === 1 ? "" : "s"} ago`;
+    };
+
     if (user.last_active) {
       const date = new Date(user.last_active);
       if (!Number.isNaN(date.getTime())) {
-        return date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+        return formatRelativeTime(date);
       }
     }
-    const options = ["1 minute ago", "4 hours ago", "2 days ago", "1 week ago", "1 month ago"];
+    const options = ["1 minute ago", "4 hours ago", "4 days ago", "1 week ago", "1 month ago"];
     return options[index % options.length];
   };
   const getAvatarUrl = (user) => {
@@ -2365,6 +2428,48 @@ if (adminPage) {
       return 0;
     });
     return sorted;
+  };
+
+  const getApplicationSortValue = (item, key) => {
+    switch (key) {
+      case "full_name":
+        return String(item.full_name || "").toLowerCase();
+      case "application_type":
+        return String(item.application_type || item.business_type || "").toLowerCase();
+      case "lead_postcode":
+        return String(item.lead_postcode || "").toLowerCase();
+      case "documents_count":
+        return Number(item.documents_count || 0);
+      case "application_status":
+        return String(item.application_status || "").toLowerCase();
+      case "account_status":
+        return String(item.account_status || "").toLowerCase();
+      case "created_at":
+        return new Date(item.created_at || 0).getTime() || 0;
+      default:
+        return "";
+    }
+  };
+
+  const sortAdminApplications = (items) => {
+    const sorted = [...items];
+    const direction = adminApplicationSort.direction === "asc" ? 1 : -1;
+    sorted.sort((left, right) => {
+      const leftValue = getApplicationSortValue(left, adminApplicationSort.key);
+      const rightValue = getApplicationSortValue(right, adminApplicationSort.key);
+      if (leftValue < rightValue) return -1 * direction;
+      if (leftValue > rightValue) return 1 * direction;
+      return 0;
+    });
+    return sorted;
+  };
+
+  const syncAdminApplicationSortUi = () => {
+    adminApplicationSortHeaders.forEach((header) => {
+      const isActive = header.dataset.appSortKey === adminApplicationSort.key;
+      header.dataset.sortDirection = isActive ? adminApplicationSort.direction : "";
+      header.classList.toggle("is-active", isActive);
+    });
   };
 
   const syncAdminUserSortUi = () => {
@@ -2817,10 +2922,23 @@ if (adminPage) {
 
   const renderApplications = () => {
     if (!adminApplicationsRows) return;
+    const typeOptions = [...new Set(adminApplications.map((item) => titleCase(item.application_type || item.business_type || "")).filter(Boolean))]
+      .map((label) => ({ value: label, label }));
+    const statusOptions = [...new Set(adminApplications.map((item) => titleCase(item.application_status || "")).filter(Boolean))]
+      .map((label) => ({ value: label, label }));
+    setFilterOptions(adminApplicationsTypeFilter, typeOptions, adminApplicationsTypeFilter?.value);
+    setFilterOptions(adminApplicationsStatusFilter, statusOptions, adminApplicationsStatusFilter?.value);
+    setFilterOptions(adminApplicationsDateFilter, [
+      { value: "today", label: "Today" },
+      { value: "7d", label: "Last 7 days" },
+      { value: "30d", label: "Last 30 days" },
+      { value: "all", label: "All time" }
+    ], adminApplicationsDateFilter?.value || "all");
+
     const terms = getCombinedSearchTerms("applications");
-    const typeValue = adminRoleFilter?.value || "all";
-    const statusValue = adminStatusFilter?.value || "all";
-    const dateValue = adminDateFilter?.value || "all";
+    const typeValue = adminApplicationsTypeFilter?.value || "all";
+    const statusValue = adminApplicationsStatusFilter?.value || "all";
+    const dateValue = adminApplicationsDateFilter?.value || "all";
     const rows = adminApplications.filter((item) => {
       const matchesTerm = matchesSearchTerms([
         item.full_name,
@@ -2829,13 +2947,13 @@ if (adminPage) {
         item.application_type,
         item.application_status,
         item.account_status
-      ], terms);
+        ], terms);
       const matchesType =
         typeValue === "all" ||
-        normaliseFilterToken(item.application_type || item.business_type) === normaliseFilterToken(typeValue);
+        titleCase(item.application_type || item.business_type || "") === typeValue;
       const matchesStatus =
         statusValue === "all" ||
-        normaliseFilterToken(item.application_status) === normaliseFilterToken(statusValue);
+        titleCase(item.application_status || "") === statusValue;
       const matchesDate = matchesDateFilter(item.created_at, dateValue);
       return matchesTerm && matchesType && matchesStatus && matchesDate;
     });
@@ -2845,43 +2963,92 @@ if (adminPage) {
     }
     adminApplicationsRows.innerHTML = "";
     adminApplicationsEmptyState?.classList.toggle("is-hidden", rows.length > 0);
-    if (!rows.length) return;
+    if (!rows.length) {
+      if (adminApplicationsRowsMeta) adminApplicationsRowsMeta.textContent = "0 of 0 rows";
+      if (adminApplicationsPagination) adminApplicationsPagination.innerHTML = "";
+      syncAdminApplicationSortUi();
+      return;
+    }
 
-    adminApplicationsRows.innerHTML = rows
-      .map(
-        (item) => `
-          <tr>
-            <td>
-              <div class="user-cell">
-                <div class="avatar">${getInitials(item.full_name)}</div>
-                <div class="user-meta">
+    const sortedRows = sortAdminApplications(rows);
+    const pages = Math.max(1, Math.ceil(sortedRows.length / adminApplicationsPageSize));
+    if (adminApplicationsPage > pages) adminApplicationsPage = pages;
+    const start = (adminApplicationsPage - 1) * adminApplicationsPageSize;
+    const end = Math.min(start + adminApplicationsPageSize, sortedRows.length);
+    if (adminApplicationsRowsMeta) {
+      adminApplicationsRowsMeta.textContent = `${start + 1}-${end} of ${sortedRows.length} rows`;
+    }
+
+    adminApplicationsRows.innerHTML = sortedRows
+      .slice(start, end)
+        .map(
+          (item) => {
+            const applicationStatus = titleCase(item.application_status || "-");
+            const accountStatus = titleCase(item.account_status || "-");
+            const applicationStatusClass = String(applicationStatus).toLowerCase().replace(/\s+/g, "-");
+            const accountStatusClass = String(accountStatus).toLowerCase().replace(/\s+/g, "-");
+            return `
+            <tr>
+              <td>
+                <div class="user-cell">
+                  <div class="avatar">${getInitials(item.full_name)}</div>
+                  <div class="user-meta">
                   <strong>${escapeHtml(item.full_name)}</strong>
                   <span>${escapeHtml(item.email)}</span>
                 </div>
               </div>
             </td>
-            <td>${escapeHtml(titleCase(item.application_type || item.business_type || "-"))}</td>
-            <td>${escapeHtml(item.lead_postcode || "-")}</td>
-            <td>${escapeHtml(String(item.documents_count || 0))}</td>
-            <td>${escapeHtml(titleCase(item.application_status || "-"))}</td>
-            <td>${escapeHtml(titleCase(item.account_status || "-"))}</td>
-            <td>${escapeHtml(formatDate(item.created_at))}</td>
-            <td>
-              <div class="admin-actions-cell">
-                <button class="icon-btn" type="button" data-application-action="approve" data-application-user-id="${escapeHtml(String(item.user_id))}" title="Approve">
-                  Approve
+              <td>${escapeHtml(titleCase(item.application_type || item.business_type || "-"))}</td>
+              <td>${escapeHtml(item.lead_postcode || "-")}</td>
+              <td>${escapeHtml(String(item.documents_count || 0))}</td>
+              <td><span class="admin-status-badge admin-status-badge--${applicationStatusClass}">${escapeHtml(applicationStatus)}</span></td>
+              <td><span class="admin-status-badge admin-status-badge--${accountStatusClass}">${escapeHtml(accountStatus)}</span></td>
+              <td>${escapeHtml(formatDate(item.created_at))}</td>
+              <td>
+                <div class="admin-actions-cell">
+                  <button class="icon-btn" type="button" data-application-action="approve" data-application-user-id="${escapeHtml(String(item.user_id))}" title="Approve">
+                    Approve
                 </button>
                 <button class="icon-btn" type="button" data-application-action="request_info" data-application-user-id="${escapeHtml(String(item.user_id))}" title="Request info">
                   Info
                 </button>
                 <button class="icon-btn danger" type="button" data-application-action="reject" data-application-user-id="${escapeHtml(String(item.user_id))}" title="Reject">
                   Reject
-                </button>
-              </div>
-            </td>
-          </tr>`
-      )
-      .join("");
+                  </button>
+                </div>
+              </td>
+            </tr>`;
+          }
+        )
+        .join("");
+
+    if (adminApplicationsPagination) {
+      adminApplicationsPagination.innerHTML = "";
+      if (pages > 1) {
+        const addButton = (label, page, isActive = false, isDisabled = false) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.textContent = label;
+          btn.disabled = isDisabled;
+          btn.classList.toggle("active", isActive);
+          btn.addEventListener("click", () => {
+            adminApplicationsPage = page;
+            renderApplications();
+          });
+          adminApplicationsPagination.appendChild(btn);
+        };
+
+        addButton("<", Math.max(1, adminApplicationsPage - 1), false, adminApplicationsPage === 1);
+        const startPage = Math.max(1, adminApplicationsPage - 2);
+        const endPage = Math.min(pages, startPage + 4);
+        for (let page = startPage; page <= endPage; page += 1) {
+          addButton(String(page), page, page === adminApplicationsPage);
+        }
+        addButton(">", Math.min(pages, adminApplicationsPage + 1), false, adminApplicationsPage === pages);
+      }
+    }
+
+    syncAdminApplicationSortUi();
   };
 
   const renderBookings = () => {
@@ -3157,7 +3324,10 @@ if (adminPage) {
       const readiness = getReadiness(user, index);
       const status = getStatus(user, index);
       const role = user.role_name || "-";
-      const canDeleteUser = role === "MECHANIC" || role === "CUSTOMER";
+      const normalisedRole = String(role).trim().toUpperCase();
+      const canDeleteUser = normalisedRole === "MECHANIC" || normalisedRole === "CUSTOMER";
+      const canEditRole = normalisedRole !== "ADMIN";
+      const canEditUser = normalisedRole !== "ADMIN";
       const experience = getExperience(user);
       const joinedDate = formatDate(user.created_at);
       const lastActive = getLastActive(user, index);
@@ -3193,7 +3363,7 @@ if (adminPage) {
         <td>${lastActive}</td>
         <td class="table-actions">
           <div class="admin-actions-cell">
-            <button class="icon-btn" type="button" title="Edit options" data-admin-edit-toggle="${userId}">
+            <button class="icon-btn" type="button" title="${canEditUser ? "Edit options" : "Admin users cannot be edited here"}" data-admin-edit-toggle="${userId}" ${canEditUser ? "" : "disabled"}>
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 20h9"></path>
                 <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
@@ -3204,7 +3374,7 @@ if (adminPage) {
               <button type="button" data-admin-edit-field="phone" data-admin-edit-user="${userId}">Phone</button>
               <button type="button" data-admin-edit-field="username" data-admin-edit-user="${userId}">Username</button>
               <button type="button" data-admin-edit-field="address" data-admin-edit-user="${userId}">Address</button>
-              <button type="button" data-admin-edit-field="role" data-admin-edit-user="${userId}">Role</button>
+              <button type="button" data-admin-edit-field="role" data-admin-edit-user="${userId}" title="${canEditRole ? "Edit role" : "Admin role cannot be changed here"}" ${canEditRole ? "" : "disabled"}>Role</button>
               <button type="button" data-admin-edit-field="status" data-admin-edit-user="${userId}">Status</button>
             </div>
             <button
@@ -3639,9 +3809,10 @@ if (adminPage) {
     if (activeAdminView === "catalog") return renderCatalog();
   });
   adminApplicationsSearch?.addEventListener("input", () => {
-    syncAdminSideSearchFromView();
+      syncAdminSideSearchFromView();
+    adminApplicationsPage = 1;
     renderApplications();
-  });
+    });
   adminApplicationsRows?.addEventListener("click", async (event) => {
     const actionButton = event.target.closest("[data-application-action]");
     if (!actionButton) return;
@@ -3739,10 +3910,41 @@ if (adminPage) {
       actionButton.disabled = false;
     }
   });
+  adminApplicationsTypeFilter?.addEventListener("change", () => {
+    adminApplicationsPage = 1;
+    renderApplications();
+  });
+  adminApplicationsStatusFilter?.addEventListener("change", () => {
+    adminApplicationsPage = 1;
+    renderApplications();
+  });
+  adminApplicationsDateFilter?.addEventListener("change", () => {
+    adminApplicationsPage = 1;
+    renderApplications();
+  });
+  adminApplicationsRowsPerPage?.addEventListener("change", () => {
+    adminApplicationsPageSize = Number(adminApplicationsRowsPerPage.value);
+    adminApplicationsPage = 1;
+    renderApplications();
+  });
+  adminApplicationSortHeaders.forEach((header) => {
+    header.addEventListener("click", () => {
+      const key = header.dataset.appSortKey;
+      if (!key) return;
+      if (adminApplicationSort.key === key) {
+        adminApplicationSort.direction = adminApplicationSort.direction === "asc" ? "desc" : "asc";
+      } else {
+        adminApplicationSort = { key, direction: "asc" };
+      }
+      adminApplicationsPage = 1;
+      renderApplications();
+    });
+  });
+
   adminRoleFilter?.addEventListener("change", () => {
-    if (activeAdminView === "users") return applyFilters();
-    if (activeAdminView === "applications") return renderApplications();
-    if (activeAdminView === "resolution") return renderResolutionCases();
+      if (activeAdminView === "users") return applyFilters();
+      if (activeAdminView === "applications") return renderApplications();
+      if (activeAdminView === "resolution") return renderResolutionCases();
     if (activeAdminView === "payments") return renderPayments();
     if (activeAdminView === "catalog") return renderCatalog();
   });

@@ -415,7 +415,7 @@ body.admin-body .primari-shell {
 }
 
 #adminPage .admin-section-head p {
-  color: #9fabbe;
+  color: #ffffff;
   font-size: 0.92rem;
   margin: 0;
 }
@@ -499,13 +499,22 @@ body.admin-body .primari-shell {
 }
 
 #adminPage #adminUsersView .admin-table-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     gap: 16px;
     margin: 0;
-    padding: 0;
-  }
+      padding: 0;
+    }
+
+#adminPage #adminApplicationsView .admin-table-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0;
+      padding: 0;
+    }
 
 #adminPage .admin-table-head h3 {
   color: #eef3fc;
@@ -526,24 +535,29 @@ body.admin-body .primari-shell {
   min-width: 220px;
 }
 
-#adminPage #adminUsersView .admin-table-head-filters {
+#adminPage #adminUsersView .admin-table-head-filters,
+#adminPage #adminApplicationsView .admin-table-head-filters {
     display: flex;
     align-items: center;
     gap: 14px;
     flex-wrap: wrap;
   }
 
-#adminPage #adminUsersView .admin-head-control {
+#adminPage #adminUsersView .admin-head-control,
+#adminPage #adminApplicationsView .admin-head-control {
     min-width: 0;
     position: relative;
   }
 
-#adminPage #adminUsersView .admin-head-label {
+#adminPage #adminUsersView .admin-head-label,
+#adminPage #adminApplicationsView .admin-head-label {
   display: none;
 }
 
 #adminPage #adminUsersView .admin-head-control input,
-#adminPage #adminUsersView .admin-head-control select {
+#adminPage #adminUsersView .admin-head-control select,
+#adminPage #adminApplicationsView .admin-head-control input,
+#adminPage #adminApplicationsView .admin-head-control select {
     min-height: 42px;
     border-radius: 999px;
     border: 1px solid rgba(160, 180, 205, 0.7);
@@ -553,11 +567,13 @@ body.admin-body .primari-shell {
     font-weight: 600;
   }
 
-#adminPage #adminUsersView .admin-head-control input::placeholder {
+#adminPage #adminUsersView .admin-head-control input::placeholder,
+#adminPage #adminApplicationsView .admin-head-control input::placeholder {
     color: #607289;
   }
 
-#adminPage #adminUsersView .admin-head-control::before {
+#adminPage #adminUsersView .admin-head-control::before,
+#adminPage #adminApplicationsView .admin-head-control::before {
     content: "";
     position: absolute;
     top: 50%;
@@ -572,23 +588,28 @@ body.admin-body .primari-shell {
     background-size: contain;
   }
 
-#adminPage #adminUsersView .admin-head-control--search::before {
+#adminPage #adminUsersView .admin-head-control--search::before,
+#adminPage #adminApplicationsView .admin-head-control--search::before {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23607289' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");
   }
 
-#adminPage #adminUsersView .admin-head-control--role::before {
+#adminPage #adminUsersView .admin-head-control--role::before,
+#adminPage #adminApplicationsView .admin-head-control--role::before {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23607289' stroke-width='2'%3E%3Cpath d='M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='8.5' cy='7' r='4'/%3E%3Cpath d='M20 8v6'/%3E%3Cpath d='M23 11h-6'/%3E%3C/svg%3E");
   }
 
-#adminPage #adminUsersView .admin-head-control--status::before {
+#adminPage #adminUsersView .admin-head-control--status::before,
+#adminPage #adminApplicationsView .admin-head-control--status::before {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23607289' stroke-width='2'%3E%3Cpath d='M12 3l7 4v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V7l7-4Z'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E");
   }
 
-#adminPage #adminUsersView .admin-head-control--date::before {
+#adminPage #adminUsersView .admin-head-control--date::before,
+#adminPage #adminApplicationsView .admin-head-control--date::before {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23607289' stroke-width='2'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M16 3v4M8 3v4M3 10h18'/%3E%3C/svg%3E");
   }
 
-#adminPage #adminUsersView .admin-head-control select {
+#adminPage #adminUsersView .admin-head-control select,
+#adminPage #adminApplicationsView .admin-head-control select {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -599,16 +620,19 @@ body.admin-body .primari-shell {
     background-repeat: no-repeat;
   }
 
-#adminPage #adminUsersView .admin-head-control select option {
+#adminPage #adminUsersView .admin-head-control select option,
+#adminPage #adminApplicationsView .admin-head-control select option {
     color: #1f2f43;
     background: #ffffff;
   }
 
-#adminPage #adminUsersView #adminSearch {
+#adminPage #adminUsersView #adminSearch,
+#adminPage #adminApplicationsView #adminApplicationsSearch {
     min-width: 220px;
   }
 
-#adminPage #adminUsersView .admin-table-head-actions {
+#adminPage #adminUsersView .admin-table-head-actions,
+#adminPage #adminApplicationsView .admin-table-head-actions {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -616,11 +640,50 @@ body.admin-body .primari-shell {
   }
 
 #adminPage #adminUsersView .admin-table-head-actions .ghost,
-#adminPage #adminUsersView .admin-table-head-actions .primary {
-    min-height: 42px;
-    border-radius: 999px;
-    padding: 0 18px;
-  }
+#adminPage #adminUsersView .admin-table-head-actions .primary,
+#adminPage #adminApplicationsView .admin-table-head-actions .ghost,
+#adminPage #adminApplicationsView .admin-table-head-actions .primary {
+      min-height: 42px;
+      border-radius: 999px;
+      padding: 0 20px;
+      font-weight: 700;
+      box-shadow: none;
+    }
+
+#adminPage #adminExportBtn,
+#adminPage #adminApplicationsExportBtn {
+      background: #ffffff;
+      border: 1px solid rgba(160, 180, 205, 0.7);
+      color: #0f172a;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+#adminPage #adminExportBtn,
+#adminPage #adminExportBtn span,
+#adminPage #adminApplicationsExportBtn,
+#adminPage #adminApplicationsExportBtn span {
+      color: #0f172a !important;
+    }
+
+#adminPage #adminExportBtn .admin-button-icon,
+#adminPage #adminApplicationsExportBtn .admin-button-icon {
+      width: 16px;
+      height: 16px;
+      stroke: #607289;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex: 0 0 16px;
+    }
+
+#adminPage #adminAddUserBtn {
+      background: #364c67;
+      border: 1px solid #364c67;
+      color: #ffffff;
+    }
 
 #adminPage .admin-table-wrap {
     grid-column: 1;
@@ -628,13 +691,17 @@ body.admin-body .primari-shell {
     margin-top: 0;
     overflow: auto;
     border-radius: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    border: 1px solid #ffffff;
     background: rgba(14, 19, 28, 0.9);
   }
 
 #adminPage #adminUsersView .admin-table-wrap {
-    padding: 0;
-  }
+      padding: 0;
+    }
+
+#adminPage #adminApplicationsView .admin-table-wrap {
+      padding: 0;
+    }
 
 #adminPage .admin-table-footer {
   grid-column: 1;
@@ -642,21 +709,23 @@ body.admin-body .primari-shell {
 }
 
 #adminPage #adminUsersView .admin-table-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     gap: 16px;
-    padding: 0;
-  }
+      padding: 0;
+    }
 
-#adminPage #adminUsersView .admin-table-footer-meta {
+#adminPage #adminUsersView .admin-table-footer-meta,
+#adminPage #adminApplicationsView .admin-table-footer-meta {
       display: flex;
       align-items: center;
       gap: 10px;
       color: #1f2f43;
     }
 
-#adminPage #adminUsersView .admin-table-footer-meta select {
+#adminPage #adminUsersView .admin-table-footer-meta select,
+#adminPage #adminApplicationsView .admin-table-footer-meta select {
       min-height: 36px;
       border-radius: 999px;
       border: 1px solid rgba(86, 111, 150, 0.38);
@@ -665,12 +734,14 @@ body.admin-body .primari-shell {
       padding: 0 12px;
     }
 
-#adminPage #adminUsersView .admin-table-footer-meta select option {
+#adminPage #adminUsersView .admin-table-footer-meta select option,
+#adminPage #adminApplicationsView .admin-table-footer-meta select option {
       color: #1f2f43;
       background: #ffffff;
     }
 
-#adminPage #adminUsersView .admin-pagination {
+#adminPage #adminUsersView .admin-pagination,
+#adminPage #adminApplicationsView .admin-pagination {
     display: flex;
     align-items: center;
   justify-content: flex-end;
@@ -678,7 +749,8 @@ body.admin-body .primari-shell {
   flex-wrap: wrap;
 }
 
-#adminPage #adminUsersView .admin-pagination button {
+#adminPage #adminUsersView .admin-pagination button,
+#adminPage #adminApplicationsView .admin-pagination button {
     min-width: 34px;
     height: 34px;
     border-radius: 999px;
@@ -687,19 +759,61 @@ body.admin-body .primari-shell {
     color: #ffffff;
   }
 
-#adminPage #adminUsersView .admin-pagination button.active {
+#adminPage #adminUsersView .admin-pagination button.active,
+#adminPage #adminApplicationsView .admin-pagination button.active {
     background: #364c67;
     border-color: #364c67;
   }
 
-#adminPage .admin-table th,
-#adminPage .admin-table td {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    font-size: 0.87rem;
-    color: #d5deed;
-    padding: 11px 10px;
+#adminPage #adminApplicationsView .admin-table tbody tr:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+#adminPage #adminApplicationsView .admin-table tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+#adminPage #adminApplicationsView .admin-sortable {
+    cursor: pointer;
+  }
+
+#adminPage #adminApplicationsView .admin-sort-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    background: transparent;
+    color: #1f2f43;
+    font: inherit;
+    font-weight: 700;
+    padding: 0;
+    cursor: pointer;
     white-space: nowrap;
   }
+
+#adminPage #adminApplicationsView .admin-sort-icon::before {
+    content: "↕";
+    color: #1f2f43;
+    font-size: 0.75rem;
+    line-height: 1;
+  }
+
+#adminPage #adminApplicationsView .admin-sortable[data-sort-direction="asc"] .admin-sort-icon::before {
+    content: "↑";
+  }
+
+#adminPage #adminApplicationsView .admin-sortable[data-sort-direction="desc"] .admin-sort-icon::before {
+    content: "↓";
+  }
+
+#adminPage .admin-table th,
+#adminPage .admin-table td {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.87rem;
+      color: #d5deed;
+      padding: 11px 10px;
+      white-space: nowrap;
+    }
 
 #adminPage .admin-status-badge {
     display: inline-flex;
@@ -950,8 +1064,15 @@ body.admin-body .admin-edit-menu button {
     cursor: pointer;
   }
 
-body.admin-body .admin-edit-menu button:hover {
+body.admin-body .admin-edit-menu button:not(:disabled):hover {
     background: rgba(255, 255, 255, 0.08);
+  }
+
+body.admin-body .admin-edit-menu button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.6);
   }
 
 #adminPage .admin-table th {
@@ -1097,6 +1218,35 @@ body.admin-body .admin-edit-menu button:hover {
 
 #adminPage .admin-actions-cell .icon-btn.danger svg {
     stroke: #0f172a;
+  }
+
+#adminPage #adminApplicationsView .admin-actions-cell .icon-btn {
+    width: auto;
+    min-width: 60px;
+    padding: 0 10px;
+    color: #0f172a;
+    font-weight: 700;
+    font-size: 0.78rem;
+    background: #ffffff;
+    border-color: rgba(255, 255, 255, 0.75);
+  }
+
+#adminPage #adminApplicationsView .admin-actions-cell .icon-btn[data-application-action="approve"] {
+    background: #35b55c;
+    border-color: #35b55c;
+    color: #ffffff;
+  }
+
+#adminPage #adminApplicationsView .admin-actions-cell .icon-btn[data-application-action="request_info"] {
+    background: #ffffff;
+    border-color: rgba(255, 255, 255, 0.8);
+    color: #0f172a;
+  }
+
+#adminPage #adminApplicationsView .admin-actions-cell .icon-btn[data-application-action="reject"] {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
   }
 
 #adminPage .admin-empty {
