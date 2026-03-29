@@ -20,6 +20,7 @@ body.admin-body .primari-shell {
 
 #adminPage .mainSection {
   display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   width: 100%;
   min-width: 0;
   min-height: 100%;
@@ -31,12 +32,24 @@ body.admin-body .primari-shell {
   border-radius: 0 15px 15px 0;
 }
 
+#adminPage .mainSection > .admin-dashboard-hero {
+  padding: 5px 10px;
+  background: #ffffff;
+  border-radius: 0;
+}
+
 #adminPage .adminContent {
   background: transparent;
   border: 0;
   border-radius: 0;
   padding: 10px;
   overflow: hidden;
+  min-height: 0;
+  color: #ffffff;
+}
+
+#adminPage .adminContent * {
+  color: #ffffff;
 }
 
 #adminPage .rail-base {
@@ -201,9 +214,30 @@ body.admin-body .primari-shell {
   color: #ffe7ea;
 }
 
-#adminPage .admin-dashboard-grid {
+#adminPage .adminDashboardLayout {
   display: grid;
   gap: 14px;
+  color: #ffffff;
+}
+
+#adminPage .adminDashboardLayout h1,
+#adminPage .adminDashboardLayout h2,
+#adminPage .adminDashboardLayout h3,
+#adminPage .adminDashboardLayout h4,
+#adminPage .adminDashboardLayout p,
+#adminPage .adminDashboardLayout span,
+#adminPage .adminDashboardLayout strong,
+#adminPage .adminDashboardLayout label,
+#adminPage .adminDashboardLayout li,
+#adminPage .adminDashboardLayout button {
+  color: #ffffff;
+}
+
+#adminPage .adminDashboardLayout .label,
+#adminPage .adminDashboardLayout .subtle,
+#adminPage .adminDashboardLayout [class*="subtitle"],
+#adminPage .adminDashboardLayout [class*="meta"] {
+  color: #ffffff !important;
 }
 
 #adminPage .admin-dashboard-hero,
@@ -215,6 +249,7 @@ body.admin-body .primari-shell {
 #adminPage .admin-dashboard-hero .settings-header {
   margin: 0;
   padding: 0 0 0px;
+  max-height: none;
 }
 
 #adminPage .admin-dashboard-hero-copy {
@@ -225,11 +260,42 @@ body.admin-body .primari-shell {
 
 #adminPage .admin-dashboard-hero .settings-header h2,
 #adminPage .admin-dashboard-hero .settings-header h3 {
-  color: #f4f7fd;
+  color: #1b2430;
 }
 
 #adminPage .admin-dashboard-hero .settings-header p {
-  color: #c0cbdb;
+  color: #475569;
+}
+
+#adminPage .admin-dashboard-hero .settings-header .settings-header-aside {
+  text-align: right;
+}
+
+#adminPage .admin-dashboard-hero .settings-header .settings-header-aside h2 {
+  margin: 0 0 2px;
+  color: #1b2430;
+  font-size: 1.17em;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+#adminPage #adminDashboardHeroName {
+  margin: 0;
+  color: #1b2430;
+  font-size: 1.17em;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+#adminPage #adminDashboardHeroRole {
+  margin: 2px 0 0;
+  color: #1b2430;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 #adminPage .admin-dashboard-metrics {
@@ -279,6 +345,7 @@ body.admin-body .primari-shell {
 
 #adminPage .admin-dashboard-list {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -304,27 +371,40 @@ body.admin-body .primari-shell {
 }
 
 #adminPage .admin-dashboard-actions {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 
 #adminPage .admin-dashboard-actions .ghost {
   border-radius: 10px;
+  min-height: 44px;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 #adminPage .admin-section-head {
   display: grid;
-  gap: 4px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 10px;
 }
 
 #adminPage .admin-section-head h3 {
   color: #f4f7fd;
+  margin: 0;
 }
 
 #adminPage .admin-section-head p {
   color: #9fabbe;
   font-size: 0.92rem;
+  margin: 0;
+}
+
+#adminPage .admin-section-note-right {
+  justify-self: end;
+  text-align: right;
 }
 
 #adminPage .adminContent .admin-table-card {
@@ -445,9 +525,12 @@ body.admin-body .primari-shell {
 
 #adminPage .admin-profile-card,
 #adminPage .admin-panel {
+  display: grid;
+  gap: 10px;
   background: rgba(14, 19, 28, 0.9);
   border: 1px solid var(--border-light-08);
   border-radius: 8px;
+  padding: 16px;
 }
 
 #adminPage .side-section .side-section-body {
@@ -466,6 +549,11 @@ body.admin-body .primari-shell {
   #adminPage .admin-dashboard-metrics,
   #adminPage .admin-dashboard-queues {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #adminPage .admin-dashboard-list,
+  #adminPage .admin-dashboard-actions {
+    grid-template-columns: 1fr;
   }
 
 
@@ -496,3 +584,4 @@ body.admin-body .primari-shell {
     grid-template-columns: 1fr;
   }
 }
+

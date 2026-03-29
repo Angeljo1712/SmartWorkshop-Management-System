@@ -1982,6 +1982,7 @@ if (adminPage) {
   const adminMetricPendingApplications = document.getElementById("adminMetricPendingApplications");
   const adminMetricPendingPayouts = document.getElementById("adminMetricPendingPayouts");
   const adminDashboardHeroName = document.getElementById("adminDashboardHeroName");
+  const adminDashboardHeroRole = document.getElementById("adminDashboardHeroRole");
   const adminDashboardHeroAvatar = document.getElementById("adminDashboardHeroAvatar");
   const adminMetricBookingsTodayCard = document.getElementById("adminMetricBookingsTodayCard");
   const adminMetricOpenCasesCard = document.getElementById("adminMetricOpenCasesCard");
@@ -2064,6 +2065,7 @@ if (adminPage) {
     if (adminProfileAvatar) adminProfileAvatar.textContent = initials;
     if (adminProfileName) adminProfileName.textContent = displayName;
     if (adminDashboardHeroName) adminDashboardHeroName.textContent = displayName;
+    if (adminDashboardHeroRole) adminDashboardHeroRole.textContent = role;
     setAdminAvatar(adminDashboardHeroAvatar, initials, user?.avatar_url);
     if (adminProfileRole) adminProfileRole.textContent = role;
     if (adminSettingsAvatar) adminSettingsAvatar.textContent = initials;
@@ -2363,6 +2365,7 @@ if (adminPage) {
     ];
     const configs = {
       dashboard: { showSide: false },
+      account: { showSide: false },
       profile: { showSide: false },
       settings: { showSide: false },
       users: {
@@ -3245,7 +3248,7 @@ if (adminPage) {
       adminResolutionView?.classList.toggle("is-hidden", view !== "resolution");
       adminPaymentsView?.classList.toggle("is-hidden", view !== "payments");
       adminCatalogView?.classList.toggle("is-hidden", view !== "catalog");
-      adminProfileView.classList.toggle("is-hidden", view !== "profile");
+      adminProfileView.classList.toggle("is-hidden", view !== "profile" && view !== "account");
       adminUsersView.classList.toggle("is-hidden", view !== "users");
       adminSettingsView?.classList.toggle("is-hidden", view !== "settings");
     });

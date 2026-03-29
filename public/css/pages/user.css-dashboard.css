@@ -1351,7 +1351,7 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
   display: block;
 }
 
-.user-dashboard-layout {
+.userDashboardLayout {
   display: grid;
   grid-template-areas:
     "welcome"
@@ -1373,7 +1373,7 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
   grid-area: welcome;
 }
 
-.user-dashboard-layout > .settings-divider:first-of-type {
+.userDashboardLayout > .settings-divider:first-of-type {
   grid-area: divider-top;
 }
 
@@ -1395,7 +1395,7 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
   margin: 0 auto;
 }
 
-.user-dashboard-layout > .settings-divider:last-of-type {
+.userDashboardLayout > .settings-divider:last-of-type {
   grid-area: divider-middle;
 }
 
@@ -2243,5 +2243,6 @@ body.user-body #userVehicleView .user-reg-badge {
   }
 }
   
+
 
 
