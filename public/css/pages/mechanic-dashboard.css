@@ -1,110 +1,262 @@
 #mechanicPage.mechanic-layout {
   position: relative;
   display: grid;
-  grid-template-columns: 150px minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
   grid-template-rows: auto 1fr;
   grid-template-areas:
-    "rail subnav"
+    "rail hero"
     "rail content";
   align-items: stretch;
-  gap: 18px;
+  column-gap: 0;
+  row-gap: 18px;
 }
 
-#mechanicPage.mechanic-layout > .mechanic-rail,
+#mechanicPage.mechanic-layout > .mainRail,
 #mechanicPage.mechanic-layout > .mechanic-content,
 #mechanicPage.mechanic-layout > .is-hidden {
   position: relative;
   z-index: 1;
 }
 
-#mechanicPage.mechanic-layout > .mechanic-rail {
+#mechanicPage.mechanic-layout > .mainRail {
   grid-area: rail;
 }
 
-#mechanicPage .mechanic-subnav {
-  grid-area: subnav;
-  position: relative;
-  z-index: 1;
+#mechanicPage .mechanic-dashboard-hero {
+  grid-area: hero;
+  padding: 5px 10px;
+  background: #ffffff;
+  border-radius: 0;
+}
+
+#mechanicPage .mechanic-dashboard-hero,
+#mechanicPage .mechanic-dashboard-hero .settings-header {
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: max-content;
-  justify-content: center;
   gap: 12px;
-  padding: 12px;
-  border: 2px solid #ffffff;
-  border-radius: 14px;
+}
+
+#mechanicPage .mechanic-dashboard-hero .settings-header {
+  margin: 0;
+  padding: 0;
+  max-height: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+#mechanicPage .mechanic-dashboard-hero .settings-header-copy {
+  display: grid;
+  gap: 4px;
+  justify-items: start;
+  text-align: left;
+}
+
+#mechanicPage .mechanic-dashboard-hero-copy {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#mechanicPage .mechanic-dashboard-hero .settings-header h2,
+#mechanicPage .mechanic-dashboard-hero .settings-header h3 {
+  color: #1b2430;
+  margin: 0;
+}
+
+#mechanicPage .mechanic-dashboard-hero .settings-header p {
+  color: #475569;
+  margin: 0;
+}
+
+#mechanicPage .mechanic-dashboard-hero .settings-header .settings-header-aside {
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+}
+
+#mechanicPage .mechanic-dashboard-hero .settings-header .settings-header-aside h2 {
+  margin: 0 0 2px;
+  color: #1b2430;
+  font-size: 1.17em;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+#mechanicPage #mechanicDashboardHeroName {
+  margin: 0;
+  color: #1b2430;
+  font-size: 1.17em;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+#mechanicPage #mechanicDashboardHeroRole {
+  margin: 2px 0 0;
+  color: #1b2430;
+}
+
+#mechanicPage.mechanic-layout > .mainRail,
+#mechanicPage.mechanic-layout > .mechanic-content {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
-  background: #475a72;
-  justify-self: stretch;
-  width: 100%;
 }
 
-#mechanicPage .mechanic-subnav .settings-subnav-link {
-  min-width: 0;
-  white-space: nowrap;
-  color: #ffffff;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border: 1px solid transparent;
-  border-radius: 12px;
-  background: transparent;
-  box-shadow: none;
+#mechanicPage .rail-base {
+  width: 70px;
+  min-width: 70px;
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 0;
+  border-radius: 15px 0 0 15px;
+  color: #1b2430;
+  overflow: hidden;
+  transition: width 0.22s ease;
 }
 
-#mechanicPage .mechanic-subnav .settings-subnav-link .rail-icon {
-  width: 18px;
-  height: 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#mechanicPage .mechanic-subnav .settings-subnav-link .rail-icon svg {
-  width: 16px;
-  height: 16px;
-  stroke: currentColor;
-  fill: none;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-#mechanicPage .mechanic-subnav .settings-subnav-link.active {
-  background: #1f2632;
-  color: #ffffff;
-  border-color: #ffffff;
-}
-
-#mechanicPage .mechanic-subnav .settings-subnav-link:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-#mechanicPage.mechanic-layout .mechanic-rail {
+#mechanicPage .mainRail {
   min-height: 100%;
   height: 100%;
   align-self: stretch;
+  padding: 14px 10px;
+  justify-items: center;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
 }
 
-#mechanicPage.mechanic-layout .mechanic-rail .rail-item {
-  border: 1px solid transparent;
+#mechanicPage .mainRail:hover {
+  width: 200px;
+}
+
+#mechanicPage .mainRail .rail-brand {
+  width: 100%;
+  padding: 0 0 10px;
+}
+
+#mechanicPage .mainRail .rail-brand .logo {
+  width: 40px;
+  height: 40px;
   border-radius: 12px;
+  background: #eef2f7;
+  color: #1b2430;
 }
 
-#mechanicPage.mechanic-layout .mechanic-rail .rail-item:hover {
-  background: rgba(255, 255, 255, 0.1);
+#mechanicPage .mainRail .rail-nav {
+  width: 100%;
+  justify-items: center;
+  gap: 10px;
+  align-content: start;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 2px;
 }
 
-#mechanicPage.mechanic-layout .mechanic-rail .rail-item.active {
-  background: #1f2632;
+#mechanicPage .mainRail .rail-item {
+  width: 48px;
+  max-width: 48px;
+  height: 48px;
+  justify-content: center;
+  padding: 0;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #334155;
+  gap: 0;
+  transition: max-width 0.22s ease, width 0.22s ease, padding 0.22s ease, justify-content 0.22s ease, background 0.18s ease;
+}
+
+#mechanicPage .mainRail .rail-item:hover {
+  background: rgba(15, 23, 42, 0.06);
+}
+
+#mechanicPage .mainRail .rail-item.active {
+  background: #1b1f27;
   color: #ffffff;
-  border-color: #ffffff;
+  border-color: rgba(15, 23, 42, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
-#mechanicPage.mechanic-layout > .mechanic-rail,
-#mechanicPage.mechanic-layout > .mechanic-content {
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+#mechanicPage .mainRail .rail-text {
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: width 0.18s ease, opacity 0.18s ease;
+}
+
+#mechanicPage .mainRail .rail-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+}
+
+#mechanicPage .mainRail .rail-footer {
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(15, 23, 42, 0.12);
+}
+
+#mechanicPage .mainRail .admin-signout {
+  width: 48px;
+  min-width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  color: transparent;
+  font-size: 0;
+  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+#mechanicPage .mainRail .admin-signout::before {
+  content: "←";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #334155;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  z-index: 1;
+}
+
+#mechanicPage .mainRail:hover .rail-item {
+  width: 100%;
+  max-width: 100%;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 0 14px;
+}
+
+#mechanicPage .mainRail:hover .rail-text {
+  width: auto;
+  opacity: 1;
+}
+
+#mechanicPage .mainRail:hover .rail-footer {
+  justify-items: stretch;
+}
+
+#mechanicPage .mainRail:hover .admin-signout {
+  width: 100%;
+  color: #334155;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0 14px 0 40px;
+  justify-content: flex-start;
+}
+
+#mechanicPage .mainRail:hover .admin-signout::before {
+  inset: 0 auto 0 14px;
+  width: 18px;
 }
 
 #mechanicPage.mechanic-layout > .mechanic-content {
@@ -121,6 +273,23 @@ body.mechanic-body .mechanic-content {
   display: grid;
   gap: 18px;
   grid-template-columns: 1fr;
+}
+
+#mechanicDashboardView > .settings-card > .settings-header,
+#mechanicResolutionCenterView > .settings-card > .settings-header,
+#mechanicProcedureView > .settings-card > .settings-header,
+#mechanicPaymentsView > .settings-card > .settings-header,
+#mechanicAccountView > .settings-card > .settings-header,
+#mechanicPictureView > .settings-card > .settings-header,
+#mechanicCertificationsView > .settings-card > .settings-header,
+#mechanicTaxView > .settings-card > .settings-header,
+#mechanicDocumentsView > .settings-card > .settings-header,
+#mechanicPreferencesView > .settings-card > .settings-header,
+#mechanicTypesView > .settings-card > .settings-header,
+#mechanicSettingsView .settings-section--welcome,
+#mechanicSettingsView .settings-section--divider,
+#mechanicDashboardView .mechanic-dashboard-layout > .settings-header {
+  display: none;
 }
 
 body.mechanic-body .mechanic-dashboard-layout {
@@ -977,10 +1146,19 @@ body.mechanic-body .mechanic-resolution-booking .primary {
 }
 
 @media (max-width: 768px) {
+  #mechanicPage .mechanic-dashboard-hero .settings-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  #mechanicPage .mechanic-dashboard-hero .settings-header .settings-header-aside {
+    width: 100%;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
   .mechanic-settings-layout {
     grid-template-areas:
-      "welcome"
-      "divider"
       "subnav"
       "panel";
     grid-template-columns: 1fr;

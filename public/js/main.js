@@ -5480,6 +5480,11 @@ if (userPage) {
   const userProfileAvatar = document.getElementById("userProfileAvatar");
   const userProfileName = document.getElementById("userProfileName");
   const userProfileRole = document.getElementById("userProfileRole");
+  const userHeroSectionTitle = document.getElementById("userHeroSectionTitle");
+  const userHeroSectionSubtitle = document.getElementById("userHeroSectionSubtitle");
+  const userDashboardHeroAvatar = document.getElementById("userDashboardHeroAvatar");
+  const userDashboardHeroName = document.getElementById("userDashboardHeroName");
+  const userDashboardHeroRole = document.getElementById("userDashboardHeroRole");
   const userSettingsAvatar = document.getElementById("userSettingsAvatar");
   const userSettingsName = document.getElementById("userSettingsName");
   const userSettingsEmail = document.getElementById("userSettingsEmail");
@@ -5641,6 +5646,9 @@ if (userPage) {
     setAvatar(userProfileAvatar, initials, user?.avatar_url);
     userProfileName.textContent = displayName;
     userProfileRole.textContent = activeRole;
+    setAvatar(userDashboardHeroAvatar, initials, user?.avatar_url);
+    if (userDashboardHeroName) userDashboardHeroName.textContent = displayName;
+    if (userDashboardHeroRole) userDashboardHeroRole.textContent = activeRole;
     setAvatar(userSettingsAvatar, initials, user?.avatar_url);
     userSettingsName.textContent = displayName;
     if (userSettingsEmail) userSettingsEmail.textContent = user?.email || "-";
@@ -5691,6 +5699,20 @@ if (userPage) {
         }
       };
     }
+  };
+
+  const setUserHeroByView = (view) => {
+    const heroConfig = {
+      dashboard: { title: "Dashboard", subtitle: "General information" },
+      account: { title: "Account", subtitle: "Review your profile information" },
+      vehicle: { title: "Vehicle", subtitle: "Information related to your vehicles" },
+      bookings: { title: "Bookings", subtitle: "Review of your bookings" },
+      resolution: { title: "Resolution center", subtitle: "Manage mechanic issues and active resolutions" },
+      settings: { title: "Account settings", subtitle: "Manage your profile and preferences" }
+    };
+    const current = heroConfig[view] || heroConfig.dashboard;
+    if (userHeroSectionTitle) userHeroSectionTitle.textContent = current.title;
+    if (userHeroSectionSubtitle) userHeroSectionSubtitle.textContent = current.subtitle;
   };
 
   const settingsFieldConfig = {
@@ -5805,6 +5827,7 @@ if (userPage) {
   }
 
   const setUserView = (view) => {
+    setUserHeroByView(view);
     userDashboardView.classList.toggle("is-hidden", view !== "dashboard");
     userAccountView.classList.toggle("is-hidden", view !== "account");
     userVehicleView.classList.toggle("is-hidden", view !== "vehicle");
@@ -6926,11 +6949,15 @@ if (mechanicDashboard) {
   const mechanicBackBtn = document.getElementById("mechanicBackBtn");
   const mechanicLogoutBtn = document.getElementById("mechanicLogoutBtn");
   const mechanicNavLinks = mechanicDashboard.querySelectorAll(".rail-nav .rail-item[data-view]");
-  const mechanicSubnavLinks = mechanicDashboard.querySelectorAll(".mechanic-subnav .settings-subnav-link[data-view]");
   const mechanicDashboardView = document.getElementById("mechanicDashboardView");
   const mechanicResolutionCenterView = document.getElementById("mechanicResolutionCenterView");
   const mechanicProcedureView = document.getElementById("mechanicProcedureView");
   const mechanicPaymentsView = document.getElementById("mechanicPaymentsView");
+  const mechanicHeroSectionTitle = document.getElementById("mechanicHeroSectionTitle");
+  const mechanicHeroSectionSubtitle = document.getElementById("mechanicHeroSectionSubtitle");
+  const mechanicDashboardHeroAvatar = document.getElementById("mechanicDashboardHeroAvatar");
+  const mechanicDashboardHeroName = document.getElementById("mechanicDashboardHeroName");
+  const mechanicDashboardHeroRole = document.getElementById("mechanicDashboardHeroRole");
   const mechanicProfileView = document.getElementById("mechanicProfileView");
   const mechanicAccountView = document.getElementById("mechanicAccountView");
   const mechanicPictureView = document.getElementById("mechanicPictureView");
@@ -7037,6 +7064,29 @@ if (mechanicDashboard) {
   let latestMechanicAssignedBookings = [];
   let pendingResolutionBookingId = null;
   let pendingResolutionCaseId = null;
+
+  const setMechanicHeroByView = (view) => {
+    const heroConfig = {
+      dashboard: { title: "Dashboard", subtitle: "General information" },
+      account: { title: "Account", subtitle: "Review your profile information" },
+      resolution: { title: "Resolution center", subtitle: "Manage customer issues and active resolutions" },
+      procedure: { title: "Procedure", subtitle: "Review your mechanic procedures and workflow" },
+      payments: { title: "Payments", subtitle: "Review payouts and payment activity" },
+      profile: { title: "Profile", subtitle: "Review your public mechanic profile" },
+      "edit-profile": { title: "Edit profile", subtitle: "Update your experience, coverage and fulfilment details" },
+      picture: { title: "Profile picture", subtitle: "Manage your profile picture" },
+      certifications: { title: "Certification", subtitle: "Review and manage your certifications" },
+      tax: { title: "Tax information", subtitle: "Review your tax details" },
+      documents: { title: "Document", subtitle: "Review your uploaded documents" },
+      preferences: { title: "Preferences", subtitle: "Manage your mechanic preferences" },
+      types: { title: "Type of work covered", subtitle: "Review the work types you cover" },
+      settings: { title: "Account settings", subtitle: "Manage your profile and preferences" }
+    };
+    const current = heroConfig[view] || heroConfig.dashboard;
+    if (mechanicHeroSectionTitle) mechanicHeroSectionTitle.textContent = current.title;
+    if (mechanicHeroSectionSubtitle) mechanicHeroSectionSubtitle.textContent = current.subtitle;
+  };
+
   if (profile) {
     try {
       const user = JSON.parse(profile);
@@ -7049,6 +7099,9 @@ if (mechanicDashboard) {
         .toUpperCase() || "ME";
       const roles = Array.isArray(user?.roles) && user.roles.length ? user.roles : [user?.role_name || "MECHANIC"];
       const activeRole = roles.includes("MECHANIC") ? "MECHANIC" : roles[0];
+      if (mechanicDashboardHeroAvatar) mechanicDashboardHeroAvatar.textContent = initials;
+      if (mechanicDashboardHeroName) mechanicDashboardHeroName.textContent = name;
+      if (mechanicDashboardHeroRole) mechanicDashboardHeroRole.textContent = activeRole;
       if (nameEl) nameEl.textContent = name;
       if (mechanicAccountName) mechanicAccountName.textContent = name;
       if (idEl) {
@@ -7824,6 +7877,7 @@ if (mechanicDashboard) {
   });
 
   const setMechanicView = (view) => {
+    setMechanicHeroByView(view);
     mechanicDashboardView?.classList.toggle("is-hidden", view !== "dashboard");
     mechanicResolutionCenterView?.classList.toggle("is-hidden", view !== "resolution");
     mechanicProcedureView?.classList.toggle("is-hidden", view !== "procedure");
@@ -7844,12 +7898,9 @@ if (mechanicDashboard) {
   };
 
   const syncMechanicNavState = (view) => {
-    const railViews = new Set(["profile", "edit-profile", "picture", "certifications", "tax", "documents", "preferences", "types", "settings"]);
     mechanicNavLinks.forEach((btn) => {
-      const isActive = btn.dataset.view === view && railViews.has(view);
-      btn.classList.toggle("active", isActive);
+      btn.classList.toggle("active", btn.dataset.view === view);
     });
-    mechanicSubnavLinks.forEach((btn) => btn.classList.toggle("active", btn.dataset.view === view));
   };
 
   mechanicNavLinks.forEach((link) => {
@@ -7920,13 +7971,6 @@ if (mechanicDashboard) {
       });
   });
 
-  mechanicSubnavLinks.forEach((link) => {
-    link.addEventListener("click", () => {
-      const view = link.dataset.view || "dashboard";
-      syncMechanicNavState(view);
-      setMechanicView(view);
-    });
-  });
   const pendingMechanicView = sessionStorage.getItem("mechanicHeaderTargetView");
   const initialMechanicView =
     pendingMechanicView && ["dashboard", "resolution", "procedure", "payments", "profile", "account", "settings"].includes(pendingMechanicView)

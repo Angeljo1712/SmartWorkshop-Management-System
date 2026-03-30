@@ -35,29 +35,65 @@ block content
 
   main.primari-shell
     .page-shell-content
-      section.mechanic-layout#mechanicPage
-        aside.mechanic-rail.Layer2
+      section.mainLayout.mechanic-layout#mechanicPage
+        aside.mainRail.rail-base
           .rail-brand
             span.logo SW
           nav.rail-nav
+            button.admin-nav-link.rail-item(type="button" data-view="dashboard")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  rect(x="3" y="3" width="7" height="7" rx="1")
+                  rect(x="14" y="3" width="7" height="7" rx="1")
+                  rect(x="3" y="14" width="7" height="7" rx="1")
+                  rect(x="14" y="14" width="7" height="7" rx="1")
+              span.rail-text Dashboard
+            button.admin-nav-link.rail-item(type="button" data-view="account")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  circle(cx="12" cy="8" r="4")
+                  path(d="M5 20a7 7 0 0 1 14 0")
+              span.rail-text Account
+            button.admin-nav-link.rail-item(type="button" data-view="resolution")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  circle(cx="12" cy="8" r="4")
+                  path(d="M5 20a7 7 0 0 1 14 0")
+              span.rail-text Resolution center
+            button.admin-nav-link.rail-item(type="button" data-view="procedure")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  path(d="M7 4h10")
+                  path(d="M7 8h10")
+                  path(d="M7 12h6")
+                  path(d="M5 18h14")
+              span.rail-text Procedure
+            button.admin-nav-link.rail-item(type="button" data-view="payments")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  path(d="M4 7h16")
+                  path(d="M4 12h16")
+                  path(d="M4 17h10")
+                  circle(cx="17" cy="17" r="2")
+              span.rail-text Payments
             button.admin-nav-link.rail-item(type="button" data-view="profile")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
                   circle(cx="12" cy="8" r="4")
                   path(d="M5 20a7 7 0 0 1 14 0")
-              | Profile
+              span.rail-text Profile
             button.admin-nav-link.rail-item(type="button" data-view="edit-profile")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
                   path(d="M12 20h9")
                   path(d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z")
-              | Edit Profile
+              span.rail-text Edit Profile
             button.admin-nav-link.rail-item(type="button" data-view="certifications")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
                   path(d="M12 3l7 4v5c0 4.5-2.8 7.7-7 9-4.2-1.3-7-4.5-7-9V7z")
                   path(d="M9 12l2 2 4-4")
-              | Certification
+              span.rail-text Certification
             button.admin-nav-link.rail-item(type="button" data-view="tax")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
@@ -66,7 +102,7 @@ block content
                   path(d="M17 3v6")
                   rect(x="4" y="6" width="16" height="14" rx="2")
                   path(d="M8 12h8")
-              | Tax information
+              span.rail-text Tax information
             button.admin-nav-link.rail-item(type="button" data-view="documents")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
@@ -74,7 +110,7 @@ block content
                   path(d="M14 3v5h5")
                   path(d="M10 13h6")
                   path(d="M10 17h6")
-              | Document
+              span.rail-text Document
             button.admin-nav-link.rail-item(type="button" data-view="types")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
@@ -83,58 +119,33 @@ block content
                   path(d="M4 17h12")
                   circle(cx="17" cy="7" r="2")
                   circle(cx="9" cy="17" r="2")
-              | Type of work covered
+              span.rail-text Type of work covered
             button.admin-nav-link.rail-item(type="button" data-view="settings")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
                   circle(cx="12" cy="12" r="3")
                   path(d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 0 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.2a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3h.1a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8v.1a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.5 1z")
-              | Settings
+              span.rail-text Settings
           .rail-footer
             button.admin-nav-link.rail-item#mechanicBackBtn(type="button")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
                   path(d="M15 18l-6-6 6-6")
-              | Back
+              span.rail-text Back
             button.admin-signout#mechanicLogoutBtn(type="button") Sign out
 
-        nav.settings-subnav.mechanic-subnav(aria-label="Mechanic sections")
-          button.settings-subnav-link.active(type="button" data-view="dashboard")
-            span.rail-icon(aria-hidden="true")
-              svg(viewBox="0 0 24 24")
-                rect(x="3" y="3" width="7" height="7" rx="1")
-                rect(x="14" y="3" width="7" height="7" rx="1")
-                rect(x="3" y="14" width="7" height="7" rx="1")
-                rect(x="14" y="14" width="7" height="7" rx="1")
-            | Dashboard
-          button.settings-subnav-link(type="button" data-view="account")
-            span.rail-icon(aria-hidden="true")
-              svg(viewBox="0 0 24 24")
-                circle(cx="12" cy="8" r="4")
-                path(d="M5 20a7 7 0 0 1 14 0")
-            | Account
-          button.settings-subnav-link(type="button" data-view="resolution")
-            span.rail-icon(aria-hidden="true")
-              svg(viewBox="0 0 24 24")
-                circle(cx="12" cy="8" r="4")
-                path(d="M5 20a7 7 0 0 1 14 0")
-            | Resolution center
-          button.settings-subnav-link(type="button" data-view="procedure")
-            span.rail-icon(aria-hidden="true")
-              svg(viewBox="0 0 24 24")
-                path(d="M7 4h10")
-                path(d="M7 8h10")
-                path(d="M7 12h6")
-                path(d="M5 18h14")
-            | Procedure
-          button.settings-subnav-link(type="button" data-view="payments")
-            span.rail-icon(aria-hidden="true")
-              svg(viewBox="0 0 24 24")
-                path(d="M4 7h16")
-                path(d="M4 12h16")
-                path(d="M4 17h10")
-                circle(cx="17" cy="17" r="2")
-            | Payments
+        .mechanic-dashboard-hero
+          .settings-header
+            .settings-header-copy
+              h3#mechanicHeroSectionTitle Dashboard
+              p#mechanicHeroSectionSubtitle General information
+            .settings-header-aside
+              .mechanic-dashboard-hero-copy
+                .admin-profile-avatar#mechanicDashboardHeroAvatar ME
+                div
+                  h2 Welcome
+                  p#mechanicDashboardHeroName Mechanic
+                  p#mechanicDashboardHeroRole MECHANIC
 
         section.mechanic-content#mechanicDashboardView
           .settings-card.mechanic-dashboard-card

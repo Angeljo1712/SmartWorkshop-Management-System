@@ -9,6 +9,7 @@
 
 #userPage .mainSection {
   display: grid;
+  grid-template-rows: auto 1fr;
   width: 100%;
   min-width: 0;
   min-height: 100%;
@@ -18,6 +19,94 @@
   border: 1px solid #ffffff;
   border-left: 0;
   border-radius: 0 15px 15px 0;
+}
+
+#userPage .mainSection > .user-dashboard-hero {
+  padding: 5px 10px;
+  background: #ffffff;
+  border-radius: 0;
+}
+
+#userPage .user-dashboard-hero,
+#userPage .user-dashboard-hero .settings-header {
+  display: grid;
+  gap: 12px;
+}
+
+#userPage .user-dashboard-hero .settings-header {
+  margin: 0;
+  padding: 0;
+  max-height: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+#userPage .user-dashboard-hero-copy {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#userPage .user-dashboard-hero .settings-header-copy {
+  display: grid;
+  gap: 4px;
+  justify-items: start;
+  text-align: left;
+}
+
+#userPage .user-dashboard-hero .settings-header h2,
+#userPage .user-dashboard-hero .settings-header h3 {
+  color: #1b2430;
+  margin: 0;
+}
+
+#userPage .user-dashboard-hero .settings-header p {
+  color: #475569;
+  margin: 0;
+}
+
+#userPage .user-dashboard-hero .settings-header .settings-header-aside {
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+}
+
+#userPage .user-dashboard-hero .settings-header .settings-header-aside h2 {
+  margin: 0 0 2px;
+  color: #1b2430;
+  font-size: 1.17em;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+#userPage #userDashboardHeroName {
+  margin: 0;
+  color: #1b2430;
+  font-size: 1.17em;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+#userPage #userDashboardHeroRole {
+  margin: 2px 0 0;
+  color: #1b2430;
+}
+
+@media (max-width: 768px) {
+  #userPage .user-dashboard-hero .settings-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  #userPage .user-dashboard-hero .settings-header .settings-header-aside {
+    width: 100%;
+    justify-content: flex-start;
+    text-align: left;
+  }
 }
 
 #userPage .userContent {
@@ -1354,13 +1443,11 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
 .userDashboardLayout {
   display: grid;
   grid-template-areas:
-    "welcome"
-    "divider-top"
     "cars-header"
     "cars-list"
+    "divider-middle"
     "add-title"
     "add-form"
-    "divider-middle"
     "quote";
   gap: 30px;
 }
@@ -1371,10 +1458,6 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
 
 .dashboard-section--welcome {
   grid-area: welcome;
-}
-
-.userDashboardLayout > .settings-divider:first-of-type {
-  grid-area: divider-top;
 }
 
 .dashboard-section--cars-header {
@@ -1401,6 +1484,52 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
 
 .dashboard-section--quote {
   grid-area: quote;
+}
+
+#userDashboardView .dashboard-section--welcome,
+#userDashboardView .userDashboardLayout > .settings-divider:first-of-type,
+#userAccountView .account-section--welcome,
+#userAccountView .user-account-layout > .settings-divider:nth-of-type(1),
+#userVehicleView .vehicle-section--welcome,
+#userVehicleView .user-vehicle-layout > .settings-divider,
+#userBookingsView .bookings-section--welcome,
+#userBookingsView .bookings-section--divider,
+#userResolutionView .resolution-section--welcome,
+#userResolutionView .resolution-section--divider,
+#userSettingsView .settings-section--welcome,
+#userSettingsView .settings-section--divider {
+  display: none;
+}
+
+.user-account-layout {
+  grid-template-areas:
+    "avatar"
+    "divider-mid"
+    "profile"
+    "divider-profile"
+    "contacts"
+    "divider-bottom"
+    "role"
+    "divider-final"
+    "integration";
+}
+
+.user-vehicle-layout {
+  grid-template-areas:
+    "heading"
+    "meta"
+    "cards";
+}
+
+.user-bookings-layout,
+.user-resolution-layout {
+  grid-template-areas:
+    "card";
+}
+
+.user-settings-layout {
+  grid-template-areas:
+    "subnav panel";
 }
 
 .user-car-list {
