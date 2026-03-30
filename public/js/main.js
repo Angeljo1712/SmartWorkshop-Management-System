@@ -1956,6 +1956,8 @@ if (adminPage) {
   const adminUserRows = document.getElementById("adminUserRows");
   const adminUserSortHeaders = document.querySelectorAll("#adminUsersView [data-sort-key]");
   const adminUsersSelectAll = document.getElementById("adminUsersSelectAll");
+  const adminApplicationsSelectAll = document.getElementById("adminApplicationsSelectAll");
+  const adminBookingsSelectAll = document.getElementById("adminBookingsSelectAll");
   const adminEmptyState = document.getElementById("adminEmptyState");
   const adminUserCount = document.getElementById("adminUserCount");
   const adminRowsPerPage = document.getElementById("adminRowsPerPage");
@@ -2034,21 +2036,52 @@ if (adminPage) {
   const adminDashboardRecentApplications = document.getElementById("adminDashboardRecentApplications");
   const adminDashboardRecentCases = document.getElementById("adminDashboardRecentCases");
   const adminBookingsSearch = document.getElementById("adminBookingsSearch");
+  const adminBookingsTypeFilter = document.getElementById("adminBookingsTypeFilter");
+  const adminBookingsStatusFilter = document.getElementById("adminBookingsStatusFilter");
+  const adminBookingsDateFilter = document.getElementById("adminBookingsDateFilter");
   const adminBookingsRows = document.getElementById("adminBookingsRows");
   const adminBookingsCount = document.getElementById("adminBookingsCount");
+  const adminBookingsRowsMeta = document.getElementById("adminBookingsRowsMeta");
+  const adminBookingsRowsPerPage = document.getElementById("adminBookingsRowsPerPage");
+  const adminBookingsPagination = document.getElementById("adminBookingsPagination");
+  const adminBookingsExportBtn = document.getElementById("adminBookingsExportBtn");
+  const adminBookingSortHeaders = document.querySelectorAll("#adminBookingsView [data-booking-sort-key]");
   const adminBookingsEmptyState = document.getElementById("adminBookingsEmptyState");
   const adminResolutionSearch = document.getElementById("adminResolutionSearch");
+  const adminResolutionTypeFilter = document.getElementById("adminResolutionTypeFilter");
+  const adminResolutionStatusFilter = document.getElementById("adminResolutionStatusFilter");
+  const adminResolutionDateFilter = document.getElementById("adminResolutionDateFilter");
   const adminResolutionRows = document.getElementById("adminResolutionRows");
+  const adminResolutionSelectAll = document.getElementById("adminResolutionSelectAll");
   const adminResolutionCount = document.getElementById("adminResolutionCount");
+  const adminResolutionRowsMeta = document.getElementById("adminResolutionRowsMeta");
+  const adminResolutionRowsPerPage = document.getElementById("adminResolutionRowsPerPage");
+  const adminResolutionPagination = document.getElementById("adminResolutionPagination");
   const adminResolutionEmptyState = document.getElementById("adminResolutionEmptyState");
+  const adminResolutionExportBtn = document.getElementById("adminResolutionExportBtn");
   const adminPaymentsSearch = document.getElementById("adminPaymentsSearch");
+  const adminPaymentsKindFilter = document.getElementById("adminPaymentsKindFilter");
+  const adminPaymentsStatusFilter = document.getElementById("adminPaymentsStatusFilter");
+  const adminPaymentsDateFilter = document.getElementById("adminPaymentsDateFilter");
   const adminPaymentsRows = document.getElementById("adminPaymentsRows");
+  const adminPaymentsSelectAll = document.getElementById("adminPaymentsSelectAll");
   const adminPaymentsCount = document.getElementById("adminPaymentsCount");
+  const adminPaymentsRowsMeta = document.getElementById("adminPaymentsRowsMeta");
+  const adminPaymentsRowsPerPage = document.getElementById("adminPaymentsRowsPerPage");
+  const adminPaymentsPagination = document.getElementById("adminPaymentsPagination");
   const adminPaymentsEmptyState = document.getElementById("adminPaymentsEmptyState");
+  const adminPaymentsExportBtn = document.getElementById("adminPaymentsExportBtn");
   const adminCatalogSearch = document.getElementById("adminCatalogSearch");
+  const adminCatalogGroupFilter = document.getElementById("adminCatalogGroupFilter");
+  const adminCatalogSubcategoryFilter = document.getElementById("adminCatalogSubcategoryFilter");
   const adminCatalogRows = document.getElementById("adminCatalogRows");
   const adminCatalogCount = document.getElementById("adminCatalogCount");
+  const adminCatalogRowsMeta = document.getElementById("adminCatalogRowsMeta");
+  const adminCatalogRowsPerPage = document.getElementById("adminCatalogRowsPerPage");
+  const adminCatalogPagination = document.getElementById("adminCatalogPagination");
   const adminCatalogEmptyState = document.getElementById("adminCatalogEmptyState");
+  const adminCatalogAddGroupBtn = document.getElementById("adminCatalogAddGroupBtn");
+  const adminCatalogExportBtn = document.getElementById("adminCatalogExportBtn");
   const adminActionFeedback = document.getElementById("adminActionFeedback");
   const adminProfileAvatar = document.getElementById("adminProfileAvatar");
   const adminProfileName = document.getElementById("adminProfileName");
@@ -2059,6 +2092,29 @@ if (adminPage) {
   const adminSettingsEmailDetail = document.getElementById("adminSettingsEmailDetail");
   const adminSettingsRole = document.getElementById("adminSettingsRole");
   const adminSettingsPhone = document.getElementById("adminSettingsPhone");
+  const adminSettingsUsername = document.getElementById("adminSettingsUsername");
+  const adminSettingsAddress = document.getElementById("adminSettingsAddress");
+  const adminSettingsWelcomeName = document.getElementById("adminSettingsWelcomeName");
+  const adminSettingsViewAvatar = document.getElementById("adminSettingsViewAvatar");
+  const adminSettingsPhotoInput = document.getElementById("adminSettingsPhotoInput");
+  const adminSettingsPhotoBtn = document.getElementById("adminSettingsPhotoBtn");
+  const adminSettingsViewName = document.getElementById("adminSettingsViewName");
+  const adminSettingsViewPhone = document.getElementById("adminSettingsViewPhone");
+  const adminSettingsViewUsername = document.getElementById("adminSettingsViewUsername");
+  const adminSettingsViewEmail = document.getElementById("adminSettingsViewEmail");
+  const adminSettingsViewAddress = document.getElementById("adminSettingsViewAddress");
+  const adminSettingsThemeValue = document.getElementById("adminSettingsThemeValue");
+  const adminSettingsThemeBtn = document.getElementById("adminSettingsThemeBtn");
+  const adminSettingsSubviewTitle = document.getElementById("adminSettingsSubviewTitle");
+  const adminSettingsSubnavLinks = document.querySelectorAll("[data-admin-settings-subview]");
+  const adminSettingsActionButtons = document.querySelectorAll("[data-admin-settings-field]");
+  const adminSettingsGeneralSubview = document.getElementById("adminSettingsGeneral");
+  const adminSettingsNotificationsSubview = document.getElementById("adminSettingsNotifications");
+  const adminSettingsSecuritySubview = document.getElementById("adminSettingsSecurity");
+  const adminNotificationsMarketing = document.getElementById("adminNotificationsMarketing");
+  const adminSecurity2faEmail = document.getElementById("adminSecurity2faEmail");
+  const adminSecurity2faSms = document.getElementById("adminSecurity2faSms");
+  const adminSecurity2faEnable = document.getElementById("adminSecurity2faEnable");
 
 
   let adminUsers = [];
@@ -2073,6 +2129,10 @@ if (adminPage) {
   let activeAdminView = "dashboard";
   let adminFeedbackTimer = null;
   const selectedAdminUsers = new Set();
+  const selectedAdminApplications = new Set();
+  const selectedAdminBookings = new Set();
+  const selectedAdminResolutionCases = new Set();
+  const selectedAdminPayments = new Set();
   let activeAdminEditField = null;
   let activeAdminEditUserId = null;
   let pendingAdminDeleteUser = null;
@@ -2080,6 +2140,16 @@ if (adminPage) {
   let adminApplicationsPageSize = Number(adminApplicationsRowsPerPage?.value || 10);
   let adminApplicationsPage = 1;
   let adminApplicationSort = { key: "created_at", direction: "desc" };
+  let adminBookingsPage = 1;
+  let adminBookingsPageSize = Number(adminBookingsRowsPerPage?.value || 10);
+  let adminBookingSort = { key: "created_at", direction: "desc" };
+  let adminResolutionPage = 1;
+  let adminResolutionPageSize = Number(adminResolutionRowsPerPage?.value || 10);
+  let adminCatalogPage = 1;
+  let adminCatalogPageSize = Number(adminCatalogRowsPerPage?.value || 10);
+  let activeAdminCatalogGroup = null;
+  let adminPaymentsPage = 1;
+  let adminPaymentsPageSize = Number(adminPaymentsRowsPerPage?.value || 10);
 
   const getAdminToken = () => getStoredAuthValue("userToken");
   const getAdminProfile = () => {
@@ -2095,6 +2165,22 @@ if (adminPage) {
     const displayName = user?.full_name || joinedName || user?.email || "Admin";
     const role = user?.role_name || "ADMIN";
     const initials = getInitials(displayName);
+    const addressText = user?.address
+      || [
+        user?.address_details?.line1,
+        user?.address_details?.line2,
+        user?.address_details?.city,
+        user?.address_details?.postal_code,
+        user?.address_details?.country
+      ].filter(Boolean).join(", ")
+      || [
+        user?.address_line_1,
+        user?.address_line_2,
+        user?.city || user?.town,
+        user?.postcode || user?.postal_code,
+        user?.country
+      ].filter(Boolean).join(", ")
+      || String(user?.location || "").trim();
     const setAdminAvatar = (el, fallbackInitials, url) => {
       if (!el) return;
       el.innerHTML = "";
@@ -2116,12 +2202,45 @@ if (adminPage) {
     if (adminProfileRole) adminProfileRole.textContent = role;
     if (adminSettingsAvatar) adminSettingsAvatar.textContent = initials;
     if (adminSettingsName) adminSettingsName.textContent = displayName;
-    if (adminSettingsEmail) adminSettingsEmail.textContent = user?.email || "admin@smartworkshop.local";
+    if (adminSettingsEmail) adminSettingsEmail.textContent = `Email: ${user?.email || "admin@smartworkshop.local"}`;
     if (adminSettingsEmailDetail) {
       adminSettingsEmailDetail.textContent = `Email: ${user?.email || "admin@smartworkshop.local"}`;
     }
     if (adminSettingsRole) adminSettingsRole.textContent = role;
-    if (adminSettingsPhone) adminSettingsPhone.textContent = "Phone: -";
+    if (adminSettingsPhone) adminSettingsPhone.textContent = `Phone: ${user?.phone || "-"}`;
+    if (adminSettingsUsername) adminSettingsUsername.textContent = `Username: ${user?.username || "-"}`;
+    if (adminSettingsAddress) adminSettingsAddress.textContent = `Address: ${addressText || "-"}`;
+    if (adminSettingsWelcomeName) adminSettingsWelcomeName.textContent = displayName;
+    setAdminAvatar(adminSettingsViewAvatar, initials, user?.avatar_url);
+    if (adminSettingsViewName) adminSettingsViewName.textContent = displayName;
+    if (adminSettingsViewPhone) adminSettingsViewPhone.textContent = user?.phone || "-";
+    if (adminSettingsViewUsername) adminSettingsViewUsername.textContent = user?.username || "-";
+    if (adminSettingsViewEmail) adminSettingsViewEmail.textContent = user?.email || "admin@smartworkshop.local";
+    if (adminSettingsViewAddress) adminSettingsViewAddress.textContent = addressText || "-";
+  };
+
+  const setAdminSettingsSubview = (subview) => {
+    const titles = {
+      general: "General",
+      notifications: "Notifications",
+      security: "Login & security"
+    };
+    adminSettingsGeneralSubview?.classList.toggle("is-hidden", subview !== "general");
+    adminSettingsNotificationsSubview?.classList.toggle("is-hidden", subview !== "notifications");
+    adminSettingsSecuritySubview?.classList.toggle("is-hidden", subview !== "security");
+    if (adminSettingsSubviewTitle) {
+      adminSettingsSubviewTitle.textContent = titles[subview] || "General";
+    }
+    adminSettingsSubnavLinks.forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.adminSettingsSubview === subview);
+    });
+  };
+
+  const syncAdminSecurity2faButton = () => {
+    if (!adminSecurity2faEnable) return;
+    const hasSelection = Boolean(adminSecurity2faEmail?.checked || adminSecurity2faSms?.checked);
+    adminSecurity2faEnable.disabled = !hasSelection;
+    adminSecurity2faEnable.classList.toggle("is-active", hasSelection);
   };
 
   const setAdminVisibility = (loggedIn) => {
@@ -2400,10 +2519,6 @@ if (adminPage) {
         return String(user.role_name || "").toLowerCase();
       case "experience":
         return Number.parseFloat(String(getExperience(user) || "0").replace(/[^\d.]/g, "")) || 0;
-      case "readiness": {
-        const value = String(getReadiness(user, index) || "0/5").split("/")[0];
-        return Number.parseInt(value, 10) || 0;
-      }
       case "joined_date":
         return new Date(user.created_at || 0).getTime() || 0;
       case "last_active": {
@@ -2468,6 +2583,157 @@ if (adminPage) {
     adminApplicationSortHeaders.forEach((header) => {
       const isActive = header.dataset.appSortKey === adminApplicationSort.key;
       header.dataset.sortDirection = isActive ? adminApplicationSort.direction : "";
+      header.classList.toggle("is-active", isActive);
+    });
+  };
+
+  const getBookingSortValue = (item, key) => {
+    switch (key) {
+      case "reference":
+        return String(item.reference || "").toLowerCase();
+      case "status":
+        return String(item.status || "").toLowerCase();
+      case "customer_name":
+        return String(item.customer_name || "").toLowerCase();
+      case "mechanic_name":
+        return String(item.mechanic_name || "").toLowerCase();
+      case "vehicle":
+        return String(item.vehicle || "").toLowerCase();
+      case "location":
+        return String(item.location || "").toLowerCase();
+      case "total":
+        return Number(item.total || 0);
+      case "created_at":
+        return new Date(item.created_at || 0).getTime() || 0;
+      default:
+        return "";
+    }
+  };
+
+  const getBookingType = (item) => {
+    const services = Array.isArray(item?.services)
+      ? item.services
+      : String(item?.services || "")
+          .split(",")
+          .map((value) => value.trim())
+          .filter(Boolean);
+    return services[0] || "General";
+  };
+
+  const syncAdminBookingHeadFilters = () => {
+    const bookingDateOptions = [
+      { value: "all", label: "All time" },
+      { value: "30", label: "Last 30 days" },
+      { value: "90", label: "Last 90 days" },
+      { value: "365", label: "Last year" }
+    ];
+    setFilterOptions(
+      adminBookingsTypeFilter,
+      getUniqueOptions(adminBookings, (item) => getBookingType(item)).map((value) => ({
+        value,
+        label: titleCase(value)
+      })),
+      adminBookingsTypeFilter?.value
+    );
+    setFilterOptions(
+      adminBookingsStatusFilter,
+      getUniqueOptions(adminBookings, (item) => item.status).map((value) => ({
+        value,
+        label: titleCase(value)
+      })),
+      adminBookingsStatusFilter?.value
+    );
+    setFilterOptions(adminBookingsDateFilter, bookingDateOptions, adminBookingsDateFilter?.value);
+  };
+
+  const syncAdminResolutionHeadFilters = () => {
+    const resolutionDateOptions = [
+      { value: "all", label: "All time" },
+      { value: "30", label: "Last 30 days" },
+      { value: "90", label: "Last 90 days" },
+      { value: "365", label: "Last year" }
+    ];
+    setFilterOptions(
+      adminResolutionTypeFilter,
+      getUniqueOptions(adminResolutionCases, (item) => item.type).map((value) => ({
+        value,
+        label: titleCase(value)
+      })),
+      adminResolutionTypeFilter?.value
+    );
+    setFilterOptions(
+      adminResolutionStatusFilter,
+      getUniqueOptions(adminResolutionCases, (item) => item.status).map((value) => ({
+        value,
+        label: titleCase(value)
+      })),
+      adminResolutionStatusFilter?.value
+    );
+    setFilterOptions(adminResolutionDateFilter, resolutionDateOptions, adminResolutionDateFilter?.value);
+  };
+
+  const syncAdminPaymentsHeadFilters = () => {
+    const paymentDateOptions = [
+      { value: "all", label: "All time" },
+      { value: "30", label: "Last 30 days" },
+      { value: "90", label: "Last 90 days" },
+      { value: "365", label: "Last year" }
+    ];
+    setFilterOptions(
+      adminPaymentsKindFilter,
+      getUniqueOptions(adminPayments, (item) => item.kind).map((value) => ({
+        value,
+        label: titleCase(value)
+      })),
+      adminPaymentsKindFilter?.value
+    );
+    setFilterOptions(
+      adminPaymentsStatusFilter,
+      getUniqueOptions(adminPayments, (item) => item.status).map((value) => ({
+        value,
+        label: titleCase(value)
+      })),
+      adminPaymentsStatusFilter?.value
+    );
+    setFilterOptions(adminPaymentsDateFilter, paymentDateOptions, adminPaymentsDateFilter?.value);
+  };
+
+  const syncAdminCatalogHeadFilters = () => {
+    setFilterOptions(
+      adminCatalogGroupFilter,
+      getUniqueOptions(adminCatalog, (item) => item.group).map((value) => ({
+        value,
+        label: value
+      })),
+      adminCatalogGroupFilter?.value
+    );
+    setFilterOptions(
+      adminCatalogSubcategoryFilter,
+      getUniqueOptions(adminCatalog, (item) => item.subcategory).map((value) => ({
+        value,
+        label: value
+      })),
+      adminCatalogSubcategoryFilter?.value
+    );
+  };
+
+  const sortAdminBookings = (items) => {
+    const sorted = [...items];
+    const direction = adminBookingSort.direction === "asc" ? 1 : -1;
+    sorted.sort((left, right) => {
+      const leftValue = getBookingSortValue(left, adminBookingSort.key);
+      const rightValue = getBookingSortValue(right, adminBookingSort.key);
+      if (leftValue < rightValue) return -1 * direction;
+      if (leftValue > rightValue) return 1 * direction;
+      return 0;
+    });
+    return sorted;
+  };
+
+  const syncAdminBookingSortUi = () => {
+    adminBookingSortHeaders.forEach((header) => {
+      const isActive = header.dataset.bookingSortKey === adminBookingSort.key;
+      header.dataset.sortDirection = isActive ? adminBookingSort.direction : "";
       header.classList.toggle("is-active", isActive);
     });
   };
@@ -2850,7 +3116,7 @@ if (adminPage) {
     const config = adminEditFieldConfig[field];
     if (!config || !user) return;
     activeAdminEditField = field;
-    activeAdminEditUserId = user.user_id;
+    activeAdminEditUserId = user.user_id || user.id;
     if (adminSettingsEditTitle) adminSettingsEditTitle.textContent = `Update ${config.label}`;
     if (adminSettingsEditDescription) adminSettingsEditDescription.textContent = config.description;
     if (adminSettingsEditNameGrid) adminSettingsEditNameGrid.classList.add("is-hidden");
@@ -2987,11 +3253,17 @@ if (adminPage) {
             const accountStatus = titleCase(item.account_status || "-");
             const applicationStatusClass = String(applicationStatus).toLowerCase().replace(/\s+/g, "-");
             const accountStatusClass = String(accountStatus).toLowerCase().replace(/\s+/g, "-");
+            const avatarUrl = getAvatarUrl(item);
+            const applicationId = String(item.user_id || item.id || item.email || item.full_name || "");
+            const isChecked = selectedAdminApplications.has(applicationId);
             return `
             <tr>
+              <td class="table-check">
+                <input type="checkbox" aria-label="Select ${escapeHtml(item.full_name)}" data-application-select="${escapeHtml(applicationId)}" ${isChecked ? "checked" : ""} />
+              </td>
               <td>
                 <div class="user-cell">
-                  <div class="avatar">${getInitials(item.full_name)}</div>
+                  <div class="avatar">${avatarUrl ? `<img src="${escapeHtml(avatarUrl)}" alt="" />` : escapeHtml(getInitials(item.full_name || item.email || ""))}</div>
                   <div class="user-meta">
                   <strong>${escapeHtml(item.full_name)}</strong>
                   <span>${escapeHtml(item.email)}</span>
@@ -3002,7 +3274,7 @@ if (adminPage) {
               <td>${escapeHtml(item.lead_postcode || "-")}</td>
               <td>${escapeHtml(String(item.documents_count || 0))}</td>
               <td><span class="admin-status-badge admin-status-badge--${applicationStatusClass}">${escapeHtml(applicationStatus)}</span></td>
-              <td><span class="admin-status-badge admin-status-badge--${accountStatusClass}">${escapeHtml(accountStatus)}</span></td>
+              <td>${escapeHtml(accountStatus)}</td>
               <td>${escapeHtml(formatDate(item.created_at))}</td>
               <td>
                 <div class="admin-actions-cell">
@@ -3021,6 +3293,31 @@ if (adminPage) {
           }
         )
         .join("");
+
+    adminApplicationsRows.querySelectorAll("[data-application-select]").forEach((checkbox) => {
+      checkbox.addEventListener("change", (event) => {
+        const applicationId = event.currentTarget.getAttribute("data-application-select");
+        if (!applicationId) return;
+        if (event.currentTarget.checked) {
+          selectedAdminApplications.add(applicationId);
+        } else {
+          selectedAdminApplications.delete(applicationId);
+        }
+        const visibleIds = sortedRows.slice(start, end).map((item) => String(item.user_id || item.id || item.email || item.full_name || ""));
+        const selectedVisible = visibleIds.filter((id) => selectedAdminApplications.has(id)).length;
+        if (adminApplicationsSelectAll) {
+          adminApplicationsSelectAll.checked = selectedVisible > 0 && selectedVisible === visibleIds.length;
+          adminApplicationsSelectAll.indeterminate = selectedVisible > 0 && selectedVisible < visibleIds.length;
+        }
+      });
+    });
+
+    if (adminApplicationsSelectAll) {
+      const visibleIds = sortedRows.slice(start, end).map((item) => String(item.user_id || item.id || item.email || item.full_name || ""));
+      const selectedVisible = visibleIds.filter((id) => selectedAdminApplications.has(id)).length;
+      adminApplicationsSelectAll.checked = selectedVisible > 0 && selectedVisible === visibleIds.length;
+      adminApplicationsSelectAll.indeterminate = selectedVisible > 0 && selectedVisible < visibleIds.length;
+    }
 
     if (adminApplicationsPagination) {
       adminApplicationsPagination.innerHTML = "";
@@ -3054,8 +3351,9 @@ if (adminPage) {
   const renderBookings = () => {
     if (!adminBookingsRows) return;
     const terms = getCombinedSearchTerms("bookings");
-    const statusValue = adminStatusFilter?.value || "all";
-    const dateValue = adminDateFilter?.value || "all";
+    const typeValue = adminBookingsTypeFilter?.value || "all";
+    const statusValue = adminBookingsStatusFilter?.value || adminStatusFilter?.value || "all";
+    const dateValue = adminBookingsDateFilter?.value || adminDateFilter?.value || "all";
     const rows = adminBookings.filter((item) => {
       const matchesTerm = matchesSearchTerms([
         item.reference,
@@ -3066,11 +3364,14 @@ if (adminPage) {
         item.location,
         item.services
       ], terms);
+      const matchesType =
+        typeValue === "all" ||
+        normaliseFilterToken(getBookingType(item)) === normaliseFilterToken(typeValue);
       const matchesStatus =
         statusValue === "all" ||
         normaliseFilterToken(item.status) === normaliseFilterToken(statusValue);
-      const matchesDate = matchesDateFilter(item.created_at, dateValue);
-      return matchesTerm && matchesStatus && matchesDate;
+      const matchesDate = dateValue === "all" ? true : matchesDateFilter(item.created_at, dateValue);
+      return matchesTerm && matchesType && matchesStatus && matchesDate;
     });
 
     if (adminBookingsCount) {
@@ -3078,12 +3379,31 @@ if (adminPage) {
     }
     adminBookingsRows.innerHTML = "";
     adminBookingsEmptyState?.classList.toggle("is-hidden", rows.length > 0);
-    if (!rows.length) return;
+    if (!rows.length) {
+      if (adminBookingsRowsMeta) adminBookingsRowsMeta.textContent = "0 of 0 rows";
+      if (adminBookingsPagination) adminBookingsPagination.innerHTML = "";
+      syncAdminBookingSortUi();
+      return;
+    }
 
-    adminBookingsRows.innerHTML = rows
+    const sortedRows = sortAdminBookings(rows);
+    const pages = Math.max(1, Math.ceil(sortedRows.length / adminBookingsPageSize));
+    if (adminBookingsPage > pages) adminBookingsPage = pages;
+    const start = (adminBookingsPage - 1) * adminBookingsPageSize;
+    const end = Math.min(start + adminBookingsPageSize, sortedRows.length);
+    if (adminBookingsRowsMeta) {
+      adminBookingsRowsMeta.textContent = `${start + 1}-${end} of ${sortedRows.length} rows`;
+    }
+
+    adminBookingsRows.innerHTML = sortedRows
+      .slice(start, end)
       .map(
         (item) => {
           const status = normaliseFilterToken(item.status);
+          const statusLabel = titleCase(item.status);
+          const statusClass = status.replace(/[^a-z0-9]+/g, "-");
+          const bookingId = String(item.booking_id || item.id || item.reference || "");
+          const isChecked = selectedAdminBookings.has(bookingId);
           const actions = [];
           if (["requested", "accepted"].includes(status)) {
             actions.push(`<button class="icon-btn" type="button" data-booking-action="start" data-booking-id="${escapeHtml(String(item.booking_id))}" title="Start">Start</button>`);
@@ -3096,8 +3416,11 @@ if (adminPage) {
           }
           return `
           <tr>
+            <td class="table-check">
+              <input type="checkbox" aria-label="Select booking ${escapeHtml(item.reference)}" data-booking-select="${escapeHtml(bookingId)}" ${isChecked ? "checked" : ""} />
+            </td>
             <td>${escapeHtml(item.reference)}</td>
-            <td>${escapeHtml(titleCase(item.status))}</td>
+            <td><span class="admin-booking-status-badge status-${escapeHtml(statusClass)}">${escapeHtml(statusLabel)}</span></td>
             <td>${escapeHtml(item.customer_name)}</td>
             <td>${escapeHtml(item.mechanic_name)}</td>
             <td>${escapeHtml(item.vehicle)}</td>
@@ -3113,14 +3436,67 @@ if (adminPage) {
         }
       )
       .join("");
+
+    adminBookingsRows.querySelectorAll("[data-booking-select]").forEach((checkbox) => {
+      checkbox.addEventListener("change", (event) => {
+        const bookingId = event.currentTarget.getAttribute("data-booking-select");
+        if (!bookingId) return;
+        if (event.currentTarget.checked) {
+          selectedAdminBookings.add(bookingId);
+        } else {
+          selectedAdminBookings.delete(bookingId);
+        }
+        const visibleIds = sortedRows.slice(start, end).map((item) => String(item.booking_id || item.id || item.reference || ""));
+        const selectedVisible = visibleIds.filter((id) => selectedAdminBookings.has(id)).length;
+        if (adminBookingsSelectAll) {
+          adminBookingsSelectAll.checked = selectedVisible > 0 && selectedVisible === visibleIds.length;
+          adminBookingsSelectAll.indeterminate = selectedVisible > 0 && selectedVisible < visibleIds.length;
+        }
+      });
+    });
+
+    if (adminBookingsSelectAll) {
+      const visibleIds = sortedRows.slice(start, end).map((item) => String(item.booking_id || item.id || item.reference || ""));
+      const selectedVisible = visibleIds.filter((id) => selectedAdminBookings.has(id)).length;
+      adminBookingsSelectAll.checked = selectedVisible > 0 && selectedVisible === visibleIds.length;
+      adminBookingsSelectAll.indeterminate = selectedVisible > 0 && selectedVisible < visibleIds.length;
+    }
+
+    if (adminBookingsPagination) {
+      adminBookingsPagination.innerHTML = "";
+      if (pages > 1) {
+        const addButton = (label, page, isActive = false, isDisabled = false) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.textContent = label;
+          btn.disabled = isDisabled;
+          btn.classList.toggle("active", isActive);
+          btn.addEventListener("click", () => {
+            adminBookingsPage = page;
+            renderBookings();
+          });
+          adminBookingsPagination.appendChild(btn);
+        };
+
+        addButton("<", Math.max(1, adminBookingsPage - 1), false, adminBookingsPage === 1);
+        const startPage = Math.max(1, adminBookingsPage - 2);
+        const endPage = Math.min(pages, startPage + 4);
+        for (let page = startPage; page <= endPage; page += 1) {
+          addButton(String(page), page, page === adminBookingsPage);
+        }
+        addButton(">", Math.min(pages, adminBookingsPage + 1), false, adminBookingsPage === pages);
+      }
+    }
+
+    syncAdminBookingSortUi();
   };
 
   const renderResolutionCases = () => {
     if (!adminResolutionRows) return;
     const terms = getCombinedSearchTerms("resolution");
-    const typeValue = adminRoleFilter?.value || "all";
-    const statusValue = adminStatusFilter?.value || "all";
-    const dateValue = adminDateFilter?.value || "all";
+    const typeValue = adminResolutionTypeFilter?.value || adminRoleFilter?.value || "all";
+    const statusValue = adminResolutionStatusFilter?.value || adminStatusFilter?.value || "all";
+    const dateValue = adminResolutionDateFilter?.value || adminDateFilter?.value || "all";
     const rows = adminResolutionCases.filter((item) => {
       const matchesTerm = matchesSearchTerms([
         item.reference,
@@ -3136,7 +3512,7 @@ if (adminPage) {
       const matchesStatus =
         statusValue === "all" ||
         normaliseFilterToken(item.status) === normaliseFilterToken(statusValue);
-      const matchesDate = matchesDateFilter(item.updated_at, dateValue);
+      const matchesDate = dateValue === "all" ? true : matchesDateFilter(item.updated_at, dateValue);
       return matchesTerm && matchesType && matchesStatus && matchesDate;
     });
 
@@ -3145,17 +3521,35 @@ if (adminPage) {
     }
     adminResolutionRows.innerHTML = "";
     adminResolutionEmptyState?.classList.toggle("is-hidden", rows.length > 0);
-    if (!rows.length) return;
+    if (!rows.length) {
+      if (adminResolutionRowsMeta) adminResolutionRowsMeta.textContent = "0 of 0 rows";
+      if (adminResolutionPagination) adminResolutionPagination.innerHTML = "";
+      return;
+    }
+
+    const pages = Math.max(1, Math.ceil(rows.length / adminResolutionPageSize));
+    if (adminResolutionPage > pages) adminResolutionPage = pages;
+    const start = (adminResolutionPage - 1) * adminResolutionPageSize;
+    const end = Math.min(start + adminResolutionPageSize, rows.length);
+    if (adminResolutionRowsMeta) {
+      adminResolutionRowsMeta.textContent = `${start + 1}-${end} of ${rows.length} rows`;
+    }
 
     adminResolutionRows.innerHTML = rows
+      .slice(start, end)
       .map(
         (item) => {
+          const caseId = String(item.case_id || item.id || item.reference || "");
+          const isChecked = selectedAdminResolutionCases.has(caseId);
           const status = normaliseFilterToken(item.status);
           const actions = status === "open"
             ? [`<button class="icon-btn" type="button" data-resolution-action="close" data-resolution-case-id="${escapeHtml(String(item.case_id))}" title="Close">Close</button>`]
             : [`<button class="icon-btn" type="button" data-resolution-action="reopen" data-resolution-case-id="${escapeHtml(String(item.case_id))}" title="Reopen">Reopen</button>`];
           return `
           <tr>
+            <td class="table-check">
+              <input type="checkbox" aria-label="Select case ${escapeHtml(item.reference)}" data-resolution-select="${escapeHtml(caseId)}" ${isChecked ? "checked" : ""} />
+            </td>
             <td>${escapeHtml(item.reference)}</td>
             <td>${escapeHtml(titleCase(item.type))}</td>
             <td>${escapeHtml(item.subject)}</td>
@@ -3172,14 +3566,64 @@ if (adminPage) {
         }
       )
       .join("");
+
+    adminResolutionRows.querySelectorAll("[data-resolution-select]").forEach((checkbox) => {
+      checkbox.addEventListener("change", (event) => {
+        const caseId = event.currentTarget.getAttribute("data-resolution-select");
+        if (!caseId) return;
+        if (event.currentTarget.checked) {
+          selectedAdminResolutionCases.add(caseId);
+        } else {
+          selectedAdminResolutionCases.delete(caseId);
+        }
+        const visibleIds = rows.slice(start, end).map((item) => String(item.case_id || item.id || item.reference || ""));
+        const selectedVisible = visibleIds.filter((id) => selectedAdminResolutionCases.has(id)).length;
+        if (adminResolutionSelectAll) {
+          adminResolutionSelectAll.checked = selectedVisible > 0 && selectedVisible === visibleIds.length;
+          adminResolutionSelectAll.indeterminate = selectedVisible > 0 && selectedVisible < visibleIds.length;
+        }
+      });
+    });
+
+    if (adminResolutionSelectAll) {
+      const visibleIds = rows.slice(start, end).map((item) => String(item.case_id || item.id || item.reference || ""));
+      const selectedVisible = visibleIds.filter((id) => selectedAdminResolutionCases.has(id)).length;
+      adminResolutionSelectAll.checked = selectedVisible > 0 && selectedVisible === visibleIds.length;
+      adminResolutionSelectAll.indeterminate = selectedVisible > 0 && selectedVisible < visibleIds.length;
+    }
+
+    if (adminResolutionPagination) {
+      adminResolutionPagination.innerHTML = "";
+      if (pages > 1) {
+        const addButton = (label, page, isActive = false, isDisabled = false) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.textContent = label;
+          btn.disabled = isDisabled;
+          btn.classList.toggle("active", isActive);
+          btn.addEventListener("click", () => {
+            adminResolutionPage = page;
+            renderResolutionCases();
+          });
+          adminResolutionPagination.appendChild(btn);
+        };
+        addButton("<", Math.max(1, adminResolutionPage - 1), false, adminResolutionPage === 1);
+        const startPage = Math.max(1, adminResolutionPage - 2);
+        const endPage = Math.min(pages, startPage + 4);
+        for (let page = startPage; page <= endPage; page += 1) {
+          addButton(String(page), page, page === adminResolutionPage);
+        }
+        addButton(">", Math.min(pages, adminResolutionPage + 1), false, adminResolutionPage === pages);
+      }
+    }
   };
 
   const renderPayments = () => {
     if (!adminPaymentsRows) return;
     const terms = getCombinedSearchTerms("payments");
-    const kindValue = adminRoleFilter?.value || "all";
-    const statusValue = adminStatusFilter?.value || "all";
-    const dateValue = adminDateFilter?.value || "all";
+    const kindValue = adminPaymentsKindFilter?.value || adminRoleFilter?.value || "all";
+    const statusValue = adminPaymentsStatusFilter?.value || adminStatusFilter?.value || "all";
+    const dateValue = adminPaymentsDateFilter?.value || adminDateFilter?.value || "all";
     const rows = adminPayments.filter((item) => {
       const matchesTerm = matchesSearchTerms([
         item.reference,
@@ -3195,7 +3639,7 @@ if (adminPage) {
       const matchesStatus =
         statusValue === "all" ||
         normaliseFilterToken(item.status) === normaliseFilterToken(statusValue);
-      const matchesDate = matchesDateFilter(item.created_at, dateValue);
+      const matchesDate = dateValue === "all" ? true : matchesDateFilter(item.created_at, dateValue);
       return matchesTerm && matchesKind && matchesStatus && matchesDate;
     });
 
@@ -3204,13 +3648,28 @@ if (adminPage) {
     }
     adminPaymentsRows.innerHTML = "";
     adminPaymentsEmptyState?.classList.toggle("is-hidden", rows.length > 0);
-    if (!rows.length) return;
+    if (!rows.length) {
+      if (adminPaymentsRowsMeta) adminPaymentsRowsMeta.textContent = "0 of 0 rows";
+      if (adminPaymentsPagination) adminPaymentsPagination.innerHTML = "";
+      return;
+    }
+
+    const pages = Math.max(1, Math.ceil(rows.length / adminPaymentsPageSize));
+    if (adminPaymentsPage > pages) adminPaymentsPage = pages;
+    const start = (adminPaymentsPage - 1) * adminPaymentsPageSize;
+    const end = Math.min(start + adminPaymentsPageSize, rows.length);
+    if (adminPaymentsRowsMeta) {
+      adminPaymentsRowsMeta.textContent = `${start + 1}-${end} of ${rows.length} rows`;
+    }
 
     adminPaymentsRows.innerHTML = rows
+      .slice(start, end)
       .map(
         (item) => {
           const kind = normaliseFilterToken(item.kind);
           const status = normaliseFilterToken(item.status);
+          const paymentId = String(item.record_id || item.id || item.reference || "");
+          const isChecked = selectedAdminPayments.has(paymentId);
           const actions = [];
 
           if (kind === "customer_payment") {
@@ -3239,13 +3698,16 @@ if (adminPage) {
 
           return `
           <tr>
+            <td class="table-check">
+              <input type="checkbox" aria-label="Select payment ${escapeHtml(item.reference)}" data-payment-select="${escapeHtml(paymentId)}" ${isChecked ? "checked" : ""} />
+            </td>
             <td>${escapeHtml(item.reference)}</td>
             <td>${escapeHtml(titleCase(item.kind))}</td>
             <td>${escapeHtml(item.booking_reference || "-")}</td>
             <td>${escapeHtml(item.party)}</td>
             <td>${escapeHtml(item.provider)}</td>
             <td>${escapeHtml(titleCase(item.status))}</td>
-            <td>€${escapeHtml(Number(item.amount || 0).toFixed(2))}</td>
+            <td>£${escapeHtml(Number(item.amount || 0).toFixed(2))}</td>
             <td>${escapeHtml(formatDate(item.created_at))}</td>
             <td>
               <div class="admin-actions-cell">
@@ -3256,12 +3718,63 @@ if (adminPage) {
         }
       )
       .join("");
+
+    adminPaymentsRows.querySelectorAll("[data-payment-select]").forEach((checkbox) => {
+      checkbox.addEventListener("change", (event) => {
+        const paymentId = event.currentTarget.getAttribute("data-payment-select");
+        if (!paymentId) return;
+        if (event.currentTarget.checked) {
+          selectedAdminPayments.add(paymentId);
+        } else {
+          selectedAdminPayments.delete(paymentId);
+        }
+        const visibleIds = rows.slice(start, end).map((item) => String(item.record_id || item.id || item.reference || ""));
+        const selectedVisible = visibleIds.filter((id) => selectedAdminPayments.has(id)).length;
+        if (adminPaymentsSelectAll) {
+          adminPaymentsSelectAll.checked = selectedVisible > 0 && selectedVisible === visibleIds.length;
+          adminPaymentsSelectAll.indeterminate = selectedVisible > 0 && selectedVisible < visibleIds.length;
+        }
+      });
+    });
+
+    if (adminPaymentsSelectAll) {
+      const visibleIds = rows.slice(start, end).map((item) => String(item.record_id || item.id || item.reference || ""));
+      const selectedVisible = visibleIds.filter((id) => selectedAdminPayments.has(id)).length;
+      adminPaymentsSelectAll.checked = selectedVisible > 0 && selectedVisible === visibleIds.length;
+      adminPaymentsSelectAll.indeterminate = selectedVisible > 0 && selectedVisible < visibleIds.length;
+    }
+
+    if (adminPaymentsPagination) {
+      adminPaymentsPagination.innerHTML = "";
+      if (pages > 1) {
+        const addButton = (label, page, isActive = false, isDisabled = false) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.textContent = label;
+          btn.disabled = isDisabled;
+          btn.classList.toggle("active", isActive);
+          btn.addEventListener("click", () => {
+            adminPaymentsPage = page;
+            renderPayments();
+          });
+          adminPaymentsPagination.appendChild(btn);
+        };
+        addButton("<", Math.max(1, adminPaymentsPage - 1), false, adminPaymentsPage === 1);
+        const startPage = Math.max(1, adminPaymentsPage - 2);
+        const endPage = Math.min(pages, startPage + 4);
+        for (let page = startPage; page <= endPage; page += 1) {
+          addButton(String(page), page, page === adminPaymentsPage);
+        }
+        addButton(">", Math.min(pages, adminPaymentsPage + 1), false, adminPaymentsPage === pages);
+      }
+    }
   };
 
   const renderCatalog = () => {
     if (!adminCatalogRows) return;
     const terms = getCombinedSearchTerms("catalog");
-    const groupValue = adminRoleFilter?.value || "all";
+    const groupValue = activeAdminCatalogGroup || adminCatalogGroupFilter?.value || "all";
+    const subcategoryValue = adminCatalogSubcategoryFilter?.value || "all";
     const rows = adminCatalog.filter((item) => {
       const matchesTerm = matchesSearchTerms([
         item.group,
@@ -3272,7 +3785,10 @@ if (adminPage) {
       const matchesGroup =
         groupValue === "all" ||
         normaliseFilterToken(item.group) === normaliseFilterToken(groupValue);
-      return matchesTerm && matchesGroup;
+      const matchesSubcategory =
+        subcategoryValue === "all" ||
+        normaliseFilterToken(item.subcategory) === normaliseFilterToken(subcategoryValue);
+      return matchesTerm && matchesGroup && matchesSubcategory;
     });
 
     if (adminCatalogCount) {
@@ -3280,27 +3796,138 @@ if (adminPage) {
     }
     adminCatalogRows.innerHTML = "";
     adminCatalogEmptyState?.classList.toggle("is-hidden", rows.length > 0);
-    if (!rows.length) return;
+    if (!rows.length) {
+      if (adminCatalogGroupFilter?.parentElement) {
+        adminCatalogGroupFilter.parentElement.classList.add("is-hidden");
+      }
+      if (adminCatalogSubcategoryFilter?.parentElement) {
+        adminCatalogSubcategoryFilter.parentElement.classList.add("is-hidden");
+      }
+      if (adminCatalogRowsMeta) adminCatalogRowsMeta.textContent = "0 of 0 rows";
+      if (adminCatalogPagination) adminCatalogPagination.innerHTML = "";
+      return;
+    }
 
-    adminCatalogRows.innerHTML = rows
-      .map(
-        (item) => `
-          <tr>
-            <td>${escapeHtml(item.group)}</td>
-            <td>${escapeHtml(item.subcategory)}</td>
-            <td>${escapeHtml(item.name)}</td>
-            <td>${escapeHtml(item.code)}</td>
-            <td>${escapeHtml(String(item.base_labour_minutes ?? "-"))}</td>
-            <td>${item.price == null ? "-" : `€${escapeHtml(Number(item.price).toFixed(2))}`}</td>
-            <td>
-              <div class="admin-actions-cell">
-                <button class="icon-btn" type="button" data-catalog-direction="up" data-catalog-service-id="${escapeHtml(String(item.service_id))}" title="Move up">Up</button>
-                <button class="icon-btn" type="button" data-catalog-direction="down" data-catalog-service-id="${escapeHtml(String(item.service_id))}" title="Move down">Down</button>
+    const groupedRows = rows.reduce((accumulator, item) => {
+      const groupKey = item.group || "-";
+      const subcategoryKey = item.subcategory || "-";
+      if (!accumulator[groupKey]) accumulator[groupKey] = {};
+      if (!accumulator[groupKey][subcategoryKey]) accumulator[groupKey][subcategoryKey] = [];
+      accumulator[groupKey][subcategoryKey].push(item);
+      return accumulator;
+    }, {});
+    const groupedEntries = Object.entries(groupedRows);
+    const hasDetailFilters =
+      terms.length > 0 ||
+      groupValue !== "all" ||
+      subcategoryValue !== "all";
+    const isOverviewMode = !hasDetailFilters;
+    if (adminCatalogGroupFilter?.parentElement) {
+      adminCatalogGroupFilter.parentElement.classList.toggle("is-hidden", isOverviewMode);
+    }
+    if (adminCatalogSubcategoryFilter?.parentElement) {
+      adminCatalogSubcategoryFilter.parentElement.classList.toggle("is-hidden", isOverviewMode);
+    }
+    const pages = Math.max(1, Math.ceil(groupedEntries.length / adminCatalogPageSize));
+    if (adminCatalogPage > pages) adminCatalogPage = pages;
+    const start = (adminCatalogPage - 1) * adminCatalogPageSize;
+    const end = Math.min(start + adminCatalogPageSize, groupedEntries.length);
+    if (adminCatalogRowsMeta) {
+      adminCatalogRowsMeta.textContent = isOverviewMode
+        ? `${start + 1}-${end} of ${groupedEntries.length} groups`
+        : `${start + 1}-${end} of ${groupedEntries.length} group views`;
+    }
+
+    const visibleEntries = groupedEntries.slice(start, end);
+    if (isOverviewMode) {
+      adminCatalogRows.innerHTML = visibleEntries
+        .map(([groupName]) => `
+          <section class="admin-catalog-group admin-catalog-group--overview">
+            <header class="admin-catalog-group-header">
+              <div class="admin-catalog-group-title">
+                <h4>${escapeHtml(groupName)}</h4>
               </div>
-            </td>
-          </tr>`
-      )
-      .join("");
+              <div class="admin-actions-cell">
+                <button class="icon-btn" type="button" data-catalog-group-action="open" data-catalog-open-group="${escapeHtml(groupName)}">Open</button>
+                <button class="icon-btn" type="button" data-catalog-group-action="edit" data-catalog-group="${escapeHtml(groupName)}">Edit</button>
+                <button class="icon-btn danger" type="button" data-catalog-group-action="delete" data-catalog-group="${escapeHtml(groupName)}">Delete</button>
+              </div>
+            </header>
+          </section>
+        `)
+        .join("");
+    } else {
+      adminCatalogRows.innerHTML = visibleEntries
+        .map(([groupName, subcategories]) => `
+          <section class="admin-catalog-group">
+            <header class="admin-catalog-group-header">
+              <div class="admin-catalog-group-title">
+                <h4>${escapeHtml(groupName)}</h4>
+              </div>
+              <button class="admin-catalog-open-btn" type="button" data-catalog-back>Back</button>
+            </header>
+            <div class="admin-catalog-subgroups">
+              ${Object.entries(subcategories)
+                .map(([subcategoryName, services]) => `
+                  <section class="admin-catalog-subgroup">
+                    <header class="admin-catalog-subgroup-header">
+                      <h5>${escapeHtml(subcategoryName)}</h5>
+                      <span>${services.length} service${services.length === 1 ? "" : "s"}</span>
+                    </header>
+                    <div class="admin-catalog-services">
+                      ${services
+                        .map((item) => `
+                          <article class="admin-catalog-service">
+                            <div class="admin-catalog-service-main">
+                              <strong>${escapeHtml(item.name)}</strong>
+                              <span>${escapeHtml(item.code)}</span>
+                            </div>
+                            <div class="admin-catalog-service-meta">
+                              <span>${escapeHtml(String(item.base_labour_minutes ?? "-"))} min</span>
+                              <span>${item.price == null ? "-" : `£${escapeHtml(Number(item.price).toFixed(2))}`}</span>
+                            </div>
+                            <div class="admin-actions-cell">
+                              <button class="icon-btn" type="button" data-catalog-action="edit" data-catalog-service-id="${escapeHtml(String(item.service_id))}" title="Edit">Edit</button>
+                              <button class="icon-btn" type="button" data-catalog-action="suspend" data-catalog-service-id="${escapeHtml(String(item.service_id))}" title="Suspend">Suspend</button>
+                              <button class="icon-btn danger" type="button" data-catalog-action="delete" data-catalog-service-id="${escapeHtml(String(item.service_id))}" title="Delete">Delete</button>
+                            </div>
+                          </article>
+                        `)
+                        .join("")}
+                    </div>
+                  </section>
+                `)
+                .join("")}
+            </div>
+          </section>
+        `)
+        .join("");
+    }
+
+    if (adminCatalogPagination) {
+      adminCatalogPagination.innerHTML = "";
+      if (pages > 1) {
+        const addButton = (label, page, isActive = false, isDisabled = false) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.textContent = label;
+          btn.disabled = isDisabled;
+          btn.classList.toggle("active", isActive);
+          btn.addEventListener("click", () => {
+            adminCatalogPage = page;
+            renderCatalog();
+          });
+          adminCatalogPagination.appendChild(btn);
+        };
+        addButton("<", Math.max(1, adminCatalogPage - 1), false, adminCatalogPage === 1);
+        const startPage = Math.max(1, adminCatalogPage - 2);
+        const endPage = Math.min(pages, startPage + 4);
+        for (let page = startPage; page <= endPage; page += 1) {
+          addButton(String(page), page, page === adminCatalogPage);
+        }
+        addButton(">", Math.min(pages, adminCatalogPage + 1), false, adminCatalogPage === pages);
+      }
+    }
   };
 
   const renderUsers = (users) => {
@@ -3321,7 +3948,6 @@ if (adminPage) {
 
     users.forEach((user, index) => {
       const row = document.createElement("tr");
-      const readiness = getReadiness(user, index);
       const status = getStatus(user, index);
       const role = user.role_name || "-";
       const normalisedRole = String(role).trim().toUpperCase();
@@ -3346,7 +3972,7 @@ if (adminPage) {
         <td>
           <div class="user-cell">
             <div class="avatar">
-              ${avatarUrl ? `<img src="${avatarUrl}" alt="" />` : ""}
+              ${avatarUrl ? `<img src="${avatarUrl}" alt="" />` : escapeHtml(getInitials(displayName))}
             </div>
             <div class="user-meta">
               <strong>${fullName}</strong>
@@ -3358,7 +3984,6 @@ if (adminPage) {
         <td><span class="admin-status-badge admin-status-badge--${statusClass}">${status}</span></td>
         <td>${role}</td>
         <td>${experience}</td>
-        <td>${readiness}</td>
         <td>${joinedDate}</td>
         <td>${lastActive}</td>
         <td class="table-actions">
@@ -3519,6 +4144,19 @@ if (adminPage) {
       try {
         const result = await apiAuth("/api/admin/users", token);
         adminUsers = (result || []).map((user) => ({ ...user }));
+        const currentProfile = getAdminProfile();
+        const currentAdmin = adminUsers.find((user) => {
+          const rowId = String(user.user_id || user.id || "");
+          const profileId = String(currentProfile?.id || currentProfile?.user_id || "");
+          return rowId && profileId && rowId === profileId;
+        });
+        if (currentAdmin) {
+          setAdminHeader({
+            ...currentProfile,
+            ...currentAdmin,
+            role_name: "ADMIN"
+          });
+        }
         if (activeAdminView === "users") {
           configureAdminSide("users");
         }
@@ -3584,6 +4222,16 @@ if (adminPage) {
     }
   };
 
+  const syncAdminCurrentProfile = async () => {
+    const token = getAdminToken();
+    if (!token) return;
+    try {
+      const profile = await apiAuth("/api/users/me", token);
+      setStoredAuthValue("userProfile", JSON.stringify(profile));
+      setAdminHeader({ ...profile, role_name: "ADMIN" });
+    } catch {}
+  };
+
   const updateAdminApplicationStatus = async (userId, action) => {
     const token = getAdminToken();
     if (!token) return;
@@ -3605,6 +4253,7 @@ if (adminPage) {
     if (!token) return;
     try {
       adminBookings = await apiAuth("/api/admin/bookings", token);
+      syncAdminBookingHeadFilters();
       configureAdminSide(activeAdminView);
       renderAdminDashboard();
       renderBookings();
@@ -3623,6 +4272,7 @@ if (adminPage) {
     adminBookings = adminBookings.map((item) =>
       Number(item.booking_id) === Number(bookingId) ? { ...item, ...updated } : item
     );
+    syncAdminBookingHeadFilters();
     configureAdminSide(activeAdminView);
     renderBookings();
     fetchDashboardSummary();
@@ -3634,6 +4284,7 @@ if (adminPage) {
     if (!token) return;
     try {
       adminResolutionCases = await apiAuth("/api/admin/resolution-cases", token);
+      syncAdminResolutionHeadFilters();
       configureAdminSide(activeAdminView);
       renderAdminDashboard();
       renderResolutionCases();
@@ -3652,6 +4303,7 @@ if (adminPage) {
     adminResolutionCases = adminResolutionCases.map((item) =>
       Number(item.case_id) === Number(caseId) ? { ...item, ...updated } : item
     );
+    syncAdminResolutionHeadFilters();
     configureAdminSide(activeAdminView);
     renderResolutionCases();
     fetchDashboardSummary();
@@ -3688,6 +4340,7 @@ if (adminPage) {
     if (!token) return;
     try {
       adminPayments = await apiAuth("/api/admin/payments", token);
+      syncAdminPaymentsHeadFilters();
       configureAdminSide(activeAdminView);
       renderAdminDashboard();
       renderPayments();
@@ -3706,6 +4359,7 @@ if (adminPage) {
     adminPayments = adminPayments.map((item) =>
       String(item.kind) === String(kind) && Number(item.record_id) === Number(recordId) ? { ...item, ...updated } : item
     );
+    syncAdminPaymentsHeadFilters();
     configureAdminSide(activeAdminView);
     renderPayments();
     fetchDashboardSummary();
@@ -3732,6 +4386,7 @@ if (adminPage) {
           });
         });
       });
+      syncAdminCatalogHeadFilters();
       configureAdminSide(activeAdminView);
       renderCatalog();
     } catch (err) {
@@ -3790,6 +4445,54 @@ if (adminPage) {
     });
   });
 
+  adminSettingsSubnavLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      setAdminSettingsSubview(link.dataset.adminSettingsSubview || "general");
+    });
+  });
+
+  adminSettingsActionButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const field = button.dataset.adminSettingsField;
+      const profile = getAdminProfile();
+      if (!field || !profile) return;
+      openAdminSettingsEditModal(profile, field);
+    });
+  });
+
+  adminSettingsPhotoBtn?.addEventListener("click", () => {
+    adminSettingsPhotoInput?.click();
+  });
+
+  adminSettingsPhotoInput?.addEventListener("change", () => {
+    const file = adminSettingsPhotoInput.files?.[0];
+    if (!file || !file.type.startsWith("image/") || !adminSettingsViewAvatar) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      adminSettingsViewAvatar.innerHTML = `<img src="${reader.result}" alt="" />`;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  adminSettingsThemeBtn?.addEventListener("click", () => {
+    const isDark = (adminSettingsThemeValue?.textContent || "").trim().toLowerCase() !== "light mode";
+    const nextLabel = isDark ? "Light mode" : "Dark mode";
+    if (adminSettingsThemeValue) adminSettingsThemeValue.textContent = nextLabel;
+    adminSettingsThemeBtn.textContent = nextLabel;
+  });
+
+  adminNotificationsMarketing?.addEventListener("change", () => {
+    const updateButton = adminNotificationsMarketing
+      .closest(".notifications-card")
+      ?.querySelector(".notifications-actions .ghost");
+    if (updateButton) {
+      updateButton.disabled = false;
+    }
+  });
+
+  adminSecurity2faEmail?.addEventListener("change", syncAdminSecurity2faButton);
+  adminSecurity2faSms?.addEventListener("change", syncAdminSecurity2faButton);
+
   adminDashboardView?.addEventListener("click", (event) => {
     const targetButton = event.target.closest("[data-admin-dashboard-target]");
     if (!targetButton) return;
@@ -3831,7 +4534,38 @@ if (adminPage) {
   });
   adminBookingsSearch?.addEventListener("input", () => {
     syncAdminSideSearchFromView();
+    adminBookingsPage = 1;
     renderBookings();
+  });
+  adminBookingsTypeFilter?.addEventListener("change", () => {
+    adminBookingsPage = 1;
+    renderBookings();
+  });
+  adminBookingsStatusFilter?.addEventListener("change", () => {
+    adminBookingsPage = 1;
+    renderBookings();
+  });
+  adminBookingsDateFilter?.addEventListener("change", () => {
+    adminBookingsPage = 1;
+    renderBookings();
+  });
+  adminBookingsRowsPerPage?.addEventListener("change", () => {
+    adminBookingsPageSize = Number(adminBookingsRowsPerPage.value);
+    adminBookingsPage = 1;
+    renderBookings();
+  });
+  adminBookingSortHeaders.forEach((header) => {
+    header.addEventListener("click", () => {
+      const key = header.dataset.bookingSortKey;
+      if (!key) return;
+      if (adminBookingSort.key === key) {
+        adminBookingSort.direction = adminBookingSort.direction === "asc" ? "desc" : "asc";
+      } else {
+        adminBookingSort = { key, direction: "asc" };
+      }
+      adminBookingsPage = 1;
+      renderBookings();
+    });
   });
   adminBookingsRows?.addEventListener("click", async (event) => {
     const actionButton = event.target.closest("[data-booking-action]");
@@ -3849,8 +4583,51 @@ if (adminPage) {
       actionButton.disabled = false;
     }
   });
+  adminBookingsExportBtn?.addEventListener("click", () => {
+    const headers = ["Reference", "Status", "Customer", "Mechanic", "Vehicle", "Location", "Total", "Created"];
+    const rows = adminBookings.map((item) => [
+      item.reference,
+      item.status,
+      item.customer_name,
+      item.mechanic_name,
+      item.vehicle,
+      item.location,
+      Number(item.total || 0).toFixed(2),
+      formatDate(item.created_at)
+    ]);
+    const csv = [headers, ...rows]
+      .map((row) => row.map((value) => `"${String(value ?? "").replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "bookings-overview.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  });
   adminResolutionSearch?.addEventListener("input", () => {
     syncAdminSideSearchFromView();
+    adminResolutionPage = 1;
+    renderResolutionCases();
+  });
+  adminResolutionTypeFilter?.addEventListener("change", () => {
+    adminResolutionPage = 1;
+    renderResolutionCases();
+  });
+  adminResolutionStatusFilter?.addEventListener("change", () => {
+    adminResolutionPage = 1;
+    renderResolutionCases();
+  });
+  adminResolutionDateFilter?.addEventListener("change", () => {
+    adminResolutionPage = 1;
+    renderResolutionCases();
+  });
+  adminResolutionRowsPerPage?.addEventListener("change", () => {
+    adminResolutionPageSize = Number(adminResolutionRowsPerPage.value);
+    adminResolutionPage = 1;
     renderResolutionCases();
   });
   adminResolutionRows?.addEventListener("click", async (event) => {
@@ -3869,8 +4646,145 @@ if (adminPage) {
       actionButton.disabled = false;
     }
   });
+  adminResolutionExportBtn?.addEventListener("click", () => {
+    const headers = ["Reference", "Type", "Subject", "Status", "Customer", "Mechanic", "Updated"];
+    const rows = adminResolutionCases.map((item) => [
+      item.reference,
+      titleCase(item.type),
+      item.subject,
+      titleCase(item.status),
+      item.customer_name,
+      item.mechanic_name,
+      formatDate(item.updated_at)
+    ]);
+    const csv = [headers, ...rows]
+      .map((row) => row.map((value) => `"${String(value ?? "").replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "resolution-cases.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  });
+  adminResolutionSelectAll?.addEventListener("change", () => {
+    const terms = getCombinedSearchTerms("resolution");
+    const typeValue = adminResolutionTypeFilter?.value || adminRoleFilter?.value || "all";
+    const statusValue = adminResolutionStatusFilter?.value || adminStatusFilter?.value || "all";
+    const dateValue = adminResolutionDateFilter?.value || adminDateFilter?.value || "all";
+    const rows = adminResolutionCases.filter((item) => {
+      const matchesTerm = matchesSearchTerms([
+        item.reference,
+        item.type,
+        item.subject,
+        item.status,
+        item.customer_name,
+        item.mechanic_name
+      ], terms);
+      const matchesType =
+        typeValue === "all" ||
+        normaliseFilterToken(item.type) === normaliseFilterToken(typeValue);
+      const matchesStatus =
+        statusValue === "all" ||
+        normaliseFilterToken(item.status) === normaliseFilterToken(statusValue);
+      const matchesDate = dateValue === "all" ? true : matchesDateFilter(item.updated_at, dateValue);
+      return matchesTerm && matchesType && matchesStatus && matchesDate;
+    });
+    const start = (adminResolutionPage - 1) * adminResolutionPageSize;
+    const end = Math.min(start + adminResolutionPageSize, rows.length);
+    rows.slice(start, end).forEach((item) => {
+      const caseId = String(item.case_id || item.id || item.reference || "");
+      if (adminResolutionSelectAll.checked) {
+        selectedAdminResolutionCases.add(caseId);
+      } else {
+        selectedAdminResolutionCases.delete(caseId);
+      }
+    });
+    renderResolutionCases();
+  });
   adminPaymentsSearch?.addEventListener("input", () => {
     syncAdminSideSearchFromView();
+    adminPaymentsPage = 1;
+    renderPayments();
+  });
+  adminPaymentsKindFilter?.addEventListener("change", () => {
+    adminPaymentsPage = 1;
+    renderPayments();
+  });
+  adminPaymentsStatusFilter?.addEventListener("change", () => {
+    adminPaymentsPage = 1;
+    renderPayments();
+  });
+  adminPaymentsDateFilter?.addEventListener("change", () => {
+    adminPaymentsPage = 1;
+    renderPayments();
+  });
+  adminPaymentsRowsPerPage?.addEventListener("change", () => {
+    adminPaymentsPageSize = Number(adminPaymentsRowsPerPage.value);
+    adminPaymentsPage = 1;
+    renderPayments();
+  });
+  adminPaymentsExportBtn?.addEventListener("click", () => {
+    const headers = ["Reference", "Kind", "Booking", "Party", "Provider", "Status", "Amount", "Created"];
+    const rows = adminPayments.map((item) => [
+      item.reference,
+      titleCase(item.kind),
+      item.booking_reference || "-",
+      item.party,
+      item.provider,
+      titleCase(item.status),
+      Number(item.amount || 0).toFixed(2),
+      formatDate(item.created_at)
+    ]);
+    const csv = [headers, ...rows]
+      .map((row) => row.map((value) => `"${String(value ?? "").replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "payments-overview.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  });
+  adminPaymentsSelectAll?.addEventListener("change", () => {
+    const terms = getCombinedSearchTerms("payments");
+    const kindValue = adminPaymentsKindFilter?.value || adminRoleFilter?.value || "all";
+    const statusValue = adminPaymentsStatusFilter?.value || adminStatusFilter?.value || "all";
+    const dateValue = adminPaymentsDateFilter?.value || adminDateFilter?.value || "all";
+    const rows = adminPayments.filter((item) => {
+      const matchesTerm = matchesSearchTerms([
+        item.reference,
+        item.kind,
+        item.booking_reference,
+        item.party,
+        item.provider,
+        item.status
+      ], terms);
+      const matchesKind =
+        kindValue === "all" ||
+        normaliseFilterToken(item.kind) === normaliseFilterToken(kindValue);
+      const matchesStatus =
+        statusValue === "all" ||
+        normaliseFilterToken(item.status) === normaliseFilterToken(statusValue);
+      const matchesDate = dateValue === "all" ? true : matchesDateFilter(item.created_at, dateValue);
+      return matchesTerm && matchesKind && matchesStatus && matchesDate;
+    });
+    const start = (adminPaymentsPage - 1) * adminPaymentsPageSize;
+    const end = Math.min(start + adminPaymentsPageSize, rows.length);
+    rows.slice(start, end).forEach((item) => {
+      const paymentId = String(item.record_id || item.id || item.reference || "");
+      if (adminPaymentsSelectAll.checked) {
+        selectedAdminPayments.add(paymentId);
+      } else {
+        selectedAdminPayments.delete(paymentId);
+      }
+    });
     renderPayments();
   });
   adminPaymentsRows?.addEventListener("click", async (event) => {
@@ -3892,22 +4806,122 @@ if (adminPage) {
   });
   adminCatalogSearch?.addEventListener("input", () => {
     syncAdminSideSearchFromView();
+    adminCatalogPage = 1;
     renderCatalog();
   });
+  adminCatalogGroupFilter?.addEventListener("change", () => {
+    activeAdminCatalogGroup = adminCatalogGroupFilter.value === "all" ? null : adminCatalogGroupFilter.value;
+    adminCatalogPage = 1;
+    renderCatalog();
+  });
+  adminCatalogSubcategoryFilter?.addEventListener("change", () => {
+    adminCatalogPage = 1;
+    renderCatalog();
+  });
+  adminCatalogRowsPerPage?.addEventListener("change", () => {
+    adminCatalogPageSize = Number(adminCatalogRowsPerPage.value || 10);
+    adminCatalogPage = 1;
+    renderCatalog();
+  });
+  adminCatalogExportBtn?.addEventListener("click", () => {
+    const terms = getCombinedSearchTerms("catalog");
+    const groupValue = adminCatalogGroupFilter?.value || "all";
+    const subcategoryValue = adminCatalogSubcategoryFilter?.value || "all";
+    const rows = adminCatalog.filter((item) => {
+      const matchesTerm = matchesSearchTerms([item.group, item.subcategory, item.name, item.code], terms);
+      const matchesGroup =
+        groupValue === "all" ||
+        normaliseFilterToken(item.group) === normaliseFilterToken(groupValue);
+      const matchesSubcategory =
+        subcategoryValue === "all" ||
+        normaliseFilterToken(item.subcategory) === normaliseFilterToken(subcategoryValue);
+      return matchesTerm && matchesGroup && matchesSubcategory;
+    });
+    const header = ["Group", "Subcategory", "Service", "Code", "Labour", "Price"];
+    const lines = rows.map((item) => [
+      item.group || "",
+      item.subcategory || "",
+      item.name || "",
+      item.code || "",
+      String(item.base_labour_minutes ?? ""),
+      item.price == null ? "" : Number(item.price).toFixed(2)
+    ]);
+    const csv = [header, ...lines]
+      .map((row) => row.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "catalog.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  });
+  adminCatalogAddGroupBtn?.addEventListener("click", () => {
+    showAdminFeedback("Add Group is not available yet.");
+  });
   adminCatalogRows?.addEventListener("click", async (event) => {
-    const actionButton = event.target.closest("[data-catalog-direction]");
+    const backButton = event.target.closest("[data-catalog-back]");
+    if (backButton) {
+      activeAdminCatalogGroup = null;
+      if (adminCatalogGroupFilter) {
+        adminCatalogGroupFilter.value = "all";
+      }
+      adminCatalogPage = 1;
+      renderCatalog();
+      return;
+    }
+    const groupActionButton = event.target.closest("[data-catalog-group-action]");
+    if (groupActionButton) {
+      const action = groupActionButton.getAttribute("data-catalog-group-action");
+      const groupName = groupActionButton.getAttribute("data-catalog-group") || groupActionButton.getAttribute("data-catalog-open-group");
+      if (action === "open") {
+        activeAdminCatalogGroup = groupActionButton.getAttribute("data-catalog-open-group");
+        if (adminCatalogGroupFilter) {
+          adminCatalogGroupFilter.value = activeAdminCatalogGroup || "all";
+        }
+        adminCatalogPage = 1;
+        renderCatalog();
+        return;
+      }
+      if (action === "edit") {
+        showAdminFeedback(`Edit for ${groupName || "group"} is not available yet.`);
+        return;
+      }
+      if (action === "delete") {
+        showAdminFeedback(`Delete for ${groupName || "group"} is not available yet.`, "error");
+        return;
+      }
+    }
+    const openGroupButton = event.target.closest("[data-catalog-open-group]");
+    if (openGroupButton) {
+      activeAdminCatalogGroup = openGroupButton.getAttribute("data-catalog-open-group");
+      if (adminCatalogGroupFilter) {
+        adminCatalogGroupFilter.value = activeAdminCatalogGroup || "all";
+      }
+      adminCatalogPage = 1;
+      renderCatalog();
+      return;
+    }
+    const actionButton = event.target.closest("[data-catalog-action]");
     if (!actionButton) return;
     const serviceId = Number(actionButton.dataset.catalogServiceId);
-    const direction = actionButton.dataset.catalogDirection;
-    if (!serviceId || !direction) return;
-    actionButton.disabled = true;
-    try {
-      await updateAdminCatalogOrder(serviceId, direction);
-    } catch (err) {
-      console.error("Unable to update catalog order", err);
-      showAdminFeedback(err?.error?.message || err?.message || "Unable to update catalog.", "error");
-    } finally {
-      actionButton.disabled = false;
+    const action = actionButton.dataset.catalogAction;
+    if (!serviceId || !action) return;
+    const service = adminCatalog.find((item) => Number(item.service_id) === serviceId);
+    const serviceName = service?.name || "Service";
+    if (action === "edit") {
+      showAdminFeedback(`Edit for ${serviceName} is not available yet.`);
+      return;
+    }
+    if (action === "suspend") {
+      showAdminFeedback(`Suspend for ${serviceName} is not available yet.`);
+      return;
+    }
+    if (action === "delete") {
+      showAdminFeedback(`Delete for ${serviceName} is not available yet.`, "error");
     }
   });
   adminApplicationsTypeFilter?.addEventListener("change", () => {
@@ -3998,6 +5012,79 @@ if (adminPage) {
     renderPage();
   });
 
+  adminApplicationsSelectAll?.addEventListener("change", () => {
+    const typeValue = adminApplicationsTypeFilter?.value || "all";
+    const statusValue = adminApplicationsStatusFilter?.value || "all";
+    const dateValue = adminApplicationsDateFilter?.value || "all";
+    const rows = adminApplications.filter((item) => {
+      const matchesTerm = matchesSearchTerms([
+        item.full_name,
+        item.email,
+        item.lead_postcode,
+        item.application_type,
+        item.application_status,
+        item.account_status
+      ], getCombinedSearchTerms("applications"));
+      const matchesType =
+        typeValue === "all" ||
+        titleCase(item.application_type || item.business_type || "") === typeValue;
+      const matchesStatus =
+        statusValue === "all" ||
+        titleCase(item.application_status || "") === statusValue;
+      const matchesDate = matchesDateFilter(item.created_at, dateValue);
+      return matchesTerm && matchesType && matchesStatus && matchesDate;
+    });
+    const sortedRows = sortAdminApplications(rows);
+    const start = (adminApplicationsPage - 1) * adminApplicationsPageSize;
+    const end = Math.min(start + adminApplicationsPageSize, sortedRows.length);
+    sortedRows.slice(start, end).forEach((item) => {
+      const applicationId = String(item.user_id || item.id || item.email || item.full_name || "");
+      if (adminApplicationsSelectAll.checked) {
+        selectedAdminApplications.add(applicationId);
+      } else {
+        selectedAdminApplications.delete(applicationId);
+      }
+    });
+    renderApplications();
+  });
+
+  adminBookingsSelectAll?.addEventListener("change", () => {
+    const typeValue = adminBookingsTypeFilter?.value || "all";
+    const statusValue = adminBookingsStatusFilter?.value || adminStatusFilter?.value || "all";
+    const dateValue = adminBookingsDateFilter?.value || adminDateFilter?.value || "all";
+    const rows = adminBookings.filter((item) => {
+      const matchesTerm = matchesSearchTerms([
+        item.reference,
+        item.status,
+        item.customer_name,
+        item.mechanic_name,
+        item.vehicle,
+        item.location,
+        item.services
+      ], getCombinedSearchTerms("bookings"));
+      const matchesType =
+        typeValue === "all" ||
+        normaliseFilterToken(getBookingType(item)) === normaliseFilterToken(typeValue);
+      const matchesStatus =
+        statusValue === "all" ||
+        normaliseFilterToken(item.status) === normaliseFilterToken(statusValue);
+      const matchesDate = dateValue === "all" ? true : matchesDateFilter(item.created_at, dateValue);
+      return matchesTerm && matchesType && matchesStatus && matchesDate;
+    });
+    const sortedRows = sortAdminBookings(rows);
+    const start = (adminBookingsPage - 1) * adminBookingsPageSize;
+    const end = Math.min(start + adminBookingsPageSize, sortedRows.length);
+    sortedRows.slice(start, end).forEach((item) => {
+      const bookingId = String(item.booking_id || item.id || item.reference || "");
+      if (adminBookingsSelectAll.checked) {
+        selectedAdminBookings.add(bookingId);
+      } else {
+        selectedAdminBookings.delete(bookingId);
+      }
+    });
+    renderBookings();
+  });
+
   adminDeleteCancel?.addEventListener("click", closeAdminDeleteModal);
   adminSettingsEditCancel?.addEventListener("click", closeAdminSettingsEditModal);
   adminSettingsEditModal?.querySelectorAll("[data-admin-edit-close]").forEach((element) => {
@@ -4047,6 +5134,15 @@ if (adminPage) {
         method: "PATCH",
         body: JSON.stringify(payload)
       });
+      const currentProfile = getAdminProfile();
+      const currentProfileId = String(currentProfile?.user_id || currentProfile?.id || "");
+      if (currentProfileId && currentProfileId === String(activeAdminEditUserId)) {
+        try {
+          const refreshedProfile = await apiAuth("/api/users/me", token);
+          setStoredAuthValue("userProfile", JSON.stringify(refreshedProfile));
+          setAdminHeader({ ...refreshedProfile, role_name: "ADMIN" });
+        } catch {}
+      }
       closeAdminSettingsEditModal();
       showAdminFeedback("User updated successfully.");
       await fetchUsers();
@@ -4125,6 +5221,9 @@ if (adminPage) {
   if (hasProfile) {
     configureAdminSide(activeAdminView);
     setAdminHeroByView(activeAdminView);
+    setAdminSettingsSubview("general");
+    syncAdminSecurity2faButton();
+    syncAdminCurrentProfile();
     fetchDashboardSummary();
     fetchUsers();
     fetchApplications();
@@ -4787,8 +5886,8 @@ if (userPage) {
     return `${time} on ${date}`;
   };
 
-  const formatCurrency = (amount, currency = "EUR") => {
-    const normalizedCurrency = String(currency || "EUR").toUpperCase();
+  const formatCurrency = (amount, currency = "GBP") => {
+    const normalizedCurrency = String(currency || "GBP").toUpperCase();
     const value = Number(amount || 0);
     try {
       return new Intl.NumberFormat("en-GB", {

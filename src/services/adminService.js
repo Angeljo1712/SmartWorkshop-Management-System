@@ -410,7 +410,7 @@ const listPayments = async () => {
     provider: row.provider || "-",
     status: row.status || "authorized",
     amount: Number(row.amount_eur || 0),
-    currency: row.currency || "EUR",
+    currency: row.currency || "GBP",
     created_at: row.created_at
   }));
 
@@ -423,7 +423,7 @@ const listPayments = async () => {
     provider: row.provider_ref || "-",
     status: row.status || "requested",
     amount: Number(row.amount_eur || 0),
-    currency: "EUR",
+    currency: "GBP",
     created_at: row.created_at
   }));
 

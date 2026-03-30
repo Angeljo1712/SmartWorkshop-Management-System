@@ -81,12 +81,6 @@ block content
                   circle(cx="12" cy="8" r="4")
                   path(d="M5 20a7 7 0 0 1 14 0")
               span.rail-text Account
-            button.admin-nav-link.rail-item(type="button" data-view="profile")
-              span.rail-icon(aria-hidden="true")
-                svg(viewBox="0 0 24 24")
-                  circle(cx="12" cy="8" r="4")
-                  path(d="M5 20a7 7 0 0 1 14 0")
-              span.rail-text Profile
             button.admin-nav-link.rail-item(type="button" data-view="settings")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
@@ -240,10 +234,6 @@ block content
                             button.admin-sort-button(type="button")
                               span Exp.
                               span.admin-sort-icon(aria-hidden="true")
-                          th.admin-sortable(data-sort-key="readiness")
-                            button.admin-sort-button(type="button")
-                              span Ready
-                              span.admin-sort-icon(aria-hidden="true")
                           th.admin-sortable(data-sort-key="joined_date")
                             button.admin-sort-button(type="button")
                               span Joined date
@@ -297,6 +287,8 @@ block content
                     table.admin-table
                       thead
                         tr
+                          th.table-check
+                            input#adminApplicationsSelectAll(type="checkbox" aria-label="Select all applications")
                           th.admin-sortable(data-app-sort-key="full_name")
                             button.admin-sort-button(type="button")
                               span Name
@@ -315,11 +307,11 @@ block content
                               span.admin-sort-icon(aria-hidden="true")
                           th.admin-sortable(data-app-sort-key="application_status")
                             button.admin-sort-button(type="button")
-                              span Application
+                              span Status
                               span.admin-sort-icon(aria-hidden="true")
                           th.admin-sortable(data-app-sort-key="account_status")
                             button.admin-sort-button(type="button")
-                              span Account
+                              span Account status
                               span.admin-sort-icon(aria-hidden="true")
                           th.admin-sortable(data-app-sort-key="created_at")
                             button.admin-sort-button(type="button")
@@ -340,145 +332,360 @@ block content
 
             section.admin-view.is-hidden#adminBookingsView
               .adminUserLayout
-                .admin-table-head
-                  .head-left
-                    h3 Bookings
-                    p
-                      span#adminBookingsCount 0
-                  .admin-table-actions
-                    input#adminBookingsSearch.side-input(type="search" placeholder="Search bookings")
-                .admin-table-wrap
-                  table.admin-table
-                    thead
-                      tr
-                        th Reference
-                        th Status
-                        th Customer
-                        th Mechanic
-                        th Vehicle
-                        th Location
-                        th Total
-                        th Created
-                        th Actions
-                    tbody#adminBookingsRows
-                  p.admin-empty#adminBookingsEmptyState.is-hidden No bookings found.
+                .adminTableLayout
+                  .admin-table-head
+                    .admin-table-head-filters
+                      .admin-head-control.admin-head-control--search
+                        span.admin-head-label.is-hidden Search
+                        input#adminBookingsSearch.side-input(type="search" placeholder="Search")
+                      .admin-head-control.admin-head-control--role
+                        span.admin-head-label.is-hidden Type
+                        select#adminBookingsTypeFilter.side-select(data-all-label="Type")
+                          option(value="all") Type
+                      .admin-head-control.admin-head-control--status
+                        span.admin-head-label.is-hidden Status
+                        select#adminBookingsStatusFilter.side-select(data-all-label="Status")
+                          option(value="all") Status
+                      .admin-head-control.admin-head-control--date
+                        span.admin-head-label.is-hidden Date
+                        select#adminBookingsDateFilter.side-select(data-all-label="All time")
+                          option(value="all") All time
+                    .admin-table-head-actions
+                      span.is-hidden#adminBookingsCount 0
+                      button.ghost#adminBookingsExportBtn(type="button")
+                        svg.admin-button-icon(viewBox="0 0 24 24" aria-hidden="true")
+                          path(d="M12 16V5")
+                          path(d="m8 9 4-4 4 4")
+                          path(d="M5 19h14")
+                        span Export
+                  .admin-table-wrap
+                    table.admin-table
+                      thead
+                        tr
+                          th.table-check
+                            input#adminBookingsSelectAll(type="checkbox" aria-label="Select all bookings")
+                          th.admin-sortable(data-booking-sort-key="reference")
+                            button.admin-sort-button(type="button")
+                              span Reference
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-booking-sort-key="status")
+                            button.admin-sort-button(type="button")
+                              span Status
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-booking-sort-key="customer_name")
+                            button.admin-sort-button(type="button")
+                              span Customer
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-booking-sort-key="mechanic_name")
+                            button.admin-sort-button(type="button")
+                              span Mechanic
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-booking-sort-key="vehicle")
+                            button.admin-sort-button(type="button")
+                              span Vehicle
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-booking-sort-key="location")
+                            button.admin-sort-button(type="button")
+                              span Location
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-booking-sort-key="total")
+                            button.admin-sort-button(type="button")
+                              span Total
+                              span.admin-sort-icon(aria-hidden="true")
+                          th.admin-sortable(data-booking-sort-key="created_at")
+                            button.admin-sort-button(type="button")
+                              span Created
+                              span.admin-sort-icon(aria-hidden="true")
+                          th Actions
+                      tbody#adminBookingsRows
+                    p.admin-empty#adminBookingsEmptyState.is-hidden No bookings found.
+                  .admin-table-footer
+                    .admin-table-footer-meta
+                      span Rows per page
+                      select#adminBookingsRowsPerPage
+                        option(value="10") 10
+                        option(value="20") 20
+                        option(value="50") 50
+                      span#adminBookingsRowsMeta 0 of 0 rows
+                    .admin-pagination#adminBookingsPagination
 
             section.admin-view.is-hidden#adminResolutionView
               .adminUserLayout
-                .admin-table-head
-                  .head-left
-                    h3 Resolution
-                    p
-                      span#adminResolutionCount 0
-                  .admin-table-actions
-                    input#adminResolutionSearch.side-input(type="search" placeholder="Search cases")
-                .admin-table-wrap
-                  table.admin-table
-                    thead
-                      tr
-                        th Reference
-                        th Type
-                        th Subject
-                        th Status
-                        th Customer
-                        th Mechanic
-                        th Updated
-                        th Actions
-                    tbody#adminResolutionRows
-                  p.admin-empty#adminResolutionEmptyState.is-hidden No resolution cases found.
+                .adminTableLayout
+                  .admin-table-head
+                    .admin-table-head-filters
+                      .admin-head-control.admin-head-control--search
+                        span.admin-head-label.is-hidden Search
+                        input#adminResolutionSearch.side-input(type="search" placeholder="Search")
+                      .admin-head-control.admin-head-control--role
+                        span.admin-head-label.is-hidden Type
+                        select#adminResolutionTypeFilter.side-select(data-all-label="Type")
+                          option(value="all") Type
+                      .admin-head-control.admin-head-control--status
+                        span.admin-head-label.is-hidden Status
+                        select#adminResolutionStatusFilter.side-select(data-all-label="Status")
+                          option(value="all") Status
+                      .admin-head-control.admin-head-control--date
+                        span.admin-head-label.is-hidden Date
+                        select#adminResolutionDateFilter.side-select(data-all-label="All time")
+                          option(value="all") All time
+                    .admin-table-head-actions
+                      span.is-hidden#adminResolutionCount 0
+                      button.ghost#adminResolutionExportBtn(type="button")
+                        svg.admin-button-icon(viewBox="0 0 24 24" aria-hidden="true")
+                          path(d="M12 16V5")
+                          path(d="m8 9 4-4 4 4")
+                          path(d="M5 19h14")
+                        span Export
+                  .admin-table-wrap
+                    table.admin-table
+                      thead
+                        tr
+                          th.table-check
+                            input#adminResolutionSelectAll(type="checkbox" aria-label="Select all resolution cases")
+                          th Reference
+                          th Type
+                          th Subject
+                          th Status
+                          th Customer
+                          th Mechanic
+                          th Updated
+                          th Actions
+                      tbody#adminResolutionRows
+                    p.admin-empty#adminResolutionEmptyState.is-hidden No resolution cases found.
+                  .admin-table-footer
+                    .admin-table-footer-meta
+                      span Rows per page
+                      select#adminResolutionRowsPerPage
+                        option(value="10") 10
+                        option(value="20") 20
+                        option(value="50") 50
+                      span#adminResolutionRowsMeta 0 of 0 rows
+                    .admin-pagination#adminResolutionPagination
 
             section.admin-view.is-hidden#adminPaymentsView
               .adminUserLayout
-                .admin-table-head
-                  .head-left
-                    h3 Payments
-                    p
-                      span#adminPaymentsCount 0
-                  .admin-table-actions
-                    input#adminPaymentsSearch.side-input(type="search" placeholder="Search payments")
-                .admin-table-wrap
-                  table.admin-table
-                    thead
-                      tr
-                        th Reference
-                        th Kind
-                        th Booking
-                        th Party
-                        th Provider
-                        th Status
-                        th Amount
-                        th Created
-                        th Actions
-                    tbody#adminPaymentsRows
-                  p.admin-empty#adminPaymentsEmptyState.is-hidden No payments found.
+                .adminTableLayout
+                  .admin-table-head
+                    .admin-table-head-filters
+                      .admin-head-control.admin-head-control--search
+                        span.admin-head-label.is-hidden Search
+                        input#adminPaymentsSearch.side-input(type="search" placeholder="Search")
+                      .admin-head-control.admin-head-control--role
+                        span.admin-head-label.is-hidden Kind
+                        select#adminPaymentsKindFilter.side-select(data-all-label="Kind")
+                          option(value="all") Kind
+                      .admin-head-control.admin-head-control--status
+                        span.admin-head-label.is-hidden Status
+                        select#adminPaymentsStatusFilter.side-select(data-all-label="Status")
+                          option(value="all") Status
+                      .admin-head-control.admin-head-control--date
+                        span.admin-head-label.is-hidden Date
+                        select#adminPaymentsDateFilter.side-select(data-all-label="All time")
+                          option(value="all") All time
+                    .admin-table-head-actions
+                      span.is-hidden#adminPaymentsCount 0
+                      button.ghost#adminPaymentsExportBtn(type="button")
+                        svg.admin-button-icon(viewBox="0 0 24 24" aria-hidden="true")
+                          path(d="M12 16V5")
+                          path(d="m8 9 4-4 4 4")
+                          path(d="M5 19h14")
+                        span Export
+                  .admin-table-wrap
+                    table.admin-table
+                      thead
+                        tr
+                          th.table-check
+                            input#adminPaymentsSelectAll(type="checkbox" aria-label="Select all payments")
+                          th Reference
+                          th Kind
+                          th Booking
+                          th Party
+                          th Provider
+                          th Status
+                          th Amount
+                          th Created
+                          th Actions
+                      tbody#adminPaymentsRows
+                    p.admin-empty#adminPaymentsEmptyState.is-hidden No payments found.
+                  .admin-table-footer
+                    .admin-table-footer-meta
+                      span Rows per page
+                      select#adminPaymentsRowsPerPage
+                        option(value="10") 10
+                        option(value="20") 20
+                        option(value="50") 50
+                      span#adminPaymentsRowsMeta 0 of 0 rows
+                    .admin-pagination#adminPaymentsPagination
 
             section.admin-view.is-hidden#adminCatalogView
               .adminUserLayout
-                .admin-table-head
-                  .head-left
-                    h3 Service catalog
-                    p
-                      span#adminCatalogCount 0
-                  .admin-table-actions
-                    input#adminCatalogSearch.side-input(type="search" placeholder="Search catalog")
-                .admin-table-wrap
-                  table.admin-table
-                    thead
-                      tr
-                        th Group
-                        th Subcategory
-                        th Service
-                        th Code
-                        th Labour
-                        th Price
-                        th Actions
-                    tbody#adminCatalogRows
-                  p.admin-empty#adminCatalogEmptyState.is-hidden No catalog services found.
+                .adminTableLayout
+                  .admin-table-head
+                    .admin-table-head-filters
+                      .admin-head-control.admin-head-control--search
+                        span.admin-head-label.is-hidden Search
+                        input#adminCatalogSearch.side-input(type="search" placeholder="Search")
+                      .admin-head-control.admin-head-control--role
+                        span.admin-head-label.is-hidden Group
+                        select#adminCatalogGroupFilter.side-select(data-all-label="Group")
+                          option(value="all") Group
+                      .admin-head-control.admin-head-control--status
+                        span.admin-head-label.is-hidden Subcategory
+                        select#adminCatalogSubcategoryFilter.side-select(data-all-label="Subcategory")
+                          option(value="all") Subcategory
+                    .admin-table-head-actions
+                      span.is-hidden#adminCatalogCount 0
+                      button.primary#adminCatalogAddGroupBtn(type="button") Add Group
+                      button.ghost#adminCatalogExportBtn(type="button")
+                        svg.admin-button-icon(viewBox="0 0 24 24" aria-hidden="true")
+                          path(d="M12 16V5")
+                          path(d="m8 9 4-4 4 4")
+                          path(d="M5 19h14")
+                        span Export
+                  .admin-table-wrap
+                    .admin-catalog-list#adminCatalogRows
+                    p.admin-empty#adminCatalogEmptyState.is-hidden No catalog services found.
+                  .admin-table-footer
+                    .admin-table-footer-meta
+                      span Rows per page
+                      select#adminCatalogRowsPerPage
+                        option(value="10") 10
+                        option(value="20") 20
+                        option(value="50") 50
+                      span#adminCatalogRowsMeta 0 of 0 rows
+                    .admin-pagination#adminCatalogPagination
 
             section.admin-view.is-hidden#adminProfileView
-              .admin-profile-card
-                  .profile-left
+              .admin-account-layout
+                .settings-divider
+                .admin-account-avatar-row
                   .admin-profile-avatar#adminProfileAvatar AU
-                  div
-                    strong#adminProfileName Admin User
-                    span#adminProfileRole Administrator
-                  .profile-right
-                  .profile-item.is-hidden
-                    span.label Avatar
-                    span#adminSettingsAvatar AU
-                  .profile-item.is-hidden
-                    span.label Name
-                    span#adminSettingsName Admin User
-                  .profile-item
-                    span.label Email
-                    span#adminSettingsEmail admin@smartworkshop.local
-                  .profile-item.is-hidden
-                    span.label Email detail
-                    span#adminSettingsEmailDetail Email: admin@smartworkshop.local
-                  .profile-item
-                    span.label Phone
-                    span#adminSettingsPhone Phone: -
-                  .profile-item
-                    span.label Role
-                    span#adminSettingsRole Administrator
+                .settings-divider
+                .admin-account-section
+                  h4 Full Name
+                  p#adminSettingsName Admin User
+                .settings-divider
+                .admin-account-section
+                  h4 Contacts
+                  p#adminSettingsPhone -
+                  p#adminSettingsUsername Username: -
+                  p#adminSettingsEmail admin@smartworkshop.local
+                  p#adminSettingsAddress Address: -
+                .settings-divider
+                .admin-account-section
+                  h4 Role
+                  p#adminSettingsRole Administrator
+                .settings-divider
+                .admin-account-section
+                  h4 Integration
+                  p No integrations connected
 
             section.admin-view.is-hidden#adminSettingsView
-              .admin-profile-card
-                  .profile-left
-                  .admin-profile-avatar AA
-                  div
-                    strong Admin Settings
-                    span Manage your workspace preferences
-                  .profile-right
-                  .profile-item
-                    span.label Theme
-                    span Dark
-                  .profile-item
-                    span.label Notifications
-                    span Enabled
-                  .profile-item
-                    span.label Access
-                    span Administrator
+              .settings-card.admin-settings-card
+                .admin-settings-layout
+                  .admin-settings-topbar
+                    h3#adminSettingsSubviewTitle General
+                    nav.settings-subnav.admin-settings-topnav
+                      button.settings-subnav-link.active(type="button" data-admin-settings-subview="general") General
+                      button.settings-subnav-link(type="button" data-admin-settings-subview="notifications") Notifications
+                      button.settings-subnav-link(type="button" data-admin-settings-subview="security") Login & security
+
+                  .settings-panel
+                    section.settings-subview#adminSettingsGeneral
+                      .settings-photo-row
+                        .settings-avatar.settings-avatar-lg#adminSettingsViewAvatar AA
+                        input#adminSettingsPhotoInput.is-hidden(type="file" accept="image/*")
+                        button.ghost#adminSettingsPhotoBtn(type="button") Update
+
+                      .settings-divider
+
+                      .settings-profile
+                        .settings-meta
+                          h4 Full name
+                          p#adminSettingsViewName Admin User
+                        button.secondary(type="button" data-admin-settings-field="full_name") Update
+
+                      .settings-divider
+
+                      .settings-row
+                        .settings-contact-list
+                          .settings-contact-item
+                            .settings-contact-copy
+                              span.settings-contact-label Phone
+                              p#adminSettingsViewPhone -
+                          .settings-contact-item
+                            .settings-contact-copy
+                              span.settings-contact-label Username
+                              p#adminSettingsViewUsername -
+                          .settings-contact-item
+                            .settings-contact-copy
+                              span.settings-contact-label Email
+                              p#adminSettingsViewEmail admin@smartworkshop.local
+                          .settings-contact-item
+                            .settings-contact-copy
+                              span.settings-contact-label Address
+                              p#adminSettingsViewAddress -
+                        .settings-contact-actions
+                          button.secondary(type="button" data-admin-settings-field="phone") Update
+                          button.secondary(type="button" data-admin-settings-field="username") Update
+                          button.secondary(type="button" data-admin-settings-field="email") Update
+                          button.secondary(type="button" data-admin-settings-field="address") Update
+
+                      .settings-divider
+
+                      .settings-row
+                        .settings-meta
+                          h4 Theme
+                          p#adminSettingsThemeValue Dark mode
+                        button.secondary#adminSettingsThemeBtn(type="button") Dark mode
+
+                      .settings-divider
+
+                      .settings-row
+                        .settings-meta
+                          h4 Integration
+                          p No integrations connected
+                        button.secondary(type="button" disabled) Connect
+
+                    section.settings-subview.is-hidden#adminSettingsNotifications
+                      .notifications-card
+                        .notifications-card-head
+                          h3 Email Preferences
+                        label.notifications-check(for="adminNotificationsMarketing")
+                          input#adminNotificationsMarketing(type="checkbox")
+                          span Don't miss out! Subscribe to get special offers/promotions and updates about our services.
+                        .notifications-actions
+                          button.ghost(type="button" disabled) Update
+
+                    section.settings-subview.is-hidden#adminSettingsSecurity
+                      .security-card
+                        .security-card-head
+                          h3 Change Password
+                        form.security-form
+                          label.security-field
+                            span Old Password
+                            input(type="password" placeholder="")
+                          label.security-field
+                            span New Password
+                            input(type="password" placeholder="")
+                          label.security-field
+                            span Confirm Password
+                            input(type="password" placeholder="")
+                          .security-actions
+                            button.ghost(type="button" disabled) Change
+                      .security-card
+                        .security-card-head
+                          h3 Two Factor Authentication
+                        .security-2fa-grid
+                          label.security-check(for="adminSecurity2faEmail")
+                            input#adminSecurity2faEmail(type="checkbox")
+                            span Email
+                          label.security-check(for="adminSecurity2faSms")
+                            input#adminSecurity2faSms(type="checkbox")
+                            span SMS
+                        .security-actions
+                          button#adminSecurity2faEnable.ghost(type="button" disabled) Enable 2FA
 
             section.admin-panel.is-hidden#adminAddUserPanel
               .admin-panel-head
