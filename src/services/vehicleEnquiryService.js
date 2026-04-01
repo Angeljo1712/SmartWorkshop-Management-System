@@ -31,7 +31,11 @@ const enquireVehicle = async (registrationNumber) => {
     throw new AppError("DVLA_ERROR", message, response.status);
   }
 
-  if (!payload?.model) {
+  const needsDvsaDetails =
+    !payload?.model ||
+    (!payload?.mileage && !Array.isArray(payload?.motTests) && !payload?.motExpiryDate);
+
+  if (needsDvsaDetails) {
     try {
       const dvsaPayload = await getVehicleByRegistration(normalized);
       const vehicle = Array.isArray(dvsaPayload) ? dvsaPayload[0] : dvsaPayload;
@@ -40,6 +44,21 @@ const enquireVehicle = async (registrationNumber) => {
       }
       if (!payload.make && vehicle?.make) {
         payload.make = vehicle.make;
+      }
+      if (!payload.fuelType && vehicle?.fuelType) {
+        payload.fuelType = vehicle.fuelType;
+      }
+      if (!payload.mileage && vehicle?.odometerValue) {
+        payload.mileage = vehicle.odometerValue;
+      }
+      if (!payload.motExpiryDate && (vehicle?.expiryDate || vehicle?.motExpiryDate)) {
+        payload.motExpiryDate = vehicle.expiryDate || vehicle.motExpiryDate;
+      }
+      if (!payload.motStatus && (vehicle?.testResult || vehicle?.motStatus)) {
+        payload.motStatus = vehicle.testResult || vehicle.motStatus;
+      }
+      if (!payload.motTests && vehicle) {
+        payload.motTests = [vehicle];
       }
     } catch (_err) {
       // Ignore DVSA failures and return DVLA payload.

@@ -2163,6 +2163,7 @@ if (adminPage) {
   const setAdminHeader = (user) => {
     const joinedName = [user?.name, user?.lastname].filter(Boolean).join(" ").trim();
     const displayName = user?.full_name || joinedName || user?.email || "Admin";
+    const heroDisplayName = joinedName || displayName;
     const role = user?.role_name || "ADMIN";
     const initials = getInitials(displayName);
     const addressText = user?.address
@@ -2196,7 +2197,7 @@ if (adminPage) {
     };
     if (adminProfileAvatar) adminProfileAvatar.textContent = initials;
     if (adminProfileName) adminProfileName.textContent = displayName;
-    if (adminDashboardHeroName) adminDashboardHeroName.textContent = displayName;
+    if (adminDashboardHeroName) adminDashboardHeroName.textContent = heroDisplayName;
     if (adminDashboardHeroRole) adminDashboardHeroRole.textContent = role;
     setAdminAvatar(adminDashboardHeroAvatar, initials, user?.avatar_url);
     if (adminProfileRole) adminProfileRole.textContent = role;
@@ -5644,8 +5645,8 @@ if (userPage) {
     const activeRole = resolveActiveRole(roles);
     const initials = getInitials(displayName);
     setAvatar(userProfileAvatar, initials, user?.avatar_url);
-    userProfileName.textContent = displayName;
-    userProfileRole.textContent = activeRole;
+    if (userProfileName) userProfileName.textContent = displayName;
+    if (userProfileRole) userProfileRole.textContent = activeRole;
     setAvatar(userDashboardHeroAvatar, initials, user?.avatar_url);
     if (userDashboardHeroName) userDashboardHeroName.textContent = displayName;
     if (userDashboardHeroRole) userDashboardHeroRole.textContent = activeRole;
@@ -5968,6 +5969,56 @@ if (userPage) {
     }));
   };
 
+  const vehicleNeedsEnrichment = (vehicle) => {
+    if (!vehicle) return false;
+    const missingFuel = !String(vehicle.fuelType || "").trim() || String(vehicle.fuelType).trim() === "-";
+    const missingMileage = !String(vehicle.mileage || "").trim() || String(vehicle.mileage).trim() === "-";
+    const missingMot = !String(vehicle.motStatus || "").trim() || String(vehicle.motStatus).includes("not available");
+    const missingTax = !String(vehicle.taxStatus || "").trim() || String(vehicle.taxStatus).includes("not available");
+    return missingFuel || missingMileage || missingMot || missingTax;
+  };
+
+  const enrichVehicleFromEnquiry = async (vehicle) => {
+    const registrationNumber = String(vehicle?.registrationNumber || "").trim();
+    if (!registrationNumber) return vehicle;
+
+    try {
+      const result = await api("/api/vehicle-enquiry", {
+        method: "POST",
+        body: JSON.stringify({ registrationNumber })
+      });
+
+      const enriched = normaliseDashboardVehicle({
+        ...vehicle,
+        registrationNumber: result.registrationNumber || registrationNumber,
+        make: result.make || vehicle.make || "",
+        model: result.model || vehicle.model || "",
+        fuelType: result.fuelType || vehicle.fuelType || "",
+        yearOfManufacture: result.yearOfManufacture || vehicle.yearOfManufacture || null,
+        mileage: deriveMileage(result, vehicle.mileage || "-"),
+        motStatus: deriveMotStatus(result),
+        taxStatus: deriveTaxStatus(result)
+      });
+
+      if (userToken) {
+        try {
+          const persisted = await apiAuth("/api/users/me/vehicles", userToken, {
+            method: "POST",
+            body: JSON.stringify(enriched)
+          });
+          enriched.id = persisted?.id || enriched.id || null;
+          enriched.uuid_public = persisted?.uuid_public || enriched.uuid_public || null;
+        } catch (_err) {
+          // Keep enriched local data if persistence fails.
+        }
+      }
+
+      return enriched;
+    } catch (_err) {
+      return vehicle;
+    }
+  };
+
   const renderDashboardVehicles = (vehicles) => {
     const closeVehicleMenus = () => {
       document.querySelectorAll(".user-car-menu-panel").forEach((panel) => panel.classList.add("is-hidden"));
@@ -5977,13 +6028,14 @@ if (userPage) {
       const reg = vehicle.registrationNumber || "-";
       const make = String(vehicle.make || "").trim();
       const model = String(vehicle.model || "").trim();
-      const fuel = vehicle.fuelType || "-";
+      const fuel = String(vehicle.fuelType || vehicle.fuel || "").trim() || "-";
       const year = Number(vehicle.yearOfManufacture);
       const age = Number.isFinite(year) ? `${Math.max(new Date().getFullYear() - year, 0)} years old` : "-";
+      const rawMileage = vehicle.mileage ?? vehicle.odometerValue ?? vehicle.odometer_value ?? "-";
       const mileage =
-        typeof vehicle.mileage === "number"
-          ? `${vehicle.mileage.toLocaleString()} miles`
-          : String(vehicle.mileage || "-");
+        typeof rawMileage === "number"
+          ? `${rawMileage.toLocaleString()} miles`
+          : String(rawMileage || "-").trim();
 
       const card = document.createElement("div");
       card.className = "user-car-summary";
@@ -6008,9 +6060,9 @@ if (userPage) {
           </div>
         </div>
         <div class="user-car-meta">
-          <span>${fuel}</span>
-          <span>${age}</span>
-          <span>${mileage}</span>
+          <span><i aria-hidden="true">⛽</i>${fuel}</span>
+          <span><i aria-hidden="true">🗓</i>${age}</span>
+          <span><i aria-hidden="true">◉</i>${mileage}</span>
         </div>
         <div class="user-car-status">
           <div class="user-car-status-item">
@@ -6195,6 +6247,9 @@ if (userPage) {
     try {
       const vehicles = await apiAuth("/api/users/me/vehicles", userToken);
       dashboardVehicles = mergeDashboardVehicles(getDashboardVehicles(), vehicles.map(normaliseDashboardVehicle));
+      dashboardVehicles = await Promise.all(
+        dashboardVehicles.map((vehicle) => (vehicleNeedsEnrichment(vehicle) ? enrichVehicleFromEnquiry(vehicle) : vehicle))
+      );
       saveDashboardVehicles(dashboardVehicles);
       renderDashboardVehicles(dashboardVehicles);
       renderVehicleDetail(dashboardVehicles);
@@ -6537,6 +6592,76 @@ if (userPage) {
     sessionStorage.removeItem("homeUserTargetView");
   }
 
+  const parseVehicleDate = (value) => {
+    if (!value) return null;
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  };
+
+  const formatTimeUntilDate = (value, fallback) => {
+    const target = parseVehicleDate(value);
+    if (!target) return fallback;
+    const now = new Date();
+    const diffMs = target.getTime() - now.getTime();
+    const dayMs = 24 * 60 * 60 * 1000;
+    const weekMs = 7 * dayMs;
+
+    if (diffMs <= 0) return "Expired";
+
+    const weeks = Math.round(diffMs / weekMs);
+    if (weeks >= 1) return `Due in ${weeks} week${weeks === 1 ? "" : "s"}`;
+
+    const days = Math.ceil(diffMs / dayMs);
+    return `Due in ${days} day${days === 1 ? "" : "s"}`;
+  };
+
+  const deriveMotStatus = (result) => {
+    const motExpiry =
+      result?.motExpiryDate ||
+      result?.motDueDate ||
+      result?.motTestDueDate ||
+      result?.motTests?.[0]?.expiryDate ||
+      result?.motTests?.[0]?.motTestExpiryDate;
+
+    if (motExpiry) {
+      return formatTimeUntilDate(motExpiry, "MOT details loaded");
+    }
+
+    const motStatus =
+      result?.motStatus ||
+      result?.motTests?.[0]?.testResult ||
+      result?.motTests?.[0]?.motTestResult;
+
+    if (motStatus) return String(motStatus);
+    return "MOT status not available";
+  };
+
+  const deriveTaxStatus = (result) => {
+    const taxDue =
+      result?.taxDueDate ||
+      result?.taxExpiryDate ||
+      result?.taxStatusDate;
+
+    if (taxDue) {
+      return formatTimeUntilDate(taxDue, "Tax details loaded");
+    }
+
+    const taxStatus = result?.taxStatus;
+    if (taxStatus) return String(taxStatus);
+    return "Tax status not available";
+  };
+
+  const deriveMileage = (result, fallback = "-") => {
+    const directMileage = result?.mileage;
+    if (directMileage) return directMileage;
+
+    const nestedMileage =
+      result?.motTests?.[0]?.odometerValue ||
+      result?.motTests?.[0]?.motTests?.[0]?.odometerValue;
+
+    return nestedMileage || fallback;
+  };
+
   const handleAddVehicle = async (registrationInput, errorOutput) => {
     const registrationNumber = registrationInput?.value?.trim().toUpperCase().replace(/\s+/g, "") || "";
     if (!registrationNumber) {
@@ -6558,9 +6683,9 @@ if (userPage) {
         model: result.model || "",
         fuelType: result.fuelType || "",
         yearOfManufacture: result.yearOfManufacture || null,
-        mileage: result.motTests?.[0]?.odometerValue || result.mileage || "-",
-        motStatus: "MOT details loaded",
-        taxStatus: "Tax details loaded"
+        mileage: deriveMileage(result, "-"),
+        motStatus: deriveMotStatus(result),
+        taxStatus: deriveTaxStatus(result)
       };
 
       if (dashboardVehicles.some((vehicle) => vehicle.registrationNumber === vehicleData.registrationNumber)) {

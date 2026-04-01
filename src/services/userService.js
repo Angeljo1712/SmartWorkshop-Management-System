@@ -314,10 +314,10 @@ const listUserVehicles = async (userId) => {
             make,
             model,
             year,
-            NULL AS fuel_type,
-            NULL AS mileage,
-            NULL AS mot_status,
-            NULL AS tax_status
+            fuel_type,
+            mileage,
+            mot_status,
+            tax_status
      FROM vehicles
      WHERE user_id = ?
      ORDER BY id ASC`,
@@ -336,15 +336,23 @@ const saveUserVehicle = async (userId, payload) => {
   const make = String(payload.make || "").trim();
   const model = String(payload.model || "").trim();
   const year = payload.yearOfManufacture ? Number(payload.yearOfManufacture) : null;
+  const fuelType = String(payload.fuelType || "").trim() || null;
+  const mileage = String(payload.mileage || "").trim() || null;
+  const motStatus = String(payload.motStatus || "").trim() || null;
+  const taxStatus = String(payload.taxStatus || "").trim() || null;
 
   await pool.query(
-    `INSERT INTO vehicles (uuid_public, user_id, license_plate, make, model, year)
-     VALUES (UUID_TO_BIN(UUID()), ?, ?, ?, ?, ?)
+    `INSERT INTO vehicles (uuid_public, user_id, license_plate, make, model, year, fuel_type, mileage, mot_status, tax_status)
+     VALUES (UUID_TO_BIN(UUID()), ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON DUPLICATE KEY UPDATE
        make = VALUES(make),
        model = VALUES(model),
-       year = VALUES(year)`,
-    [userId, registrationNumber, make, model, Number.isFinite(year) ? year : null]
+       year = VALUES(year),
+       fuel_type = VALUES(fuel_type),
+       mileage = VALUES(mileage),
+       mot_status = VALUES(mot_status),
+       tax_status = VALUES(tax_status)`,
+    [userId, registrationNumber, make, model, Number.isFinite(year) ? year : null, fuelType, mileage, motStatus, taxStatus]
   );
 
   const [rows] = await pool.query(
@@ -354,10 +362,10 @@ const saveUserVehicle = async (userId, payload) => {
             make,
             model,
             year,
-            NULL AS fuel_type,
-            NULL AS mileage,
-            NULL AS mot_status,
-            NULL AS tax_status
+            fuel_type,
+            mileage,
+            mot_status,
+            tax_status
      FROM vehicles
      WHERE user_id = ? AND license_plate = ?
      LIMIT 1`,
