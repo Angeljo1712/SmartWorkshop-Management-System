@@ -9,8 +9,6 @@ body.admin-body .primari-shell {
 body.user-body .page-shell-content,
 body.mechanic-body .page-shell-content,
 body.admin-body .page-shell-content {
-  min-height: calc(100vh - 176px);
-  height: 100%;
   background: #344154;
   border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 20px;
