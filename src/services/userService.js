@@ -381,7 +381,18 @@ const deleteUserVehicle = async (userId, registrationNumber) => {
     throw new AppError("VALIDATION_ERROR", "registrationNumber is required", 400);
   }
 
-  await pool.query("DELETE FROM vehicles WHERE user_id = ? AND license_plate = ?", [userId, normalized]);
+  try {
+    await pool.query("DELETE FROM vehicles WHERE user_id = ? AND license_plate = ?", [userId, normalized]);
+  } catch (error) {
+    if (error && (error.code === "ER_ROW_IS_REFERENCED_2" || error.code === "ER_ROW_IS_REFERENCED")) {
+      throw new AppError(
+        "VEHICLE_DELETE_BLOCKED",
+        "This vehicle cannot be removed because it is linked to existing bookings",
+        409
+      );
+    }
+    throw error;
+  }
   return { deleted: true };
 };
 

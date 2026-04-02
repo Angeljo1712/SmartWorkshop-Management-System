@@ -3,20 +3,32 @@
   grid-template-columns: auto minmax(0, 1fr);
   align-items: stretch;
   gap: 0;
-  border-radius: 15px;
+  border-radius: 15px 15px 0 0;
   overflow: hidden;
+}
+
+body.user-body .primari-shell {
+  min-height: 0;
+}
+
+body.user-body .page-shell-content {
+  min-height: 0;
+  height: auto;
 }
 
 #userPage .mainSection {
   display: grid;
   grid-template-rows: auto 1fr;
   width: 100%;
+  min-height: 0;
   min-width: 0;
+  height: auto;
   align-self: stretch;
   background: rgba(25, 31, 42, 0.96);
-  border: 1px solid #ffffff;
+  border: 2px solid #ffffff;
   border-left: 0;
-  border-radius: 0 15px 15px 0;
+  border-bottom: 0;
+  border-radius: 0 15px 0 0;
 }
 
 #userPage .mainSection > .user-dashboard-hero {
@@ -63,6 +75,7 @@
 #userPage .user-dashboard-hero .settings-header p {
   color: #475569;
   margin: 0;
+  font-weight: 700;
 }
 
 #userPage .user-dashboard-hero .settings-header .settings-header-aside {
@@ -78,6 +91,23 @@
   font-weight: 700;
   letter-spacing: 0;
   text-transform: none;
+}
+
+.user-panel-head {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.user-panel-head h2,
+.user-panel-head p {
+  margin: 0;
+}
+
+.user-panel-head p {
+  white-space: nowrap;
+  text-align: right;
 }
 
 #userPage #userDashboardHeroName {
@@ -114,7 +144,7 @@
   background: rgba(9, 13, 21, 0.96);
   border: 0;
   border-radius: 0;
-  padding: 10px;
+  padding: 15px;
   overflow: hidden;
   min-height: auto;
   height: auto;
@@ -137,11 +167,12 @@ body.user-body .main-header.general-header {
 #userPage.mainLayout .rail-base {
   width: 70px;
   min-width: 70px;
-  min-height: auto;
+  /* min-height: auto; */
   background: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-right: 0;
-  border-radius: 15px 0 0 15px;
+  border-bottom: 0;
+  border-radius: 15px 0 0 0;
   color: #1b2430;
   overflow: hidden;
   transition: width 0.22s ease;
@@ -186,10 +217,11 @@ body.user-body .main-header.general-header {
   background: transparent;
   color: #334155;
   gap: 0;
+  position: relative;
   transition: max-width 0.22s ease, width 0.22s ease, padding 0.22s ease, justify-content 0.22s ease, background 0.18s ease;
 }
 
-#userPage.mainLayout .mainRail .rail-item:hover {
+#userPage.mainLayout .mainRail .rail-item:hover:not(.active) {
   background: rgba(15, 23, 42, 0.06);
 }
 
@@ -199,6 +231,18 @@ body.user-body .main-header.general-header {
   color: #ffffff;
   border-color: rgba(15, 23, 42, 0.08);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+#userPage.mainLayout .rail-item.active::before {
+  content: "";
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  width: 4px;
+  height: 28px;
+  border-radius: 999px;
+  background: #475569;
+  transform: translateY(-50%);
 }
 
 #userPage.mainLayout .mainRail .rail-text {
@@ -220,7 +264,7 @@ body.user-body .main-header.general-header {
   display: grid;
   justify-items: center;
   padding-top: 10px;
-  border-top: 1px dashed rgba(15, 23, 42, 0.12);
+  border-top: 0;
 }
 
 #userPage.mainLayout .mainRail .admin-signout {
@@ -287,33 +331,30 @@ body.user-body .main-header.general-header {
   min-height: auto;
 }
 
-body.user-body #userBookingsView .settings-card {
-  display: block;
+body.user-body .userContent .settings-card,
+body.user-body .user-booking-card,
+body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-card,
+body.user-body :is(#userResolutionView, #userResolutionCaseView) .mechanic-resolution-sidebar-card,
+body.user-body #userSettingsSecurity .security-card,
+body.user-body #userSettingsNotifications .notifications-card,
+body.user-body .user-car-summary,
+body.user-body .user-vehicle-info-card,
+body.user-body .user-verify-card {
+  background: rgba(34, 43, 58, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  box-shadow: 0 18px 36px rgba(5, 10, 18, 0.24);
 }
 
-.user-bookings-card {
+body.user-body #userBookingsView .settings-card {
   display: block;
 }
 
 .user-bookings-layout {
   display: grid;
-  grid-template-areas:
-    "welcome"
-    "divider"
-    "card";
-  gap: 30px;
-}
-
-.bookings-section--welcome {
-  grid-area: welcome;
-}
-
-.bookings-section--divider {
-  grid-area: divider;
-}
-
-.bookings-section--card {
-  grid-area: card;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: start;
 }
 
 .user-resolution-layout {
@@ -342,97 +383,111 @@ body.user-body #userSettingsView .settings-card {
 }
 
 .user-settings-card {
-  display: block;
+  display: grid;
+  min-height: 100%;
+  height: auto;
 }
 
 .user-settings-layout {
   display: grid;
-  grid-template-areas:
-    "welcome welcome"
-    "divider divider"
-    "subnav panel";
-  grid-template-columns: 150px minmax(0, 1fr);
-  gap: 30px 24px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
   align-items: start;
+  align-content: start;
 }
 
-.settings-section--welcome {
-  grid-area: welcome;
-}
-
-.settings-section--divider {
-  display: block;
-  grid-area: divider;
-}
-
-.settings-section--layout {
-  display: contents;
-}
-
-body.user-body #userSettingsView .settings-layout {
-  display: contents;
-}
-
-body.user-body #userSettingsView .settings-panel {
-  grid-area: panel;
+body.user-body #userSettingsView .setting-panel {
   display: grid;
+  gap: 22px;
 }
 
-body.user-body #userSettingsView .settings-subview {
+body.user-body #userSettingsView .user-settings-subview {
   display: grid;
+  gap: 22px;
+  align-content: start;
+  align-items: start;
+  grid-template-columns: minmax(0, 1fr);
 }
 
-body.user-body #userSettingsView .settings-subnav {
-  grid-area: subnav;
-  background: linear-gradient(180deg, #425369 0%, #3a4a5f 100%);
-  border: 2px solid #ffffff;
+body.user-body #userSettingsView .user-settings-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+body.user-body #userSettingsPanelTitle {
+  margin: 0;
+  color: #ffffff;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+body.user-body #userSettingsView .user-settings-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 14px;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
-  padding: 10px;
-  align-self: stretch;
-  height: 100%;
+  background: rgba(14, 19, 28, 0.92);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
-body.user-body #userSettingsView .settings-subnav-link {
-  color: #e8edf6;
-  border-radius: 8px;
+body.user-body #userSettingsView .user-settings-tab-link {
+  min-height: 34px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #dce5f3;
+  font-size: 0.95rem;
+  font-weight: 700;
 }
 
-body.user-body #userSettingsView .settings-subnav-link:hover {
-  background: rgba(255, 255, 255, 0.1);
+body.user-body #userSettingsView .user-settings-tab-link:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 
-body.user-body #userSettingsView .settings-subnav-link.active {
-  background: #0d1220;
-  border-color: rgba(255, 255, 255, 0.28);
+body.user-body #userSettingsView .user-settings-tab-link.active {
+  background: #4f627b;
+  border-color: rgba(255, 255, 255, 0.18);
   color: #ffffff;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
-body.user-body #userSettingsView .settings-divider {
-  background: #ffffff;
-  opacity: 1;
-}
-
-body.user-body #userSettingsView .settings-header h2,
-body.user-body #userSettingsView .settings-header p,
-body.user-body #userSettingsView .user-welcome-corner,
-body.user-body #userSettingsView .user-welcome-corner-subtitle {
-  color: #ffffff;
-}
-
-body.user-body #userSettingsView .settings-photo-row {
+body.user-body #userSettingsView .user-settings-photo-row {
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
   gap: 16px;
 }
 
-body.user-body #userSettingsView .settings-photo-row .ghost {
+body.user-body #userSettingsView .settings-avatar {
+  background: #d5def7;
+  color: #334085;
+}
+
+body.user-body #userSettingsView .settings-avatar-lg {
+  width: 140px;
+  height: 140px;
+  border-radius: 36px;
+}
+
+body.user-body #userSettingsView .user-settings-photo-row .ghost {
   justify-self: end;
   background: #4f627b;
   border-color: #4f627b;
   color: #ffffff;
+  width: 104px;
+}
+
+body.user-body #userSettingsView .user-settings-profile,
+body.user-body #userSettingsView .user-settings-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 16px;
 }
 
 body.user-body #userSettingsView .secondary {
@@ -443,48 +498,80 @@ body.user-body #userSettingsView .secondary {
 
 body.user-body #userSettingsView .settings-field,
 body.user-body #userSettingsView .settings-field h4,
-body.user-body #userSettingsView .settings-row h4,
-body.user-body #userSettingsView .settings-profile h4,
-body.user-body #userSettingsView .settings-profile p,
-body.user-body #userSettingsView .settings-row p,
+body.user-body #userSettingsView .user-settings-row h4,
+body.user-body #userSettingsView .user-settings-profile h4,
+body.user-body #userSettingsView .user-settings-profile p,
+body.user-body #userSettingsView .user-settings-row p,
 body.user-body #userSettingsView .form-error {
   color: #ffffff;
 }
 
-body.user-body #userSettingsView .settings-contact-list {
+body.user-body #userSettingsView .user-settings-profile h4,
+body.user-body #userSettingsView .user-settings-row h4,
+body.user-body #userSettingsView .user-settings-contact-label {
+  font-size: 1.4rem;
+  text-transform: none;
+  letter-spacing: normal;
+  opacity: 1;
+}
+
+body.user-body #userSettingsView .user-settings-profile p,
+body.user-body #userSettingsView .user-settings-row p,
+body.user-body #userSettingsView .user-settings-contact-copy p {
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.4;
+  opacity: 0.92;
+}
+
+body.user-body #userSettingsView .settings-meta,
+body.user-body #userSettingsView .user-settings-row > div,
+body.user-body #userSettingsView .user-settings-contact-copy {
+  display: grid;
+  gap: 10px;
+}
+
+body.user-body #userSettingsView .user-settings-contact-list {
   display: grid;
   gap: 14px;
 }
 
-body.user-body #userSettingsView .settings-contact-item {
+body.user-body #userSettingsView .user-settings-contact-item {
   display: block;
   min-height: 44px;
 }
 
-body.user-body #userSettingsView .settings-contact-copy {
+body.user-body #userSettingsView .user-settings-contact-copy {
   display: grid;
   gap: 6px;
 }
 
-body.user-body #userSettingsView .settings-contact-label {
+body.user-body #userSettingsView .user-settings-contact-label {
   color: #ffffff;
   font-weight: 600;
 }
 
-body.user-body #userSettingsView .settings-contact-copy p {
+body.user-body #userSettingsView .user-settings-contact-copy p {
   margin: 0;
   color: #ffffff;
 }
 
-body.user-body #userSettingsView .settings-contact-actions {
+body.user-body #userSettingsView .user-settings-contact-actions {
   display: grid;
   gap: 14px;
   align-content: start;
   justify-items: end;
+  width: 104px;
 }
 
-body.user-body #userSettingsView .settings-contact-actions .secondary {
+body.user-body #userSettingsView .user-settings-contact-actions .secondary {
   min-height: 44px;
+  width: 100%;
+}
+
+body.user-body #userSettingsView .user-settings-profile .secondary,
+body.user-body #userSettingsView .user-settings-row > .secondary {
+  width: 104px;
 }
 
 body.user-body #userSettingsSecurity {
@@ -498,7 +585,7 @@ body.user-body #userSettingsSecurity .security-card {
   border: 2px solid #ffffff;
   border-radius: 14px;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(34, 43, 58, 0.96);
 }
 
 body.user-body #userSettingsSecurity .security-card-head h3 {
@@ -589,7 +676,7 @@ body.user-body #userSettingsNotifications .notifications-card {
   border: 2px solid #ffffff;
   border-radius: 14px;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
-  background: #0d1220;
+  background: rgba(34, 43, 58, 0.96);
 }
 
 body.user-body #userSettingsNotifications .notifications-card-head h3 {
@@ -756,7 +843,282 @@ body.user-body #userBookingsView .user-booking-empty {
 
 .user-bookings-list {
   display: grid;
+  gap: 12px;
+}
+
+.userTableLayout {
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 14px;
+  background: rgba(34, 43, 58, 0.96);
+  padding: 0;
+  box-shadow: 0 18px 36px rgba(5, 10, 18, 0.24);
+}
+
+.user-bookings-detail {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 16px 0 0;
+}
+
+.userTableLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  row-gap: 30px;
+  min-height: 0;
+  padding: 15px;
+}
+
+.userTableLayout > .user-table-head,
+.userTableLayout > .user-table-wrap,
+.userTableLayout > .user-table-footer {
+  position: relative;
+  min-width: 0;
+}
+
+.userTableLayout > .user-table-head::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -15px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.userTableLayout > .user-table-footer::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -15px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.user-bookings-summary-title {
+  margin: 0 0 14px;
+  color: #eaf0fb;
+  font-size: 1.1rem;
+}
+
+.user-table-head-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(0, 0.95fr)) auto;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.user-head-control {
+  position: relative;
+}
+
+.user-head-control input,
+.user-head-control select,
+.user-bookings-export {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid rgba(180, 194, 214, 0.9);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+}
+
+.user-head-control input,
+.user-head-control select {
+  padding: 0 14px 0 40px;
+}
+
+.user-head-control::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  width: 16px;
+  height: 16px;
+  transform: translateY(-50%);
+  opacity: 0.75;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px 16px;
+}
+
+.user-head-control--search::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23556b89' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");
+}
+
+.user-head-control--role::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23556b89' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='8.5' cy='7' r='4'/%3E%3Cpath d='M20 8v6'/%3E%3Cpath d='M23 11h-6'/%3E%3C/svg%3E");
+}
+
+.user-head-control--status::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23556b89' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m12 2 7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4Z'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E");
+}
+
+.user-head-control--date::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23556b89' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M16 2v4'/%3E%3Cpath d='M8 2v4'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
+}
+
+.user-head-control select {
+  appearance: none;
+  padding-right: 36px;
+}
+
+.user-bookings-export {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 120px;
+  padding: 0 18px;
+  color: #0f172a;
+}
+
+.user-bookings-export::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px 16px;
+  background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23556b89' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12'/%3E%3Cpath d='m7 8 5-5 5 5'/%3E%3Cpath d='M5 21h14'/%3E%3C/svg%3E\");
+}
+
+.user-table-wrap {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.userTable {
+  width: 100%;
+  min-width: 880px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.02);
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.userTable th,
+.userTable td {
+  padding: 14px;
+  text-align: left;
+  color: #c8d4e8;
+}
+
+.userTable thead th {
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.userTable thead th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.userTable thead th:last-child {
+  border-top-right-radius: 12px;
+}
+
+.user-booking-summary-card {
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  background: transparent;
+}
+
+.user-booking-summary-card:hover,
+.user-booking-summary-card.is-active {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.user-booking-summary-card td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.userTable tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.user-booking-summary-reference {
+  color: #eaf0fb;
+  font-weight: 700;
+}
+
+.user-booking-summary-date,
+.user-booking-summary-status,
+.user-booking-summary-vehicle,
+.user-booking-summary-mechanic {
+  font-size: 0.95rem;
+}
+
+.user-booking-summary-vehicle,
+.user-booking-summary-mechanic {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-booking-summary-card .user-booking-status {
+  min-width: 0;
+  width: fit-content;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+}
+
+.user-table-footer {
+  color: #c8d4e8;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 16px;
+}
+
+.user-table-footer-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #ffffff;
+}
+
+.user-table-footer-meta select {
+  min-height: 38px;
+  border: 1px solid rgba(180, 194, 214, 0.9);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #0f172a;
+  padding: 0 14px;
+}
+
+.user-pagination {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-pagination button {
+  min-width: 36px;
+  min-height: 36px;
+  border: 1px solid rgba(180, 194, 214, 0.28);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.user-pagination button.active {
+  background: #334966;
+  border-color: #334966;
+}
+
+.user-booking-detail:empty {
+  display: none;
 }
 
 .user-booking-card {
@@ -781,11 +1143,31 @@ body.user-body #userBookingsView .user-booking-empty {
   justify-content: center;
   min-width: 64px;
   padding: 6px 10px;
-  border-radius: 6px;
-  background: #3ea74c;
+  border-radius: 999px;
   color: #ffffff;
   font-size: 0.82rem;
   font-weight: 800;
+}
+
+.user-booking-status--requested {
+  background: #2d57b8;
+}
+
+.user-booking-status--accepted {
+  background: #39bf5b;
+}
+
+.user-booking-status--pending {
+  background: #2d57b8;
+}
+
+.user-booking-status--completed {
+  background: #39bf5b;
+}
+
+.user-booking-status--cancelled,
+.user-booking-status--canceled {
+  background: #c54d4d;
 }
 
 .user-booking-reference {
@@ -887,9 +1269,32 @@ body.user-body #userBookingsView .user-booking-empty {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+@media (max-width: 980px) {
+  .user-bookings-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .user-table-head-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .userTable {
+    min-width: 720px;
+  }
+
+  .user-table-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 .user-booking-empty,
 .user-booking-photos-inline p {
   margin: 0;
+}
+
+.user-booking-empty-row td {
+  padding: 18px 14px;
 }
 
 body.user-body :is(#userBookingsView, #userResolutionView) .bookings-section--resolution {
@@ -989,11 +1394,13 @@ body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-
 }
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-back {
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: transparent;
+  border: 0;
+  background: #5a6f90;
   color: #ffffff;
   border-radius: 999px;
-  padding: 8px 14px;
+  padding: 12px 24px;
+  min-height: 46px;
+  font-weight: 700;
   cursor: pointer;
 }
 
@@ -1070,6 +1477,17 @@ body.user-body :is(#userBookingsView, #userResolutionView) #userResolutionCompla
   background: #4f627b;
   border-color: #4f627b;
   color: #ffffff;
+}
+
+body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .primary {
+  border: 0;
+  background: #5a6f90;
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 12px 24px;
+  min-height: 46px;
+  font-weight: 700;
+  box-shadow: none;
 }
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case-view {
@@ -1163,7 +1581,18 @@ body.user-body #userResolutionView .settings-header p {
 }
 
 body.user-body #userResolutionOverview {
-  background: #0d1220;
+  background: rgba(34, 43, 58, 0.96);
+}
+
+body.user-body .settings-card.user-resolution-card {
+  display: grid;
+  gap: 15px;
+}
+
+body.user-body #userResolutionView .userResolutionLayout {
+  display: grid;
+  grid-template-rows: auto auto;
+  gap: 15px;
 }
 
 body.user-body #userResolutionView .mechanic-resolution-layout {
@@ -1175,7 +1604,7 @@ body.user-body #userResolutionView .mechanic-resolution-layout {
 body.user-body #userResolutionView .mechanic-resolution-card {
   border: 1px solid #ffffff;
   border-radius: 22px;
-  background: #0d1220;
+  background: rgba(34, 43, 58, 0.96);
   overflow: hidden;
 }
 
@@ -1317,20 +1746,16 @@ body.user-body #userResolutionView .mechanic-resolution-link {
   grid-area: divider-profile;
 }
 
-.user-account-layout > .settings-divider:nth-of-type(4) {
-  grid-area: divider-bottom;
-}
-
-.user-account-layout > .settings-divider:nth-of-type(5) {
-  grid-area: divider-final;
-}
-
 .account-section--contacts {
   grid-area: contacts;
 }
 
 .account-section--role {
   grid-area: role;
+}
+
+.user-account-layout > .settings-divider:nth-of-type(4) {
+  grid-area: divider-bottom;
 }
 
 .account-section--role .settings-row {
@@ -1342,6 +1767,10 @@ body.user-body #userResolutionView .mechanic-resolution-link {
   grid-area: integration;
 }
 
+.user-account-layout > .settings-divider:nth-of-type(5) {
+  grid-area: divider-final;
+}
+
 body.user-body #userAccountView .settings-header p,
 body.user-body #userAccountView .settings-row p,
 body.user-body #userAccountView .settings-meta p,
@@ -1349,6 +1778,28 @@ body.user-body #userAccountView .account-section p,
 body.user-body #userAccountView .account-section h4,
 body.user-body #userAccountView .account-section span {
   color: #ffffff;
+}
+
+body.user-body #userAccountView .account-section h4,
+body.user-body #userAccountView .settings-meta h4 {
+  font-size: 1.4rem;
+  text-transform: none;
+  letter-spacing: normal;
+  opacity: 1;
+}
+
+body.user-body #userAccountView .account-section p,
+body.user-body #userAccountView .settings-meta p {
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.4;
+  opacity: 0.92;
+}
+
+body.user-body #userAccountView .settings-meta,
+body.user-body #userAccountView .account-section > div {
+  display: grid;
+  gap: 10px;
 }
 
 body.user-body #userAccountView .settings-divider {
@@ -1364,6 +1815,12 @@ body.user-body #userAccountView .settings-row {
 body.user-body #userAccountView .settings-avatar {
   background: #d5def7;
   color: #334085;
+}
+
+body.user-body #userAccountView .settings-avatar-lg {
+  width: 140px;
+  height: 140px;
+  border-radius: 36px;
 }
 
 @media (max-width: 980px) {
@@ -1405,6 +1862,10 @@ body.user-body #userDashboardView .user-verify-text,
 body.user-body #userDashboardView .user-car-meta span,
 body.user-body #userDashboardView .form-error {
   color: #a9b6cb;
+}
+
+body.user-body #userDashboardView .user-car-meta span {
+  color: #0f172a;
 }
 
 body.user-body #userDashboardView .user-quick-quote label {
@@ -1467,11 +1928,10 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
 .user-panel {
   display: grid;
   gap: 14px;
-  background: linear-gradient(180deg, rgba(122, 145, 182, 0.24), rgba(55, 68, 92, 0.3));
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(34, 43, 58, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 14px;
   box-shadow: 0 18px 36px rgba(5, 10, 18, 0.24);
-  backdrop-filter: blur(16px);
   padding: 16px;
   align-self: start;
 }
@@ -1481,7 +1941,7 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
 }
 
 .dashboard-section--add-form {
-  width: min(720px, 100%);
+  width: min(360px, 100%);
   margin: 0 auto;
 }
 
@@ -1524,11 +1984,6 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
 .user-resolution-layout {
   grid-template-areas:
     "card";
-}
-
-.user-settings-layout {
-  grid-template-areas:
-    "subnav panel";
 }
 
 .user-car-list {
@@ -1671,11 +2126,12 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.92);
   border-radius: 999px;
   padding: 3px 10px;
   font-size: 0.82rem;
-  color: #d5def7;
+  background: #ffffff;
+  color: #0f172a;
 }
 
 .user-car-meta span i {
@@ -1684,7 +2140,7 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
   justify-content: center;
   font-style: normal;
   line-height: 1;
-  opacity: 0.9;
+  opacity: 0.85;
 }
 
 .user-car-status {
@@ -1738,6 +2194,7 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
 }
 
 .user-add-vehicle input {
+  width: 100%;
   border: 1px solid rgba(15, 23, 42, 0.2);
   border-radius: 10px;
   padding: 10px 12px;
@@ -1765,20 +2222,10 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
 .user-vehicle-layout {
   display: grid;
   grid-template-areas:
-    "welcome"
-    "divider-top"
     "heading"
     "meta"
     "cards";
   gap: 30px;
-}
-
-.vehicle-section--welcome {
-  grid-area: welcome;
-}
-
-.user-vehicle-layout > .settings-divider {
-  grid-area: divider-top;
 }
 
 body.user-body #userVehicleView .settings-divider {
@@ -1790,7 +2237,6 @@ body.user-body #userVehicleView .settings-header h2,
 body.user-body #userVehicleView .settings-header p,
 body.user-body #userVehicleView .user-welcome-corner,
 body.user-body #userVehicleView .user-welcome-corner-subtitle,
-body.user-body #userVehicleView .user-vehicle-pills span,
 body.user-body #userVehicleView .user-vehicle-info-copy strong,
 body.user-body #userVehicleView .user-vehicle-info-copy p,
 body.user-body #userVehicleView .user-vehicle-info-arrow,
@@ -1921,7 +2367,25 @@ body.user-body #userVehicleView .user-reg-badge {
   border: 1px solid #ffffff;
   border-radius: 999px;
   padding: 8px 14px;
-  color: #eaf0fb;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+body.user-body #userVehicleView .user-vehicle-pills span,
+body.user-body #userVehicleView .user-vehicle-pills span i {
+  color: #0f172a;
+}
+
+.user-vehicle-pills span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.user-vehicle-pills span i {
+  font-style: normal;
+  line-height: 1;
+  opacity: 0.85;
 }
 
 .user-vehicle-cards {
@@ -2214,7 +2678,7 @@ body.user-body #userVehicleView .user-reg-badge {
 .user-quick-quote {
   display: grid;
   gap: 10px;
-  width: min(720px, 100%);
+  width: min(360px, 100%);
   margin: 0 auto;
 }
 
@@ -2302,12 +2766,17 @@ body.user-body #userVehicleView .user-reg-badge {
 
 @media (max-width: 768px) {
   .user-settings-layout {
-    grid-template-areas:
-      "welcome"
-      "divider"
-      "subnav"
-      "panel";
     grid-template-columns: 1fr;
+  }
+
+  body.user-body #userSettingsView .user-settings-panel-head {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  body.user-body #userSettingsView .user-settings-tabs {
+    justify-self: start;
+    flex-wrap: wrap;
   }
 
   body.user-body .main-header.general-header {
@@ -2412,6 +2881,9 @@ body.user-body #userVehicleView .user-reg-badge {
   }
 }
   
+
+
+
 
 
 

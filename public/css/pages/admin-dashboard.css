@@ -12,20 +12,15 @@ body.admin-body .page-shell-content {
 
 body.admin-body .primari-shell {
   min-height: 0;
-  align-content: start;
-}
-
-body.admin-body .primari-shell {
-  background: #1f2937;
 }
 
 #adminPage.mainLayout {
     display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 0;
-  align-items: stretch;
-  border-radius: 15px;
-  overflow: hidden;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0;
+    align-items: stretch;
+    border-radius: 15px 15px 0 0;
+    overflow: hidden;
 }
 
 #adminPage .mainSection {
@@ -37,9 +32,10 @@ body.admin-body .primari-shell {
   height: auto;
   align-self: stretch;
   background: rgba(25, 31, 42, 0.96);
-  border: 1px solid #ffffff;
+  border: 2px solid #ffffff;
   border-left: 0;
-  border-radius: 0 15px 15px 0;
+  border-bottom: 0;
+  border-radius: 0 15px 0 0;
 }
 
 #adminPage .mainSection > .admin-dashboard-hero {
@@ -80,10 +76,13 @@ body.admin-body .primari-shell {
 
 #adminPage .rail-base {
   width: 70px;
+  min-width: 70px;
+  min-height: auto;
   background: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-right: 0;
-  border-radius: 15px 0 0 15px;
+  border-bottom: 0;
+  border-radius: 15px 0 0 0;
   color: #1b2430;
   overflow: hidden;
   transition: width 0.22s ease;

@@ -693,7 +693,7 @@ header.main-header:not(.home-header):not(.general-header):not(.basic-header) {
   align-items: center;
   max-height: 70px;
   justify-content: space-between;
-  gap: 12px;
+  gap: 24px;
 }
 
 .settings-header h2 {
@@ -1473,7 +1473,7 @@ body.admin-body .customer-header-menu-btn:hover {
   display: grid;
   grid-template-rows: auto 1fr auto;
   gap: 18px;
-  min-height: calc(100vh - 16px);
+  min-height: auto;
 }
 
 .rail-brand {

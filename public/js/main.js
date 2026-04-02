@@ -5532,7 +5532,8 @@ if (userPage) {
   const userSettingsAddressInput = document.getElementById("userSettingsAddressInput");
   const userSettingsContactSave = document.getElementById("userSettingsContactSave");
   const userSettingsContactMessage = document.getElementById("userSettingsContactMessage");
-  const settingsSubnavLinks = document.querySelectorAll(".settings-subnav-link");
+  const settingsSubnavLinks = document.querySelectorAll(".user-settings-tab-link");
+  const userSettingsPanelTitle = document.getElementById("userSettingsPanelTitle");
   const userSettingsGeneral = document.getElementById("userSettingsGeneral");
   const userSettingsNotifications = document.getElementById("userSettingsNotifications");
   const userSettingsSecurity = document.getElementById("userSettingsSecurity");
@@ -5570,6 +5571,16 @@ if (userPage) {
   const userBookingsView = document.getElementById("userBookingsView");
   const userResolutionView = document.getElementById("userResolutionView");
   const userBookingsList = document.getElementById("userBookingsList");
+  const userBookingsTableHead = document.querySelector("#userBookingsView .user-bookings-table-row--head");
+  const userBookingsSearch = document.getElementById("userBookingsSearch");
+  const userBookingsTypeFilter = document.getElementById("userBookingsTypeFilter");
+  const userBookingsStatusFilter = document.getElementById("userBookingsStatusFilter");
+  const userBookingsDateFilter = document.getElementById("userBookingsDateFilter");
+  const userBookingsRowsPerPage = document.getElementById("userBookingsRowsPerPage");
+  const userBookingsPagination = document.getElementById("userBookingsPagination");
+  const userBookingsExportBtn = document.getElementById("userBookingsExportBtn");
+  const userBookingsFooterCount = document.getElementById("userBookingsFooterCount");
+  const userBookingDetail = document.getElementById("userBookingDetail");
   const userBookingsWelcomeSection = document.querySelector("#userBookingsView .bookings-section--welcome");
   const userBookingsCardSection = document.querySelector("#userBookingsView .bookings-section--card");
   const userResolutionOverview = document.getElementById("userResolutionOverview");
@@ -5715,6 +5726,13 @@ if (userPage) {
     if (userHeroSectionTitle) userHeroSectionTitle.textContent = current.title;
     if (userHeroSectionSubtitle) userHeroSectionSubtitle.textContent = current.subtitle;
   };
+
+  const setVehiclePill = (element, icon, text) => {
+    if (!element) return;
+    const value = String(text || "-");
+    element.innerHTML = `<i aria-hidden="true">${icon}</i><span>${value}</span>`;
+  };
+
 
   const settingsFieldConfig = {
     full_name: {
@@ -6118,9 +6136,9 @@ if (userPage) {
     if (!selectedVehicle) {
       if (userVehicleTitle) userVehicleTitle.textContent = "No vehicle selected";
       if (userVehicleRegBadge) userVehicleRegBadge.textContent = "-";
-      if (userVehicleFuel) userVehicleFuel.textContent = "-";
-      if (userVehicleAge) userVehicleAge.textContent = "-";
-      if (userVehicleMileage) userVehicleMileage.textContent = "-";
+      setVehiclePill(userVehicleFuel, "⛽", "-");
+      setVehiclePill(userVehicleAge, "🗓", "-");
+      setVehiclePill(userVehicleMileage, "◉", "-");
       if (userVehicleMotStatus) userVehicleMotStatus.textContent = "MOT status not available";
       if (userVehicleTaxStatus) userVehicleTaxStatus.textContent = "Tax status not available";
       if (userVehicleMileageStatus) userVehicleMileageStatus.textContent = "-";
@@ -6153,9 +6171,9 @@ if (userPage) {
 
     if (userVehicleTitle) userVehicleTitle.textContent = [make, model].filter(Boolean).join(" ") || selectedVehicle.registrationNumber;
     if (userVehicleRegBadge) userVehicleRegBadge.textContent = selectedVehicle.registrationNumber || "-";
-    if (userVehicleFuel) userVehicleFuel.textContent = selectedVehicle.fuelType || "-";
-    if (userVehicleAge) userVehicleAge.textContent = age;
-    if (userVehicleMileage) userVehicleMileage.textContent = mileage;
+    setVehiclePill(userVehicleFuel, "⛽", selectedVehicle.fuelType || "-");
+    setVehiclePill(userVehicleAge, "🗓", age);
+    setVehiclePill(userVehicleMileage, "◉", mileage);
     if (userVehicleMotStatus) userVehicleMotStatus.textContent = selectedVehicle.motStatus || "MOT status not available";
     if (userVehicleTaxStatus) userVehicleTaxStatus.textContent = selectedVehicle.taxStatus || "Tax status not available";
     if (userVehicleMileageStatus) userVehicleMileageStatus.textContent = mileage;
@@ -6163,30 +6181,87 @@ if (userPage) {
     saveSelectedVehicleReg(selectedVehicle.registrationNumber);
   };
 
-  const renderUserBookings = (bookings) => {
-    if (!userBookingsList) return;
-    const user = getUserProfile() || {};
-    userBookingsList.innerHTML = "";
+  let activeUserBookingId = null;
+  let userBookingsPage = 1;
 
-    if (!Array.isArray(bookings) || !bookings.length) {
-      const emptyState = document.createElement("p");
-      emptyState.className = "user-booking-empty";
-      emptyState.textContent = "No bookings to show yet.";
-      userBookingsList.appendChild(emptyState);
-      return;
-    }
+  const setSimpleOptions = (select, labels, defaultLabel) => {
+    if (!select) return;
+    const current = select.value || "all";
+    const values = Array.from(new Set(labels.filter(Boolean)));
+    select.innerHTML = "";
+    const allOption = document.createElement("option");
+    allOption.value = "all";
+    allOption.textContent = defaultLabel;
+    select.appendChild(allOption);
+    values.forEach((label) => {
+      const option = document.createElement("option");
+      option.value = label;
+      option.textContent = label;
+      select.appendChild(option);
+    });
+    select.value = values.includes(current) ? current : "all";
+  };
 
-    bookings.forEach((booking) => {
-      const addressLines = [booking.address?.line1, booking.address?.line2, booking.address?.city, booking.address?.postal_code].filter(Boolean);
-      const mechanicName = booking.mechanic || "Unassigned";
-      const vehicleLabel = [booking.vehicle?.make, booking.vehicle?.model, booking.vehicle?.yearOfManufacture].filter(Boolean).join(" ");
-      const parts = booking.items.flatMap((item) => (Array.isArray(item.parts) ? item.parts : []));
+  const getUserBookingType = (booking) => booking?.items?.[0]?.name || "General";
+  const getBookingStatusClass = (booking) => {
+    const label = formatBookingStatus(booking.status, booking.payment?.status);
+    return String(label || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-");
+  };
 
-      const card = document.createElement("article");
-      card.className = "user-booking-card";
-      card.innerHTML = `
+  const formatDate = (value) => {
+    if (!value) return "-";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "-";
+    return date.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      year: "numeric"
+    });
+  };
+
+  const getFilteredUserBookings = (bookingsSource = latestUserBookings) => {
+    const term = String(userBookingsSearch?.value || "").trim().toLowerCase();
+    const typeValue = userBookingsTypeFilter?.value || "all";
+    const statusValue = userBookingsStatusFilter?.value || "all";
+    const dateValue = userBookingsDateFilter?.value || "all";
+    const now = Date.now();
+
+    const source = Array.isArray(bookingsSource) ? bookingsSource : [];
+
+    return source.filter((booking) => {
+      const matchesTerm =
+        !term ||
+        String(booking.reference || "").toLowerCase().includes(term) ||
+        String(getUserBookingType(booking)).toLowerCase().includes(term);
+      const matchesType = typeValue === "all" || getUserBookingType(booking) === typeValue;
+      const matchesStatus = statusValue === "all" || formatBookingStatus(booking.status, booking.payment?.status) === statusValue;
+
+      let matchesDate = true;
+      if (dateValue !== "all") {
+        const created = new Date(booking.created_at);
+        const ageDays = Number.isNaN(created.getTime()) ? Number.POSITIVE_INFINITY : (now - created.getTime()) / 86400000;
+        if (dateValue === "7d") matchesDate = ageDays <= 7;
+        if (dateValue === "30d") matchesDate = ageDays <= 30;
+        if (dateValue === "90d") matchesDate = ageDays <= 90;
+      }
+
+      return matchesTerm && matchesType && matchesStatus && matchesDate;
+    });
+  };
+
+  const buildUserBookingDetailCard = (booking, user) => {
+    const addressLines = [booking.address?.line1, booking.address?.line2, booking.address?.city, booking.address?.postal_code].filter(Boolean);
+    const mechanicName = booking.mechanic || "Unassigned";
+    const vehicleLabel = [booking.vehicle?.make, booking.vehicle?.model, booking.vehicle?.yearOfManufacture].filter(Boolean).join(" ");
+    const parts = booking.items.flatMap((item) => (Array.isArray(item.parts) ? item.parts : []));
+
+    return `
+      <article class="user-booking-card">
         <div class="user-booking-toolbar">
-          <span class="user-booking-status">${formatBookingStatus(booking.status, booking.payment?.status)}</span>
+          <span class="user-booking-status user-booking-status--${getBookingStatusClass(booking)}">${formatBookingStatus(booking.status, booking.payment?.status)}</span>
           <strong class="user-booking-reference">Reference: ${booking.reference}</strong>
           <div class="user-booking-actions-wrap">
             <button class="primary user-booking-actions" type="button" data-booking-actions-toggle="${booking.id}">Actions</button>
@@ -6232,9 +6307,90 @@ if (userPage) {
           <h4>Photos</h4>
           <p>No booking photos available.</p>
         </div>
+      </article>
+    `;
+  };
+
+  const renderUserBookings = (bookings) => {
+    if (!userBookingsList || !userBookingDetail) return;
+    const user = getUserProfile() || {};
+    const bookingList = Array.isArray(bookings) ? bookings : latestUserBookings;
+    userBookingsList.innerHTML = "";
+    userBookingDetail.innerHTML = "";
+
+    if (!Array.isArray(bookingList) || !bookingList.length) {
+      const emptyRow = document.createElement("tr");
+      emptyRow.className = "user-booking-empty-row";
+      emptyRow.innerHTML = '<td colspan="5" class="user-booking-empty">No bookings to show yet.</td>';
+      userBookingsList.appendChild(emptyRow);
+      userBookingDetail.innerHTML = "";
+      if (userBookingsFooterCount) userBookingsFooterCount.textContent = "0 bookings";
+      return;
+    }
+
+    setSimpleOptions(userBookingsTypeFilter, bookingList.map(getUserBookingType), "Type");
+    setSimpleOptions(
+      userBookingsStatusFilter,
+      bookingList.map((booking) => formatBookingStatus(booking.status, booking.payment?.status)),
+      "Status"
+    );
+
+    const filteredBookings = getFilteredUserBookings(bookingList);
+    const pageSize = Number(userBookingsRowsPerPage?.value || 10);
+    const total = filteredBookings.length;
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    userBookingsPage = Math.min(userBookingsPage, totalPages);
+    const startIndex = total ? (userBookingsPage - 1) * pageSize : 0;
+    const pageBookings = filteredBookings.slice(startIndex, startIndex + pageSize);
+
+    if (!pageBookings.length) {
+      const emptyRow = document.createElement("tr");
+      emptyRow.className = "user-booking-empty-row";
+      emptyRow.innerHTML = `<td colspan="5" class="user-booking-empty">No bookings to show yet.</td>`;
+      userBookingsList.appendChild(emptyRow);
+      userBookingDetail.innerHTML = "";
+      if (userBookingsFooterCount) userBookingsFooterCount.textContent = `0-0 of ${total} rows`;
+      if (userBookingsPagination) userBookingsPagination.innerHTML = "";
+      return;
+    }
+
+    const selectedId = pageBookings.some((booking) => booking.id === activeUserBookingId) ? activeUserBookingId : null;
+    activeUserBookingId = selectedId;
+
+    pageBookings.forEach((booking) => {
+      const vehicleLabel = [booking.vehicle?.make, booking.vehicle?.model, booking.vehicle?.registrationNumber].filter(Boolean).join(" · ") || "-";
+      const mechanicLabel = booking.mechanic || "Unassigned";
+      const item = document.createElement("tr");
+      item.className = `user-booking-summary-card${booking.id === selectedId ? " is-active" : ""}`;
+      item.dataset.bookingSummaryId = booking.id;
+      item.innerHTML = `
+        <td><strong class="user-booking-summary-reference">${booking.reference}</strong></td>
+        <td><span class="user-booking-status user-booking-status--${getBookingStatusClass(booking)}">${formatBookingStatus(booking.status, booking.payment?.status)}</span></td>
+        <td><span class="user-booking-summary-vehicle">${vehicleLabel}</span></td>
+        <td><span class="user-booking-summary-mechanic">${mechanicLabel}</span></td>
+        <td><span class="user-booking-summary-date">${formatDate(booking.created_at)}</span></td>
       `;
-      userBookingsList.appendChild(card);
+      userBookingsList.appendChild(item);
     });
+
+    const selectedBooking = filteredBookings.find((booking) => booking.id === selectedId) || null;
+    userBookingDetail.innerHTML = selectedBooking ? buildUserBookingDetailCard(selectedBooking, user) : "";
+    if (userBookingsFooterCount) {
+      const from = startIndex + 1;
+      const to = startIndex + pageBookings.length;
+      userBookingsFooterCount.textContent = `${from}-${to} of ${total} rows`;
+    }
+    if (userBookingsPagination) {
+      userBookingsPagination.innerHTML = "";
+      for (let page = 1; page <= totalPages; page += 1) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = String(page);
+        button.dataset.userBookingsPage = String(page);
+        button.classList.toggle("active", page === userBookingsPage);
+        userBookingsPagination.appendChild(button);
+      }
+    }
   };
 
   let dashboardVehicles = getDashboardVehicles();
@@ -6262,12 +6418,18 @@ if (userPage) {
     if (!userToken || !userBookingsList) return;
     try {
       const bookings = await apiAuth("/api/users/me/bookings", userToken);
-      renderUserBookings(bookings);
       latestUserBookings = Array.isArray(bookings) ? bookings : [];
-      await syncUserResolutionOverview();
+      renderUserBookings(latestUserBookings);
     } catch (_err) {
+      console.error("Unable to load user bookings", _err);
       renderUserBookings([]);
       latestUserBookings = [];
+      return;
+    }
+
+    try {
+      await syncUserResolutionOverview();
+    } catch (_err) {
       renderUserResolutionCaseRows(userResolutionCasesTable, []);
     }
   };
@@ -6344,11 +6506,11 @@ if (userPage) {
     const isMessage = view === "message";
     const isCase = view === "case";
     userBookingsCardSection?.classList.toggle("is-hidden", isMessage || isCase);
-    userResolutionOverview?.classList.toggle("is-hidden", !isOverview);
+    userResolutionOverview?.classList.toggle("is-hidden", !(isOverview || isMessage || isCase));
     userResolutionMessageView?.classList.toggle("is-hidden", !isMessage);
     userResolutionCaseView?.classList.toggle("is-hidden", !isCase);
     if (isMessage || isCase) {
-      userBookingsView?.scrollIntoView({ block: "start", behavior: "smooth" });
+      userResolutionView?.scrollIntoView({ block: "start", behavior: "smooth" });
     }
   };
 
@@ -6501,7 +6663,12 @@ if (userPage) {
           await apiAuth(`/api/users/me/vehicles/${encodeURIComponent(reg)}`, userToken, {
             method: "DELETE"
           });
-        } catch (_err) {
+        } catch (err) {
+          const message =
+            err?.error?.message ||
+            err?.message ||
+            "This vehicle cannot be removed because it is linked to existing bookings.";
+          window.alert(message);
           return;
         }
       }
@@ -6515,6 +6682,59 @@ if (userPage) {
 
   [userCarList].forEach((listEl) => {
     listEl?.addEventListener("click", handleVehicleCardAction);
+  });
+
+  userBookingsList?.addEventListener("click", (event) => {
+    const summaryCard = event.target.closest("[data-booking-summary-id]");
+    if (!summaryCard || !latestUserBookings.length) return;
+    activeUserBookingId = Number(summaryCard.dataset.bookingSummaryId);
+    renderUserBookings(latestUserBookings);
+  });
+
+  userBookingsPagination?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-user-bookings-page]");
+    if (!button) return;
+    userBookingsPage = Number(button.dataset.userBookingsPage || 1);
+    renderUserBookings(latestUserBookings);
+  });
+
+  [userBookingsSearch, userBookingsTypeFilter, userBookingsStatusFilter, userBookingsDateFilter].forEach((control) => {
+    control?.addEventListener("input", () => {
+      userBookingsPage = 1;
+      renderUserBookings(latestUserBookings);
+    });
+    control?.addEventListener("change", () => {
+      userBookingsPage = 1;
+      renderUserBookings(latestUserBookings);
+    });
+  });
+
+  userBookingsRowsPerPage?.addEventListener("change", () => {
+    userBookingsPage = 1;
+    renderUserBookings(latestUserBookings);
+  });
+
+  userBookingsExportBtn?.addEventListener("click", () => {
+    const rows = getFilteredUserBookings();
+    const csv = [
+      ["Reference", "Status", "Created"],
+      ...rows.map((booking) => [
+        booking.reference,
+        formatBookingStatus(booking.status, booking.payment?.status),
+        formatDate(booking.created_at)
+      ])
+    ]
+      .map((row) => row.map((value) => `"${String(value ?? "").replaceAll('"', '""')}"`).join(","))
+      .join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "user-bookings.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
   });
 
   userBookingsList?.addEventListener("click", async (event) => {
@@ -6532,6 +6752,28 @@ if (userPage) {
       const bookingId = Number(resolutionMessage.dataset.userResolutionMessage);
       if (!bookingId) return;
       userBookingsList.querySelectorAll(".user-booking-actions-panel").forEach((item) => item.classList.add("is-hidden"));
+      pendingUserResolutionOrigin = "resolution";
+      setUserView("resolution");
+      setActiveUserNav("resolution");
+      await openUserResolutionMessage(bookingId, "general");
+    }
+  });
+
+  userBookingDetail?.addEventListener("click", async (event) => {
+    const toggle = event.target.closest("[data-booking-actions-toggle]");
+    if (toggle) {
+      const panel = toggle.parentElement?.querySelector(".user-booking-actions-panel");
+      const shouldOpen = panel?.classList.contains("is-hidden");
+      document.querySelectorAll(".user-booking-actions-panel").forEach((menu) => menu.classList.add("is-hidden"));
+      if (panel && shouldOpen) panel.classList.remove("is-hidden");
+      return;
+    }
+
+    const resolutionButton = event.target.closest("[data-user-resolution-message]");
+    if (resolutionButton) {
+      const bookingId = Number(resolutionButton.dataset.userResolutionMessage);
+      if (!bookingId) return;
+      document.querySelectorAll(".user-booking-actions-panel").forEach((menu) => menu.classList.add("is-hidden"));
       pendingUserResolutionOrigin = "resolution";
       setUserView("resolution");
       setActiveUserNav("resolution");
@@ -6572,6 +6814,10 @@ if (userPage) {
     userSettingsGeneral.classList.toggle("is-hidden", view !== "general");
     userSettingsNotifications.classList.toggle("is-hidden", view !== "notifications");
     userSettingsSecurity.classList.toggle("is-hidden", view !== "security");
+    if (userSettingsPanelTitle) {
+      userSettingsPanelTitle.textContent =
+        view === "notifications" ? "Notifications" : view === "security" ? "Login & security" : "General";
+    }
   };
 
   setUserResolutionSubview("overview");
@@ -8281,4 +8527,8 @@ if (document.body.classList.contains("mechanic-welcome")) {
     }
   });
 }
+
+
+
+
 

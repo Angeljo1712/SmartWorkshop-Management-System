@@ -87,10 +87,9 @@ block content
               section.user-view#userDashboardView
                 .userDashboardLayout
                   .user-panel
-                    .settings-header
-                      div
-                        h2 Your Cars
-                        p Save up to 100 vehicles in your account.
+                    .settings-header.user-panel-head
+                      h2 Your Cars
+                      p Save up to 50 vehicles in your account.
                     .user-car-list#userCarList
                       .user-car-summary
                         .user-car-top
@@ -104,8 +103,6 @@ block content
                           p Your MOT is valid · Due in 28 weeks
                           p Taxed · Due in 24 weeks
 
-                  .settings-divider
-
                   .user-panel
                     h3.user-section-title Add another vehicle
                     .dashboard-section.dashboard-section--add-form
@@ -113,8 +110,6 @@ block content
                         input#userDashboardCarReg(type="text" placeholder="Enter Car Reg")
                         button.primary#userAddVehicleBtn(type="button") Add Vehicle
                       p.form-error#userDashboardCarError(role="alert" aria-live="polite")
-
-                  .settings-divider
 
                   .user-panel
                     .dashboard-section.dashboard-section--quote
@@ -150,13 +145,13 @@ block content
                         .user-welcome-corner-wrap
                           h2.user-welcome-corner Account Details
                           p.user-welcome-corner-subtitle Review your profile information.
-  
+
                     .settings-divider
   
                     .account-section.account-section--avatar
                       .settings-photo-row
                         .settings-avatar.settings-avatar-lg#userSettingsAvatar AG
-  
+
                     .settings-divider
   
                     .account-section.account-section--profile
@@ -165,7 +160,7 @@ block content
                           h4 Full Name
                           p#userSettingsName Angel Gomes
                           span#userSettingsRoleBadge.is-hidden CUSTOMER
-  
+
                     .settings-divider
   
                     .account-section.account-section--contacts
@@ -175,14 +170,14 @@ block content
                         p#userSettingsEmailDetail Email: admin@smartworkshop.local
                         p#userSettingsUsername Username: -
                         p#userSettingsAddress Address: -
-  
+
                     .settings-divider
   
                     .account-section.account-section--role
                       div
                         h4 Role
                         p#userSettingsRole ADMIN
-  
+
                     .settings-divider
   
                     .account-section.account-section--integration
@@ -244,45 +239,117 @@ block content
                         .user-vehicle-info-arrow ›
   
               section.user-view.is-hidden#userBookingsView
-                .settings-card.user-bookings-card
-                  .user-bookings-layout
-                    .dashboard-section.dashboard-section--welcome.bookings-section--welcome
-                      .settings-header
-                        div
-                          h2 Welcome back
-                          p.user-welcome-name User
-                        .user-welcome-corner-wrap
-                          h2.user-welcome-corner Your bookings
-                          p.user-welcome-corner-subtitle Review of your bookings
-  
-                    .settings-divider.bookings-section--divider
-  
-                    .bookings-section.bookings-section--card
-                      #userBookingsList.user-bookings-list
+                .user-bookings-layout
+                  .userTableLayout
+                    .user-table-head
+                      .user-table-head-filters
+                        .user-head-control.user-head-control--search
+                          input#userBookingsSearch(type="search" placeholder="Search")
+                        .user-head-control.user-head-control--role
+                          select#userBookingsTypeFilter
+                            option(value="all") Type
+                        .user-head-control.user-head-control--status
+                          select#userBookingsStatusFilter
+                            option(value="all") Status
+                        .user-head-control.user-head-control--date
+                          select#userBookingsDateFilter
+                            option(value="all") All time
+                        button.secondary.user-bookings-export#userBookingsExportBtn(type="button")
+                          span Export
+                    .user-table-wrap
+                      table.userTable
+                        thead
+                          tr
+                            th Reference
+                            th Status
+                            th Vehicle
+                            th Mechanic
+                            th Created
+                        tbody#userBookingsList
+                    .user-table-footer
+                      .user-table-footer-meta
+                        label(for="userBookingsRowsPerPage") Rows per page
+                        select#userBookingsRowsPerPage
+                          option(value="10" selected) 10
+                          option(value="20") 20
+                          option(value="50") 50
+                        span#userBookingsFooterCount No bookings
+                      .user-pagination#userBookingsPagination
+                  .user-bookings-detail
+                    #userBookingDetail.user-booking-detail
   
               section.user-view.is-hidden#userResolutionView
-                .settings-card.user-resolution-card#userResolutionOverview
-                  .user-resolution-layout
-                    .dashboard-section.dashboard-section--welcome.resolution-section--welcome
-                      .settings-header
-                        div
-                          h2 Welcome back
-                          p.user-welcome-name User
-                        .user-welcome-corner-wrap
-                          h2.user-welcome-corner Resolution center
-                          p.user-welcome-corner-subtitle Manage mechanic issues and active resolutions.
-  
-                    .settings-divider.resolution-section--divider
-  
-                    .resolution-section.resolution-section--card
-                      .mechanic-resolution-layout
-                        .mechanic-resolution-card
-                          h3 Current cases
-                          .mechanic-resolution-card-body
-                            .mechanic-resolution-tabs
-                              button.mechanic-resolution-tab.is-active(type="button" data-user-resolution-filter="all") All
-                              button.mechanic-resolution-tab(type="button" data-user-resolution-filter="complaint") Complaint
-                              button.mechanic-resolution-tab(type="button" data-user-resolution-filter="general") General
+                .userResolutionLayout
+                  .settings-card.user-resolution-card#userResolutionOverview
+                    .user-resolution-layout
+                      .dashboard-section.dashboard-section--welcome.resolution-section--welcome
+                        .settings-header
+                          div
+                            h2 Welcome back
+                            p.user-welcome-name User
+                          .user-welcome-corner-wrap
+                            h2.user-welcome-corner Resolution center
+                            p.user-welcome-corner-subtitle Manage mechanic issues and active resolutions.
+    
+                      .settings-divider.resolution-section--divider
+    
+                      .resolution-section.resolution-section--card
+                        .mechanic-resolution-layout
+                          .mechanic-resolution-card
+                            h3 Current cases
+                            .mechanic-resolution-card-body
+                              .mechanic-resolution-tabs
+                                button.mechanic-resolution-tab.is-active(type="button" data-user-resolution-filter="all") All
+                                button.mechanic-resolution-tab(type="button" data-user-resolution-filter="complaint") Complaint
+                                button.mechanic-resolution-tab(type="button" data-user-resolution-filter="general") General
+                              .mechanic-resolution-table
+                                .mechanic-resolution-table-head
+                                  span Status
+                                  span Reference
+                                  span Updated at
+                                  span Subject
+                                  span
+                                #userResolutionCasesTable
+                  .settings-card.user-resolution-card.is-hidden#userResolutionMessageView
+                    .user-resolution-layout
+                      .dashboard-section.dashboard-section--welcome.resolution-section--welcome
+                        .settings-header
+                          div
+                            h2 Welcome back
+                            p.user-welcome-name User
+                          .user-welcome-corner-wrap
+                            h2.user-welcome-corner Resolution center
+                            p.user-welcome-corner-subtitle Manage mechanic issues and active resolutions.
+    
+                      .settings-divider.resolution-section--divider
+    
+                      .resolution-section.resolution-section--card
+                        .mechanic-resolution-detail
+                          .mechanic-resolution-detail-head
+                            button.mechanic-resolution-back#userResolutionBackBtn(type="button") Back
+                            h3#userResolutionDetailTitle Message mechanic regarding booking
+                          .mechanic-resolution-card
+                            .mechanic-resolution-field
+                              label(for="userResolutionIssue") Please select your issue from the list below:
+                              select#userResolutionIssue
+                                option(value="message_mechanic" data-case-type="general" selected) Message my mechanic
+                                option(value="mechanic_late" data-case-type="complaint") My mechanic is late
+                                option(value="workmanship_problem" data-case-type="complaint") Problem with workmanship
+                                option(value="charged_more_than_agreed" data-case-type="complaint") I've been charged more than agreed
+                                option(value="charged_for_unagreed_work" data-case-type="complaint") I've been charged for work that I didn't agree to
+                                option(value="mechanic_cancelled" data-case-type="complaint") Mechanic has cancelled my booking
+                                option(value="other_problem" data-case-type="complaint") Other problem
+                            p.mechanic-resolution-notice#userResolutionNotice No case has been created for this booking yet.
+                            button.primary#userResolutionGoToCase(type="button") Go to case
+                            .mechanic-resolution-complaint.is-hidden#userResolutionComplaintComposer
+                              p.mechanic-resolution-complaint-copy#userResolutionComplaintCopy
+                              textarea#userResolutionComplaintInput(rows="5" placeholder="Write your message here")
+                              .mechanic-resolution-complaint-actions
+                                button.primary#userResolutionComplaintSendBtn(type="button") Send
+                              .mechanic-resolution-complaint-footer
+                                button.secondary#userResolutionComplaintAttachBtn(type="button") Attach file(s)
+                          .mechanic-resolution-card
+                            .mechanic-resolution-card-header#userResolutionCaseListTitle Resolution cases already created for booking
                             .mechanic-resolution-table
                               .mechanic-resolution-table-head
                                 span Status
@@ -290,62 +357,14 @@ block content
                                 span Updated at
                                 span Subject
                                 span
-                              #userResolutionCasesTable
-                .settings-card.user-resolution-card.is-hidden#userResolutionMessageView
-                  .user-resolution-layout
-                    .dashboard-section.dashboard-section--welcome.resolution-section--welcome
-                      .settings-header
-                        div
-                          h2 Welcome back
-                          p.user-welcome-name User
-                        .user-welcome-corner-wrap
-                          h2.user-welcome-corner Resolution center
-                          p.user-welcome-corner-subtitle Manage mechanic issues and active resolutions.
-  
-                    .settings-divider.resolution-section--divider
-  
-                    .resolution-section.resolution-section--card
-                      .mechanic-resolution-detail
-                        .mechanic-resolution-detail-head
-                          button.mechanic-resolution-back#userResolutionBackBtn(type="button") Back
-                          h3#userResolutionDetailTitle Message mechanic regarding booking
-                        .mechanic-resolution-card
-                          .mechanic-resolution-field
-                            label(for="userResolutionIssue") Please select your issue from the list below:
-                            select#userResolutionIssue
-                              option(value="message_mechanic" data-case-type="general" selected) Message my mechanic
-                              option(value="mechanic_late" data-case-type="complaint") My mechanic is late
-                              option(value="workmanship_problem" data-case-type="complaint") Problem with workmanship
-                              option(value="charged_more_than_agreed" data-case-type="complaint") I've been charged more than agreed
-                              option(value="charged_for_unagreed_work" data-case-type="complaint") I've been charged for work that I didn't agree to
-                              option(value="mechanic_cancelled" data-case-type="complaint") Mechanic has cancelled my booking
-                              option(value="other_problem" data-case-type="complaint") Other problem
-                          p.mechanic-resolution-notice#userResolutionNotice No case has been created for this booking yet.
-                          button.primary#userResolutionGoToCase(type="button") Go to case
-                          .mechanic-resolution-complaint.is-hidden#userResolutionComplaintComposer
-                            p.mechanic-resolution-complaint-copy#userResolutionComplaintCopy
-                            textarea#userResolutionComplaintInput(rows="5" placeholder="Write your message here")
-                            .mechanic-resolution-complaint-actions
-                              button.primary#userResolutionComplaintSendBtn(type="button") Send
-                            .mechanic-resolution-complaint-footer
-                              button.secondary#userResolutionComplaintAttachBtn(type="button") Attach file(s)
-                        .mechanic-resolution-card
-                          .mechanic-resolution-card-header#userResolutionCaseListTitle Resolution cases already created for booking
-                          .mechanic-resolution-table
-                            .mechanic-resolution-table-head
-                              span Status
-                              span Reference
-                              span Updated at
-                              span Subject
-                              span
-                            #userResolutionBookingCasesTable
-  
-                .settings-card.user-resolution-card.is-hidden#userResolutionCaseView
-                  .user-resolution-layout
-                    .dashboard-section.dashboard-section--welcome.resolution-section--welcome
-                      .settings-header
-                        div
-                          h2 Welcome back
+                              #userResolutionBookingCasesTable
+    
+                  .settings-card.user-resolution-card.is-hidden#userResolutionCaseView
+                    .user-resolution-layout
+                      .dashboard-section.dashboard-section--welcome.resolution-section--welcome
+                        .settings-header
+                          div
+                            h2 Welcome back
                           p.user-welcome-name User
                         .user-welcome-corner-wrap
                           h2.user-welcome-corner Resolution center
@@ -386,120 +405,108 @@ block content
               section.user-view.is-hidden#userSettingsView
                 .settings-card.user-settings-card
                   .user-settings-layout
-                    .dashboard-section.dashboard-section--welcome.settings-section--welcome
-                      .settings-header
-                        div
-                          h2 Welcome back
-                          p.user-welcome-name User
-                        .user-welcome-corner-wrap
-                          h2.user-welcome-corner Account settings
-                          p.user-welcome-corner-subtitle Manage your profile and preferences.
-  
-                    .settings-section.settings-section--divider
-                      .settings-divider
-  
-                    .settings-section.settings-section--layout
-                      .settings-layout
-                        nav.settings-subnav
-                          button.settings-subnav-link.active(type="button" data-subview="general") General
-                          button.settings-subnav-link(type="button" data-subview="notifications") Notifications
-                          button.settings-subnav-link(type="button" data-subview="security") Login & security
-  
-                        .settings-panel
-                          section.settings-subview#userSettingsGeneral
-                            .settings-photo-row
+                    .user-settings-panel-head
+                      h2#userSettingsPanelTitle General
+                      .user-settings-tabs
+                        button.user-settings-tab-link.active(type="button" data-subview="general") General
+                        button.user-settings-tab-link(type="button" data-subview="notifications") Notifications
+                        button.user-settings-tab-link(type="button" data-subview="security") Login & security
+
+                    .setting-panel
+                      section.user-settings-subview#userSettingsGeneral
+                            .user-settings-photo-row
                               .settings-avatar.settings-avatar-lg#userSettingsAvatarSettings AG
                               button.ghost#userSettingsPhotoButton(type="button") Update
                               input.file-input#userSettingsPhotoInput(type="file" accept="image/*")
-  
+
                             .settings-divider
-  
-                            .settings-profile
+
+                            .user-settings-profile
                               .settings-meta
                                 h4 Full name
                                 p#userSettingsNameSettings Angel Gomes
                               button.secondary(type="button" data-settings-field="full_name") Update
-  
+
                             .settings-divider
-  
-                            .settings-row
+
+                            .user-settings-row
                               div
-                                .settings-contact-list
-                                  .settings-contact-item
-                                    .settings-contact-copy
-                                      span.settings-contact-label Phone
+                                .user-settings-contact-list
+                                  .user-settings-contact-item
+                                    .user-settings-contact-copy
+                                      span.user-settings-contact-label Phone
                                       p#userSettingsPhoneValueSettings -
-                                  .settings-contact-item
-                                    .settings-contact-copy
-                                      span.settings-contact-label Username
+                                  .user-settings-contact-item
+                                    .user-settings-contact-copy
+                                      span.user-settings-contact-label Username
                                       p#userSettingsUsernameValueSettings -
-                                  .settings-contact-item
-                                    .settings-contact-copy
-                                      span.settings-contact-label Email
+                                  .user-settings-contact-item
+                                    .user-settings-contact-copy
+                                      span.user-settings-contact-label Email
                                       p#userSettingsEmailValueSettings -
-                                  .settings-contact-item
-                                    .settings-contact-copy
-                                      span.settings-contact-label Address
+                                  .user-settings-contact-item
+                                    .user-settings-contact-copy
+                                      span.user-settings-contact-label Address
                                       p#userSettingsAddressValueSettings -
                                 p.form-error#userSettingsContactMessage(role="alert" aria-live="polite")
-                              .settings-contact-actions
+                              .user-settings-contact-actions
                                 button.secondary(type="button" data-settings-field="phone") Update
                                 button.secondary(type="button" data-settings-field="username") Update
                                 button.secondary(type="button" data-settings-field="email") Update
                                 button.secondary(type="button" data-settings-field="address") Update
-  
-                            .settings-row
+
+                            .user-settings-row
                               div
                                 h4 Theme
                                 p Light mode
                               button.secondary(type="button") Light mode
-  
-                            .settings-row
+
+                            .user-settings-row
                               div
                                 h4 Integration
                                 p No integrations connected
                               button.secondary(type="button") Connect
-  
-                          section.settings-subview.is-hidden#userSettingsNotifications
-                            .notifications-card
-                              .notifications-card-head
-                                h3 Email Preferences
-                              label.notifications-check(for="userNotificationsMarketing")
-                                input#userNotificationsMarketing(type="checkbox")
-                                span Don't miss out! Subscribe to get special offers/promotions and updates about our services.
-                              .notifications-actions
-                                button.ghost(type="button") Update
-  
-                          section.settings-subview.is-hidden#userSettingsSecurity
-                            .security-card
-                              .security-card-head
-                                h3 Change Password
-                              form.security-form#userSecurityPasswordForm
-                                label.security-field(for="userSecurityOldPassword")
-                                  span Old Password
-                                  input#userSecurityOldPassword(type="password" autocomplete="current-password")
-                                label.security-field(for="userSecurityNewPassword")
-                                  span New Password
-                                  input#userSecurityNewPassword(type="password" autocomplete="new-password")
-                                label.security-field(for="userSecurityConfirmPassword")
-                                  span Confirm Password
-                                  input#userSecurityConfirmPassword(type="password" autocomplete="new-password")
-                                p.form-error#userSecurityPasswordMessage(role="alert" aria-live="polite")
-                                .security-actions
-                                  button.ghost#userSecurityPasswordSubmit(type="submit") Change
-  
-                            .security-card
-                              .security-card-head
-                                h3 Two Factor Authentication
-                              .security-2fa-grid
-                                label.security-check
-                                  input#userSecurity2faEmail(type="checkbox")
-                                  span Email
-                                label.security-check
-                                  input#userSecurity2faSms(type="checkbox")
-                                  span SMS
-                              .security-actions
-                                button.secondary#userSecurity2faEnable(type="button") Enable 2FA
+
+                      section.user-settings-subview.is-hidden#userSettingsNotifications
+                        .notifications-card
+                          .notifications-card-head
+                            h3 Email Preferences
+                          label.notifications-check(for="userNotificationsMarketing")
+                            input#userNotificationsMarketing(type="checkbox")
+                            span Don't miss out! Subscribe to get special offers/promotions and updates about our services.
+                          .notifications-actions
+                            button.ghost(type="button") Update
+
+                      section.user-settings-subview.is-hidden#userSettingsSecurity
+                        .security-card
+                          .security-card-head
+                            h3 Change Password
+                          form.security-form#userSecurityPasswordForm
+                            label.security-field(for="userSecurityOldPassword")
+                              span Old Password
+                              input#userSecurityOldPassword(type="password" autocomplete="current-password")
+                            label.security-field(for="userSecurityNewPassword")
+                              span New Password
+                              input#userSecurityNewPassword(type="password" autocomplete="new-password")
+                            label.security-field(for="userSecurityConfirmPassword")
+                              span Confirm Password
+                              input#userSecurityConfirmPassword(type="password" autocomplete="new-password")
+                            p.form-error#userSecurityPasswordMessage(role="alert" aria-live="polite")
+                            .security-actions
+                              button.ghost#userSecurityPasswordSubmit(type="submit") Change
+
+                        .security-card
+                          .security-card-head
+                            h3 Two Factor Authentication
+                          .security-2fa-grid
+                            label.security-check
+                              input#userSecurity2faEmail(type="checkbox")
+                              span Email
+                            label.security-check
+                              input#userSecurity2faSms(type="checkbox")
+                              span SMS
+                          .security-actions
+                            button.secondary#userSecurity2faEnable(type="button") Enable 2FA
               .settings-edit-modal.is-hidden#userSettingsEditModal
                 .settings-edit-backdrop(data-close-modal="true")
                 .settings-edit-dialog(role="dialog" aria-modal="true" aria-labelledby="userSettingsEditTitle")
@@ -537,4 +544,7 @@ block content
                     button.secondary#userSettingsEditCancel(type="button") Cancel
                     button.ghost#userSettingsEditSave(type="button") Update
   include ../../partials/general-footer
+
+
+
 
