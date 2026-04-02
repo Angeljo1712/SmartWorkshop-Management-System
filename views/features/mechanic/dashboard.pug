@@ -615,6 +615,7 @@ block content
                         .security-card-head
                           h3 Change Password
                         form.security-form#mechanicSecurityPasswordForm
+                          input#mechanicSecurityUsername(type="text" name="username" autocomplete="username" hidden)
                           label.security-field(for="mechanicSecurityOldPassword")
                             span Old Password
                             input#mechanicSecurityOldPassword(type="password" autocomplete="current-password")

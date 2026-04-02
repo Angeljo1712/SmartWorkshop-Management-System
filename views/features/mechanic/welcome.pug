@@ -34,14 +34,14 @@ block content
           h2 Set your password
           p.subtle Finish creating your mechanic account by setting a password.
           form#setMechanicPasswordForm
-            input(type="hidden" name="email" id="mechanicPasswordEmail")
+            input(type="text" name="username" id="mechanicPasswordEmail" autocomplete="username" hidden)
             .field-grid
               label
                 span New password
-                input(type="password" name="password" id="mechanicPasswordValue" placeholder="••••••••")
+                input(type="password" name="password" id="mechanicPasswordValue" placeholder="••••••••" autocomplete="new-password")
               label
                 span Confirm password
-                input(type="password" name="confirm" id="mechanicPasswordConfirm" placeholder="••••••••")
+                input(type="password" name="confirm" id="mechanicPasswordConfirm" placeholder="••••••••" autocomplete="new-password")
             p.form-error#mechanicPasswordError(role="alert" aria-live="polite")
             button.primary(type="submit") Save password
 

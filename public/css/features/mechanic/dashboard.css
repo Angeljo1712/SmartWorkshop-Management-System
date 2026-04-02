@@ -310,8 +310,10 @@ body.mechanic-body .mechanic-profile-info-card,
 body.mechanic-body .mechanic-profile-map,
 body.mechanic-body .mechanic-resolution-card,
 body.mechanic-body .mechanic-resolution-sidebar-card {
-  background: rgba(34, 43, 58, 0.96);
-  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: var(--dashboard-panel-bg);
+  border: 1px solid var(--dashboard-panel-border);
+  border-radius: var(--dashboard-panel-radius);
+  box-shadow: var(--dashboard-panel-shadow);
 }
 
 #mechanicDashboardView > .settings-card > .settings-header,
@@ -531,10 +533,10 @@ body.mechanic-body .mechanic-booking-status {
   color: #ffffff;
 }
 
-body.mechanic-body .mechanic-booking-status--pending { background: #2d57b8; }
-body.mechanic-body .mechanic-booking-status--accepted { background: #39bf5b; }
+body.mechanic-body .mechanic-booking-status--pending { background: var(--dashboard-badge-blue); }
+body.mechanic-body .mechanic-booking-status--accepted { background: var(--dashboard-badge-green); }
 body.mechanic-body .mechanic-booking-status--declined,
-body.mechanic-body .mechanic-booking-status--expired { background: #6b7280; }
+body.mechanic-body .mechanic-booking-status--expired { background: var(--dashboard-badge-gray); }
 
 body.mechanic-body .mechanic-table-footer {
   color: #c8d4e8;
@@ -554,10 +556,10 @@ body.mechanic-body .mechanic-table-footer-meta {
 
 body.mechanic-body .mechanic-table-footer-meta select {
   min-height: 38px;
-  border: 1px solid rgba(180, 194, 214, 0.9);
+  border: 1px solid var(--dashboard-control-border);
   border-radius: 999px;
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--dashboard-control-bg);
+  color: var(--dashboard-control-text);
   padding: 0 14px;
 }
 
@@ -570,16 +572,16 @@ body.mechanic-body .mechanic-pagination {
 body.mechanic-body .mechanic-pagination button {
   min-width: 36px;
   min-height: 36px;
-  border: 1px solid rgba(180, 194, 214, 0.28);
+  border: 1px solid var(--dashboard-pagination-border);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--dashboard-pagination-bg);
   color: #ffffff;
   cursor: pointer;
 }
 
 body.mechanic-body .mechanic-pagination button.active {
-  background: #475569;
-  border-color: #475569;
+  background: var(--dashboard-pagination-active);
+  border-color: var(--dashboard-pagination-active);
 }
 
 body.mechanic-body .mechanic-booking-detail {
@@ -983,8 +985,8 @@ body.mechanic-body #mechanicSettingsView .mechanic-settings-tab-link:hover {
 }
 
 body.mechanic-body #mechanicSettingsView .mechanic-settings-tab-link.active {
-  background: #4f627b;
-  border-color: rgba(255, 255, 255, 0.18);
+  background: var(--dashboard-tab-active-bg);
+  border-color: var(--dashboard-tab-active-border);
   color: #ffffff;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
@@ -1261,15 +1263,15 @@ body.mechanic-body .mechanic-resolution-tab {
   min-height: 42px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.06);
-  color: #d6dfef;
+  background: var(--dashboard-tab-bg);
+  color: var(--dashboard-tab-text);
   cursor: pointer;
 }
 
 body.mechanic-body .mechanic-resolution-tab.is-active {
-  background: #0d1220;
+  background: var(--dashboard-tab-active-bg);
   color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.18);
+  border-color: var(--dashboard-tab-active-border);
 }
 
 body.mechanic-body .mechanic-resolution-table {

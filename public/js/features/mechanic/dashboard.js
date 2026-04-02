@@ -88,6 +88,7 @@ if (mechanicDashboard) {
   const mechanicSettingsEmail = document.getElementById("mechanicSettingsEmail");
   const mechanicSettingsAddress = document.getElementById("mechanicSettingsAddress");
   const mechanicSettingsAvatarSettings = document.getElementById("mechanicSettingsAvatarSettings");
+  const mechanicSecurityUsername = document.getElementById("mechanicSecurityUsername");
   const mechanicResolutionOverview = document.getElementById("mechanicResolutionOverview");
   const mechanicResolutionMessageView = document.getElementById("mechanicResolutionMessageView");
   const mechanicResolutionBackBtn = document.getElementById("mechanicResolutionBackBtn");
@@ -189,6 +190,7 @@ if (mechanicDashboard) {
       if (mechanicSettingsUsername) mechanicSettingsUsername.textContent = user?.username || "-";
       if (mechanicSettingsEmail) mechanicSettingsEmail.textContent = user?.email || "-";
       if (mechanicSettingsAddress) mechanicSettingsAddress.textContent = user?.address || "-";
+      if (mechanicSecurityUsername) mechanicSecurityUsername.value = user?.email || user?.username || "";
       if (mechanicProfileHeading) {
         const location = user?.address_details?.city || user?.address || "Surrey";
         mechanicProfileHeading.textContent = `${name}, ${location}`;

@@ -340,10 +340,10 @@ body.user-body #userSettingsNotifications .notifications-card,
 body.user-body .user-car-summary,
 body.user-body .user-vehicle-info-card,
 body.user-body .user-verify-card {
-  background: rgba(34, 43, 58, 0.96);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 14px;
-  box-shadow: 0 18px 36px rgba(5, 10, 18, 0.24);
+  background: var(--dashboard-panel-bg);
+  border: 1px solid var(--dashboard-panel-border);
+  border-radius: var(--dashboard-panel-radius);
+  box-shadow: var(--dashboard-panel-shadow);
 }
 
 body.user-body #userBookingsView .settings-card {
@@ -450,8 +450,8 @@ body.user-body #userSettingsView .user-settings-tab-link:hover {
 }
 
 body.user-body #userSettingsView .user-settings-tab-link.active {
-  background: #4f627b;
-  border-color: rgba(255, 255, 255, 0.18);
+  background: var(--dashboard-tab-active-bg);
+  border-color: var(--dashboard-tab-active-border);
   color: #ffffff;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
@@ -919,10 +919,10 @@ body.user-body #userBookingsView .user-booking-empty {
 .user-bookings-export {
   width: 100%;
   min-height: 40px;
-  border: 1px solid rgba(180, 194, 214, 0.9);
+  border: 1px solid var(--dashboard-control-border);
   border-radius: 999px;
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--dashboard-control-bg);
+  color: var(--dashboard-control-text);
   font: inherit;
 }
 
@@ -968,8 +968,8 @@ body.user-body #userBookingsView .user-booking-empty {
 }
 
 .user-head-control select option {
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--dashboard-control-bg);
+  color: var(--dashboard-control-text);
 }
 
 .user-bookings-export {
@@ -979,7 +979,7 @@ body.user-body #userBookingsView .user-booking-empty {
   gap: 8px;
   min-width: 120px;
   padding: 0 18px;
-  color: #0f172a;
+  color: var(--dashboard-control-text);
 }
 
 .user-bookings-export::before {
@@ -1094,10 +1094,10 @@ body.user-body #userBookingsView .user-booking-empty {
 
 .user-table-footer-meta select {
   min-height: 38px;
-  border: 1px solid rgba(180, 194, 214, 0.9);
+  border: 1px solid var(--dashboard-control-border);
   border-radius: 999px;
-  background: #ffffff;
-  color: #0f172a;
+  background: var(--dashboard-control-bg);
+  color: var(--dashboard-control-text);
   padding: 0 14px;
 }
 
@@ -1110,16 +1110,16 @@ body.user-body #userBookingsView .user-booking-empty {
 .user-pagination button {
   min-width: 36px;
   min-height: 36px;
-  border: 1px solid rgba(180, 194, 214, 0.28);
+  border: 1px solid var(--dashboard-pagination-border);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--dashboard-pagination-bg);
   color: #ffffff;
   cursor: pointer;
 }
 
 .user-pagination button.active {
-  background: #334966;
-  border-color: #334966;
+  background: var(--dashboard-pagination-active);
+  border-color: var(--dashboard-pagination-active);
 }
 
 .user-booking-detail:empty {
@@ -1155,24 +1155,24 @@ body.user-body #userBookingsView .user-booking-empty {
 }
 
 .user-booking-status--requested {
-  background: #2d57b8;
+  background: var(--dashboard-badge-blue);
 }
 
 .user-booking-status--accepted {
-  background: #39bf5b;
+  background: var(--dashboard-badge-green);
 }
 
 .user-booking-status--pending {
-  background: #2d57b8;
+  background: var(--dashboard-badge-blue);
 }
 
 .user-booking-status--completed {
-  background: #39bf5b;
+  background: var(--dashboard-badge-green);
 }
 
 .user-booking-status--cancelled,
 .user-booking-status--canceled {
-  background: #c54d4d;
+  background: var(--dashboard-badge-red);
 }
 
 .user-booking-reference {
@@ -1731,16 +1731,16 @@ body.user-body #userResolutionView .mechanic-resolution-tab {
   min-height: 42px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
-  background: #5f7593;
-  color: #ffffff;
+  background: var(--dashboard-tab-bg);
+  color: var(--dashboard-tab-text);
   font: inherit;
   cursor: pointer;
 }
 
 body.user-body #userResolutionView .mechanic-resolution-tab.is-active {
-  background: #0d1220;
+  background: var(--dashboard-tab-active-bg);
   color: #ffffff;
-  border-color: #ffffff;
+  border-color: var(--dashboard-tab-active-border);
 }
 
 body.user-body #userResolutionView .mechanic-resolution-table {
@@ -2018,10 +2018,10 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
 .user-panel {
   display: grid;
   gap: 14px;
-  background: rgba(34, 43, 58, 0.96);
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 14px;
-  box-shadow: 0 18px 36px rgba(5, 10, 18, 0.24);
+  background: var(--dashboard-panel-bg);
+  border: 1px solid var(--dashboard-panel-border);
+  border-radius: var(--dashboard-panel-radius);
+  box-shadow: var(--dashboard-panel-shadow);
   padding: 16px;
   align-self: start;
 }

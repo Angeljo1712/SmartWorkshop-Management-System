@@ -1111,9 +1111,9 @@ body.admin-body .primari-shell {
 #adminPage #adminPaymentsView .admin-table-footer-meta select {
       min-height: 36px;
       border-radius: 999px;
-      border: 1px solid rgba(86, 111, 150, 0.38);
-      background: #ffffff;
-      color: #1f2f43;
+      border: 1px solid var(--dashboard-control-border);
+      background: var(--dashboard-control-bg);
+      color: var(--dashboard-control-text);
       padding: 0 12px;
     }
 
@@ -1123,8 +1123,8 @@ body.admin-body .primari-shell {
 #adminPage #adminCatalogView .admin-table-footer-meta select option,
 #adminPage #adminResolutionView .admin-table-footer-meta select option,
 #adminPage #adminPaymentsView .admin-table-footer-meta select option {
-      color: #1f2f43;
-      background: #ffffff;
+      color: var(--dashboard-control-text);
+      background: var(--dashboard-control-bg);
     }
 
 #adminPage #adminUsersView .admin-pagination,
@@ -1149,8 +1149,8 @@ body.admin-body .primari-shell {
     min-width: 34px;
     height: 34px;
     border-radius: 999px;
-    border: 1px solid rgba(86, 111, 150, 0.38);
-    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--dashboard-pagination-border);
+    background: var(--dashboard-pagination-bg);
     color: #ffffff;
   }
 
@@ -1160,8 +1160,8 @@ body.admin-body .primari-shell {
 #adminPage #adminCatalogView .admin-pagination button.active,
 #adminPage #adminResolutionView .admin-pagination button.active,
 #adminPage #adminPaymentsView .admin-pagination button.active {
-    background: #364c67;
-    border-color: #364c67;
+    background: var(--dashboard-pagination-active);
+    border-color: var(--dashboard-pagination-active);
   }
 
 #adminPage #adminBookingsView .admin-table tbody tr:nth-child(odd) {
@@ -1284,12 +1284,12 @@ body.admin-body .primari-shell {
   }
 
 #adminPage .admin-status-badge--active {
-    background: #35b55c;
+    background: var(--dashboard-badge-green);
   }
 
 #adminPage .admin-status-badge--approved,
 #adminPage .admin-status-badge--completed {
-    background: #35b55c;
+    background: var(--dashboard-badge-green);
   }
 
 #adminPage .admin-status-badge--inactive {
@@ -1301,17 +1301,17 @@ body.admin-body .primari-shell {
   }
 
 #adminPage .admin-status-badge--banned {
-    background: #e5484d;
+    background: var(--dashboard-badge-red);
   }
 
 #adminPage .admin-status-badge--rejected,
 #adminPage .admin-status-badge--cancelled,
 #adminPage .admin-status-badge--refunded {
-    background: #e5484d;
+    background: var(--dashboard-badge-red);
   }
 
 #adminPage .admin-status-badge--pending {
-    background: #203b7d;
+    background: var(--dashboard-badge-blue);
   }
 
 #adminPage .admin-status-badge--in-review,
@@ -1320,7 +1320,7 @@ body.admin-body .primari-shell {
 #adminPage .admin-status-badge--accepted,
 #adminPage .admin-status-badge--in-progress,
 #adminPage .admin-status-badge--in_progress {
-    background: #203b7d;
+    background: var(--dashboard-badge-blue);
   }
 
 #adminPage .admin-status-badge--suspended {
@@ -1767,7 +1767,7 @@ body.admin-body .admin-edit-menu button:disabled {
 
 #adminPage #adminBookingsView .admin-booking-status-badge.status-requested,
 #adminPage #adminBookingsView .admin-booking-status-badge.status-pending {
-    background: #203b7d;
+    background: var(--dashboard-badge-blue);
   }
 
 #adminPage #adminBookingsView .admin-booking-status-badge.status-accepted,
@@ -1775,13 +1775,13 @@ body.admin-body .admin-edit-menu button:disabled {
 #adminPage #adminBookingsView .admin-booking-status-badge.status-in-progress,
 #adminPage #adminBookingsView .admin-booking-status-badge.status-in_progress,
 #adminPage #adminBookingsView .admin-booking-status-badge.status-completed {
-    background: #35b55c;
+    background: var(--dashboard-badge-green);
   }
 
 #adminPage #adminBookingsView .admin-booking-status-badge.status-cancelled,
 #adminPage #adminBookingsView .admin-booking-status-badge.status-rejected,
 #adminPage #adminBookingsView .admin-booking-status-badge.status-refunded {
-    background: #9ca3af;
+    background: var(--dashboard-badge-red);
   }
 
 #adminPage #adminBookingsView .admin-booking-status-badge.status-unknown {
@@ -1825,18 +1825,20 @@ body.admin-body .admin-edit-menu button:disabled {
 #adminPage .admin-panel {
   display: grid;
   gap: 10px;
-  background: rgba(14, 19, 28, 0.9);
-  border: 1px solid var(--border-light-08);
-  border-radius: 8px;
+  background: var(--dashboard-panel-bg);
+  border: 1px solid var(--dashboard-panel-border);
+  border-radius: var(--dashboard-panel-radius);
+  box-shadow: var(--dashboard-panel-shadow);
   padding: 16px;
 }
 
 #adminPage .admin-account-layout {
   display: grid;
   gap: 18px;
-  background: rgba(14, 19, 28, 0.9);
-  border: 1px solid var(--border-light-08);
-  border-radius: 8px;
+  background: var(--dashboard-panel-bg);
+  border: 1px solid var(--dashboard-panel-border);
+  border-radius: var(--dashboard-panel-radius);
+  box-shadow: var(--dashboard-panel-shadow);
   padding: 12px 16px 18px;
   color: #ffffff;
   min-height: 100%;
