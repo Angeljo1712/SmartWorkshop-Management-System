@@ -157,9 +157,42 @@ block content
                 .user-welcome-corner-wrap
                   h2.user-welcome-corner Dashboard
                   p.user-welcome-corner-subtitle General information
-              h3.mechanic-dashboard-section-title Your Bookings
-              .settings-divider
-              #mechanicBookingsList.mechanic-bookings-list
+              .mechanicTableLayout
+                .mechanic-table-head
+                  h3.mechanic-dashboard-section-title Your Bookings
+                  .mechanic-table-head-filters
+                    .mechanic-head-control.mechanic-head-control--search
+                      input#mechanicBookingsSearch(type="search" placeholder="Search")
+                    .mechanic-head-control.mechanic-head-control--status
+                      select#mechanicBookingsStatusFilter
+                        option(value="all") Status
+                    .mechanic-head-control.mechanic-head-control--date
+                      select#mechanicBookingsDateFilter
+                        option(value="all") All time
+                        option(value="30d") Last 30 days
+                        option(value="90d") Last 90 days
+                        option(value="365d") Last year
+                    button.mechanic-bookings-export(type="button") Export
+                .mechanic-table-wrap
+                  table.mechanicTable
+                    thead
+                      tr
+                        th Reference
+                        th Status
+                        th Customer
+                        th Vehicle
+                        th Created
+                    tbody#mechanicBookingsList
+                .mechanic-table-footer
+                  .mechanic-table-footer-meta
+                    label(for="mechanicBookingsRowsPerPage") Rows per page
+                    select#mechanicBookingsRowsPerPage
+                      option(value="10" selected) 10
+                      option(value="20") 20
+                      option(value="50") 50
+                    span#mechanicBookingsFooterCount No bookings
+                  .mechanic-pagination#mechanicBookingsPagination
+              #mechanicBookingDetail.mechanic-booking-detail
 
           .settings-card.is-hidden#mechanicSetPasswordCard
             .settings-header
@@ -533,64 +566,59 @@ block content
         section.mechanic-content.is-hidden#mechanicSettingsView
           .settings-card.mechanic-dashboard-card
             .mechanic-settings-layout
-              .dashboard-section.dashboard-section--welcome.settings-section--welcome
-                .settings-header
-                  div
-                    h2 Welcome back
-                    p#mechanicSettingsWelcomeName.user-welcome-name Mechanic
-                  .user-welcome-corner-wrap
-                    h2.user-welcome-corner Account settings
-                    p.user-welcome-corner-subtitle Manage your profile and preferences.
-              .settings-section.settings-section--divider
-                .settings-divider
-              .settings-section.settings-section--layout
-                .settings-layout
-                  nav.settings-subnav
-                    button.settings-subnav-link.active(type="button" data-mechanic-settings-subview="general") General
-                    button.settings-subnav-link(type="button" data-mechanic-settings-subview="notifications") Notifications
-                    button.settings-subnav-link(type="button" data-mechanic-settings-subview="security") Login & security
-                  .settings-panel
-                    section.settings-subview#mechanicSettingsGeneral
-                      .settings-profile
-                        .settings-meta
-                          h4 Full name
-                          p#mechanicSettingsFullName -
-                      .settings-divider
-                      .settings-row
-                        div
-                          .settings-contact-list
-                            .settings-contact-item
-                              .settings-contact-copy
-                                span.settings-contact-label Phone
-                                p#mechanicSettingsPhone -
-                            .settings-contact-item
-                              .settings-contact-copy
-                                span.settings-contact-label Username
-                                p#mechanicSettingsUsername -
-                            .settings-contact-item
-                              .settings-contact-copy
-                                span.settings-contact-label Email
-                                p#mechanicSettingsEmail -
-                            .settings-contact-item
-                              .settings-contact-copy
-                                span.settings-contact-label Address
-                                p#mechanicSettingsAddress -
-                        .settings-contact-actions
-                          button.secondary(type="button") Update
-                          button.secondary(type="button") Update
-                          button.secondary(type="button") Update
-                          button.secondary(type="button") Update
-                      .settings-row
-                        div
-                          h4 Theme
-                          p Light mode
-                        button.secondary(type="button") Light mode
-                      .settings-row
-                        div
-                          h4 Integration
-                          p No integrations connected
-                        button.secondary(type="button") Connect
-                    section.settings-subview.is-hidden#mechanicSettingsNotifications
+              .mechanic-settings-panel-head
+                h2#mechanicSettingsPanelTitle General
+                .mechanic-settings-tabs
+                  button.mechanic-settings-tab-link.active(type="button" data-mechanic-settings-subview="general") General
+                  button.mechanic-settings-tab-link(type="button" data-mechanic-settings-subview="notifications") Notifications
+                  button.mechanic-settings-tab-link(type="button" data-mechanic-settings-subview="security") Login & security
+              .setting-panel
+                section.mechanic-settings-subview#mechanicSettingsGeneral
+                  .mechanic-settings-photo-row
+                    .settings-avatar.settings-avatar-lg#mechanicSettingsAvatarSettings ME
+                    button.ghost(type="button") Update
+                  .settings-divider
+                  .mechanic-settings-profile
+                    .settings-meta
+                      h4 Full name
+                      p#mechanicSettingsFullName -
+                    button.secondary(type="button") Update
+                  .settings-divider
+                  .mechanic-settings-row
+                    div
+                      .mechanic-settings-contact-list
+                        .mechanic-settings-contact-item
+                          .mechanic-settings-contact-copy
+                            span.mechanic-settings-contact-label Phone
+                            p#mechanicSettingsPhone -
+                        .mechanic-settings-contact-item
+                          .mechanic-settings-contact-copy
+                            span.mechanic-settings-contact-label Username
+                            p#mechanicSettingsUsername -
+                        .mechanic-settings-contact-item
+                          .mechanic-settings-contact-copy
+                            span.mechanic-settings-contact-label Email
+                            p#mechanicSettingsEmail -
+                        .mechanic-settings-contact-item
+                          .mechanic-settings-contact-copy
+                            span.mechanic-settings-contact-label Address
+                            p#mechanicSettingsAddress -
+                    .mechanic-settings-contact-actions
+                      button.secondary(type="button") Update
+                      button.secondary(type="button") Update
+                      button.secondary(type="button") Update
+                      button.secondary(type="button") Update
+                  .mechanic-settings-row
+                    div
+                      h4 Theme
+                      p Light mode
+                    button.secondary(type="button") Light mode
+                  .mechanic-settings-row
+                    div
+                      h4 Integration
+                      p No integrations connected
+                    button.secondary(type="button") Connect
+                section.mechanic-settings-subview.is-hidden#mechanicSettingsNotifications
                       .notifications-card
                         .notifications-card-head
                           h3 Email Preferences
@@ -599,7 +627,7 @@ block content
                           span Don't miss out! Subscribe to get special offers/promotions and updates about jobs and platform changes.
                         .notifications-actions
                           button.ghost(type="button") Update
-                    section.settings-subview.is-hidden#mechanicSettingsSecurity
+                section.mechanic-settings-subview.is-hidden#mechanicSettingsSecurity
                       .security-card
                         .security-card-head
                           h3 Change Password

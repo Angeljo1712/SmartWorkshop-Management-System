@@ -7367,6 +7367,14 @@ if (mechanicDashboard) {
   const mechanicAccountName = document.getElementById("mechanicAccountName");
   const idEl = document.getElementById("mechanicId");
   const mechanicBookingsList = document.getElementById("mechanicBookingsList");
+  const mechanicBookingDetail = document.getElementById("mechanicBookingDetail");
+  const mechanicBookingsSearch = document.getElementById("mechanicBookingsSearch");
+  const mechanicBookingsStatusFilter = document.getElementById("mechanicBookingsStatusFilter");
+  const mechanicBookingsDateFilter = document.getElementById("mechanicBookingsDateFilter");
+  const mechanicBookingsRowsPerPage = document.getElementById("mechanicBookingsRowsPerPage");
+  const mechanicBookingsFooterCount = document.getElementById("mechanicBookingsFooterCount");
+  const mechanicBookingsPagination = document.getElementById("mechanicBookingsPagination");
+  const mechanicBookingsExport = mechanicDashboard.querySelector(".mechanic-bookings-export");
   const mechanicAccountAvatar = document.getElementById("mechanicAccountAvatar");
   const mechanicAccountAvatarSecondary = document.getElementById("mechanicAccountAvatarSecondary");
   const mechanicAccountPhone = document.getElementById("mechanicAccountPhone");
@@ -7415,11 +7423,13 @@ if (mechanicDashboard) {
   const mechanicTypesSaveBtn = document.getElementById("mechanicTypesSaveBtn");
   const mechanicTypesStatus = document.getElementById("mechanicTypesStatus");
   const mechanicSettingsWelcomeName = document.getElementById("mechanicSettingsWelcomeName");
+  const mechanicSettingsPanelTitle = document.getElementById("mechanicSettingsPanelTitle");
   const mechanicSettingsFullName = document.getElementById("mechanicSettingsFullName");
   const mechanicSettingsPhone = document.getElementById("mechanicSettingsPhone");
   const mechanicSettingsUsername = document.getElementById("mechanicSettingsUsername");
   const mechanicSettingsEmail = document.getElementById("mechanicSettingsEmail");
   const mechanicSettingsAddress = document.getElementById("mechanicSettingsAddress");
+  const mechanicSettingsAvatarSettings = document.getElementById("mechanicSettingsAvatarSettings");
   const mechanicResolutionOverview = document.getElementById("mechanicResolutionOverview");
   const mechanicResolutionMessageView = document.getElementById("mechanicResolutionMessageView");
   const mechanicResolutionBackBtn = document.getElementById("mechanicResolutionBackBtn");
@@ -7458,6 +7468,9 @@ if (mechanicDashboard) {
   let latestMechanicCoverage = [];
   let latestMechanicResolutionCases = [];
   let latestMechanicAssignedBookings = [];
+  let latestMechanicOffers = [];
+  let activeMechanicOfferId = null;
+  let mechanicBookingsPage = 1;
   let pendingResolutionBookingId = null;
   let pendingResolutionCaseId = null;
 
@@ -7517,6 +7530,7 @@ if (mechanicDashboard) {
       if (mechanicAccountRole) mechanicAccountRole.textContent = activeRole;
       if (mechanicAccountRoleSecondary) mechanicAccountRoleSecondary.textContent = activeRole;
       if (mechanicSettingsWelcomeName) mechanicSettingsWelcomeName.textContent = name;
+      if (mechanicSettingsAvatarSettings) mechanicSettingsAvatarSettings.textContent = getInitials(name, activeRole);
       if (mechanicSettingsFullName) mechanicSettingsFullName.textContent = name;
       if (mechanicSettingsPhone) mechanicSettingsPhone.textContent = user?.phone || "-";
       if (mechanicSettingsUsername) mechanicSettingsUsername.textContent = user?.username || "-";
@@ -7635,70 +7649,156 @@ if (mechanicDashboard) {
       minute: "2-digit"
     });
   };
-	  const renderMechanicOffers = (offers) => {
-    if (!mechanicBookingsList) return;
-    mechanicBookingsList.innerHTML = "";
-    if (!Array.isArray(offers) || !offers.length) {
-      const empty = document.createElement("p");
-      empty.className = "mechanic-bookings-empty";
-      empty.textContent = "No booking offers received yet.";
-      mechanicBookingsList.appendChild(empty);
-      return;
-    }
+  const getMechanicOfferStatusLabel = (offer) => {
+    const status = String(offer?.status || "").toLowerCase();
+    if (status === "accepted") return "Accepted";
+    if (status === "declined") return "Declined";
+    if (status === "expired") return "Expired";
+    return "Requested";
+  };
 
-	    offers.forEach((offer) => {
-	      const card = document.createElement("article");
-	      card.className = "mechanic-booking-card";
-	      const topStatus = offer.status === "accepted" ? "ACCEPTED" : offer.status === "pending" ? "PENDING" : String(offer.status || "").toUpperCase();
-	      const customerName = offer.customer?.name || "Customer";
-	      const itemsMarkup = (offer.items || [])
-        .map(
-          (item) => `
-            <div class="mechanic-booking-item">
-              <strong>${item.name}</strong>
-              <span>${formatMechanicLabour(item.labour_minutes)}</span>
+  const getFilteredMechanicOffers = (offers) => {
+    const searchValue = String(mechanicBookingsSearch?.value || "").trim().toLowerCase();
+    const statusValue = String(mechanicBookingsStatusFilter?.value || "all");
+    const dateValue = String(mechanicBookingsDateFilter?.value || "all");
+    return (Array.isArray(offers) ? offers : []).filter((offer) => {
+      const reference = String(offer.booking?.reference || offer.booking?.id || "");
+      const customer = String(offer.customer?.name || "");
+      const vehicle = [offer.vehicle?.registrationNumber, offer.vehicle?.make, offer.vehicle?.model].filter(Boolean).join(" ");
+      const haystack = `${reference} ${customer} ${vehicle}`.toLowerCase();
+      const matchesSearch = !searchValue || haystack.includes(searchValue);
+      const matchesStatus = statusValue === "all" ? true : String(offer.status || "").toLowerCase() === statusValue;
+      const matchesDate = dateValue === "all" ? true : matchesDateFilter(offer.booking?.created_at, dateValue);
+      return matchesSearch && matchesStatus && matchesDate;
+    });
+  };
+
+  const buildMechanicOfferDetailCard = (offer) => {
+    const itemsMarkup = (offer.items || [])
+      .map(
+        (item) => `
+          <div class="mechanic-booking-item">
+            <strong>${item.name}</strong>
+            <span>${formatMechanicLabour(item.labour_minutes)}</span>
+          </div>
+        `
+      )
+      .join("");
+    const reference = offer.booking?.reference || offer.booking?.id || "-";
+    const canRespond = String(offer.status || "").toLowerCase() === "pending";
+    const topStatus = getMechanicOfferStatusLabel(offer).toUpperCase();
+    return `
+      <article class="mechanic-booking-card">
+        <div class="mechanic-booking-topbar">
+          <span class="mechanic-booking-topbar-status" data-status="${escapeHtml(String(offer.status || ""))}">${escapeHtml(topStatus)}</span>
+          <span class="mechanic-booking-topbar-reference">Reference: ${escapeHtml(String(reference))}</span>
+          <div class="mechanic-booking-topbar-menu">
+            <button class="mechanic-booking-topbar-actions" type="button" data-booking-actions-toggle>Actions</button>
+            <div class="mechanic-booking-actions-panel is-hidden">
+              <button class="mechanic-booking-actions-item" type="button" data-resolution-message="${escapeHtml(String(reference))}">Message to Customer</button>
             </div>
-          `
-        )
-        .join("");
-	      const canRespond = offer.status === "pending";
-	      card.innerHTML = `
-	        <div class="mechanic-booking-topbar">
-	          <span class="mechanic-booking-topbar-status" data-status="${offer.status}">${topStatus}</span>
-	          <span class="mechanic-booking-topbar-reference">Reference: ${offer.booking?.reference || offer.booking?.id || "-"}</span>
-	            <div class="mechanic-booking-topbar-menu">
-	              <button class="mechanic-booking-topbar-actions" type="button" data-booking-actions-toggle>Actions</button>
-	              <div class="mechanic-booking-actions-panel is-hidden">
-	                <button class="mechanic-booking-actions-item" type="button" data-resolution-message="${offer.booking?.reference || offer.booking?.id || "-"}">Message to Customer</button>
-	              </div>
-	            </div>
-	        </div>
-	        <div class="mechanic-booking-card-head">
-	          <div class="mechanic-booking-meta">
-	            <h4>${offer.customer?.name || "Customer"}</h4>
-	          </div>
-	        </div>
+          </div>
+        </div>
+        <div class="mechanic-booking-card-head">
+          <div class="mechanic-booking-meta">
+            <h4>${escapeHtml(offer.customer?.name || "Customer")}</h4>
+          </div>
+        </div>
         <div class="mechanic-booking-grid">
-          <div><strong>Vehicle</strong><div>${[offer.vehicle?.registrationNumber, offer.vehicle?.make, offer.vehicle?.model].filter(Boolean).join(" · ") || "-"}</div></div>
-          <div><strong>Total</strong><div>${formatMechanicCurrency(offer.booking?.total_eur)}</div></div>
-          <div><strong>Address</strong><div>${formatMechanicAddress(offer.address) || "-"}</div></div>
-          <div><strong>Customer</strong><div>${offer.customer?.email || "-"}</div></div>
+          <div><strong>Vehicle</strong><div>${escapeHtml([offer.vehicle?.registrationNumber, offer.vehicle?.make, offer.vehicle?.model].filter(Boolean).join(" · ") || "-")}</div></div>
+          <div><strong>Total</strong><div>${escapeHtml(formatMechanicCurrency(offer.booking?.total_eur))}</div></div>
+          <div><strong>Address</strong><div>${escapeHtml(formatMechanicAddress(offer.address) || "-")}</div></div>
+          <div><strong>Customer</strong><div>${escapeHtml(offer.customer?.email || "-")}</div></div>
         </div>
         <div class="mechanic-booking-items">${itemsMarkup || '<div class="mechanic-booking-item"><strong>No work items</strong></div>'}</div>
         <div class="mechanic-booking-actions">
-          ${canRespond ? `<button class="primary" type="button" data-offer-action="accept" data-offer-id="${offer.offer_id}">Accept</button>
-          <button class="secondary" type="button" data-offer-action="decline" data-offer-id="${offer.offer_id}">Decline</button>` : ""}
+          ${canRespond ? `<button class="primary" type="button" data-offer-action="accept" data-offer-id="${escapeHtml(String(offer.offer_id))}">Accept</button>
+          <button class="secondary" type="button" data-offer-action="decline" data-offer-id="${escapeHtml(String(offer.offer_id))}">Decline</button>` : ""}
         </div>
+      </article>
+    `;
+  };
+
+  const renderMechanicOffers = (offers) => {
+    if (!mechanicBookingsList) return;
+    const offerList = Array.isArray(offers) ? offers : latestMechanicOffers;
+    mechanicBookingsList.innerHTML = "";
+    if (mechanicBookingDetail) mechanicBookingDetail.innerHTML = "";
+    if (!Array.isArray(offerList) || !offerList.length) {
+      const emptyRow = document.createElement("tr");
+      emptyRow.className = "mechanic-booking-empty-row";
+      emptyRow.innerHTML = '<td colspan="5" class="mechanic-bookings-empty">No booking offers received yet.</td>';
+      mechanicBookingsList.appendChild(emptyRow);
+      if (mechanicBookingsFooterCount) mechanicBookingsFooterCount.textContent = "0 bookings";
+      if (mechanicBookingsPagination) mechanicBookingsPagination.innerHTML = "";
+      return;
+    }
+
+    setSimpleOptions(mechanicBookingsStatusFilter, offerList.map((offer) => getMechanicOfferStatusLabel(offer)), "Status");
+
+    const filteredOffers = getFilteredMechanicOffers(offerList);
+    const pageSize = Number(mechanicBookingsRowsPerPage?.value || 10);
+    const total = filteredOffers.length;
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    mechanicBookingsPage = Math.min(mechanicBookingsPage, totalPages);
+    const startIndex = total ? (mechanicBookingsPage - 1) * pageSize : 0;
+    const pageOffers = filteredOffers.slice(startIndex, startIndex + pageSize);
+
+    if (!pageOffers.length) {
+      const emptyRow = document.createElement("tr");
+      emptyRow.className = "mechanic-booking-empty-row";
+      emptyRow.innerHTML = `<td colspan="5" class="mechanic-bookings-empty">No booking offers received yet.</td>`;
+      mechanicBookingsList.appendChild(emptyRow);
+      if (mechanicBookingsFooterCount) mechanicBookingsFooterCount.textContent = `0-0 of ${total} rows`;
+      if (mechanicBookingsPagination) mechanicBookingsPagination.innerHTML = "";
+      return;
+    }
+
+    const selectedId = pageOffers.some((offer) => Number(offer.offer_id) === Number(activeMechanicOfferId)) ? activeMechanicOfferId : Number(pageOffers[0].offer_id);
+    activeMechanicOfferId = selectedId;
+
+    pageOffers.forEach((offer) => {
+      const reference = offer.booking?.reference || offer.booking?.id || "-";
+      const item = document.createElement("tr");
+      item.className = `mechanic-booking-summary-row${Number(offer.offer_id) === Number(selectedId) ? " is-active" : ""}`;
+      item.dataset.mechanicOfferId = String(offer.offer_id);
+      item.innerHTML = `
+        <td><strong class="mechanic-booking-summary-reference">${escapeHtml(String(reference))}</strong></td>
+        <td><span class="mechanic-booking-status mechanic-booking-status--${escapeHtml(String(offer.status || "pending").toLowerCase())}">${escapeHtml(getMechanicOfferStatusLabel(offer))}</span></td>
+        <td><span class="mechanic-booking-summary-customer">${escapeHtml(offer.customer?.name || "Customer")}</span></td>
+        <td><span class="mechanic-booking-summary-vehicle">${escapeHtml([offer.vehicle?.registrationNumber, offer.vehicle?.make, offer.vehicle?.model].filter(Boolean).join(" · ") || "-")}</span></td>
+        <td><span class="mechanic-booking-summary-date">${escapeHtml(formatDate(offer.booking?.created_at))}</span></td>
       `;
-      mechanicBookingsList.appendChild(card);
+      mechanicBookingsList.appendChild(item);
     });
+
+    const selectedOffer = filteredOffers.find((offer) => Number(offer.offer_id) === Number(selectedId)) || null;
+    if (mechanicBookingDetail) mechanicBookingDetail.innerHTML = selectedOffer ? buildMechanicOfferDetailCard(selectedOffer) : "";
+    if (mechanicBookingsFooterCount) {
+      const from = startIndex + 1;
+      const to = startIndex + pageOffers.length;
+      mechanicBookingsFooterCount.textContent = `${from}-${to} of ${total} rows`;
+    }
+    if (mechanicBookingsPagination) {
+      mechanicBookingsPagination.innerHTML = "";
+      for (let page = 1; page <= totalPages; page += 1) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = String(page);
+        button.dataset.mechanicBookingsPage = String(page);
+        button.classList.toggle("active", page === mechanicBookingsPage);
+        mechanicBookingsPagination.appendChild(button);
+      }
+    }
   };
   const syncMechanicOffers = async () => {
     if (!mechanicToken || !mechanicBookingsList) return;
     try {
       const offers = await apiAuth("/api/users/me/mechanic-offers", mechanicToken);
-      renderMechanicOffers(offers);
+      latestMechanicOffers = Array.isArray(offers) ? offers : [];
+      renderMechanicOffers(latestMechanicOffers);
     } catch {
+      latestMechanicOffers = [];
       renderMechanicOffers([]);
     }
   };
@@ -8081,11 +8181,18 @@ if (mechanicDashboard) {
     }
   };
   mechanicBookingsList?.addEventListener("click", async (event) => {
+    const summaryRow = event.target.closest("[data-mechanic-offer-id]");
+    if (summaryRow && !event.target.closest("[data-booking-actions-toggle],[data-resolution-message],[data-offer-action]")) {
+      activeMechanicOfferId = Number(summaryRow.dataset.mechanicOfferId);
+      renderMechanicOffers(latestMechanicOffers);
+      return;
+    }
 	    const actionsToggle = event.target.closest("[data-booking-actions-toggle]");
 	    if (actionsToggle) {
+	      const detailRoot = mechanicBookingDetail || mechanicBookingsList;
 	      const menu = actionsToggle.closest(".mechanic-booking-topbar-menu");
 	      const panel = menu?.querySelector(".mechanic-booking-actions-panel");
-	      mechanicBookingsList.querySelectorAll(".mechanic-booking-actions-panel").forEach((item) => {
+	      detailRoot.querySelectorAll(".mechanic-booking-actions-panel").forEach((item) => {
 	        if (item !== panel) item.classList.add("is-hidden");
 	      });
 	      panel?.classList.toggle("is-hidden");
@@ -8098,7 +8205,7 @@ if (mechanicDashboard) {
 	      const ref = resolutionMessage.dataset.resolutionMessage || "16334274";
 	      const bookingEntry = latestMechanicAssignedBookings.find((entry) => String(entry.booking?.reference || entry.booking?.id) === String(ref));
 	      await openMechanicResolutionMessage(bookingEntry?.booking?.id, "general");
-	      mechanicBookingsList.querySelectorAll(".mechanic-booking-actions-panel").forEach((item) => {
+	      (mechanicBookingDetail || mechanicBookingsList).querySelectorAll(".mechanic-booking-actions-panel").forEach((item) => {
 	        item.classList.add("is-hidden");
 	      });
 	      return;
@@ -8117,6 +8224,81 @@ if (mechanicDashboard) {
     } catch {
       button.disabled = false;
     }
+  });
+
+  mechanicBookingDetail?.addEventListener("click", async (event) => {
+    const actionsToggle = event.target.closest("[data-booking-actions-toggle]");
+    if (actionsToggle) {
+      const menu = actionsToggle.closest(".mechanic-booking-topbar-menu");
+      const panel = menu?.querySelector(".mechanic-booking-actions-panel");
+      mechanicBookingDetail.querySelectorAll(".mechanic-booking-actions-panel").forEach((item) => {
+        if (item !== panel) item.classList.add("is-hidden");
+      });
+      panel?.classList.toggle("is-hidden");
+      return;
+    }
+    const resolutionMessage = event.target.closest("[data-resolution-message]");
+    if (resolutionMessage) {
+      syncMechanicNavState("resolution");
+      setMechanicView("resolution");
+      const ref = resolutionMessage.dataset.resolutionMessage || "16334274";
+      const bookingEntry = latestMechanicAssignedBookings.find((entry) => String(entry.booking?.reference || entry.booking?.id) === String(ref));
+      await openMechanicResolutionMessage(bookingEntry?.booking?.id, "general");
+      mechanicBookingDetail.querySelectorAll(".mechanic-booking-actions-panel").forEach((item) => item.classList.add("is-hidden"));
+      return;
+    }
+    const button = event.target.closest("[data-offer-action]");
+    if (!button || !mechanicToken) return;
+    const offerId = button.dataset.offerId;
+    const action = button.dataset.offerAction;
+    try {
+      button.disabled = true;
+      await apiAuth(`/api/users/me/mechanic-offers/${encodeURIComponent(offerId)}/respond`, mechanicToken, {
+        method: "POST",
+        body: JSON.stringify({ action })
+      });
+      await syncMechanicOffers();
+    } catch {
+      button.disabled = false;
+    }
+  });
+
+  mechanicBookingsSearch?.addEventListener("input", () => {
+    mechanicBookingsPage = 1;
+    renderMechanicOffers(latestMechanicOffers);
+  });
+
+  mechanicBookingsStatusFilter?.addEventListener("change", () => {
+    mechanicBookingsPage = 1;
+    renderMechanicOffers(latestMechanicOffers);
+  });
+
+  mechanicBookingsDateFilter?.addEventListener("change", () => {
+    mechanicBookingsPage = 1;
+    renderMechanicOffers(latestMechanicOffers);
+  });
+
+  mechanicBookingsRowsPerPage?.addEventListener("change", () => {
+    mechanicBookingsPage = 1;
+    renderMechanicOffers(latestMechanicOffers);
+  });
+
+  mechanicBookingsPagination?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-mechanic-bookings-page]");
+    if (!button) return;
+    mechanicBookingsPage = Number(button.dataset.mechanicBookingsPage || 1);
+    renderMechanicOffers(latestMechanicOffers);
+  });
+
+  mechanicBookingsExport?.addEventListener("click", () => {
+    const rows = getFilteredMechanicOffers(latestMechanicOffers).map((offer) => ({
+      Reference: offer.booking?.reference || offer.booking?.id || "-",
+      Status: getMechanicOfferStatusLabel(offer),
+      Customer: offer.customer?.name || "Customer",
+      Vehicle: [offer.vehicle?.registrationNumber, offer.vehicle?.make, offer.vehicle?.model].filter(Boolean).join(" · "),
+      Created: formatDate(offer.booking?.created_at)
+    }));
+    downloadCsv("mechanic-bookings.csv", rows);
   });
 
   mechanicTypesTree?.addEventListener("change", (event) => {
@@ -8170,6 +8352,10 @@ if (mechanicDashboard) {
     mechanicSettingsNotifications?.classList.toggle("is-hidden", subview !== "notifications");
     mechanicSettingsSecurity?.classList.toggle("is-hidden", subview !== "security");
     mechanicSettingsSubnavLinks.forEach((btn) => btn.classList.toggle("active", btn.dataset.mechanicSettingsSubview === subview));
+    if (mechanicSettingsPanelTitle) {
+      mechanicSettingsPanelTitle.textContent =
+        subview === "notifications" ? "Notifications" : subview === "security" ? "Login & security" : "General";
+    }
   };
 
   const setMechanicResolutionSubview = (subview, bookingReference = "16334274") => {

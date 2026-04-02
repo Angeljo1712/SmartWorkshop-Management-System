@@ -8,7 +8,9 @@
     "rail content";
   align-items: stretch;
   column-gap: 0;
-  row-gap: 18px;
+  row-gap: 0;
+  border-radius: 15px 15px 0 0;
+  overflow: hidden;
 }
 
 #mechanicPage.mechanic-layout > .mainRail,
@@ -27,6 +29,9 @@
   padding: 5px 10px;
   background: #ffffff;
   border-radius: 0;
+  border: 2px solid #ffffff;
+  border-left: 0;
+  border-bottom: 0;
 }
 
 #mechanicPage .mechanic-dashboard-hero,
@@ -109,7 +114,8 @@
   background: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-right: 0;
-  border-radius: 15px 0 0 15px;
+  border-bottom: 0;
+  border-radius: 15px 0 0 0;
   color: #1b2430;
   overflow: hidden;
   transition: width 0.22s ease;
@@ -166,7 +172,7 @@
   transition: max-width 0.22s ease, width 0.22s ease, padding 0.22s ease, justify-content 0.22s ease, background 0.18s ease;
 }
 
-#mechanicPage .mainRail .rail-item:hover {
+#mechanicPage .mainRail .rail-item:hover:not(.active) {
   background: rgba(15, 23, 42, 0.06);
 }
 
@@ -175,6 +181,18 @@
   color: #ffffff;
   border-color: rgba(15, 23, 42, 0.08);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+#mechanicPage .mainRail .rail-item.active::before {
+  content: "";
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  width: 4px;
+  height: 28px;
+  border-radius: 999px;
+  background: #475569;
+  transform: translateY(-50%);
 }
 
 #mechanicPage .mainRail .rail-text {
@@ -196,7 +214,6 @@
   display: grid;
   justify-items: center;
   padding-top: 10px;
-  border-top: 1px dashed rgba(15, 23, 42, 0.12);
 }
 
 #mechanicPage .mainRail .admin-signout {
@@ -261,7 +278,9 @@
 
 #mechanicPage.mechanic-layout > .mechanic-content {
   border: 2px solid #ffffff;
-  border-radius: 14px;
+  border-left: 0;
+  border-bottom: 0;
+  border-radius: 0 15px 0 0;
 }
 
 body.mechanic-body .mechanic-content {
@@ -273,6 +292,26 @@ body.mechanic-body .mechanic-content {
   display: grid;
   gap: 18px;
   grid-template-columns: 1fr;
+  background: rgba(9, 13, 21, 0.96);
+  padding: 15px;
+  overflow: hidden;
+}
+
+body.mechanic-body #mechanicSettingsView .settings-card {
+  gap: 0;
+}
+
+body.mechanic-body .mechanic-content .settings-card,
+body.mechanic-body .mechanic-cert-card,
+body.mechanic-body .mechanic-tax-card,
+body.mechanic-body .mechanic-documents-card,
+body.mechanic-body .mechanic-profile-avatar-card,
+body.mechanic-body .mechanic-profile-info-card,
+body.mechanic-body .mechanic-profile-map,
+body.mechanic-body .mechanic-resolution-card,
+body.mechanic-body .mechanic-resolution-sidebar-card {
+  background: rgba(34, 43, 58, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.24);
 }
 
 #mechanicDashboardView > .settings-card > .settings-header,
@@ -296,6 +335,258 @@ body.mechanic-body .mechanic-dashboard-layout {
   display: grid;
   grid-template-columns: 1fr;
   gap: 18px;
+}
+
+body.mechanic-body .mechanicTableLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  row-gap: 30px;
+  min-height: 0;
+  padding: 15px;
+}
+
+body.mechanic-body .mechanicTableLayout > .mechanic-table-head,
+body.mechanic-body .mechanicTableLayout > .mechanic-table-wrap,
+body.mechanic-body .mechanicTableLayout > .mechanic-table-footer {
+  position: relative;
+  min-width: 0;
+}
+
+body.mechanic-body .mechanicTableLayout > .mechanic-table-head::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -15px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+body.mechanic-body .mechanicTableLayout > .mechanic-table-footer::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -15px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+body.mechanic-body .mechanic-table-head-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.95fr) minmax(0, 0.95fr) auto;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+body.mechanic-body .mechanic-head-control {
+  position: relative;
+}
+
+body.mechanic-body .mechanic-head-control input,
+body.mechanic-body .mechanic-head-control select,
+body.mechanic-body .mechanic-bookings-export {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid rgba(180, 194, 214, 0.9);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+}
+
+body.mechanic-body .mechanic-head-control input,
+body.mechanic-body .mechanic-head-control select {
+  padding: 0 14px 0 40px;
+}
+
+body.mechanic-body .mechanic-head-control::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  width: 16px;
+  height: 16px;
+  transform: translateY(-50%);
+  opacity: 0.75;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px 16px;
+}
+
+body.mechanic-body .mechanic-head-control--search::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23556b89' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");
+}
+
+body.mechanic-body .mechanic-head-control--status::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23556b89' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m12 2 7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4Z'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E");
+}
+
+body.mechanic-body .mechanic-head-control--date::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23556b89' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M16 2v4'/%3E%3Cpath d='M8 2v4'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
+}
+
+body.mechanic-body .mechanic-head-control select {
+  appearance: none;
+  padding-right: 36px;
+}
+
+body.mechanic-body .mechanic-head-control select option {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+body.mechanic-body .mechanic-bookings-export {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 120px;
+  padding: 0 18px;
+  color: #0f172a;
+}
+
+body.mechanic-body .mechanic-bookings-export::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px 16px;
+  background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23556b89' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12'/%3E%3Cpath d='m7 8 5-5 5 5'/%3E%3Cpath d='M5 21h14'/%3E%3C/svg%3E\");
+}
+
+body.mechanic-body .mechanic-table-wrap {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+body.mechanic-body .mechanicTable {
+  width: 100%;
+  min-width: 880px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.02);
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+body.mechanic-body .mechanicTable th,
+body.mechanic-body .mechanicTable td {
+  padding: 14px;
+  text-align: left;
+  color: #c8d4e8;
+}
+
+body.mechanic-body .mechanicTable thead th {
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+body.mechanic-body .mechanic-booking-summary-row {
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+body.mechanic-body .mechanic-booking-summary-row:hover,
+body.mechanic-body .mechanic-booking-summary-row.is-active {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+body.mechanic-body .mechanic-booking-summary-row td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+body.mechanic-body .mechanicTable tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+body.mechanic-body .mechanic-booking-summary-reference {
+  color: #eaf0fb;
+  font-weight: 700;
+}
+
+body.mechanic-body .mechanic-booking-summary-vehicle,
+body.mechanic-body .mechanic-booking-summary-customer {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body.mechanic-body .mechanic-booking-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  width: fit-content;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-booking-status--pending { background: #2d57b8; }
+body.mechanic-body .mechanic-booking-status--accepted { background: #39bf5b; }
+body.mechanic-body .mechanic-booking-status--declined,
+body.mechanic-body .mechanic-booking-status--expired { background: #6b7280; }
+
+body.mechanic-body .mechanic-table-footer {
+  color: #c8d4e8;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+body.mechanic-body .mechanic-table-footer-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-table-footer-meta select {
+  min-height: 38px;
+  border: 1px solid rgba(180, 194, 214, 0.9);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #0f172a;
+  padding: 0 14px;
+}
+
+body.mechanic-body .mechanic-pagination {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+body.mechanic-body .mechanic-pagination button {
+  min-width: 36px;
+  min-height: 36px;
+  border: 1px solid rgba(180, 194, 214, 0.28);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+body.mechanic-body .mechanic-pagination button.active {
+  background: #475569;
+  border-color: #475569;
+}
+
+body.mechanic-body .mechanic-booking-detail {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding-top: 16px;
 }
 
 body.mechanic-body .mechanic-certifications-layout {
@@ -632,60 +923,68 @@ body.mechanic-body .mechanic-types-actions .primary {
 
 .mechanic-settings-layout {
   display: grid;
-  grid-template-areas:
-    "welcome welcome"
-    "divider divider"
-    "subnav panel";
-  grid-template-columns: 150px minmax(0, 1fr);
-  gap: 30px 24px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
   align-items: start;
+  align-content: start;
 }
 
-body.mechanic-body #mechanicSettingsView .settings-section--welcome {
-  grid-area: welcome;
-}
-
-body.mechanic-body #mechanicSettingsView .settings-section--divider {
-  grid-area: divider;
-}
-
-body.mechanic-body #mechanicSettingsView .settings-section--layout,
-body.mechanic-body #mechanicSettingsView .settings-layout {
-  display: contents;
-}
-
-body.mechanic-body #mechanicSettingsView .settings-panel {
-  grid-area: panel;
+body.mechanic-body #mechanicSettingsView .setting-panel {
   display: grid;
+  gap: 22px;
 }
 
-body.mechanic-body #mechanicSettingsView .settings-subview {
+body.mechanic-body #mechanicSettingsView .mechanic-settings-subview {
   display: grid;
+  gap: 22px;
+  align-content: start;
+  align-items: start;
+  grid-template-columns: minmax(0, 1fr);
 }
 
-body.mechanic-body #mechanicSettingsView .settings-subnav {
-  grid-area: subnav;
-  background: #475a72;
-  border: 2px solid #ffffff;
+body.mechanic-body #mechanicSettingsView .mechanic-settings-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+body.mechanic-body #mechanicSettingsPanelTitle {
+  margin: 0;
+  color: #ffffff;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 14px;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
-  padding: 10px;
-  align-self: stretch;
-  height: 100%;
+  background: rgba(14, 19, 28, 0.92);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
-body.mechanic-body #mechanicSettingsView .settings-subnav-link {
-  color: #e8edf6;
-  border-radius: 8px;
+body.mechanic-body #mechanicSettingsView .mechanic-settings-tab-link {
+  min-height: 34px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #dce5f3;
+  font-size: 0.95rem;
+  font-weight: 700;
 }
 
-body.mechanic-body #mechanicSettingsView .settings-subnav-link:hover {
-  background: rgba(255, 255, 255, 0.1);
+body.mechanic-body #mechanicSettingsView .mechanic-settings-tab-link:hover {
+  background: rgba(255, 255, 255, 0.08);
 }
 
-body.mechanic-body #mechanicSettingsView .settings-subnav-link.active {
-  background: #0d1220;
-  border-color: rgba(255, 255, 255, 0.28);
+body.mechanic-body #mechanicSettingsView .mechanic-settings-tab-link.active {
+  background: #4f627b;
+  border-color: rgba(255, 255, 255, 0.18);
   color: #ffffff;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
@@ -695,14 +994,44 @@ body.mechanic-body #mechanicSettingsView .settings-divider {
   opacity: 1;
 }
 
-body.mechanic-body #mechanicSettingsView .settings-header h2,
-body.mechanic-body #mechanicSettingsView .settings-header p,
-body.mechanic-body #mechanicSettingsView .user-welcome-corner,
-body.mechanic-body #mechanicSettingsView .user-welcome-corner-subtitle,
-body.mechanic-body #mechanicSettingsView .settings-profile h4,
-body.mechanic-body #mechanicSettingsView .settings-profile p,
-body.mechanic-body #mechanicSettingsView .settings-row h4,
-body.mechanic-body #mechanicSettingsView .settings-row p,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-photo-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 16px;
+}
+
+body.mechanic-body #mechanicSettingsView .settings-avatar {
+  background: #d5def7;
+  color: #334085;
+}
+
+body.mechanic-body #mechanicSettingsView .settings-avatar-lg {
+  width: 140px;
+  height: 140px;
+  border-radius: 36px;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-photo-row .ghost {
+  justify-self: end;
+  background: #4f627b;
+  border-color: #4f627b;
+  color: #ffffff;
+  width: 104px;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-profile,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 16px;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-profile h4,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-profile p,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-row h4,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-row p,
 body.mechanic-body #mechanicSettingsView .form-error {
   color: #ffffff;
 }
@@ -714,26 +1043,67 @@ body.mechanic-body #mechanicSettingsView .ghost {
   color: #ffffff;
 }
 
-body.mechanic-body #mechanicSettingsView .settings-contact-list {
+body.mechanic-body #mechanicSettingsView .mechanic-settings-profile h4,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-row h4,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-label {
+  font-size: 1.4rem;
+  text-transform: none;
+  letter-spacing: normal;
+  opacity: 1;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-profile p,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-row p,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-copy p {
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.4;
+  opacity: 0.92;
+}
+
+body.mechanic-body #mechanicSettingsView .settings-meta,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-row > div,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-copy {
+  display: grid;
+  gap: 10px;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-list {
   display: grid;
   gap: 14px;
 }
 
-body.mechanic-body #mechanicSettingsView .settings-contact-copy {
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-item {
+  display: block;
+  min-height: 44px;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-copy {
   display: grid;
   gap: 6px;
 }
 
-body.mechanic-body #mechanicSettingsView .settings-contact-label,
-body.mechanic-body #mechanicSettingsView .settings-contact-copy p {
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-label,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-copy p {
   color: #ffffff;
 }
 
-body.mechanic-body #mechanicSettingsView .settings-contact-actions {
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-actions {
   display: grid;
   gap: 14px;
   align-content: start;
   justify-items: end;
+  width: 104px;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-actions .secondary {
+  min-height: 44px;
+  width: 100%;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-profile .secondary,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-row > .secondary {
+  width: 104px;
 }
 
 body.mechanic-body #mechanicSettingsNotifications .notifications-card {
@@ -1158,13 +1528,20 @@ body.mechanic-body .mechanic-resolution-booking .primary {
   }
 
   .mechanic-settings-layout {
-    grid-template-areas:
-      "subnav"
-      "panel";
     grid-template-columns: 1fr;
   }
 
-  body.mechanic-body #mechanicSettingsView .settings-contact-actions {
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-panel-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-tabs {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-actions {
     justify-items: stretch;
   }
 }
@@ -1455,19 +1832,19 @@ body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-divider 
   background: rgba(255, 255, 255, 0.28);
 }
 
-body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-row {
+body.mechanic-body .mechanic-content .mechanic-dashboard-card .mechanic-settings-row {
   border-bottom: 2px solid rgba(255, 255, 255, 0.24);
   padding-bottom: 14px;
 }
 
 body.mechanic-body .mechanic-content .settings-header h2,
-body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-row h4,
+body.mechanic-body .mechanic-content .mechanic-dashboard-card .mechanic-settings-row h4,
 body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-meta h4 {
   color: #eaf0fb;
 }
 
 body.mechanic-body .mechanic-content .settings-header p,
-body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-row p,
+body.mechanic-body .mechanic-content .mechanic-dashboard-card .mechanic-settings-row p,
 body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-meta p,
 body.mechanic-body .mechanic-content .mechanic-note,
 body.mechanic-body .mechanic-content .subtle,

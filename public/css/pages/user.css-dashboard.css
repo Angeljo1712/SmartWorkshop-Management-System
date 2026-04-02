@@ -1505,23 +1505,30 @@ body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolut
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case-view {
   display: grid;
-  /* grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.9fr); */
-  grid-template-areas:`r`n
-    "intro intro"`r`n
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.9fr);
+  grid-template-areas:
+    "intro sidebar"
     "case sidebar";
   gap: 24px;
   align-items: start;
 }
 
-body.user-body #userResolutionCaseView .mechanic-resolution-case-intro {`r`n    grid-area: intro;`r`n    display: grid;`r`n    justify-items: start;`r`n    align-content: start;`r`n    gap: 10px;`r`n  }
+body.user-body #userResolutionCaseView .mechanic-resolution-case-intro {
+  grid-area: intro;
+  display: grid;
+  justify-items: start;
+  align-content: start;
+  gap: 10px;
+}
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case {
   grid-area: case;
-  padding: 20px;
+  padding: 0;
 }
 
 body.user-body #userResolutionCaseView .mechanic-resolution-sidebar {
   grid-area: sidebar;
+  align-self: start;
 }
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-thread {
@@ -1597,20 +1604,21 @@ body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-
 
 body.user-body #userResolutionCaseView .mechanic-resolution-detail-head {
   display: grid;
-  justify-items: center;
+  justify-items: start;
   gap: 10px;
 }
 
 body.user-body #userResolutionCaseView .mechanic-resolution-detail-head h3 {
-    text-align: left;
-    font-size: 1.2rem;
-  }
+  text-align: left;
+  font-size: 1.2rem;
+}
 
 body.user-body #userResolutionCaseView .mechanic-resolution-case-copy {
-    max-width: 680px;
-    justify-self: start;
-    text-align: left;
-  }
+  max-width: 680px;
+  margin: 0 0 20px;
+  justify-self: start;
+  text-align: left;
+}
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-compose {
   display: grid;
