@@ -785,6 +785,9 @@ body.admin-body .primari-shell {
       padding: 0 20px;
       font-weight: 700;
       box-shadow: none;
+      background: var(--dashboard-action-bg);
+      border-color: var(--dashboard-action-bg);
+      color: #ffffff;
     }
 
 #adminPage #adminExportBtn,
@@ -1981,8 +1984,8 @@ body.admin-body #adminSettingsView .settings-photo-row {
 body.admin-body #adminSettingsView .settings-photo-row .ghost,
 body.admin-body #adminSettingsView .secondary {
   justify-self: end;
-  background: #4f627b;
-  border-color: #4f627b;
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
   color: #ffffff;
 }
 
@@ -2113,8 +2116,8 @@ body.admin-body #adminSettingsNotifications .notifications-actions {
 body.admin-body #adminSettingsSecurity .security-actions .ghost,
 body.admin-body #adminSettingsNotifications .notifications-actions .ghost,
 body.admin-body #adminSecurity2faEnable {
-  background: #4f627b;
-  border-color: #4f627b;
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
   color: #ffffff;
 }
 

@@ -667,6 +667,9 @@ body.mechanic-body .mechanic-cert-actions {
 }
 
 body.mechanic-body .mechanic-cert-actions .primary {
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
   min-width: 180px;
 }
 
@@ -719,6 +722,9 @@ body.mechanic-body .mechanic-tax-actions {
 }
 
 body.mechanic-body .mechanic-tax-actions .primary {
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
   min-width: 180px;
 }
 
@@ -774,6 +780,9 @@ body.mechanic-body .mechanic-documents-body input[type="file"] {
 }
 
 body.mechanic-body .mechanic-documents-body .primary {
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
   min-width: 180px;
 }
 
@@ -920,6 +929,9 @@ body.mechanic-body #mechanicTypesStatus {
 }
 
 body.mechanic-body .mechanic-types-actions .primary {
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
   min-width: 220px;
 }
 
@@ -1016,8 +1028,8 @@ body.mechanic-body #mechanicSettingsView .settings-avatar-lg {
 
 body.mechanic-body #mechanicSettingsView .mechanic-settings-photo-row .ghost {
   justify-self: end;
-  background: #4f627b;
-  border-color: #4f627b;
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
   color: #ffffff;
   width: 104px;
 }
@@ -1040,8 +1052,8 @@ body.mechanic-body #mechanicSettingsView .form-error {
 
 body.mechanic-body #mechanicSettingsView .secondary,
 body.mechanic-body #mechanicSettingsView .ghost {
-  background: #4f627b;
-  border-color: #4f627b;
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
   color: #ffffff;
 }
 
@@ -1502,6 +1514,9 @@ body.mechanic-body .mechanic-resolution-booking-row span {
 }
 
 body.mechanic-body .mechanic-resolution-booking .primary {
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
   margin: 0 18px 18px;
 }
 

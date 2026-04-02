@@ -476,8 +476,8 @@ body.user-body #userSettingsView .settings-avatar-lg {
 
 body.user-body #userSettingsView .user-settings-photo-row .ghost {
   justify-self: end;
-  background: #4f627b;
-  border-color: #4f627b;
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
   color: #ffffff;
   width: 104px;
 }
@@ -491,8 +491,8 @@ body.user-body #userSettingsView .user-settings-row {
 }
 
 body.user-body #userSettingsView .secondary {
-  background: #4f627b;
-  border-color: #4f627b;
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
   color: #ffffff;
 }
 
@@ -1487,14 +1487,14 @@ body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-
 }
 
 body.user-body :is(#userBookingsView, #userResolutionView) #userResolutionComplaintAttachBtn.secondary {
-  background: #4f627b;
-  border-color: #4f627b;
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
   color: #ffffff;
 }
 
 body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .primary {
   border: 0;
-  background: #5a6f90;
+  background: var(--dashboard-action-bg);
   color: #ffffff;
   border-radius: 999px;
   padding: 12px 24px;
@@ -2800,9 +2800,9 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
 #userQuickQuoteBtn {
   min-width: 140px;
   padding: 12px 22px;
-  border: 1px solid #5a6f90;
+  border: 1px solid var(--dashboard-action-bg);
   border-radius: 999px;
-  background: #5a6f90;
+  background: var(--dashboard-action-bg);
   color: #ffffff;
 }
 
