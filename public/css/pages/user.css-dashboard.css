@@ -905,7 +905,7 @@ body.user-body #userBookingsView .user-booking-empty {
 
 .user-table-head-filters {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(0, 0.95fr)) auto;
+  grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(0, 0.95fr));
   gap: 12px;
   margin-bottom: 14px;
 }
@@ -965,6 +965,11 @@ body.user-body #userBookingsView .user-booking-empty {
 .user-head-control select {
   appearance: none;
   padding-right: 36px;
+}
+
+.user-head-control select option {
+  background: #ffffff;
+  color: #0f172a;
 }
 
 .user-bookings-export {
@@ -1301,13 +1306,13 @@ body.user-body :is(#userBookingsView, #userResolutionView) .bookings-section--re
   padding: 0 20px 20px;
 }
 
-body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-card,
-body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-detail,
-body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case,
-body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-sidebar-card {
-  border: 1px solid #ffffff;
+body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-card,
+body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-detail,
+body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-case,
+body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-sidebar-card {
+  border: 0;
   border-radius: 24px;
-  background: #0d1220;
+  background: rgba(34, 43, 58, 0.96);
   color: #eaf0fb;
 }
 
@@ -1380,6 +1385,7 @@ body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-detail {
   padding: 20px;
+  background: rgba(34, 43, 58, 0.96);
 }
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-detail-head {
@@ -1392,6 +1398,13 @@ body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-
   margin: 0;
   color: #ffffff;
 }
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case-copy {
+    margin: 0;
+    color: rgba(234, 240, 251, 0.82);
+    line-height: 1.55;
+    text-align: left;
+  }
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-back {
   border: 0;
@@ -1491,12 +1504,24 @@ body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolut
 }
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case-view {
-  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.9fr);
+  display: grid;
+  /* grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.9fr); */
+  grid-template-areas:`r`n
+    "intro intro"`r`n
+    "case sidebar";
+  gap: 24px;
   align-items: start;
 }
 
+body.user-body #userResolutionCaseView .mechanic-resolution-case-intro {`r`n    grid-area: intro;`r`n    display: grid;`r`n    justify-items: start;`r`n    align-content: start;`r`n    gap: 10px;`r`n  }
+
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case {
+  grid-area: case;
   padding: 20px;
+}
+
+body.user-body #userResolutionCaseView .mechanic-resolution-sidebar {
+  grid-area: sidebar;
 }
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-thread {
@@ -1510,7 +1535,46 @@ body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-
   gap: 6px;
 }
 
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message.is-customer {
+  justify-items: end;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message.is-customer .mechanic-resolution-message-row {
+  flex-direction: row-reverse;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  flex: 0 0 40px;
+  display: grid;
+  place-items: center;
+  background: #d5def7;
+  color: #334085;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 999px;
+    display: block;
+  }
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message-content {
+  display: grid;
+  gap: 6px;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message.is-customer .mechanic-resolution-message-content {
   justify-items: end;
 }
 
@@ -1531,6 +1595,23 @@ body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-
   font-size: 0.85rem;
 }
 
+body.user-body #userResolutionCaseView .mechanic-resolution-detail-head {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+}
+
+body.user-body #userResolutionCaseView .mechanic-resolution-detail-head h3 {
+    text-align: left;
+    font-size: 1.2rem;
+  }
+
+body.user-body #userResolutionCaseView .mechanic-resolution-case-copy {
+    max-width: 680px;
+    justify-self: start;
+    text-align: left;
+  }
+
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-compose {
   display: grid;
   gap: 12px;
@@ -1539,7 +1620,8 @@ body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-compose-actions {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
+  align-items: center;
 }
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-sidebar-card {
@@ -1581,12 +1663,7 @@ body.user-body #userResolutionView .settings-header p {
 }
 
 body.user-body #userResolutionOverview {
-  background: rgba(34, 43, 58, 0.96);
-}
-
-body.user-body .settings-card.user-resolution-card {
-  display: grid;
-  gap: 15px;
+  /* background: rgba(34, 43, 58, 0.96); */
 }
 
 body.user-body #userResolutionView .userResolutionLayout {
@@ -1602,7 +1679,7 @@ body.user-body #userResolutionView .mechanic-resolution-layout {
 }
 
 body.user-body #userResolutionView .mechanic-resolution-card {
-  border: 1px solid #ffffff;
+  border: 0;
   border-radius: 22px;
   background: rgba(34, 43, 58, 0.96);
   overflow: hidden;
@@ -1610,10 +1687,15 @@ body.user-body #userResolutionView .mechanic-resolution-card {
 
 body.user-body #userResolutionMessageView .mechanic-resolution-card,
 body.user-body #userResolutionCaseView .mechanic-resolution-card,
-body.user-body #userResolutionCaseView .mechanic-resolution-case,
-body.user-body #userResolutionCaseView .mechanic-resolution-sidebar-card {
+body.user-body #userResolutionCaseView .mechanic-resolution-case {
   border: 0;
   background: transparent;
+  box-shadow: none;
+}
+
+body.user-body #userResolutionCaseView .mechanic-resolution-sidebar-card {
+  border: 0;
+  background: rgba(34, 43, 58, 0.96);
   box-shadow: none;
 }
 
@@ -2881,6 +2963,12 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
   }
 }
   
+
+
+
+
+
+
 
 
 

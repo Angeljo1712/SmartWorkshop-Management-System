@@ -254,8 +254,9 @@ block content
                         .user-head-control.user-head-control--date
                           select#userBookingsDateFilter
                             option(value="all") All time
-                        button.secondary.user-bookings-export#userBookingsExportBtn(type="button")
-                          span Export
+                            option(value="30d") Last 30 days
+                            option(value="90d") Last 90 days
+                            option(value="365d") Last year
                     .user-table-wrap
                       table.userTable
                         thead
@@ -280,76 +281,16 @@ block content
   
               section.user-view.is-hidden#userResolutionView
                 .userResolutionLayout
-                  .settings-card.user-resolution-card#userResolutionOverview
-                    .user-resolution-layout
-                      .dashboard-section.dashboard-section--welcome.resolution-section--welcome
-                        .settings-header
-                          div
-                            h2 Welcome back
-                            p.user-welcome-name User
-                          .user-welcome-corner-wrap
-                            h2.user-welcome-corner Resolution center
-                            p.user-welcome-corner-subtitle Manage mechanic issues and active resolutions.
-    
-                      .settings-divider.resolution-section--divider
-    
-                      .resolution-section.resolution-section--card
-                        .mechanic-resolution-layout
-                          .mechanic-resolution-card
-                            h3 Current cases
-                            .mechanic-resolution-card-body
-                              .mechanic-resolution-tabs
-                                button.mechanic-resolution-tab.is-active(type="button" data-user-resolution-filter="all") All
-                                button.mechanic-resolution-tab(type="button" data-user-resolution-filter="complaint") Complaint
-                                button.mechanic-resolution-tab(type="button" data-user-resolution-filter="general") General
-                              .mechanic-resolution-table
-                                .mechanic-resolution-table-head
-                                  span Status
-                                  span Reference
-                                  span Updated at
-                                  span Subject
-                                  span
-                                #userResolutionCasesTable
-                  .settings-card.user-resolution-card.is-hidden#userResolutionMessageView
-                    .user-resolution-layout
-                      .dashboard-section.dashboard-section--welcome.resolution-section--welcome
-                        .settings-header
-                          div
-                            h2 Welcome back
-                            p.user-welcome-name User
-                          .user-welcome-corner-wrap
-                            h2.user-welcome-corner Resolution center
-                            p.user-welcome-corner-subtitle Manage mechanic issues and active resolutions.
-    
-                      .settings-divider.resolution-section--divider
-    
-                      .resolution-section.resolution-section--card
-                        .mechanic-resolution-detail
-                          .mechanic-resolution-detail-head
-                            button.mechanic-resolution-back#userResolutionBackBtn(type="button") Back
-                            h3#userResolutionDetailTitle Message mechanic regarding booking
-                          .mechanic-resolution-card
-                            .mechanic-resolution-field
-                              label(for="userResolutionIssue") Please select your issue from the list below:
-                              select#userResolutionIssue
-                                option(value="message_mechanic" data-case-type="general" selected) Message my mechanic
-                                option(value="mechanic_late" data-case-type="complaint") My mechanic is late
-                                option(value="workmanship_problem" data-case-type="complaint") Problem with workmanship
-                                option(value="charged_more_than_agreed" data-case-type="complaint") I've been charged more than agreed
-                                option(value="charged_for_unagreed_work" data-case-type="complaint") I've been charged for work that I didn't agree to
-                                option(value="mechanic_cancelled" data-case-type="complaint") Mechanic has cancelled my booking
-                                option(value="other_problem" data-case-type="complaint") Other problem
-                            p.mechanic-resolution-notice#userResolutionNotice No case has been created for this booking yet.
-                            button.primary#userResolutionGoToCase(type="button") Go to case
-                            .mechanic-resolution-complaint.is-hidden#userResolutionComplaintComposer
-                              p.mechanic-resolution-complaint-copy#userResolutionComplaintCopy
-                              textarea#userResolutionComplaintInput(rows="5" placeholder="Write your message here")
-                              .mechanic-resolution-complaint-actions
-                                button.primary#userResolutionComplaintSendBtn(type="button") Send
-                              .mechanic-resolution-complaint-footer
-                                button.secondary#userResolutionComplaintAttachBtn(type="button") Attach file(s)
-                          .mechanic-resolution-card
-                            .mechanic-resolution-card-header#userResolutionCaseListTitle Resolution cases already created for booking
+                  .user-resolution-layout#userResolutionOverview
+                    .resolution-section.resolution-section--card
+                      .mechanic-resolution-layout
+                        .mechanic-resolution-card
+                          h3 Current cases
+                          .mechanic-resolution-card-body
+                            .mechanic-resolution-tabs
+                              button.mechanic-resolution-tab.is-active(type="button" data-user-resolution-filter="all") All
+                              button.mechanic-resolution-tab(type="button" data-user-resolution-filter="complaint") Complaint
+                              button.mechanic-resolution-tab(type="button" data-user-resolution-filter="general") General
                             .mechanic-resolution-table
                               .mechanic-resolution-table-head
                                 span Status
@@ -357,32 +298,58 @@ block content
                                 span Updated at
                                 span Subject
                                 span
-                              #userResolutionBookingCasesTable
-    
-                  .settings-card.user-resolution-card.is-hidden#userResolutionCaseView
-                    .user-resolution-layout
-                      .dashboard-section.dashboard-section--welcome.resolution-section--welcome
-                        .settings-header
-                          div
-                            h2 Welcome back
-                          p.user-welcome-name User
-                        .user-welcome-corner-wrap
-                          h2.user-welcome-corner Resolution center
-                          p.user-welcome-corner-subtitle Manage mechanic issues and active resolutions.
+                              #userResolutionCasesTable
+                  .user-resolution-layout.is-hidden#userResolutionMessageView
+                    .resolution-section.resolution-section--card
+                      .mechanic-resolution-detail
+                        .mechanic-resolution-detail-head
+                          button.mechanic-resolution-back#userResolutionBackBtn(type="button") Back
+                          h3#userResolutionDetailTitle Message mechanic regarding booking
+                        .mechanic-resolution-card
+                          .mechanic-resolution-field
+                            label(for="userResolutionIssue") Please select your issue from the list below:
+                            select#userResolutionIssue
+                              option(value="message_mechanic" data-case-type="general" selected) Message my mechanic
+                              option(value="mechanic_late" data-case-type="complaint") My mechanic is late
+                              option(value="workmanship_problem" data-case-type="complaint") Problem with workmanship
+                              option(value="charged_more_than_agreed" data-case-type="complaint") I've been charged more than agreed
+                              option(value="charged_for_unagreed_work" data-case-type="complaint") I've been charged for work that I didn't agree to
+                              option(value="mechanic_cancelled" data-case-type="complaint") Mechanic has cancelled my booking
+                              option(value="other_problem" data-case-type="complaint") Other problem
+                          p.mechanic-resolution-notice#userResolutionNotice No case has been created for this booking yet.
+                          button.primary#userResolutionGoToCase(type="button") Go to case
+                          .mechanic-resolution-complaint.is-hidden#userResolutionComplaintComposer
+                            p.mechanic-resolution-complaint-copy#userResolutionComplaintCopy
+                            textarea#userResolutionComplaintInput(rows="5" placeholder="Write your message here")
+                            .mechanic-resolution-complaint-actions
+                              button.primary#userResolutionComplaintSendBtn(type="button") Send
+                            .mechanic-resolution-complaint-footer
+                              button.secondary#userResolutionComplaintAttachBtn(type="button") Attach file(s)
+                        .mechanic-resolution-card
+                          .mechanic-resolution-card-header#userResolutionCaseListTitle Resolution cases already created for booking
+                          .mechanic-resolution-table
+                            .mechanic-resolution-table-head
+                              span Status
+                              span Reference
+                              span Updated at
+                              span Subject
+                              span
+                            #userResolutionBookingCasesTable
   
-                    .settings-divider.resolution-section--divider
-  
+                  .user-resolution-layout.is-hidden#userResolutionCaseView
                     .resolution-section.resolution-section--card
                       .mechanic-resolution-case-view
-                        .mechanic-resolution-case
+                        .mechanic-resolution-case-intro
                           .mechanic-resolution-detail-head
-                            button.mechanic-resolution-back#userResolutionCaseBackBtn(type="button") Back
                             h3#userResolutionCaseTitle General Enquiry
+                        .mechanic-resolution-case
+                          p.mechanic-resolution-case-copy.is-hidden#userResolutionCaseCopy You can use this page to discuss your booking with your mechanic. Your messages will be sent directly to the mechanic, and you will receive an email whenever there's an update.
                           .mechanic-resolution-thread#userResolutionMessages
                           .mechanic-resolution-compose
                             textarea#userResolutionMessageInput(rows="5" placeholder="Add a new message here")
                             .mechanic-resolution-compose-actions
                               button.primary#userResolutionSendBtn(type="button") Send message
+                              button.mechanic-resolution-back#userResolutionCaseBackBtn(type="button") Back
                         aside.mechanic-resolution-sidebar
                           .mechanic-resolution-sidebar-card
                             h4#userResolutionSidebarTitle Current status of booking

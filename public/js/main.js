@@ -5601,6 +5601,7 @@ if (userPage) {
   const userResolutionCaseView = document.getElementById("userResolutionCaseView");
   const userResolutionCaseBackBtn = document.getElementById("userResolutionCaseBackBtn");
   const userResolutionCaseTitle = document.getElementById("userResolutionCaseTitle");
+  const userResolutionCaseCopy = document.getElementById("userResolutionCaseCopy");
   const userResolutionMessages = document.getElementById("userResolutionMessages");
   const userResolutionMessageInput = document.getElementById("userResolutionMessageInput");
   const userResolutionSendBtn = document.getElementById("userResolutionSendBtn");
@@ -6246,6 +6247,7 @@ if (userPage) {
         if (dateValue === "7d") matchesDate = ageDays <= 7;
         if (dateValue === "30d") matchesDate = ageDays <= 30;
         if (dateValue === "90d") matchesDate = ageDays <= 90;
+        if (dateValue === "365d") matchesDate = ageDays <= 365;
       }
 
       return matchesTerm && matchesType && matchesStatus && matchesDate;
@@ -6585,7 +6587,11 @@ if (userPage) {
   const renderUserResolutionCaseDetail = (detail) => {
     pendingUserResolutionCaseId = detail?.id || null;
     pendingUserResolutionBookingId = detail?.booking?.id || detail?.booking_id || null;
-    if (userResolutionCaseTitle) userResolutionCaseTitle.textContent = detail?.subject || "General Enquiry";
+    const caseTitle = detail?.subject || "General Enquiry";
+    if (userResolutionCaseTitle) userResolutionCaseTitle.textContent = caseTitle;
+    if (userResolutionCaseCopy) {
+      userResolutionCaseCopy.classList.toggle("is-hidden", caseTitle.toLowerCase() !== "general enquiry");
+    }
     if (userResolutionSidebarTitle) {
       userResolutionSidebarTitle.textContent = `Current status of booking #${detail?.booking?.reference || (detail?.booking_id ? formatBookingReference(detail.booking_id) : "-")}`;
     }
@@ -6605,11 +6611,30 @@ if (userPage) {
     if (userResolutionMessages) {
       userResolutionMessages.innerHTML = "";
       (detail?.messages || []).forEach((message) => {
+        const senderName = String(message.sender_name || "User");
+        const initials = senderName
+          .split(/\s+/)
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((part) => part[0]?.toUpperCase() || "")
+          .join("") || "U";
+        const avatarUrl = String(message.avatar_url || "").trim();
+        const resolvedAvatarUrl = avatarUrl
+          ? (avatarUrl.startsWith("/uploads") ? `http://localhost:3000${avatarUrl}` : avatarUrl)
+          : "";
+        const avatarMarkup = resolvedAvatarUrl
+          ? `<img src="${resolvedAvatarUrl}" alt="" />`
+          : initials;
         const item = document.createElement("div");
         item.className = `mechanic-resolution-message ${message.sender_role === "customer" ? "is-customer" : "is-mechanic"}`;
         item.innerHTML = `
-          <div class="mechanic-resolution-bubble">${String(message.body || "").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>")}</div>
-          <span class="mechanic-resolution-message-meta">${message.sender_name || "User"}, ${formatUserResolutionDateTime(message.created_at)}</span>
+          <div class="mechanic-resolution-message-row">
+            <div class="mechanic-resolution-message-avatar" aria-hidden="true">${avatarMarkup}</div>
+            <div class="mechanic-resolution-message-content">
+              <div class="mechanic-resolution-bubble">${String(message.body || "").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>")}</div>
+              <span class="mechanic-resolution-message-meta">${senderName}, ${formatUserResolutionDateTime(message.created_at)}</span>
+            </div>
+          </div>
         `;
         userResolutionMessages.appendChild(item);
       });
@@ -8527,6 +8552,7 @@ if (document.body.classList.contains("mechanic-welcome")) {
     }
   });
 }
+
 
 
 

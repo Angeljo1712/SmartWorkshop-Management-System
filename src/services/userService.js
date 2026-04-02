@@ -908,7 +908,7 @@ const getUserResolutionCaseDetail = async (userId, caseId) => {
   );
   const [messageRows] = await pool.query(
     `SELECT rcm.id, rcm.body, rcm.created_at, rcm.sender_id,
-            up.name, up.lastname, u.email
+            up.name, up.lastname, up.avatar_url, u.email
      FROM resolution_case_messages rcm
      INNER JOIN users u ON u.id = rcm.sender_id
      LEFT JOIN user_profiles up ON up.user_id = rcm.sender_id
@@ -959,6 +959,7 @@ const getUserResolutionCaseDetail = async (userId, caseId) => {
       created_at: message.created_at,
       sender_id: message.sender_id,
       sender_name: [message.name, message.lastname].filter(Boolean).join(" ") || message.email || "User",
+      avatar_url: message.avatar_url || "",
       sender_role: message.sender_id === userId ? "customer" : "mechanic"
     }))
   };
@@ -1062,7 +1063,7 @@ const getMechanicResolutionCaseDetail = async (mechanicId, caseId) => {
   );
   const [messageRows] = await pool.query(
     `SELECT rcm.id, rcm.body, rcm.created_at, rcm.sender_id,
-            up.name, up.lastname, u.email
+            up.name, up.lastname, up.avatar_url, u.email
      FROM resolution_case_messages rcm
      INNER JOIN users u ON u.id = rcm.sender_id
      LEFT JOIN user_profiles up ON up.user_id = rcm.sender_id
@@ -1113,6 +1114,7 @@ const getMechanicResolutionCaseDetail = async (mechanicId, caseId) => {
       created_at: message.created_at,
       sender_id: message.sender_id,
       sender_name: [message.name, message.lastname].filter(Boolean).join(" ") || message.email || "User",
+      avatar_url: message.avatar_url || "",
       sender_role: message.sender_id === mechanicId ? "mechanic" : "customer"
     }))
   };
@@ -1490,3 +1492,5 @@ module.exports = {
   updateMechanicProfile,
   respondToMechanicBookingOffer
 };
+
+
