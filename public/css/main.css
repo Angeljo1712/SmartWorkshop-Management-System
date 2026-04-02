@@ -683,7 +683,7 @@ header.main-header:not(.home-header):not(.general-header):not(.basic-header) {
 }
 
 .admin-content,
-.userContent {
+.user-content {
   display: grid;
   gap: 18px;
 }
@@ -1006,7 +1006,7 @@ body.admin-body .settings-card {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
-.adminUserLayout {
+.admin-user-layout {
   background: #ffffff;
   border-radius: 20px;
   border: 1px solid var(--border);
@@ -1597,7 +1597,7 @@ body.admin-body .customer-header-menu-btn:hover {
   border-radius: 8px;
 }
 
-.adminContent {
+.admin-content {
   background: rgba(25, 31, 42, 0.96);
   border: 1px solid var(--border-light-08);
   border-radius: 8px;
@@ -1605,7 +1605,7 @@ body.admin-body .customer-header-menu-btn:hover {
   overflow: hidden;
 }
 
-.adminContent .adminUserLayout {
+.admin-content .admin-user-layout {
   background: transparent;
   border: none;
   padding: 0;

@@ -137,7 +137,7 @@ body.user-body .page-shell-content {
   }
 }
 
-#userPage .userContent {
+#userPage .user-content {
   display: grid;
   width: 100%;
   align-self: stretch;
@@ -151,7 +151,7 @@ body.user-body .page-shell-content {
   color: #ffffff;
 }
 
-#userPage .userContent > .user-view {
+#userPage .user-content > .user-view {
   min-height: auto;
   height: auto;
 }
@@ -331,7 +331,7 @@ body.user-body .main-header.general-header {
   min-height: auto;
 }
 
-body.user-body .userContent .settings-card,
+body.user-body .user-content .settings-card,
 body.user-body .user-booking-card,
 body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-card,
 body.user-body :is(#userResolutionView, #userResolutionCaseView) .mechanic-resolution-sidebar-card,
@@ -846,7 +846,7 @@ body.user-body #userBookingsView .user-booking-empty {
   gap: 12px;
 }
 
-.userTableLayout {
+.user-table-layout {
   border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 14px;
   background: rgba(34, 43, 58, 0.96);
@@ -861,7 +861,7 @@ body.user-body #userBookingsView .user-booking-empty {
   padding: 16px 0 0;
 }
 
-.userTableLayout {
+.user-table-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr) auto;
@@ -870,14 +870,14 @@ body.user-body #userBookingsView .user-booking-empty {
   padding: 15px;
 }
 
-.userTableLayout > .user-table-head,
-.userTableLayout > .user-table-wrap,
-.userTableLayout > .user-table-footer {
+.user-table-layout > .user-table-head,
+.user-table-layout > .user-table-wrap,
+.user-table-layout > .user-table-footer {
   position: relative;
   min-width: 0;
 }
 
-.userTableLayout > .user-table-head::after {
+.user-table-layout > .user-table-head::after {
   content: "";
   position: absolute;
   left: 0;
@@ -887,7 +887,7 @@ body.user-body #userBookingsView .user-booking-empty {
   background: rgba(255, 255, 255, 0.72);
 }
 
-.userTableLayout > .user-table-footer::before {
+.user-table-layout > .user-table-footer::before {
   content: "";
   position: absolute;
   left: 0;
@@ -997,7 +997,7 @@ body.user-body #userBookingsView .user-booking-empty {
   overflow-y: hidden;
 }
 
-.userTable {
+.user-table {
   width: 100%;
   min-width: 880px;
   border: 1px solid rgba(255, 255, 255, 0.16);
@@ -1008,25 +1008,25 @@ body.user-body #userBookingsView .user-booking-empty {
   border-spacing: 0;
 }
 
-.userTable th,
-.userTable td {
+.user-table th,
+.user-table td {
   padding: 14px;
   text-align: left;
   color: #c8d4e8;
 }
 
-.userTable thead th {
+.user-table thead th {
   background: #ffffff;
   color: #0f172a;
   font-weight: 700;
   border-bottom: 1px solid rgba(255, 255, 255, 0.16);
 }
 
-.userTable thead th:first-child {
+.user-table thead th:first-child {
   border-top-left-radius: 12px;
 }
 
-.userTable thead th:last-child {
+.user-table thead th:last-child {
   border-top-right-radius: 12px;
 }
 
@@ -1045,7 +1045,7 @@ body.user-body #userBookingsView .user-booking-empty {
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.userTable tbody tr:last-child td {
+.user-table tbody tr:last-child td {
   border-bottom: 0;
 }
 
@@ -1283,7 +1283,7 @@ body.user-body #userBookingsView .user-booking-empty {
     grid-template-columns: 1fr;
   }
 
-  .userTable {
+  .user-table {
     min-width: 720px;
   }
 
@@ -1674,7 +1674,7 @@ body.user-body #userResolutionOverview {
   /* background: rgba(34, 43, 58, 0.96); */
 }
 
-body.user-body #userResolutionView .userResolutionLayout {
+body.user-body #userResolutionView .user-resolution-layout {
   display: grid;
   grid-template-rows: auto auto;
   gap: 15px;
@@ -2005,7 +2005,7 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
   display: block;
 }
 
-#userPage .userDashboardLayout {
+#userPage .user-dashboard-layout {
   display: grid;
   gap: 14px;
   min-height: 100%;
@@ -2026,7 +2026,7 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
   align-self: start;
 }
 
-#userDashboardView .userDashboardLayout > .user-panel:last-child {
+#userDashboardView .user-dashboard-layout > .user-panel:last-child {
   align-self: start;
 }
 
@@ -2036,7 +2036,7 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
 }
 
 #userDashboardView .dashboard-section--welcome,
-#userDashboardView .userDashboardLayout > .settings-divider:first-of-type,
+#userDashboardView .user-dashboard-layout > .settings-divider:first-of-type,
 #userAccountView .account-section--welcome,
 #userAccountView .user-account-layout > .settings-divider:nth-of-type(1),
 #userVehicleView .vehicle-section--welcome,
@@ -2901,7 +2901,7 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
     display: none;
   }
 
-  body.user-body .userContent .settings-card {
+  body.user-body .user-content .settings-card {
       padding: 16px;
       gap: 12px;
       border-radius: 12px;
@@ -2942,7 +2942,7 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
 }
 
 @media (max-width: 375px) {
-  body.user-body .userContent .settings-card {
+  body.user-body .user-content .settings-card {
       padding: 12px;
     }
 

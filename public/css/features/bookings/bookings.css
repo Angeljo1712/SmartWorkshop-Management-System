@@ -546,7 +546,7 @@
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
 }
 
-.workType-layout1 {
+.work-type-layout-1 {
   display: grid;
   grid-template-areas:
     "stepper"
@@ -554,15 +554,15 @@
   gap: 24px;
 }
 
-.workType-layout1 > .bookings-stepper {
+.work-type-layout-1 > .bookings-stepper {
   grid-area: stepper;
 }
 
-.workType-layout1 > .workType-layout2 {
+.work-type-layout-1 > .work-type-layout-2 {
   grid-area: content;
 }
 
-.workType-layout1 > .workType-layout2 {
+.work-type-layout-1 > .work-type-layout-2 {
   display: grid;
   grid-template-areas:
     "tabs tabs"
@@ -576,15 +576,15 @@
   padding: 30px;
 }
 
-.workType-layout1 > .workType-layout2 > .work-tabs {
+.work-type-layout-1 > .work-type-layout-2 > .work-tabs {
   grid-area: tabs;
 }
 
-.workType-layout1 > .workType-layout2 > .bookings-work {
+.work-type-layout-1 > .work-type-layout-2 > .bookings-work {
   grid-area: main;
 }
 
-.workType-layout1 > .workType-layout2 > .work-summary {
+.work-type-layout-1 > .work-type-layout-2 > .work-summary {
   grid-area: summary;
 }
 
@@ -1598,7 +1598,7 @@
 /* Responsive */
 
 @media (max-width: 1024px) {
-  .workType-layout1 > .workType-layout2 {
+  .work-type-layout-1 > .work-type-layout-2 {
     grid-template-areas:
       "tabs"
       "main"

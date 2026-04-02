@@ -44,7 +44,7 @@ body.admin-body .primari-shell {
   border-radius: 0;
 }
 
-#adminPage .adminContent {
+#adminPage .admin-content {
   display: grid;
   background: transparent;
   border: 0;
@@ -57,11 +57,11 @@ body.admin-body .primari-shell {
   color: #ffffff;
 }
 
-#adminPage .adminContent * {
+#adminPage .admin-content * {
   color: #ffffff;
 }
 
-#adminPage .adminContent > .admin-view {
+#adminPage .admin-content > .admin-view {
   min-height: 0;
   height: 100%;
 }
@@ -239,29 +239,29 @@ body.admin-body .primari-shell {
   color: #ffe7ea;
 }
 
-#adminPage .adminDashboardLayout {
+#adminPage .admin-dashboard-layout {
   display: grid;
   gap: 14px;
   color: #ffffff;
 }
 
-#adminPage .adminDashboardLayout h1,
-#adminPage .adminDashboardLayout h2,
-#adminPage .adminDashboardLayout h3,
-#adminPage .adminDashboardLayout h4,
-#adminPage .adminDashboardLayout p,
-#adminPage .adminDashboardLayout span,
-#adminPage .adminDashboardLayout strong,
-#adminPage .adminDashboardLayout label,
-#adminPage .adminDashboardLayout li,
-#adminPage .adminDashboardLayout button {
+#adminPage .admin-dashboard-layout h1,
+#adminPage .admin-dashboard-layout h2,
+#adminPage .admin-dashboard-layout h3,
+#adminPage .admin-dashboard-layout h4,
+#adminPage .admin-dashboard-layout p,
+#adminPage .admin-dashboard-layout span,
+#adminPage .admin-dashboard-layout strong,
+#adminPage .admin-dashboard-layout label,
+#adminPage .admin-dashboard-layout li,
+#adminPage .admin-dashboard-layout button {
   color: #ffffff;
 }
 
-#adminPage .adminDashboardLayout .label,
-#adminPage .adminDashboardLayout .subtle,
-#adminPage .adminDashboardLayout [class*="subtitle"],
-#adminPage .adminDashboardLayout [class*="meta"] {
+#adminPage .admin-dashboard-layout .label,
+#adminPage .admin-dashboard-layout .subtle,
+#adminPage .admin-dashboard-layout [class*="subtitle"],
+#adminPage .admin-dashboard-layout [class*="meta"] {
   color: #ffffff !important;
 }
 
@@ -432,7 +432,7 @@ body.admin-body .primari-shell {
   text-align: right;
 }
 
-#adminPage .adminContent .adminUserLayout {
+#adminPage .admin-content .admin-user-layout {
       display: grid !important;
       grid-template-columns: minmax(0, 1fr) !important;
       grid-template-rows: minmax(0, 1fr) !important;
@@ -445,7 +445,7 @@ body.admin-body .primari-shell {
       align-self: stretch;
     }
 
-#adminPage .adminTableLayout {
+#adminPage .admin-table-layout {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
       grid-template-rows: auto minmax(0, 1fr) auto;
@@ -456,27 +456,27 @@ body.admin-body .primari-shell {
       padding: 15px;
     }
 
-#adminPage .adminTableLayout > .admin-table-head {
+#adminPage .admin-table-layout > .admin-table-head {
     grid-row: 1;
   }
 
-#adminPage .adminTableLayout > .admin-table-wrap {
+#adminPage .admin-table-layout > .admin-table-wrap {
     grid-row: 2;
   }
 
-#adminPage .adminTableLayout > .admin-table-footer {
+#adminPage .admin-table-layout > .admin-table-footer {
     grid-row: 3;
     margin-top: 0;
   }
 
-#adminPage .adminTableLayout > .admin-table-head,
-#adminPage .adminTableLayout > .admin-table-wrap,
-#adminPage .adminTableLayout > .admin-table-footer {
+#adminPage .admin-table-layout > .admin-table-head,
+#adminPage .admin-table-layout > .admin-table-wrap,
+#adminPage .admin-table-layout > .admin-table-footer {
     position: relative;
   }
 
-#adminPage .adminTableLayout > .admin-table-head::after,
-#adminPage .adminTableLayout > .admin-table-footer::before {
+#adminPage .admin-table-layout > .admin-table-head::after,
+#adminPage .admin-table-layout > .admin-table-footer::before {
       content: "";
       position: absolute;
       left: 0;
@@ -485,19 +485,19 @@ body.admin-body .primari-shell {
       background: rgba(255, 255, 255, 0.72);
     }
 
-#adminPage .adminTableLayout > .admin-table-head::after {
+#adminPage .admin-table-layout > .admin-table-head::after {
       bottom: -15px;
     }
 
-#adminPage .adminTableLayout > .admin-table-footer::before {
+#adminPage .admin-table-layout > .admin-table-footer::before {
       top: -15px;
     }
 
-#adminPage .adminUserLayout > * {
+#adminPage .admin-user-layout > * {
     min-width: 0;
   }
 
-#adminPage .adminTableLayout > * {
+#adminPage .admin-table-layout > * {
     min-width: 0;
   }
 

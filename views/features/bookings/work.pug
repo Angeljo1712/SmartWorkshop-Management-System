@@ -18,7 +18,7 @@ block content
       a.bookings-header-help(href="#") Need help?
   main.primari-shell
     .page-shell-content
-      .workType-layout1
+      .work-type-layout-1
         - const workTitle = type === "diagnostics" ? "In-person diagnostic" : type === "service" ? "Servicing & MOT" : type === "inspection" ? "Pre-purchase inspections" : type === "tyres" ? "Choose from popular tyre services" : "Search for your repair";
         - const workSubtitle = type === "diagnostics" ? "Get a mechanic to diagnose the issue and give you a no-obligation quote for any required repairs." : type === "service" ? "Compare service levels and choose the right option for your vehicle." : type === "inspection" ? "Choose the inspection depth that matches the vehicle you are checking." : type === "tyres" ? "Pick a tyre service and continue with your booking." : "Find the repair you need or browse the available categories.";
         .bookings-stepper
@@ -35,7 +35,7 @@ block content
             .step
               span.step-dot 4
               span.step-label Book
-        .workType-layout2(data-service-category=type)
+        .work-type-layout-2(data-service-category=type)
           nav.work-tabs(aria-label="Service types")
             a.work-tab(class=(type === "repair" ? "is-active" : "") href="/bookings/work?type=repair") Repairs
             a.work-tab(class=(type === "diagnostics" ? "is-active" : "") href="/bookings/work?type=diagnostics") Diagnostics
