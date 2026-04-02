@@ -1,0 +1,83 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Payment"
+  - var bodyClass = "bookings-body app-shell-body"
+
+block head
+  link(rel="stylesheet", href="/css/features/bookings/bookings.css")
+
+block content
+  header.main-header.basic-header
+    .body-content
+      a.main-brand(href="/")
+        span.main-logo SW
+        div
+          strong SmartWorkshop
+          span Vehicle Service Marketplace
+      a.bookings-header-help(href="#") Need help?
+  main.primari-shell#bookingPaymentPage
+    .page-shell-content
+      .payment-layout1
+        .bookings-stepper
+          .stepper.stepper--progress-4(aria-label="Booking steps")
+            .step.is-complete
+              span.step-dot 1
+              span.step-label Car
+            .step.is-complete
+              span.step-dot 2
+              span.step-label Select work
+            .step.is-complete
+              span.step-dot 3
+              span.step-label Details
+            .step.is-active
+              span.step-dot 4
+              span.step-label Book
+        .payment-layout2
+          aside.details-summary
+            .price-card
+              .price-head
+                span Total price
+              .price-main
+                span.price-value#paymentTotal £0.00
+                span.price-note Quote includes VAT where applicable
+              .price-vehicle
+                span#paymentVehicle Toyota Corolla 1.4L Petrol 2005 · KT10 0QR
+                a(href="/bookings/vehicle") Edit
+            .summary-section
+              h3 Selected work
+              p.form-error.is-hidden#paymentEmpty No items selected yet.
+              #paymentItems
+            .payment-info
+              h3 Why provide your card details now?
+              ul.payment-benefits
+                li We won't charge you until the work is complete.
+                li Extra protection if anything goes wrong after booking.
+                li Free cancellation up to 24 hours before the booking.
+          section.details-content
+            .details-card
+              h3 Payment
+              p.help-text Demo mode: no real payment is taken here. Use any placeholder values to continue.
+            .details-card
+              h3 Payment details
+              label
+                | Name on card
+                input#paymentCardName(name="paymentCardName" type="text" placeholder="e.g. Mr John Smith" autocomplete="cc-name")
+              label
+                | Card number
+                input#paymentCardNumber(name="paymentCardNumber" type="text" placeholder="e.g. 1234 1234 1234 1234" autocomplete="cc-number" inputmode="numeric")
+              .field-grid
+                label
+                  | Expiry date
+                  input#paymentExpiry(name="paymentExpiry" type="text" placeholder="MM / YY" autocomplete="cc-exp")
+                label
+                  | Security code
+                  input#paymentCvc(name="paymentCvc" type="text" placeholder="CVC" autocomplete="cc-csc" inputmode="numeric")
+              p.form-error#paymentFormError(role="alert" aria-live="polite")
+              button.primary.details-submit(type="button") Complete booking
+  include ../../partials/general-footer
+
+append scripts
+  script(src="/js/features/bookings/flow.js")
+
+

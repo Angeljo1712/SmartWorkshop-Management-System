@@ -8,9 +8,10 @@ html(lang="en")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
     title= title
     link(rel="stylesheet", href="/css/main.css")
-    link(rel="stylesheet", href="/css/pages/auth.css")
+    link(rel="stylesheet", href="/css/features/auth/auth.css")
     block head
   body(class=bodyClass)
     block content
     block scripts
-      script(src="/js/main.js")
+      script(src="/js/shared/app.js")
+      script(src="/js/features/auth/pages.js")

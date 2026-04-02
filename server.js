@@ -1,5 +1,5 @@
 const app = require("./src/app");
-const { env } = require("./src/config/env");
+const { env } = require("./src/shared/config/env");
 const { seedDatabase } = require("./src/db/seed");
 
 const port = env.apiPort;

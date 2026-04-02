@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
 @import url("./base/tokens.css");
 @import url("./components.css");
-@import url("./pages/home.css");
+@import url("./features/home/home.css");
 
 /* Base */
 * {
@@ -666,7 +666,7 @@ header.main-header:not(.home-header):not(.general-header):not(.basic-header) {
   background: #22c55e;
 }
 
-.admin-nav-link {
+.rail-nav-link {
   border: none;
   background: #f3f4f6;
   color: #1f2937;
@@ -677,7 +677,7 @@ header.main-header:not(.home-header):not(.general-header):not(.basic-header) {
   cursor: pointer;
 }
 
-.admin-nav-link.active {
+.rail-nav-link.active {
   background: #e0e7ff;
   color: #1e40af;
 }
@@ -1819,5 +1819,6 @@ body.admin-body .customer-header-menu-btn:hover {
   overflow: hidden;
   transition: max-height 0.22s ease, opacity 0.18s ease, transform 0.18s ease;
 }
+
 
 

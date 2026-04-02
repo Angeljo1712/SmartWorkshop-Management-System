@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-const { pool } = require("../config/pool");
+const { pool } = require("../shared/config/pool");
 
 const SEED = {
   roles: ["ADMIN", "MECHANIC", "CUSTOMER"],
