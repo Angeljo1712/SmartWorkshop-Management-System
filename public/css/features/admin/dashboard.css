@@ -15,12 +15,12 @@ body.admin-body .primari-shell {
 }
 
 #adminPage.mainLayout {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 0;
-    align-items: stretch;
-    border-radius: 15px 15px 0 0;
-    overflow: hidden;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0;
+      align-items: stretch;
+      border-radius: 15px 15px 0 0;
+    overflow: visible;
 }
 
 #adminPage .mainSection {
@@ -75,6 +75,7 @@ body.admin-body .primari-shell {
 }
 
 #adminPage .rail-base {
+  position: static;
   width: 70px;
   min-width: 70px;
   min-height: auto;
@@ -84,7 +85,7 @@ body.admin-body .primari-shell {
   border-bottom: 0;
   border-radius: 15px 0 0 0;
   color: #1b2430;
-  overflow: hidden;
+  overflow: visible;
   transition: width 0.22s ease;
 }
 
@@ -111,7 +112,10 @@ body.admin-body .primari-shell {
 }
 
 #adminPage .mainRail .rail-nav {
+  position: sticky;
+  top: var(--general-header-height, 71px);
   width: 100%;
+  align-self: start;
   justify-items: center;
   gap: 10px;
 }
