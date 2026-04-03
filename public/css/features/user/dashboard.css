@@ -1,9 +1,10 @@
 #userPage.mainLayout {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   align-items: stretch;
   gap: 0;
-  border-radius: 15px 15px 0 0;
+  border: 2px solid #ffffff;
+  border-radius: 0px 15px 0 0;
   overflow: hidden;
 }
 
@@ -12,6 +13,11 @@ body.user-body .primari-shell {
 }
 
 body.user-body .page-shell-content {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0;
   min-height: 0;
   height: auto;
 }
@@ -25,16 +31,16 @@ body.user-body .page-shell-content {
   height: auto;
   align-self: stretch;
   background: rgba(25, 31, 42, 0.96);
-  border: 2px solid #ffffff;
-  border-left: 0;
-  border-bottom: 0;
-  border-radius: 0 15px 0 0;
+  border: 0;
+  border-radius: 0;
 }
 
 #userPage .mainSection > .user-dashboard-hero {
   padding: 5px 10px;
   background: #ffffff;
   border-radius: 0;
+  border-top-right-radius: 0 !important;
+  border-top-left-radius: 0 !important;
 }
 
 #userPage .user-dashboard-hero,
@@ -164,35 +170,42 @@ body.user-body .main-header.general-header {
   display: block;
 }
 
-#userPage.mainLayout .rail-base {
+body.user-body .page-shell-content > .rail-base {
+  position: sticky;
+  top: 72px;
   width: 70px;
   min-width: 70px;
-  /* min-height: auto; */
+  min-height: 100%;
   background: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-right: 0;
   border-bottom: 0;
   border-radius: 15px 0 0 0;
   color: #1b2430;
+  align-self: stretch;
   overflow: hidden;
+  z-index: 8;
   transition: width 0.22s ease;
 }
 
-#userPage.mainLayout .mainRail {
+body.user-body .page-shell-content > .rail-base.mainRail {
+  padding: 0;
+}
+body.user-body .page-shell-content > .rail-base.mainRail {
   padding: 14px 10px;
   justify-items: center;
 }
 
-#userPage.mainLayout .mainRail:hover {
+body.user-body .page-shell-content > .rail-base.mainRail:hover {
   width: 200px;
 }
 
-#userPage.mainLayout .mainRail .rail-brand {
+body.user-body .page-shell-content > .rail-base.mainRail .rail-brand {
   width: 100%;
   padding: 0 0 10px;
 }
 
-#userPage.mainLayout .mainRail .rail-brand .logo {
+body.user-body .page-shell-content > .rail-base.mainRail .rail-brand .logo {
   width: 40px;
   height: 40px;
   border-radius: 12px;
@@ -200,13 +213,13 @@ body.user-body .main-header.general-header {
   color: #1b2430;
 }
 
-#userPage.mainLayout .mainRail .rail-nav {
+body.user-body .page-shell-content > .rail-base.mainRail .rail-nav {
   width: 100%;
   justify-items: center;
   gap: 10px;
 }
 
-#userPage.mainLayout .mainRail .rail-item {
+body.user-body .page-shell-content > .rail-base.mainRail .rail-item {
   width: 48px;
   max-width: 48px;
   height: 48px;
@@ -221,19 +234,19 @@ body.user-body .main-header.general-header {
   transition: max-width 0.22s ease, width 0.22s ease, padding 0.22s ease, justify-content 0.22s ease, background 0.18s ease;
 }
 
-#userPage.mainLayout .mainRail .rail-item:hover:not(.active) {
+body.user-body .page-shell-content > .rail-base.mainRail .rail-item:hover:not(.active) {
   background: rgba(15, 23, 42, 0.06);
 }
 
-#userPage.mainLayout .rail-item.active,
-#userPage.mainLayout .rail-item:focus-visible {
+body.user-body .page-shell-content > .rail-base.mainRail .rail-item.active,
+body.user-body .page-shell-content > .rail-base.mainRail .rail-item:focus-visible {
   background: #1b1f27;
   color: #ffffff;
   border-color: rgba(15, 23, 42, 0.08);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
-#userPage.mainLayout .rail-item.active::before {
+body.user-body .page-shell-content > .rail-base.mainRail .rail-item.active::before {
   content: "";
   position: absolute;
   right: -10px;
@@ -245,7 +258,7 @@ body.user-body .main-header.general-header {
   transform: translateY(-50%);
 }
 
-#userPage.mainLayout .mainRail .rail-text {
+body.user-body .page-shell-content > .rail-base.mainRail .rail-text {
   width: 0;
   opacity: 0;
   overflow: hidden;
@@ -253,13 +266,13 @@ body.user-body .main-header.general-header {
   transition: width 0.18s ease, opacity 0.18s ease;
 }
 
-#userPage.mainLayout .mainRail .rail-icon {
+body.user-body .page-shell-content > .rail-base.mainRail .rail-icon {
   width: 20px;
   height: 20px;
   flex: 0 0 20px;
 }
 
-#userPage.mainLayout .mainRail .rail-footer {
+body.user-body .page-shell-content > .rail-base.mainRail .rail-footer {
   width: 100%;
   display: grid;
   justify-items: center;
@@ -267,7 +280,7 @@ body.user-body .main-header.general-header {
   border-top: 0;
 }
 
-#userPage.mainLayout .mainRail .admin-signout {
+body.user-body .page-shell-content > .rail-base.mainRail .admin-signout {
   width: 48px;
   min-width: 48px;
   height: 48px;
@@ -283,7 +296,7 @@ body.user-body .main-header.general-header {
   place-items: center;
 }
 
-#userPage.mainLayout .mainRail .admin-signout::before {
+body.user-body .page-shell-content > .rail-base.mainRail .admin-signout::before {
   content: "←";
   position: absolute;
   inset: 0;
@@ -296,7 +309,7 @@ body.user-body .main-header.general-header {
   z-index: 1;
 }
 
-#userPage.mainLayout .mainRail:hover .rail-item {
+body.user-body .page-shell-content > .rail-base.mainRail:hover .rail-item {
   width: 100%;
   max-width: 100%;
   justify-content: flex-start;
@@ -304,16 +317,16 @@ body.user-body .main-header.general-header {
   padding: 0 14px;
 }
 
-#userPage.mainLayout .mainRail:hover .rail-text {
+body.user-body .page-shell-content > .rail-base.mainRail:hover .rail-text {
   width: auto;
   opacity: 1;
 }
 
-#userPage.mainLayout .mainRail:hover .rail-footer {
+body.user-body .page-shell-content > .rail-base.mainRail:hover .rail-footer {
   justify-items: stretch;
 }
 
-#userPage.mainLayout .mainRail:hover .admin-signout {
+body.user-body .page-shell-content > .rail-base.mainRail:hover .admin-signout {
   width: 100%;
   color: #334155;
   font-size: 0.88rem;
@@ -322,7 +335,7 @@ body.user-body .main-header.general-header {
   justify-content: flex-start;
 }
 
-#userPage.mainLayout .mainRail:hover .admin-signout::before {
+body.user-body .page-shell-content > .rail-base.mainRail:hover .admin-signout::before {
   inset: 0 auto 0 14px;
   width: 18px;
 }
@@ -2848,7 +2861,7 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
 /* Responsive matrix for user dashboard */
 @media (max-width: 1440px) {
   #userPage.mainLayout {
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: 1fr;
     gap: 0;
   }
 
@@ -2885,11 +2898,27 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
     display: none;
   }
 
+  body.user-body .page-shell-content {
+    padding-left: 16px;
+  }
+
+  body.user-body .page-shell-content > .rail-base {
+    position: static;
+    width: 100%;
+    min-width: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 15px 15px 0 0;
+  }
+
   #userPage.mainLayout {
     grid-template-columns: 1fr;
   }
 
-  #userPage.mainLayout .rail-nav {
+  body.user-body .page-shell-content > .rail-base.mainRail {
+    width: 100%;
+  }
+
+  body.user-body .page-shell-content > .rail-base.mainRail .rail-nav {
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: minmax(110px, 1fr);
@@ -2897,7 +2926,7 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
     padding-bottom: 4px;
   }
 
-  #userPage.mainLayout .rail-footer {
+  body.user-body .page-shell-content > .rail-base.mainRail .rail-footer {
     display: none;
   }
 
@@ -2921,12 +2950,12 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
     font-size: 1rem;
   }
 
-  #userPage.mainLayout .rail-nav {
+  body.user-body .page-shell-content > .rail-base.mainRail .rail-nav {
     grid-auto-columns: minmax(100px, 1fr);
     gap: 4px;
   }
 
-  #userPage.mainLayout .rail-item {
+  body.user-body .page-shell-content > .rail-base.mainRail .rail-item {
     font-size: 0.8rem;
     padding: 8px 8px;
   }
@@ -2961,10 +2990,10 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
     font-size: 0.92rem;
   }
 
-  #userPage.mainLayout .rail-item {
-    font-size: 0.74rem;
-    padding: 7px 6px;
-  }
+    body.user-body .page-shell-content > .rail-base.mainRail .rail-item {
+      font-size: 0.74rem;
+      padding: 7px 6px;
+    }
 
   .user-dashboard-card .user-section-title {
     font-size: 0.95rem;
