@@ -20,7 +20,7 @@ body.admin-body .primari-shell {
       gap: 0;
       align-items: stretch;
       border-radius: 15px 15px 0 0;
-    overflow: visible;
+      overflow: visible;
 }
 
 #adminPage .mainSection {
@@ -41,7 +41,7 @@ body.admin-body .primari-shell {
 #adminPage .mainSection > .admin-dashboard-hero {
   padding: 5px 10px;
   background: #ffffff;
-  border-radius: 0;
+  border-radius: 0 12px 0 0;
 }
 
 #adminPage .admin-content {
@@ -118,6 +118,7 @@ body.admin-body .primari-shell {
   align-self: start;
   justify-items: center;
   gap: 10px;
+  padding-top: 15px;
 }
 
 #adminPage .mainRail .rail-item {
