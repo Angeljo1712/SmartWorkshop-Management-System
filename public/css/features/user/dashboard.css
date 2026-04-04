@@ -109,7 +109,15 @@ body.user-body .page-shell-content {
   margin: 0;
 }
 
+.user-panel-head h2 {
+  font-size: 1.45rem;
+  line-height: 1.15;
+  text-align: left;
+}
+
 .user-panel-head p {
+  font-size: 1rem;
+  line-height: 1.5;
   white-space: nowrap;
   text-align: right;
 }
@@ -145,7 +153,7 @@ body.user-body .page-shell-content {
   display: grid;
   width: 100%;
   align-self: stretch;
-  background: rgba(9, 13, 21, 0.96);
+  background: transparent;
   border: 0;
   border-radius: 0;
   padding: 15px;
@@ -189,11 +197,6 @@ body.user-body .main-header.general-header {
 }
 
 #userPage .mainRail:hover {
-  width: 200px;
-}
-
-#userPage .mainRail:hover .rail-nav,
-#userPage .mainRail .rail-nav:hover {
   width: 200px;
 }
 
@@ -243,28 +246,15 @@ body.user-body .main-header.general-header {
   transition: max-width 0.22s ease, width 0.22s ease, padding 0.22s ease, justify-content 0.22s ease, background 0.18s ease;
 }
 
-#userPage .mainRail .rail-item:hover:not(.active) {
+#userPage .mainRail .rail-item:hover {
   background: rgba(15, 23, 42, 0.06);
 }
 
-#userPage .mainRail .rail-item.active,
-#userPage .mainRail .rail-item:focus-visible {
+#userPage .mainRail .rail-item.active {
   background: #1b1f27;
-  color: #ffffff;
   border-color: rgba(15, 23, 42, 0.08);
+  color: #ffffff;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
-}
-
-#userPage .mainRail .rail-item.active::before {
-  content: "";
-  position: absolute;
-  right: -10px;
-  top: 50%;
-  width: 4px;
-  height: 28px;
-  border-radius: 999px;
-  background: #475569;
-  transform: translateY(-50%);
 }
 
 #userPage .mainRail .rail-text {
@@ -1810,14 +1800,14 @@ body.user-body #userResolutionView .mechanic-resolution-link {
 }
 
 .user-account-card {
-  display: block;
-}
+      display: block;
+  }
 
 .user-account-layout {
-  display: grid;
-  grid-template-areas:
-    "welcome"
-    "divider-top"
+      display: grid;
+      grid-template-areas:
+        "welcome"
+        "divider-top"
     "avatar"
     "divider-mid"
     "profile"
@@ -1928,7 +1918,7 @@ body.user-body #userAccountView .settings-avatar-lg {
 }
 
 @media (max-width: 980px) {
-  body.user-body #userAccountView .settings-card {
+body.user-body #userAccountView .settings-card {
     padding: 20px;
   }
 }
@@ -1939,6 +1929,14 @@ body.user-body #userDashboardView .user-section-title,
 body.user-body #userDashboardView .user-verify-title {
   color: #eaf0fb;
   text-align: center;
+}
+
+body.user-body #userDashboardView .user-panel-head h2 {
+  text-align: left;
+}
+
+body.user-body #userDashboardView .user-panel-head p {
+  text-align: right;
 }
 
 #userDashboardView .user-welcome-corner {
@@ -2029,15 +2027,30 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
   color: #ffffff;
 }
 
+#userDashboardView .user-dashboard-layout > .settings-divider {
+  height: 3px;
+  background: #ffffff;
+  width: 100%;
+}
+
 .user-panel {
+      display: grid;
+      gap: 14px;
+      background: transparent;
+      border: 0;
+      border-radius: var(--dashboard-panel-radius);
+      box-shadow: none;
+    padding: 16px;
+  align-self: start;
+}
+
+.car-panel {
   display: grid;
   gap: 14px;
-  background: var(--dashboard-panel-bg);
-  border: 1px solid var(--dashboard-panel-border);
-  border-radius: var(--dashboard-panel-radius);
-  box-shadow: var(--dashboard-panel-shadow);
-  padding: 16px;
-  align-self: start;
+  background: #3e434df7;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 14px;
 }
 
 #userDashboardView .user-dashboard-layout > .user-panel:last-child {
@@ -2049,8 +2062,52 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
   margin: 0 auto;
 }
 
+#userDashboardView .car-panel > .dashboard-section--add-form {
+  display: contents;
+}
+
+#userDashboardView .car-panel > .dashboard-section--add-form .user-add-vehicle {
+  display: contents;
+}
+
+#userDashboardView .car-panel > .dashboard-section--add-form .user-add-vehicle input {
+  width: min(360px, 100%);
+  justify-self: center;
+}
+
+#userDashboardView .car-panel > .dashboard-section--add-form .user-add-vehicle button {
+  justify-self: center;
+}
+
+#userDashboardView .car-panel > .dashboard-section--add-form .form-error {
+  justify-self: center;
+  text-align: center;
+}
+
+#userDashboardView .car-panel > .dashboard-section--quote {
+  display: contents;
+}
+
+#userDashboardView .car-panel > .dashboard-section--quote .user-quick-quote {
+  display: contents;
+}
+
+#userDashboardView .car-panel > .dashboard-section--quote .user-quick-quote label {
+  display: grid;
+  gap: 8px;
+  width: min(360px, 100%);
+  justify-self: center;
+}
+
+#userDashboardView .car-panel > .dashboard-section--quote .user-quick-quote button {
+  justify-self: center;
+}
+
+#userDashboardView .car-panel > .dashboard-section--quote .user-verify-card {
+  justify-self: stretch;
+}
+
 #userDashboardView .dashboard-section--welcome,
-#userDashboardView .user-dashboard-layout > .settings-divider:first-of-type,
 #userAccountView .account-section--welcome,
 #userAccountView .user-account-layout > .settings-divider:nth-of-type(1),
 #userVehicleView .vehicle-section--welcome,
@@ -2072,9 +2129,9 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
     "divider-profile"
     "contacts"
     "divider-bottom"
-    "role"
-    "divider-final"
-    "integration";
+      "role"
+      "divider-final"
+      "integration";
 }
 
 .user-vehicle-layout {

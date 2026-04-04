@@ -49,7 +49,7 @@ body.admin-body .primari-shell {
   background: transparent;
   border: 0;
   border-radius: 0;
-  padding: 0;
+  padding: 15px;
   overflow: hidden;
   min-height: 0;
   height: auto;
@@ -291,10 +291,14 @@ body.admin-body .primari-shell {
 #adminPage .admin-dashboard-hero .settings-header h2,
 #adminPage .admin-dashboard-hero .settings-header h3 {
   color: #1b2430;
+  font-size: 1.45rem;
+  line-height: 1.15;
 }
 
 #adminPage .admin-dashboard-hero .settings-header p {
   color: #475569;
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
 #adminPage .admin-dashboard-hero .settings-header .settings-header-aside {
@@ -337,18 +341,39 @@ body.admin-body .primari-shell {
 #adminPage .admin-dashboard-list-item {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.03);
+  background: #3e434df7;
 }
 
 #adminPage .admin-dashboard-metric-card {
   padding: 14px;
   display: grid;
   gap: 6px;
+  text-align: center;
+  justify-items: center;
+}
+
+#adminPage .admin-queue-item {
+  text-align: center;
+  justify-items: center;
+}
+
+#adminPage .admin-dashboard-metric-card h3,
+#adminPage .admin-queue-item h3,
+#adminPage .admin-dashboard-metric-card strong {
+  color: #ffffff;
 }
 
 #adminPage .admin-dashboard-metric-card strong {
   font-size: 1.8rem;
-  color: #f4f7fd;
+}
+
+#adminPage .admin-queue-item strong {
+  color: #ffffff;
+}
+
+#adminPage .admin-dashboard-metric-card p {
+  margin: 0;
+  color: #ffffff;
 }
 
 #adminPage .admin-dashboard-metric-card span:last-child {
@@ -411,7 +436,7 @@ body.admin-body .primari-shell {
   min-height: 44px;
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.06);
+  background: #3e434df7;
 }
 
 #adminPage .admin-section-head {
@@ -1829,14 +1854,23 @@ body.admin-body .admin-edit-menu button:disabled {
   padding: 14px;
 }
 
-#adminPage .admin-profile-card,
-#adminPage .admin-panel {
+#adminPage .admin-profile-card {
   display: grid;
   gap: 10px;
   background: var(--dashboard-panel-bg);
   border: 1px solid var(--dashboard-panel-border);
   border-radius: var(--dashboard-panel-radius);
   box-shadow: var(--dashboard-panel-shadow);
+  padding: 16px;
+}
+
+#adminPage .admin-panel {
+  display: grid;
+  gap: 10px;
+  background: transparent;
+  border: 0;
+  border-radius: var(--dashboard-panel-radius);
+  box-shadow: none;
   padding: 16px;
 }
 

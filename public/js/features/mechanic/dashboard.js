@@ -4,6 +4,7 @@ if (mechanicDashboard) {
   const mechanicLogoutBtn = document.getElementById("mechanicLogoutBtn");
   const mechanicNavLinks = mechanicDashboard.querySelectorAll(".rail-nav .rail-item[data-view]");
   const mechanicDashboardView = document.getElementById("mechanicDashboardView");
+  const mechanicBookingInformationView = document.getElementById("mechanicBookingInformationView");
   const mechanicResolutionCenterView = document.getElementById("mechanicResolutionCenterView");
   const mechanicProcedureView = document.getElementById("mechanicProcedureView");
   const mechanicPaymentsView = document.getElementById("mechanicPaymentsView");
@@ -33,6 +34,15 @@ if (mechanicDashboard) {
   const mechanicBookingsFooterCount = document.getElementById("mechanicBookingsFooterCount");
   const mechanicBookingsPagination = document.getElementById("mechanicBookingsPagination");
   const mechanicBookingsExport = mechanicDashboard.querySelector(".mechanic-bookings-export");
+  const mechanicDashboardAssignedCount = document.getElementById("mechanicDashboardAssignedCount");
+  const mechanicDashboardRequestedCount = document.getElementById("mechanicDashboardRequestedCount");
+  const mechanicDashboardAcceptedCount = document.getElementById("mechanicDashboardAcceptedCount");
+  const mechanicDashboardOpenCasesCount = document.getElementById("mechanicDashboardOpenCasesCount");
+  const mechanicDashboardRecentBookings = document.getElementById("mechanicDashboardRecentBookings");
+  const mechanicDashboardOffersStatus = document.getElementById("mechanicDashboardOffersStatus");
+  const mechanicDashboardRecentStatus = document.getElementById("mechanicDashboardRecentStatus");
+  const mechanicBookingInformationStatus = document.getElementById("mechanicBookingInformationStatus");
+  const mechanicOverviewActionButtons = mechanicDashboard.querySelectorAll(".mechanic-overview-action[data-view]");
   const mechanicAccountAvatar = document.getElementById("mechanicAccountAvatar");
   const mechanicAccountAvatarSecondary = document.getElementById("mechanicAccountAvatarSecondary");
   const mechanicAccountPhone = document.getElementById("mechanicAccountPhone");
@@ -123,14 +133,46 @@ if (mechanicDashboard) {
   let latestMechanicCoverage = [];
   let latestMechanicResolutionCases = [];
   let latestMechanicAssignedBookings = [];
-  let activeMechanicBookingId = null;
+  let latestMechanicOffers = [];
+  let activeMechanicBookingOfferId = null;
   let mechanicBookingsPage = 1;
   let pendingResolutionBookingId = null;
   let pendingResolutionCaseId = null;
+  const formatDate = window.SWApp?.formatShortDate || ((value) => String(value || "-"));
+  const formatCurrency = window.SWApp?.formatCurrency || ((value) => String(value || "0"));
+  const escapeHtml = window.SWApp?.escapeHtml || ((value) => String(value ?? ""));
+  const getInitials = window.SWApp?.getInitials || ((name) => String(name || "ME"));
+
+  const setSimpleOptions = (select, labels, defaultLabel) => {
+    if (!select) return;
+    const current = select.value || "all";
+    const values = Array.from(new Set((labels || []).filter(Boolean)));
+    select.innerHTML = "";
+    const allOption = document.createElement("option");
+    allOption.value = "all";
+    allOption.textContent = defaultLabel;
+    select.appendChild(allOption);
+    values.forEach((label) => {
+      const option = document.createElement("option");
+      option.value = label;
+      option.textContent = label;
+      select.appendChild(option);
+    });
+    select.value = values.includes(current) ? current : "all";
+  };
+
+  const setMechanicOffersStatus = (message = "") => {
+    [mechanicDashboardOffersStatus, mechanicDashboardRecentStatus, mechanicBookingInformationStatus].forEach((element) => {
+      if (!element) return;
+      element.textContent = message;
+      element.classList.toggle("is-hidden", !message);
+    });
+  };
 
   const setMechanicHeroByView = (view) => {
     const heroConfig = {
       dashboard: { title: "Dashboard", subtitle: "General information" },
+      "booking-information": { title: "Booking information", subtitle: "Review assigned bookings and booking details" },
       account: { title: "Account", subtitle: "Review your profile information" },
       resolution: { title: "Resolution center", subtitle: "Manage customer issues and active resolutions" },
       procedure: { title: "Procedure", subtitle: "Review your mechanic procedures and workflow" },
@@ -273,20 +315,65 @@ if (mechanicDashboard) {
     return "Requested";
   };
 
-  const getFilteredMechanicBookings = (bookings) => {
+  const getMechanicOfferStatusKey = (entry) => String(entry?.status || "").toLowerCase();
+
+  const getMechanicOfferStatusLabel = (entry) => {
+    const status = getMechanicOfferStatusKey(entry);
+    if (status === "accepted") return "Accepted";
+    if (status === "declined") return "Declined";
+    if (status === "expired") return "Expired";
+    return "Pending";
+  };
+
+  const getFilteredMechanicOffers = (offers) => {
     const searchValue = String(mechanicBookingsSearch?.value || "").trim().toLowerCase();
     const statusValue = String(mechanicBookingsStatusFilter?.value || "all");
     const dateValue = String(mechanicBookingsDateFilter?.value || "all");
-    return (Array.isArray(bookings) ? bookings : []).filter((entry) => {
+    return (Array.isArray(offers) ? offers : []).filter((entry) => {
       const reference = String(entry.booking?.reference || entry.booking?.id || "");
       const customer = String(entry.customer?.name || "");
       const vehicle = [entry.vehicle?.registrationNumber, entry.vehicle?.make, entry.vehicle?.model].filter(Boolean).join(" ");
       const haystack = `${reference} ${customer} ${vehicle}`.toLowerCase();
       const matchesSearch = !searchValue || haystack.includes(searchValue);
-      const matchesStatus = statusValue === "all" ? true : String(entry.booking?.status || "").toLowerCase() === statusValue;
-      const matchesDate = dateValue === "all" ? true : matchesDateFilter(entry.booking?.created_at, dateValue);
+      const matchesStatus = statusValue === "all" ? true : getMechanicOfferStatusKey(entry) === statusValue;
+      const matchesDate = dateValue === "all" ? true : matchesDateFilter(entry.sent_at || entry.booking?.created_at, dateValue);
       return matchesSearch && matchesStatus && matchesDate;
     });
+  };
+
+  const renderMechanicOverview = () => {
+    const bookings = Array.isArray(latestMechanicOffers) ? latestMechanicOffers : [];
+    const cases = Array.isArray(latestMechanicResolutionCases) ? latestMechanicResolutionCases : [];
+    const requestedCount = bookings.filter((entry) => getMechanicOfferStatusKey(entry) === "pending").length;
+    const acceptedCount = bookings.filter((entry) => getMechanicOfferStatusKey(entry) === "accepted").length;
+
+    if (mechanicDashboardAssignedCount) mechanicDashboardAssignedCount.textContent = String(bookings.length);
+    if (mechanicDashboardRequestedCount) mechanicDashboardRequestedCount.textContent = String(requestedCount);
+    if (mechanicDashboardAcceptedCount) mechanicDashboardAcceptedCount.textContent = String(acceptedCount);
+    if (mechanicDashboardOpenCasesCount) mechanicDashboardOpenCasesCount.textContent = String(cases.length);
+    if (!mechanicDashboardRecentBookings) return;
+
+    if (!bookings.length) {
+      mechanicDashboardRecentBookings.innerHTML = '<p class="mechanic-overview-empty">No matching bookings available.</p>';
+      return;
+    }
+
+    mechanicDashboardRecentBookings.innerHTML = bookings
+      .slice(0, 4)
+      .map((entry) => {
+        const reference = entry.booking?.reference || entry.booking?.id || "-";
+        const vehicle = [entry.vehicle?.registrationNumber, entry.vehicle?.make, entry.vehicle?.model].filter(Boolean).join(" · ") || "-";
+        const firstWorkType = (entry.items || []).map((item) => item?.name).find(Boolean) || "-";
+        return `
+          <article class="mechanic-overview-booking-card">
+            <strong>${escapeHtml(String(reference))} · ${escapeHtml(entry.customer?.name || "Customer")}</strong>
+            <p class="mechanic-overview-booking-meta">${escapeHtml(vehicle)}</p>
+            <p class="mechanic-overview-booking-copy">${escapeHtml(getMechanicOfferStatusLabel(entry))} · ${escapeHtml(formatDate(entry.sent_at || entry.booking?.created_at))}</p>
+            <p class="mechanic-overview-booking-copy">${escapeHtml(firstWorkType)}</p>
+          </article>
+        `;
+      })
+      .join("");
   };
 
   const buildMechanicBookingDetailCard = (entry) => {
@@ -301,53 +388,60 @@ if (mechanicDashboard) {
       )
       .join("");
     const reference = entry.booking?.reference || entry.booking?.id || "-";
-    const topStatus = getMechanicBookingStatusLabel(entry).toUpperCase();
+    const topStatus = getMechanicOfferStatusLabel(entry).toUpperCase();
+    const isPending = getMechanicOfferStatusKey(entry) === "pending";
     return `
       <article class="mechanic-booking-card">
         <div class="mechanic-booking-topbar">
-          <span class="mechanic-booking-topbar-status" data-status="${escapeHtml(String(entry.booking?.status || ""))}">${escapeHtml(topStatus)}</span>
+          <span class="mechanic-booking-topbar-status" data-status="${escapeHtml(getMechanicOfferStatusKey(entry))}">${escapeHtml(topStatus)}</span>
           <span class="mechanic-booking-topbar-reference">Reference: ${escapeHtml(String(reference))}</span>
-          <div class="mechanic-booking-topbar-menu">
-            <button class="mechanic-booking-topbar-actions" type="button" data-booking-actions-toggle>Actions</button>
-            <div class="mechanic-booking-actions-panel is-hidden">
-              <button class="mechanic-booking-actions-item" type="button" data-resolution-message="${escapeHtml(String(reference))}">Message to Customer</button>
-            </div>
-          </div>
+          <span class="mechanic-booking-topbar-date">Sent: ${escapeHtml(formatDate(entry.sent_at || entry.booking?.created_at))}</span>
         </div>
         <div class="mechanic-booking-card-head">
           <div class="mechanic-booking-meta">
             <h4>${escapeHtml(entry.customer?.name || "Customer")}</h4>
+            <span>${escapeHtml(entry.customer?.email || "-")}</span>
           </div>
         </div>
         <div class="mechanic-booking-grid">
           <div><strong>Vehicle</strong><div>${escapeHtml([entry.vehicle?.registrationNumber, entry.vehicle?.make, entry.vehicle?.model].filter(Boolean).join(" · ") || "-")}</div></div>
           <div><strong>Total</strong><div>${escapeHtml(formatMechanicCurrency(entry.booking?.total_eur))}</div></div>
           <div><strong>Address</strong><div>${escapeHtml(formatMechanicAddress(entry.address) || "-")}</div></div>
-          <div><strong>Customer</strong><div>${escapeHtml(entry.customer?.email || "-")}</div></div>
+          <div><strong>Work types</strong><div>${escapeHtml((entry.items || []).map((item) => item.name).join(", ") || "-")}</div></div>
         </div>
         <div class="mechanic-booking-items">${itemsMarkup || '<div class="mechanic-booking-item"><strong>No work items</strong></div>'}</div>
+        <div class="mechanic-booking-decision-row">
+          ${
+            isPending
+              ? `
+                <button class="primary mechanic-offer-decision" type="button" data-offer-action="accept" data-offer-id="${escapeHtml(String(entry.offer_id || ""))}">Accept</button>
+                <button class="secondary mechanic-offer-decision mechanic-offer-decision--danger" type="button" data-offer-action="decline" data-offer-id="${escapeHtml(String(entry.offer_id || ""))}">Reject</button>
+              `
+              : `<p class="mechanic-offer-state-copy">This offer is ${escapeHtml(getMechanicOfferStatusLabel(entry).toLowerCase())}.</p>`
+          }
+        </div>
       </article>
     `;
   };
 
-  const renderMechanicBookings = (bookings) => {
+  const renderMechanicBookings = (offers) => {
     if (!mechanicBookingsList) return;
-    const bookingList = Array.isArray(bookings) ? bookings : latestMechanicAssignedBookings;
+    const bookingList = Array.isArray(offers) ? offers : latestMechanicOffers;
     mechanicBookingsList.innerHTML = "";
     if (mechanicBookingDetail) mechanicBookingDetail.innerHTML = "";
     if (!Array.isArray(bookingList) || !bookingList.length) {
       const emptyRow = document.createElement("tr");
       emptyRow.className = "mechanic-booking-empty-row";
-      emptyRow.innerHTML = '<td colspan="5" class="mechanic-bookings-empty">No bookings assigned yet.</td>';
+      emptyRow.innerHTML = '<td colspan="6" class="mechanic-bookings-empty">No matching bookings available.</td>';
       mechanicBookingsList.appendChild(emptyRow);
-      if (mechanicBookingsFooterCount) mechanicBookingsFooterCount.textContent = "0 bookings";
+      if (mechanicBookingsFooterCount) mechanicBookingsFooterCount.textContent = "0 offers";
       if (mechanicBookingsPagination) mechanicBookingsPagination.innerHTML = "";
       return;
     }
 
-    setSimpleOptions(mechanicBookingsStatusFilter, bookingList.map((entry) => getMechanicBookingStatusLabel(entry)), "Status");
+    setSimpleOptions(mechanicBookingsStatusFilter, bookingList.map((entry) => getMechanicOfferStatusLabel(entry)), "Status");
 
-    const filteredBookings = getFilteredMechanicBookings(bookingList);
+    const filteredBookings = getFilteredMechanicOffers(bookingList);
     const pageSize = Number(mechanicBookingsRowsPerPage?.value || 10);
     const total = filteredBookings.length;
     const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -358,34 +452,45 @@ if (mechanicDashboard) {
     if (!pageBookings.length) {
       const emptyRow = document.createElement("tr");
       emptyRow.className = "mechanic-booking-empty-row";
-      emptyRow.innerHTML = `<td colspan="5" class="mechanic-bookings-empty">No bookings assigned yet.</td>`;
+      emptyRow.innerHTML = `<td colspan="6" class="mechanic-bookings-empty">No matching bookings available.</td>`;
       mechanicBookingsList.appendChild(emptyRow);
       if (mechanicBookingsFooterCount) mechanicBookingsFooterCount.textContent = `0-0 of ${total} rows`;
       if (mechanicBookingsPagination) mechanicBookingsPagination.innerHTML = "";
       return;
     }
 
-    const selectedId = pageBookings.some((entry) => Number(entry.booking?.id) === Number(activeMechanicBookingId))
-      ? activeMechanicBookingId
-      : Number(pageBookings[0].booking?.id);
-    activeMechanicBookingId = selectedId;
+    const selectedId = pageBookings.some((entry) => Number(entry.offer_id) === Number(activeMechanicBookingOfferId))
+      ? activeMechanicBookingOfferId
+      : Number(pageBookings[0].offer_id);
+    activeMechanicBookingOfferId = selectedId;
 
     pageBookings.forEach((entry) => {
       const reference = entry.booking?.reference || entry.booking?.id || "-";
+      const canDecide = getMechanicOfferStatusKey(entry) === "pending";
       const item = document.createElement("tr");
-      item.className = `mechanic-booking-summary-row${Number(entry.booking?.id) === Number(selectedId) ? " is-active" : ""}`;
-      item.dataset.mechanicBookingId = String(entry.booking?.id || "");
+      item.className = `mechanic-booking-summary-row${Number(entry.offer_id) === Number(selectedId) ? " is-active" : ""}`;
+      item.dataset.mechanicOfferId = String(entry.offer_id || "");
       item.innerHTML = `
         <td><strong class="mechanic-booking-summary-reference">${escapeHtml(String(reference))}</strong></td>
-        <td><span class="mechanic-booking-status mechanic-booking-status--${escapeHtml(String(entry.booking?.status || "requested").toLowerCase())}">${escapeHtml(getMechanicBookingStatusLabel(entry))}</span></td>
+        <td><span class="mechanic-booking-status mechanic-booking-status--${escapeHtml(getMechanicOfferStatusKey(entry) || "pending")}">${escapeHtml(getMechanicOfferStatusLabel(entry))}</span></td>
         <td><span class="mechanic-booking-summary-customer">${escapeHtml(entry.customer?.name || "Customer")}</span></td>
         <td><span class="mechanic-booking-summary-vehicle">${escapeHtml([entry.vehicle?.registrationNumber, entry.vehicle?.make, entry.vehicle?.model].filter(Boolean).join(" · ") || "-")}</span></td>
-        <td><span class="mechanic-booking-summary-date">${escapeHtml(formatDate(entry.booking?.created_at))}</span></td>
+        <td><span class="mechanic-booking-summary-date">${escapeHtml(formatDate(entry.sent_at || entry.booking?.created_at))}</span></td>
+        <td>
+          ${
+            canDecide
+              ? `<div class="mechanic-booking-row-actions">
+                  <button class="primary mechanic-offer-table-action" type="button" data-offer-action="accept" data-offer-id="${escapeHtml(String(entry.offer_id || ""))}">Accept</button>
+                  <button class="secondary mechanic-offer-table-action mechanic-offer-table-action--danger" type="button" data-offer-action="decline" data-offer-id="${escapeHtml(String(entry.offer_id || ""))}">Reject</button>
+                </div>`
+              : `<span class="mechanic-booking-row-state">${escapeHtml(getMechanicOfferStatusLabel(entry))}</span>`
+          }
+        </td>
       `;
       mechanicBookingsList.appendChild(item);
     });
 
-    const selectedBooking = filteredBookings.find((entry) => Number(entry.booking?.id) === Number(selectedId)) || null;
+    const selectedBooking = filteredBookings.find((entry) => Number(entry.offer_id) === Number(selectedId)) || null;
     if (mechanicBookingDetail) mechanicBookingDetail.innerHTML = selectedBooking ? buildMechanicBookingDetailCard(selectedBooking) : "";
     if (mechanicBookingsFooterCount) {
       const from = startIndex + 1;
@@ -404,15 +509,41 @@ if (mechanicDashboard) {
       }
     }
   };
-  const syncMechanicBookings = async () => {
-    if (!mechanicToken || !mechanicBookingsList) return;
+  const respondToMechanicOffer = async (offerId, action) => {
+    if (!mechanicToken || !offerId) return;
     try {
-      const bookings = await apiAuth("/api/users/me/mechanic-bookings", mechanicToken);
-      latestMechanicAssignedBookings = Array.isArray(bookings) ? bookings : [];
-      renderMechanicBookings(latestMechanicAssignedBookings);
-    } catch {
-      latestMechanicAssignedBookings = [];
+      await apiAuth(`/api/users/me/mechanic-offers/${encodeURIComponent(offerId)}/respond`, mechanicToken, {
+        method: "POST",
+        body: JSON.stringify({ action })
+      });
+      await Promise.all([syncMechanicBookings(), syncMechanicResolutionOverview()]);
+    } catch (error) {
+      window.alert(error?.message || "Unable to update this booking offer.");
+    }
+  };
+
+  const syncMechanicBookings = async () => {
+    if (!mechanicBookingsList) return;
+    if (!mechanicToken) {
+      latestMechanicOffers = [];
+      setMechanicOffersStatus("No active mechanic session was found. Sign out and sign in again.");
       renderMechanicBookings([]);
+      renderMechanicOverview();
+      return;
+    }
+    try {
+      const offers = await apiAuth("/api/users/me/mechanic-offers", mechanicToken);
+      latestMechanicOffers = Array.isArray(offers) ? offers : [];
+      setMechanicOffersStatus("");
+      renderMechanicBookings(latestMechanicOffers);
+      renderMechanicOverview();
+    } catch (error) {
+      console.error("Unable to load mechanic offers.", error);
+      latestMechanicOffers = [];
+      const message = error?.error?.message || error?.message || "Unable to load matching bookings.";
+      setMechanicOffersStatus(message);
+      renderMechanicBookings([]);
+      renderMechanicOverview();
     }
   };
 
@@ -714,9 +845,13 @@ if (mechanicDashboard) {
       ]);
       latestMechanicResolutionCases = Array.isArray(cases) ? cases : [];
       latestMechanicAssignedBookings = Array.isArray(bookings) ? bookings : [];
+      renderMechanicOverview();
       renderMechanicResolutionCaseRows(mechanicResolutionCasesTable, latestMechanicResolutionCases);
       renderMechanicResolutionBookings(latestMechanicAssignedBookings);
     } catch {
+      latestMechanicResolutionCases = [];
+      latestMechanicAssignedBookings = [];
+      renderMechanicOverview();
       renderMechanicResolutionCaseRows(mechanicResolutionCasesTable, []);
       renderMechanicResolutionBookings([]);
     }
@@ -794,95 +929,63 @@ if (mechanicDashboard) {
     }
   };
   mechanicBookingsList?.addEventListener("click", async (event) => {
-    const summaryRow = event.target.closest("[data-mechanic-booking-id]");
-    if (summaryRow && !event.target.closest("[data-booking-actions-toggle],[data-resolution-message]")) {
-      activeMechanicBookingId = Number(summaryRow.dataset.mechanicBookingId);
-      renderMechanicBookings(latestMechanicAssignedBookings);
+    const offerAction = event.target.closest(".mechanic-offer-table-action[data-offer-id][data-offer-action]");
+    if (offerAction) {
+      event.stopPropagation();
+      await respondToMechanicOffer(Number(offerAction.dataset.offerId), offerAction.dataset.offerAction);
       return;
     }
-    const actionsToggle = event.target.closest("[data-booking-actions-toggle]");
-    if (actionsToggle) {
-      const detailRoot = mechanicBookingDetail || mechanicBookingsList;
-      const menu = actionsToggle.closest(".mechanic-booking-topbar-menu");
-      const panel = menu?.querySelector(".mechanic-booking-actions-panel");
-      detailRoot.querySelectorAll(".mechanic-booking-actions-panel").forEach((item) => {
-        if (item !== panel) item.classList.add("is-hidden");
-      });
-      panel?.classList.toggle("is-hidden");
+    const summaryRow = event.target.closest("[data-mechanic-offer-id]");
+    if (summaryRow) {
+      activeMechanicBookingOfferId = Number(summaryRow.dataset.mechanicOfferId);
+      renderMechanicBookings(latestMechanicOffers);
       return;
-    }
-    const resolutionMessage = event.target.closest("[data-resolution-message]");
-    if (resolutionMessage) {
-      syncMechanicNavState("resolution");
-      setMechanicView("resolution");
-      const ref = resolutionMessage.dataset.resolutionMessage || "16334274";
-      const bookingEntry = latestMechanicAssignedBookings.find((entry) => String(entry.booking?.reference || entry.booking?.id) === String(ref));
-      await openMechanicResolutionMessage(bookingEntry?.booking?.id, "general");
-      (mechanicBookingDetail || mechanicBookingsList).querySelectorAll(".mechanic-booking-actions-panel").forEach((item) => {
-        item.classList.add("is-hidden");
-      });
     }
   });
 
   mechanicBookingDetail?.addEventListener("click", async (event) => {
-    const actionsToggle = event.target.closest("[data-booking-actions-toggle]");
-    if (actionsToggle) {
-      const menu = actionsToggle.closest(".mechanic-booking-topbar-menu");
-      const panel = menu?.querySelector(".mechanic-booking-actions-panel");
-      mechanicBookingDetail.querySelectorAll(".mechanic-booking-actions-panel").forEach((item) => {
-        if (item !== panel) item.classList.add("is-hidden");
-      });
-      panel?.classList.toggle("is-hidden");
-      return;
-    }
-    const resolutionMessage = event.target.closest("[data-resolution-message]");
-    if (resolutionMessage) {
-      syncMechanicNavState("resolution");
-      setMechanicView("resolution");
-      const ref = resolutionMessage.dataset.resolutionMessage || "16334274";
-      const bookingEntry = latestMechanicAssignedBookings.find((entry) => String(entry.booking?.reference || entry.booking?.id) === String(ref));
-      await openMechanicResolutionMessage(bookingEntry?.booking?.id, "general");
-      mechanicBookingDetail.querySelectorAll(".mechanic-booking-actions-panel").forEach((item) => item.classList.add("is-hidden"));
-      return;
+    const offerAction = event.target.closest(".mechanic-offer-decision[data-offer-id][data-offer-action]");
+    if (offerAction) {
+      await respondToMechanicOffer(Number(offerAction.dataset.offerId), offerAction.dataset.offerAction);
     }
   });
 
   mechanicBookingsSearch?.addEventListener("input", () => {
     mechanicBookingsPage = 1;
-    renderMechanicBookings(latestMechanicAssignedBookings);
+    renderMechanicBookings(latestMechanicOffers);
   });
 
   mechanicBookingsStatusFilter?.addEventListener("change", () => {
     mechanicBookingsPage = 1;
-    renderMechanicBookings(latestMechanicAssignedBookings);
+    renderMechanicBookings(latestMechanicOffers);
   });
 
   mechanicBookingsDateFilter?.addEventListener("change", () => {
     mechanicBookingsPage = 1;
-    renderMechanicBookings(latestMechanicAssignedBookings);
+    renderMechanicBookings(latestMechanicOffers);
   });
 
   mechanicBookingsRowsPerPage?.addEventListener("change", () => {
     mechanicBookingsPage = 1;
-    renderMechanicBookings(latestMechanicAssignedBookings);
+    renderMechanicBookings(latestMechanicOffers);
   });
 
   mechanicBookingsPagination?.addEventListener("click", (event) => {
     const button = event.target.closest("[data-mechanic-bookings-page]");
     if (!button) return;
     mechanicBookingsPage = Number(button.dataset.mechanicBookingsPage || 1);
-    renderMechanicBookings(latestMechanicAssignedBookings);
+    renderMechanicBookings(latestMechanicOffers);
   });
 
   mechanicBookingsExport?.addEventListener("click", () => {
-    const rows = getFilteredMechanicBookings(latestMechanicAssignedBookings).map((entry) => ({
+    const rows = getFilteredMechanicOffers(latestMechanicOffers).map((entry) => ({
       Reference: entry.booking?.reference || entry.booking?.id || "-",
-      Status: getMechanicBookingStatusLabel(entry),
+      OfferStatus: getMechanicOfferStatusLabel(entry),
       Customer: entry.customer?.name || "Customer",
       Vehicle: [entry.vehicle?.registrationNumber, entry.vehicle?.make, entry.vehicle?.model].filter(Boolean).join(" · "),
-      Created: formatDate(entry.booking?.created_at)
+      Sent: formatDate(entry.sent_at || entry.booking?.created_at)
     }));
-    downloadCsv("mechanic-bookings.csv", rows);
+    downloadCsv("mechanic-booking-offers.csv", rows);
   });
 
   mechanicTypesTree?.addEventListener("change", (event) => {
@@ -1045,6 +1148,7 @@ if (mechanicDashboard) {
   const setMechanicView = (view) => {
     setMechanicHeroByView(view);
     mechanicDashboardView?.classList.toggle("is-hidden", view !== "dashboard");
+    mechanicBookingInformationView?.classList.toggle("is-hidden", view !== "booking-information");
     mechanicResolutionCenterView?.classList.toggle("is-hidden", view !== "resolution");
     mechanicProcedureView?.classList.toggle("is-hidden", view !== "procedure");
     mechanicPaymentsView?.classList.toggle("is-hidden", view !== "payments");
@@ -1075,6 +1179,24 @@ if (mechanicDashboard) {
       syncMechanicNavState(view);
       setMechanicView(view);
     });
+  });
+
+  mechanicOverviewActionButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const view = button.dataset.view;
+      if (!view) return;
+      syncMechanicNavState(view);
+      setMechanicView(view);
+    });
+  });
+
+  mechanicDashboard.addEventListener("click", (event) => {
+    const overviewAction = event.target.closest(".mechanic-overview-action[data-view]");
+    if (!overviewAction) return;
+    const view = overviewAction.dataset.view;
+    if (!view) return;
+    syncMechanicNavState(view);
+    setMechanicView(view);
   });
 
   mechanicEditSameAddress?.addEventListener("change", () => {
@@ -1139,7 +1261,7 @@ if (mechanicDashboard) {
 
   const pendingMechanicView = sessionStorage.getItem("mechanicHeaderTargetView");
   const initialMechanicView =
-    pendingMechanicView && ["dashboard", "resolution", "procedure", "payments", "profile", "account", "settings"].includes(pendingMechanicView)
+    pendingMechanicView && ["dashboard", "booking-information", "resolution", "procedure", "payments", "profile", "account", "settings"].includes(pendingMechanicView)
       ? pendingMechanicView
       : "dashboard";
   sessionStorage.removeItem("mechanicHeaderTargetView");
@@ -1151,6 +1273,7 @@ if (mechanicDashboard) {
   syncMechanicResolutionOverview();
   setMechanicSettingsSubview("general");
   setMechanicResolutionSubview("overview");
+  window.addEventListener("focus", syncMechanicBookings);
 }
 
 const mechanicEditNav = document.querySelector(".mechanic-edit-nav");

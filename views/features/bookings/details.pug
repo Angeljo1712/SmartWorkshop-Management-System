@@ -62,7 +62,7 @@ block content
                   | Email
                   input#detailsEmail(type="email" required)
                 p.form-error.is-hidden#detailsEmailExistsMessage This account is already in our system.
-                a.details-signin(href="/auth/login") Sign in with an existing account
+                a.details-signin#detailsExistingAccountLink(href="/auth/login") Sign in with an existing account
                 label.checkbox
                   input#detailsOptIn(type="checkbox")
                   span Opt in to receive MOT reminders and monthly promotions.
@@ -116,6 +116,22 @@ block content
                     button.toggle(type="button") No
               p.form-error#bookingDetailsError(role="alert" aria-live="polite")
               button.primary.details-submit(type="submit") Continue to payment
+      .details-auth-modal.is-hidden#detailsAuthModal(hidden)
+        .details-auth-modal__backdrop(data-action="close-details-auth-modal")
+        .details-auth-modal__dialog(role="dialog" aria-modal="true" aria-labelledby="detailsAuthModalTitle")
+          button.details-auth-modal__close(type="button" aria-label="Close sign in" data-action="close-details-auth-modal") ×
+          h2#detailsAuthModalTitle Sign in
+          p.details-auth-modal__lead Sign in with your existing SmartWorkshop account to prefill your booking details.
+          p.form-error.is-hidden#detailsAuthModalError(role="alert" aria-live="polite")
+          form#detailsAuthForm.details-auth-form
+            label
+              | Email
+              input#detailsAuthEmail(type="email" autocomplete="username" required)
+            label
+              | Password
+              input#detailsAuthPassword(type="password" autocomplete="current-password" required)
+            button.primary(type="submit") Sign in
+          a.details-auth-modal__forgot(href="/auth/forgot-password") Forgot your password?
   include ../../partials/general-footer
 
 append scripts

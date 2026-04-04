@@ -1218,6 +1218,7 @@ if (adminPage) {
   const closeAdminDeleteModal = () => {
     pendingAdminDeleteUser = null;
     adminDeleteModal?.classList.add("is-hidden");
+    if (adminDeleteModal) adminDeleteModal.hidden = true;
     if (adminDeleteConfirm) adminDeleteConfirm.disabled = false;
   };
 
@@ -1227,6 +1228,7 @@ if (adminPage) {
       adminDeleteDescription.textContent = `Are you sure you want to delete ${name}?`;
     }
     adminDeleteModal?.classList.remove("is-hidden");
+    if (adminDeleteModal) adminDeleteModal.hidden = false;
   };
 
   const renderApplications = () => {

@@ -119,6 +119,73 @@ const ensureDraft = async (sessionId) => {
   return result.insertId;
 };
 
+const findEligibleMechanicIds = async ({ bookingAddressId, serviceIds }) => {
+  const requiredServiceIds = [...new Set((Array.isArray(serviceIds) ? serviceIds : [])
+    .map((value) => Number(value))
+    .filter((value) => Number.isInteger(value) && value > 0))];
+
+  if (!bookingAddressId || !requiredServiceIds.length) {
+    return [];
+  }
+
+  const [candidateRows] = await pool.query(
+    `SELECT DISTINCT u.id
+     FROM users u
+     LEFT JOIN user_roles ur ON ur.user_id = u.id
+     INNER JOIN mechanic_profiles mp ON mp.user_id = u.id
+     INNER JOIN addresses booking_address ON booking_address.id = ?
+     LEFT JOIN addresses contact_address
+       ON contact_address.user_id = u.id AND contact_address.label = 'Contact'
+     LEFT JOIN addresses premises_address
+       ON premises_address.user_id = u.id AND premises_address.label = 'Premises'
+     WHERE u.status = 'active'
+       AND (
+         LOWER(u.role) = 'mechanic'
+         OR LOWER(ur.role) = 'mechanic'
+       )
+       AND mp.travel_radius_miles IS NOT NULL
+       AND mp.travel_radius_miles > 0
+       AND COALESCE(premises_address.location, contact_address.location) IS NOT NULL
+       AND ST_Distance_Sphere(
+         COALESCE(premises_address.location, contact_address.location),
+         booking_address.location
+       ) <= mp.travel_radius_miles * 1609.34`,
+    [bookingAddressId]
+  );
+
+  const mechanicIds = candidateRows
+    .map((row) => Number(row.id))
+    .filter((value) => Number.isInteger(value) && value > 0);
+
+  if (!mechanicIds.length) {
+    return [];
+  }
+
+  const [coverageRows] = await pool.query(
+    `SELECT mechanic_id, service_id, enabled
+     FROM mechanic_services
+     WHERE mechanic_id IN (?)`,
+    [mechanicIds]
+  );
+
+  const coverageByMechanic = new Map();
+  coverageRows.forEach((row) => {
+    const mechanicId = Number(row.mechanic_id);
+    if (!coverageByMechanic.has(mechanicId)) {
+      coverageByMechanic.set(mechanicId, new Map());
+    }
+    coverageByMechanic.get(mechanicId).set(Number(row.service_id), Boolean(row.enabled));
+  });
+
+  return mechanicIds.filter((mechanicId) => {
+    const coverage = coverageByMechanic.get(mechanicId);
+    if (!coverage || coverage.size === 0) {
+      return true;
+    }
+    return requiredServiceIds.every((serviceId) => coverage.get(serviceId) === true);
+  });
+};
+
 const getDraft = async (sessionId) => {
   if (!sessionId) {
     throw new AppError("VALIDATION_ERROR", "session_id is required", 400);
@@ -321,19 +388,13 @@ const payDraft = async ({ session_id, provider = "mock", currency = "GBP" }) => 
     );
   }
 
-  const [mechanicRows] = await pool.query(
-    `SELECT DISTINCT u.id
-     FROM users u
-     LEFT JOIN user_roles ur ON ur.user_id = u.id
-     WHERE u.status = 'active'
-       AND (
-         LOWER(u.role) = 'mechanic'
-         OR LOWER(ur.role) = 'mechanic'
-       )`
-  );
+  const mechanicIds = await findEligibleMechanicIds({
+    bookingAddressId: addressRows[0].id,
+    serviceIds: draft.items.map((item) => item.service_id)
+  });
 
-  if (mechanicRows.length) {
-    const offerValues = mechanicRows.map((row) => [bookingResult.insertId, row.id]);
+  if (mechanicIds.length) {
+    const offerValues = mechanicIds.map((mechanicId) => [bookingResult.insertId, mechanicId]);
     await pool.query(
       `INSERT INTO booking_offers (booking_id, mechanic_id)
        VALUES ?`,

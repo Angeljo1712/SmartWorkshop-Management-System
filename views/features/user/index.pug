@@ -89,49 +89,56 @@ block content
                   .settings-header.user-panel-head
                     h2 Your Cars
                     p Save up to 50 vehicles in your account.
-                  .user-car-list#userCarList
-                    .user-car-summary
-                      .user-car-top
-                        span.user-reg-badge KL05USC
-                        strong COROLLA COLOUR COL-N VVTI
-                      .user-car-meta
-                        span Petrol
-                        span 21 years old
-                        span 39,580 miles
-                      .user-car-status
-                        p Your MOT is valid · Due in 28 weeks
-                        p Taxed · Due in 24 weeks
+                  .car-panel
+                    .user-car-list#userCarList
+                      .user-car-summary
+                        .user-car-top
+                          span.user-reg-badge KL05USC
+                          strong COROLLA COLOUR COL-N VVTI
+                        .user-car-meta
+                          span Petrol
+                          span 21 years old
+                          span 39,580 miles
+                        .user-car-status
+                          p Your MOT is valid · Due in 28 weeks
+                          p Taxed · Due in 24 weeks
+
+                .settings-divider
 
                 .user-panel
-                  h3.user-section-title Add another vehicle
-                  .dashboard-section.dashboard-section--add-form
-                    .user-add-vehicle
-                      input#userDashboardCarReg(type="text" placeholder="Enter Car Reg")
-                      button.primary#userAddVehicleBtn(type="button") Add Vehicle
-                    p.form-error#userDashboardCarError(role="alert" aria-live="polite")
+                  .car-panel
+                    h3.user-section-title Add another vehicle
+                    .dashboard-section.dashboard-section--add-form
+                      .user-add-vehicle
+                        input#userDashboardCarReg(type="text" placeholder="Enter Car Reg")
+                        button.primary#userAddVehicleBtn(type="button") Add Vehicle
+                      p.form-error#userDashboardCarError(role="alert" aria-live="polite")
+
+                .settings-divider
 
                 .user-panel
-                  .dashboard-section.dashboard-section--quote
-                    .user-quick-quote
-                      label
-                        | Vehicle Registration
-                        input#userQuickQuoteReg(type="text" value="")
-                      label
-                        | Postcode
-                        input(type="text" placeholder="Enter Your Postcode")
-                      label
-                        | Products
-                        select#userQuickQuoteProduct
-                          option(value="" selected) Select a product
-                          option(value="repair") Repairs
-                          option(value="diagnostics") Diagnostics
-                          option(value="service") Servicing & MOT
-                          option(value="tyres") Tyres
-                          option(value="inspection") Pre-purchase inspections
-                      button.primary#userQuickQuoteBtn(type="button") Compare Prices Instantly
-                    .user-verify-card
-                      h3.user-verify-title Need help with your next booking?
-                      p.user-verify-text Review your vehicles, compare prices instantly, and keep your account details up to date before you book.
+                  .car-panel
+                    .dashboard-section.dashboard-section--quote
+                      .user-quick-quote
+                        label
+                          | Vehicle Registration
+                          input#userQuickQuoteReg(type="text" value="")
+                        label
+                          | Postcode
+                          input(type="text" placeholder="Enter Your Postcode")
+                        label
+                          | Products
+                          select#userQuickQuoteProduct
+                            option(value="" selected) Select a product
+                            option(value="repair") Repairs
+                            option(value="diagnostics") Diagnostics
+                            option(value="service") Servicing & MOT
+                            option(value="tyres") Tyres
+                            option(value="inspection") Pre-purchase inspections
+                        button.primary#userQuickQuoteBtn(type="button") Compare Prices Instantly
+                      .user-verify-card
+                        h3.user-verify-title Need help with your next booking?
+                        p.user-verify-text Review your vehicles, compare prices instantly, and keep your account details up to date before you book.
   
             section.user-view.is-hidden#userAccountView
                 .settings-card.user-account-card

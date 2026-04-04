@@ -236,7 +236,7 @@ const renderServices = (category, services) => {
   syncCompareButtons();
 };
 
-const workLayout = document.querySelector(".workType-layout2[data-service-category]");
+const workLayout = document.querySelector(".work-type-layout-2[data-service-category]");
 if (workLayout) {
   const category = workLayout.dataset.serviceCategory;
   const searchInput = document.getElementById("serviceSearch");
@@ -635,6 +635,12 @@ if (bookingDetailsForm) {
   const detailsPostcodeInput = document.getElementById("detailsPostcode");
   const detailsPhoneInput = document.getElementById("detailsPhone");
   const detailsEmailExistsMessage = document.getElementById("detailsEmailExistsMessage");
+  const detailsExistingAccountLink = document.getElementById("detailsExistingAccountLink");
+  const detailsAuthModal = document.getElementById("detailsAuthModal");
+  const detailsAuthForm = document.getElementById("detailsAuthForm");
+  const detailsAuthEmail = document.getElementById("detailsAuthEmail");
+  const detailsAuthPassword = document.getElementById("detailsAuthPassword");
+  const detailsAuthModalError = document.getElementById("detailsAuthModalError");
   const availabilityGrid = bookingDetailsForm.querySelector("#availabilityGrid");
   const availabilityMonthLabel = bookingDetailsForm.querySelector("#availabilityMonthLabel");
   const availabilityPrevMonth = bookingDetailsForm.querySelector("#availabilityPrevMonth");
@@ -675,6 +681,31 @@ if (bookingDetailsForm) {
     }
     if (detailsPhoneInput && !detailsPhoneInput.value.trim()) {
       detailsPhoneInput.value = user.phone || "";
+    }
+  };
+
+  const openDetailsAuthModal = () => {
+    if (!detailsAuthModal) return;
+    detailsAuthModal.hidden = false;
+    detailsAuthModal.classList.remove("is-hidden");
+    if (detailsAuthModalError) {
+      detailsAuthModalError.textContent = "";
+      detailsAuthModalError.classList.add("is-hidden");
+    }
+    if (detailsAuthEmail && !detailsAuthEmail.value.trim() && detailsEmailInput?.value?.trim()) {
+      detailsAuthEmail.value = detailsEmailInput.value.trim();
+    }
+    window.requestAnimationFrame(() => detailsAuthEmail?.focus());
+  };
+
+  const closeDetailsAuthModal = () => {
+    if (!detailsAuthModal) return;
+    detailsAuthModal.hidden = true;
+    detailsAuthModal.classList.add("is-hidden");
+    if (detailsAuthPassword) detailsAuthPassword.value = "";
+    if (detailsAuthModalError) {
+      detailsAuthModalError.textContent = "";
+      detailsAuthModalError.classList.add("is-hidden");
     }
   };
 
@@ -786,6 +817,61 @@ if (bookingDetailsForm) {
   });
 
   detailsEmailInput?.addEventListener("blur", checkBookingDetailsEmail);
+  detailsExistingAccountLink?.addEventListener("click", (event) => {
+    event.preventDefault();
+    openDetailsAuthModal();
+  });
+
+  detailsAuthModal?.addEventListener("click", (event) => {
+    const closeTrigger = event.target.closest('[data-action="close-details-auth-modal"]');
+    if (closeTrigger) {
+      closeDetailsAuthModal();
+    }
+  });
+
+  detailsAuthForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const identifier = String(detailsAuthEmail?.value || "").trim();
+    const password = String(detailsAuthPassword?.value || "");
+
+    if (detailsAuthModalError) {
+      detailsAuthModalError.textContent = "";
+      detailsAuthModalError.classList.add("is-hidden");
+    }
+
+    if (!identifier || !password) {
+      if (detailsAuthModalError) {
+        detailsAuthModalError.textContent = "Enter your email and password.";
+        detailsAuthModalError.classList.remove("is-hidden");
+      }
+      return;
+    }
+
+    try {
+      const loginResult = await api("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ identifier, password })
+      });
+
+      setStoredAuthValue("userToken", loginResult.token);
+      setStoredAuthValue("userProfile", JSON.stringify(loginResult.user));
+      setStoredAuthValue("activeRole", "CUSTOMER");
+
+      const freshUser = await apiAuth("/api/users/me", loginResult.token);
+      setStoredAuthValue("userProfile", JSON.stringify(freshUser));
+      applyBookingDetailsUserData(freshUser);
+      if (detailsEmailInput && !detailsEmailInput.value.trim()) {
+        detailsEmailInput.value = identifier;
+      }
+      closeDetailsAuthModal();
+    } catch (err) {
+      if (detailsAuthModalError) {
+        detailsAuthModalError.textContent =
+          err?.error?.message || err?.message || "Unable to sign in with that account.";
+        detailsAuthModalError.classList.remove("is-hidden");
+      }
+    }
+  });
 
   const bookingSession = getStoredUserSession();
   if (bookingSession?.activeRole === "CUSTOMER") {
