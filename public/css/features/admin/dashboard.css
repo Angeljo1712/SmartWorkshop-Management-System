@@ -202,12 +202,19 @@ body.admin-body .primari-shell {
   max-width: 100%;
   justify-content: flex-start;
   gap: 10px;
+  height: auto;
+  min-height: 48px;
+  align-items: flex-start;
+  padding-top: 10px;
+  padding-bottom: 10px;
   padding: 0 14px;
 }
 
 #adminPage .mainRail:hover .rail-text {
   width: auto;
   opacity: 1;
+  white-space: normal;
+  line-height: 1.2;
 }
 
 #adminPage .mainRail:hover .rail-footer {
@@ -826,9 +833,9 @@ body.admin-body .primari-shell {
 #adminPage #adminCatalogExportBtn,
 #adminPage #adminResolutionExportBtn,
 #adminPage #adminPaymentsExportBtn {
-      background: #ffffff;
-      border: 1px solid rgba(160, 180, 205, 0.7);
-      color: #0f172a;
+      background: var(--dashboard-action-bg);
+      border: 1px solid var(--dashboard-action-bg);
+      color: #ffffff;
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -846,7 +853,7 @@ body.admin-body .primari-shell {
 #adminPage #adminResolutionExportBtn span,
 #adminPage #adminPaymentsExportBtn,
 #adminPage #adminPaymentsExportBtn span {
-      color: #0f172a !important;
+      color: #ffffff !important;
     }
 
 #adminPage #adminExportBtn .admin-button-icon,
@@ -857,7 +864,7 @@ body.admin-body .primari-shell {
 #adminPage #adminPaymentsExportBtn .admin-button-icon {
       width: 16px;
       height: 16px;
-      stroke: #607289;
+      stroke: #ffffff;
       fill: none;
       stroke-width: 2;
       stroke-linecap: round;
@@ -1877,27 +1884,31 @@ body.admin-body .admin-edit-menu button:disabled {
 #adminPage .admin-account-layout {
   display: grid;
   gap: 18px;
-  background: var(--dashboard-panel-bg);
+  background: #3e434df7;
   border: 1px solid var(--dashboard-panel-border);
   border-radius: var(--dashboard-panel-radius);
   box-shadow: var(--dashboard-panel-shadow);
-  padding: 12px 16px 18px;
+  padding: 24px;
   color: #ffffff;
   min-height: 100%;
   height: 100%;
   align-content: start;
 }
 
+#adminPage #adminProfileView {
+  min-height: 100%;
+}
+
 #adminPage .admin-account-avatar-row {
   display: grid;
   justify-items: start;
-  padding: 4px 0 8px;
+  padding: 0;
 }
 
 #adminPage .admin-account-layout .admin-profile-avatar {
-  width: 104px;
-  height: 104px;
-  border-radius: 28px;
+  width: 140px;
+  height: 140px;
+  border-radius: 36px;
   background: #cfd6fb;
   color: #44528d;
   font-size: 2rem;
@@ -1906,13 +1917,13 @@ body.admin-body .admin-edit-menu button:disabled {
 
 #adminPage .admin-account-layout .settings-divider {
   width: 100%;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.9);
+  height: 3px;
+  background: #ffffff;
 }
 
 #adminPage .admin-account-section {
   display: grid;
-  gap: 6px;
+  gap: 10px;
 }
 
 #adminPage .admin-account-section h4,
@@ -1922,13 +1933,31 @@ body.admin-body .admin-edit-menu button:disabled {
 }
 
 #adminPage .admin-account-section h4 {
-  font-size: 0.95rem;
-  font-weight: 800;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: normal;
+  opacity: 1;
 }
 
 #adminPage .admin-account-section p {
-  font-size: 0.92rem;
-  font-weight: 600;
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.4;
+  opacity: 0.92;
+}
+
+#adminPage .account-field-label,
+#adminPage .account-field-value {
+  display: inline-block;
+  vertical-align: top;
+}
+
+#adminPage .account-field-label {
+  width: 110px;
+  padding-right: 12px;
+  margin-right: 12px;
+  border-right: 2px solid rgba(255, 255, 255, 0.72);
 }
 
 #adminPage .admin-settings-card {
@@ -2258,4 +2287,7 @@ body.admin-body #adminSettingsNotifications .notifications-check {
     grid-template-columns: 1fr;
   }
 }
+
+
+
 

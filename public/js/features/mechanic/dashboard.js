@@ -142,6 +142,10 @@ if (mechanicDashboard) {
   const formatCurrency = window.SWApp?.formatCurrency || ((value) => String(value || "0"));
   const escapeHtml = window.SWApp?.escapeHtml || ((value) => String(value ?? ""));
   const getInitials = window.SWApp?.getInitials || ((name) => String(name || "ME"));
+  const setLabeledText = (el, label, value) => {
+    if (!el) return;
+    el.innerHTML = `<span class="mechanic-account-label">${escapeHtml(label)}</span><span class="mechanic-account-value">${escapeHtml(value || "-")}</span>`;
+  };
 
   const setSimpleOptions = (select, labels, defaultLabel) => {
     if (!select) return;
@@ -215,14 +219,14 @@ if (mechanicDashboard) {
       }
       if (mechanicAccountAvatar) mechanicAccountAvatar.textContent = initials;
       if (mechanicAccountAvatarSecondary) mechanicAccountAvatarSecondary.textContent = initials;
-      if (mechanicAccountPhone) mechanicAccountPhone.textContent = `Phone: ${user?.phone || "-"}`;
-      if (mechanicAccountPhoneSecondary) mechanicAccountPhoneSecondary.textContent = `Phone: ${user?.phone || "-"}`;
-      if (mechanicAccountEmail) mechanicAccountEmail.textContent = `Email: ${user?.email || "-"}`;
-      if (mechanicAccountEmailSecondary) mechanicAccountEmailSecondary.textContent = `Email: ${user?.email || "-"}`;
-      if (mechanicAccountUsername) mechanicAccountUsername.textContent = `Username: ${user?.username || "-"}`;
-      if (mechanicAccountUsernameSecondary) mechanicAccountUsernameSecondary.textContent = `Username: ${user?.username || "-"}`;
-      if (mechanicAccountAddress) mechanicAccountAddress.textContent = `Address: ${user?.address || "-"}`;
-      if (mechanicAccountAddressSecondary) mechanicAccountAddressSecondary.textContent = `Address: ${user?.address || "-"}`;
+      setLabeledText(mechanicAccountPhone, "Phone:", user?.phone);
+      setLabeledText(mechanicAccountPhoneSecondary, "Phone:", user?.phone);
+      setLabeledText(mechanicAccountEmail, "Email:", user?.email);
+      setLabeledText(mechanicAccountEmailSecondary, "Email:", user?.email);
+      setLabeledText(mechanicAccountUsername, "Username:", user?.username);
+      setLabeledText(mechanicAccountUsernameSecondary, "Username:", user?.username);
+      setLabeledText(mechanicAccountAddress, "Address:", user?.address);
+      setLabeledText(mechanicAccountAddressSecondary, "Address:", user?.address);
       if (mechanicAccountRole) mechanicAccountRole.textContent = activeRole;
       if (mechanicAccountRoleSecondary) mechanicAccountRoleSecondary.textContent = activeRole;
       if (mechanicSettingsWelcomeName) mechanicSettingsWelcomeName.textContent = name;
@@ -439,7 +443,11 @@ if (mechanicDashboard) {
       return;
     }
 
-    setSimpleOptions(mechanicBookingsStatusFilter, bookingList.map((entry) => getMechanicOfferStatusLabel(entry)), "Status");
+    setSimpleOptions(
+      mechanicBookingsStatusFilter,
+      [...bookingList.map((entry) => getMechanicOfferStatusLabel(entry)), "Cancelled"],
+      "Status"
+    );
 
     const filteredBookings = getFilteredMechanicOffers(bookingList);
     const pageSize = Number(mechanicBookingsRowsPerPage?.value || 10);

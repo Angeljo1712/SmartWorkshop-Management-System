@@ -49,6 +49,12 @@ block content
                   rect(x="3" y="14" width="7" height="7" rx="1")
                   rect(x="14" y="14" width="7" height="7" rx="1")
               span.rail-text Dashboard
+            button.rail-nav-link.rail-item(type="button" data-view="account")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  circle(cx="12" cy="8" r="4")
+                  path(d="M5 20a7 7 0 0 1 14 0")
+              span.rail-text Account
             button.rail-nav-link.rail-item(type="button" data-view="booking-information")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
@@ -57,12 +63,6 @@ block content
                   path(d="M7 12h10")
                   path(d="M7 16h6")
               span.rail-text Booking information
-            button.rail-nav-link.rail-item(type="button" data-view="account")
-              span.rail-icon(aria-hidden="true")
-                svg(viewBox="0 0 24 24")
-                  circle(cx="12" cy="8" r="4")
-                  path(d="M5 20a7 7 0 0 1 14 0")
-              span.rail-text Account
             button.rail-nav-link.rail-item(type="button" data-view="resolution")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
@@ -455,12 +455,7 @@ block content
                   button.primary.mechanic-edit-profile-submit(type="submit") Save
     
             section.mechanic-content.is-hidden#mechanicAccountView
-              .settings-card.mechanic-dashboard-card
-                .settings-header
-                  div
-                    h2 Account Details
-                    p Review your profile information.
-                .settings-divider
+              .settings-card.mechanic-dashboard-card.mechanic-account-card
                 .settings-photo-row
                   .settings-avatar.settings-avatar-lg#mechanicAccountAvatarSecondary AG
                 .settings-divider
@@ -480,10 +475,6 @@ block content
                   div
                     h4 Role
                     p#mechanicAccountRoleSecondary MECHANIC
-                .settings-row
-                  div
-                    h4 Theme
-                    p Light mode
                 .settings-row
                   div
                     h4 Integration

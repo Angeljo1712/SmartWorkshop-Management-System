@@ -1,5 +1,6 @@
 const userPage = document.getElementById("userPage");
 if (userPage) {
+  const escapeHtml = window.SWApp?.escapeHtml || ((value) => String(value ?? ""));
   const userLogoutBtn = document.getElementById("userLogoutBtn");
   const userProfileAvatar = document.getElementById("userProfileAvatar");
   const userProfileName = document.getElementById("userProfileName");
@@ -55,6 +56,10 @@ if (userPage) {
   const userSettingsAddressInput = document.getElementById("userSettingsAddressInput");
   const userSettingsContactSave = document.getElementById("userSettingsContactSave");
   const userSettingsContactMessage = document.getElementById("userSettingsContactMessage");
+  const setUserLabeledText = (el, label, value) => {
+    if (!el) return;
+    el.innerHTML = `<span class="account-field-label">${escapeHtml(label)}</span><span class="account-field-value">${escapeHtml(value || "-")}</span>`;
+  };
   const settingsSubnavLinks = document.querySelectorAll(".user-settings-tab-link");
   const userSettingsPanelTitle = document.getElementById("userSettingsPanelTitle");
   const userSettingsGeneral = document.getElementById("userSettingsGeneral");
@@ -183,12 +188,12 @@ if (userPage) {
     setAvatar(userSettingsAvatar, initials, user?.avatar_url);
     userSettingsName.textContent = displayName;
     if (userSettingsEmail) userSettingsEmail.textContent = user?.email || "-";
-    userSettingsEmailDetail.textContent = `Email: ${user?.email || "-"}`;
-    if (userSettingsUsername) userSettingsUsername.textContent = `Username: ${user?.username || "-"}`;
+    setUserLabeledText(userSettingsEmailDetail, "Email:", user?.email);
+    if (userSettingsUsername) setUserLabeledText(userSettingsUsername, "Username:", user?.username);
     userSettingsRole.textContent = activeRole;
     if (userSettingsRoleBadge) userSettingsRoleBadge.textContent = activeRole;
-    userSettingsPhone.textContent = `Phone: ${user?.phone || "-"}`;
-    if (userSettingsAddress) userSettingsAddress.textContent = `Address: ${user?.address || "-"}`;
+    setUserLabeledText(userSettingsPhone, "Phone:", user?.phone);
+    if (userSettingsAddress) setUserLabeledText(userSettingsAddress, "Address:", user?.address);
     if (userSettingsAvatarSettings) setAvatar(userSettingsAvatarSettings, initials, user?.avatar_url);
     if (userSettingsNameSettings) userSettingsNameSettings.textContent = displayName;
     if (userSettingsEmailDetailSettings)
@@ -428,6 +433,14 @@ if (userPage) {
     if (paymentStatus === "authorized" || paymentStatus === "auth_captured") return "PAID";
     return String(status || "requested").replace(/_/g, " ").toUpperCase();
   };
+
+  const titleCase = (value) =>
+    String(value || "")
+      .toLowerCase()
+      .split(" ")
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
 
   const formatBookingDateTime = (slot) => {
     if (!slot?.start_at || !slot?.end_at) return "Date and time not assigned yet";
@@ -710,7 +723,34 @@ if (userPage) {
     select.value = values.includes(current) ? current : "all";
   };
 
-  const getUserBookingType = (booking) => booking?.items?.[0]?.name || "General";
+  const USER_BOOKING_TYPE_OPTIONS = [
+    { value: "Diagnostics", label: "Diagnostics" },
+    { value: "Ev Chargers", label: "Ev Chargers" },
+    { value: "Inspections", label: "Inspections" },
+    { value: "Mots", label: "Mots" },
+    { value: "Repairs", label: "Repairs" },
+    { value: "Services", label: "Services" },
+    { value: "Tyres", label: "Tyres" }
+  ];
+
+  const getUserBookingType = (booking) => {
+    const serviceText = (
+      Array.isArray(booking?.items)
+        ? booking.items.map((item) => item?.name || "").join(" ")
+        : ""
+    ).toLowerCase();
+
+    if (!serviceText) return "Repairs";
+    if (serviceText.includes("diagnostic")) return "Diagnostics";
+    if (serviceText.includes("ev") || serviceText.includes("electric vehicle") || serviceText.includes("charger")) {
+      return "Ev Chargers";
+    }
+    if (serviceText.includes("inspection")) return "Inspections";
+    if (serviceText.includes("mot")) return "Mots";
+    if (serviceText.includes("tyre") || serviceText.includes("tire")) return "Tyres";
+    if (serviceText.includes("service")) return "Services";
+    return "Repairs";
+  };
   const getBookingStatusClass = (booking) => {
     const label = formatBookingStatus(booking.status, booking.payment?.status);
     return String(label || "")
@@ -736,7 +776,9 @@ if (userPage) {
         String(booking.reference || "").toLowerCase().includes(term) ||
         String(getUserBookingType(booking)).toLowerCase().includes(term);
       const matchesType = typeValue === "all" || getUserBookingType(booking) === typeValue;
-      const matchesStatus = statusValue === "all" || formatBookingStatus(booking.status, booking.payment?.status) === statusValue;
+      const matchesStatus =
+        statusValue === "all" ||
+        titleCase(String(formatBookingStatus(booking.status, booking.payment?.status) || "").toLowerCase()) === statusValue;
 
       let matchesDate = true;
       if (dateValue !== "all") {
@@ -828,10 +870,19 @@ if (userPage) {
       return;
     }
 
-    setSimpleOptions(userBookingsTypeFilter, bookingList.map(getUserBookingType), "Type");
+    setSimpleOptions(
+      userBookingsTypeFilter,
+      USER_BOOKING_TYPE_OPTIONS.map((option) => option.label),
+      "Type"
+    );
     setSimpleOptions(
       userBookingsStatusFilter,
-      bookingList.map((booking) => formatBookingStatus(booking.status, booking.payment?.status)),
+      [
+        ...bookingList.map((booking) =>
+          titleCase(String(formatBookingStatus(booking.status, booking.payment?.status) || "").toLowerCase())
+        ),
+        "Cancelled"
+      ],
       "Status"
     );
 

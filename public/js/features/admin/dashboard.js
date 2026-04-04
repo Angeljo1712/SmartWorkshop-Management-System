@@ -226,9 +226,12 @@ if (adminPage) {
     const joinedName = [user?.name, user?.lastname].filter(Boolean).join(" ").trim();
     const displayName = user?.full_name || joinedName || user?.email || "Admin";
     const heroDisplayName = joinedName || displayName;
-    const role = user?.role_name || "ADMIN";
+    const role = "ADMINISTRATOR";
     const initials = getInitials(displayName);
     const addressText = user?.address
+      || user?.full_address
+      || user?.formatted_address
+      || user?.address_text
       || [
         user?.address_details?.line1,
         user?.address_details?.line2,
@@ -242,6 +245,10 @@ if (adminPage) {
         user?.city || user?.town,
         user?.postcode || user?.postal_code,
         user?.country
+      ].filter(Boolean).join(", ")
+      || [
+        user?.premises_address,
+        user?.contact_address
       ].filter(Boolean).join(", ")
       || String(user?.location || "").trim();
     const setAdminAvatar = (el, fallbackInitials, url) => {
@@ -265,14 +272,14 @@ if (adminPage) {
     if (adminProfileRole) adminProfileRole.textContent = role;
     if (adminSettingsAvatar) adminSettingsAvatar.textContent = initials;
     if (adminSettingsName) adminSettingsName.textContent = displayName;
-    if (adminSettingsEmail) adminSettingsEmail.textContent = `Email: ${user?.email || "admin@smartworkshop.local"}`;
+    if (adminSettingsEmail) setAdminLabeledText(adminSettingsEmail, "Email:", user?.email || "admin@smartworkshop.local");
     if (adminSettingsEmailDetail) {
-      adminSettingsEmailDetail.textContent = `Email: ${user?.email || "admin@smartworkshop.local"}`;
+      setAdminLabeledText(adminSettingsEmailDetail, "Email:", user?.email || "admin@smartworkshop.local");
     }
     if (adminSettingsRole) adminSettingsRole.textContent = role;
-    if (adminSettingsPhone) adminSettingsPhone.textContent = `Phone: ${user?.phone || "-"}`;
-    if (adminSettingsUsername) adminSettingsUsername.textContent = `Username: ${user?.username || "-"}`;
-    if (adminSettingsAddress) adminSettingsAddress.textContent = `Address: ${addressText || "-"}`;
+    if (adminSettingsPhone) setAdminLabeledText(adminSettingsPhone, "Phone:", user?.phone);
+    if (adminSettingsUsername) setAdminLabeledText(adminSettingsUsername, "Username:", user?.username);
+    if (adminSettingsAddress) setAdminLabeledText(adminSettingsAddress, "Address:", addressText);
     if (adminSettingsWelcomeName) adminSettingsWelcomeName.textContent = displayName;
     setAdminAvatar(adminSettingsViewAvatar, initials, user?.avatar_url);
     if (adminSettingsViewName) adminSettingsViewName.textContent = displayName;
@@ -320,7 +327,7 @@ if (adminPage) {
       resolution: { title: "Resolution", subtitle: "Resolution cases" },
       payments: { title: "Payments", subtitle: "Payments overview" },
       catalog: { title: "Catalog", subtitle: "Service catalog" },
-      account: { title: "Account", subtitle: "Account information" },
+      account: { title: "Account", subtitle: "Review your profile information" },
       profile: { title: "Profile", subtitle: "Profile information" },
       settings: { title: "Settings", subtitle: "Workspace settings" }
     };
@@ -653,14 +660,33 @@ if (adminPage) {
     }
   };
 
+  const BOOKING_TYPE_OPTIONS = [
+    { value: "Diagnostics", label: "Diagnostics" },
+    { value: "Ev Chargers", label: "Ev Chargers" },
+    { value: "Inspections", label: "Inspections" },
+    { value: "Mots", label: "Mots" },
+    { value: "Repairs", label: "Repairs" },
+    { value: "Services", label: "Services" },
+    { value: "Tyres", label: "Tyres" }
+  ];
+
   const getBookingType = (item) => {
-    const services = Array.isArray(item?.services)
-      ? item.services
-      : String(item?.services || "")
-          .split(",")
-          .map((value) => value.trim())
-          .filter(Boolean);
-    return services[0] || "General";
+    const serviceText = (
+      Array.isArray(item?.services)
+        ? item.services.join(" ")
+        : String(item?.services || "")
+    ).toLowerCase();
+
+    if (!serviceText) return "Repairs";
+    if (serviceText.includes("diagnostic")) return "Diagnostics";
+    if (serviceText.includes("ev") || serviceText.includes("electric vehicle") || serviceText.includes("charger")) {
+      return "Ev Chargers";
+    }
+    if (serviceText.includes("inspection")) return "Inspections";
+    if (serviceText.includes("mot")) return "Mots";
+    if (serviceText.includes("tyre") || serviceText.includes("tire")) return "Tyres";
+    if (serviceText.includes("service")) return "Services";
+    return "Repairs";
   };
 
   const syncAdminBookingHeadFilters = () => {
@@ -672,18 +698,18 @@ if (adminPage) {
     ];
     setFilterOptions(
       adminBookingsTypeFilter,
-      getUniqueOptions(adminBookings, (item) => getBookingType(item)).map((value) => ({
-        value,
-        label: titleCase(value)
-      })),
+      BOOKING_TYPE_OPTIONS,
       adminBookingsTypeFilter?.value
     );
     setFilterOptions(
       adminBookingsStatusFilter,
-      getUniqueOptions(adminBookings, (item) => item.status).map((value) => ({
-        value,
-        label: titleCase(value)
-      })),
+      [
+        ...getUniqueOptions(adminBookings, (item) => item.status).map((value) => ({
+          value,
+          label: titleCase(value)
+        })),
+        { value: "cancelled", label: "Cancelled" }
+      ],
       adminBookingsStatusFilter?.value
     );
     setFilterOptions(adminBookingsDateFilter, bookingDateOptions, adminBookingsDateFilter?.value);
@@ -1220,6 +1246,11 @@ if (adminPage) {
     adminDeleteModal?.classList.add("is-hidden");
     if (adminDeleteModal) adminDeleteModal.hidden = true;
     if (adminDeleteConfirm) adminDeleteConfirm.disabled = false;
+  };
+
+  const setAdminLabeledText = (el, label, value) => {
+    if (!el) return;
+    el.innerHTML = `<span class="account-field-label">${escapeHtml(label)}</span><span class="account-field-value">${escapeHtml(value || "-")}</span>`;
   };
 
   const openAdminDeleteModal = ({ userId, name, role }) => {
