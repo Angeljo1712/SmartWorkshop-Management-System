@@ -26,7 +26,6 @@ body.admin-body .page-shell-content {
 #mechanicPage .mainSection,
 #adminPage .mainSection {
   gap: 0;
-  padding: 0;
 }
 
 #userPage .mainSection,

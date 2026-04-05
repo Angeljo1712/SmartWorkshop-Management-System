@@ -1383,7 +1383,7 @@ pre {
   background: #ffffff;
   border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 20px;
+  padding: 0px;
   display: grid;
   gap: 12px;
   align-content: start;
