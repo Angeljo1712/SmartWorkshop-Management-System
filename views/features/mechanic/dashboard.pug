@@ -194,53 +194,43 @@ block content
                         p.mechanic-overview-empty No matching bookings available.
 
             section.mechanic-content.is-hidden#mechanicBookingInformationView
-              .settings-card.mechanic-dashboard-card
-                .mechanic-dashboard-layout
-                  .settings-header
-                    div
-                      h2 Booking information
-                      p Review matching bookings and decide whether to accept them.
-                    .user-welcome-corner-wrap
-                      h2.user-welcome-corner Review bookings
-                      p.user-welcome-corner-subtitle Accept or decline matching work.
-                  p#mechanicBookingInformationStatus.mechanic-status-note.is-hidden
-                  .mechanic-table-layout
-                    .mechanic-table-head
-                      h3.mechanic-dashboard-section-title Available bookings
-                      .mechanic-table-head-filters
-                        .mechanic-head-control.mechanic-head-control--search
-                          input#mechanicBookingsSearch(type="search" placeholder="Search")
-                        .mechanic-head-control.mechanic-head-control--status
-                          select#mechanicBookingsStatusFilter
-                            option(value="all") Status
-                        .mechanic-head-control.mechanic-head-control--date
-                          select#mechanicBookingsDateFilter
-                            option(value="all") All time
-                            option(value="30d") Last 30 days
-                            option(value="90d") Last 90 days
-                            option(value="365d") Last year
-                        button.mechanic-bookings-export(type="button") Export
-                    .mechanic-table-wrap
-                      table.mechanic-table
-                        thead
+              .mechanic-dashboard-layout
+                p#mechanicBookingInformationStatus.mechanic-status-note.is-hidden
+                .mechanic-table-layout
+                  .mechanic-table-head
+                    .mechanic-table-head-filters
+                      .mechanic-head-control.mechanic-head-control--search
+                        input#mechanicBookingsSearch(type="search" placeholder="Search")
+                      .mechanic-head-control.mechanic-head-control--status
+                        select#mechanicBookingsStatusFilter
+                          option(value="all") Status
+                      .mechanic-head-control.mechanic-head-control--date
+                        select#mechanicBookingsDateFilter
+                          option(value="all") All time
+                          option(value="30d") Last 30 days
+                          option(value="90d") Last 90 days
+                          option(value="365d") Last year
+                      button.mechanic-bookings-export(type="button") Export
+                  .mechanic-table-wrap
+                    table.mechanic-table
+                      thead
                           tr
                             th Reference
                             th Offer status
                             th Customer
                             th Vehicle
                             th Sent
-                            th Actions
-                        tbody#mechanicBookingsList
-                    .mechanic-table-footer
-                      .mechanic-table-footer-meta
-                        label(for="mechanicBookingsRowsPerPage") Rows per page
-                        select#mechanicBookingsRowsPerPage
-                          option(value="10" selected) 10
-                          option(value="20") 20
-                          option(value="50") 50
-                        span#mechanicBookingsFooterCount No bookings
-                      .mechanic-pagination#mechanicBookingsPagination
-                  #mechanicBookingDetail.mechanic-booking-detail
+                      tbody#mechanicBookingsList
+                  .mechanic-table-footer
+                    .mechanic-table-footer-meta
+                      label(for="mechanicBookingsRowsPerPage") Rows per page
+                      select#mechanicBookingsRowsPerPage
+                        option(value="10" selected) 10
+                        option(value="20") 20
+                        option(value="50") 50
+                      span#mechanicBookingsFooterCount No bookings
+                    .mechanic-pagination#mechanicBookingsPagination
+                #mechanicBookingDetail.mechanic-booking-detail
     
             section.mechanic-content.is-hidden#mechanicResolutionCenterView
               .settings-card.mechanic-dashboard-card

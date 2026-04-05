@@ -1351,8 +1351,8 @@ const updateMechanicProfile = async (userId, payload) => {
 
 const respondToMechanicBookingOffer = async (mechanicId, offerId, action) => {
   const normalizedAction = String(action || "").trim().toLowerCase();
-  if (!["accept", "decline"].includes(normalizedAction)) {
-    throw new AppError("VALIDATION_ERROR", "action must be accept or decline", 400);
+  if (!["accept", "decline", "cancel"].includes(normalizedAction)) {
+    throw new AppError("VALIDATION_ERROR", "action must be accept, decline or cancel", 400);
   }
 
   const connection = await pool.getConnection();
@@ -1360,7 +1360,12 @@ const respondToMechanicBookingOffer = async (mechanicId, offerId, action) => {
     await connection.beginTransaction();
 
     const [offerRows] = await connection.query(
-      `SELECT bo.id, bo.booking_id, bo.status, b.mechanic_id, b.status AS booking_status
+      `SELECT bo.id,
+              bo.booking_id,
+              bo.status,
+              b.mechanic_id,
+              b.status AS booking_status,
+              b.address_id
        FROM booking_offers bo
        INNER JOIN bookings b ON b.id = bo.booking_id
        WHERE bo.id = ? AND bo.mechanic_id = ?
@@ -1372,11 +1377,11 @@ const respondToMechanicBookingOffer = async (mechanicId, offerId, action) => {
     if (!offer) {
       throw new AppError("NOT_FOUND", "Booking offer not found", 404);
     }
-    if (offer.status !== "pending") {
-      throw new AppError("VALIDATION_ERROR", `Offer is already ${offer.status}`, 400);
-    }
 
     if (normalizedAction === "accept") {
+      if (offer.status !== "pending") {
+        throw new AppError("VALIDATION_ERROR", `Offer is already ${offer.status}`, 400);
+      }
       if (offer.mechanic_id || offer.booking_status === "accepted") {
         throw new AppError("CONFLICT", "This booking has already been accepted by another mechanic", 409);
       }
@@ -1401,17 +1406,161 @@ const respondToMechanicBookingOffer = async (mechanicId, offerId, action) => {
          WHERE id = ?`,
         [mechanicId, offer.booking_id]
       );
-    } else {
+    } else if (normalizedAction === "decline") {
+      if (offer.status !== "pending") {
+        throw new AppError("VALIDATION_ERROR", `Offer is already ${offer.status}`, 400);
+      }
       await connection.query(
         `UPDATE booking_offers
          SET status = 'declined', responded_at = CURRENT_TIMESTAMP
          WHERE id = ?`,
         [offerId]
       );
+    } else {
+      if (offer.status !== "accepted") {
+        throw new AppError("VALIDATION_ERROR", "Only accepted offers can be cancelled", 400);
+      }
+      if (Number(offer.mechanic_id || 0) !== Number(mechanicId) || offer.booking_status !== "accepted") {
+        throw new AppError("CONFLICT", "This booking can no longer be cancelled by this mechanic", 409);
+      }
+
+      await connection.query(
+        `UPDATE booking_offers
+         SET status = 'declined', responded_at = CURRENT_TIMESTAMP
+         WHERE id = ?`,
+        [offerId]
+      );
+
+      await connection.query(
+        `UPDATE bookings
+         SET mechanic_id = NULL, status = 'requested'
+         WHERE id = ?`,
+        [offer.booking_id]
+      );
+
+      const [serviceRows] = await connection.query(
+        `SELECT service_id
+         FROM booking_items
+         WHERE booking_id = ?`,
+        [offer.booking_id]
+      );
+
+      const serviceIds = [...new Set(
+        serviceRows
+          .map((row) => Number(row.service_id))
+          .filter((value) => Number.isInteger(value) && value > 0)
+      )];
+
+      let eligibleMechanicIds = [];
+      if (offer.address_id && serviceIds.length) {
+        const [candidateRows] = await connection.query(
+          `SELECT DISTINCT u.id
+           FROM users u
+           LEFT JOIN user_roles ur ON ur.user_id = u.id
+           INNER JOIN mechanic_profiles mp ON mp.user_id = u.id
+           INNER JOIN addresses booking_address ON booking_address.id = ?
+           LEFT JOIN addresses contact_address
+             ON contact_address.user_id = u.id AND contact_address.label = 'Contact'
+           LEFT JOIN addresses premises_address
+             ON premises_address.user_id = u.id AND premises_address.label = 'Premises'
+           WHERE u.status = 'active'
+             AND (
+               LOWER(u.role) = 'mechanic'
+               OR LOWER(ur.role) = 'mechanic'
+             )
+             AND mp.travel_radius_miles IS NOT NULL
+             AND mp.travel_radius_miles > 0
+             AND COALESCE(premises_address.location, contact_address.location) IS NOT NULL
+             AND ST_Distance_Sphere(
+               COALESCE(premises_address.location, contact_address.location),
+               booking_address.location
+             ) <= mp.travel_radius_miles * 1609.34`,
+          [offer.address_id]
+        );
+
+        const candidateIds = candidateRows
+          .map((row) => Number(row.id))
+          .filter((value) => Number.isInteger(value) && value > 0 && value !== Number(mechanicId));
+
+        if (candidateIds.length) {
+          const [coverageRows] = await connection.query(
+            `SELECT mechanic_id, service_id, enabled
+             FROM mechanic_services
+             WHERE mechanic_id IN (?)`,
+            [candidateIds]
+          );
+
+          const coverageByMechanic = new Map();
+          coverageRows.forEach((row) => {
+            const candidateId = Number(row.mechanic_id);
+            if (!coverageByMechanic.has(candidateId)) coverageByMechanic.set(candidateId, new Map());
+            coverageByMechanic.get(candidateId).set(Number(row.service_id), Boolean(row.enabled));
+          });
+
+          eligibleMechanicIds = candidateIds.filter((candidateId) => {
+            const mechanicCoverage = coverageByMechanic.get(candidateId);
+            if (!mechanicCoverage || mechanicCoverage.size === 0) return true;
+            return serviceIds.every((serviceId) => mechanicCoverage.get(serviceId) === true);
+          });
+        }
+      }
+
+      if (eligibleMechanicIds.length) {
+        const [existingOfferRows] = await connection.query(
+          `SELECT id, mechanic_id, status
+           FROM booking_offers
+           WHERE booking_id = ? AND mechanic_id IN (?)`,
+          [offer.booking_id, eligibleMechanicIds]
+        );
+
+        const existingByMechanic = new Map(
+          existingOfferRows.map((row) => [Number(row.mechanic_id), { id: Number(row.id), status: String(row.status || "").toLowerCase() }])
+        );
+
+        const expiredOfferIds = [];
+        const missingOfferValues = [];
+
+        eligibleMechanicIds.forEach((candidateId) => {
+          const existing = existingByMechanic.get(candidateId);
+          if (!existing) {
+            missingOfferValues.push([offer.booking_id, candidateId]);
+            return;
+          }
+          if (existing.status === "expired") {
+            expiredOfferIds.push(existing.id);
+          }
+        });
+
+        if (expiredOfferIds.length) {
+          await connection.query(
+            `UPDATE booking_offers
+             SET status = 'pending', responded_at = NULL, sent_at = CURRENT_TIMESTAMP
+             WHERE id IN (?)`,
+            [expiredOfferIds]
+          );
+        }
+
+        if (missingOfferValues.length) {
+          await connection.query(
+            `INSERT INTO booking_offers (booking_id, mechanic_id)
+             VALUES ?`,
+            [missingOfferValues]
+          );
+        }
+      }
     }
 
     await connection.commit();
-    return { ok: true, offer_id: offerId, status: normalizedAction === "accept" ? "accepted" : "declined" };
+    return {
+      ok: true,
+      offer_id: offerId,
+      status:
+        normalizedAction === "accept"
+          ? "accepted"
+          : normalizedAction === "decline"
+            ? "declined"
+            : "cancelled"
+    };
   } catch (err) {
     await connection.rollback();
     throw err;

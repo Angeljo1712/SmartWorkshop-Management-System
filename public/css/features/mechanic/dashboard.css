@@ -467,7 +467,7 @@ body.mechanic-body .mechanic-panel-card {
   background: transparent;
   border: 0;
   border-radius: 10px;
-  padding: 16px;
+  padding: 0px;
 }
 
 body.mechanic-body .mechanic-panel-head {
@@ -581,6 +581,8 @@ body.mechanic-body .mechanic-table-layout {
   row-gap: 30px;
   min-height: 0;
   padding: 15px;
+  background: #3e434df7;
+  border-radius: 14px;
 }
 
 body.mechanic-body .mechanic-table-layout > .mechanic-table-head,
@@ -822,8 +824,8 @@ body.mechanic-body .mechanic-pagination button.active {
 body.mechanic-body .mechanic-booking-detail {
   border: 0;
   border-radius: 0;
-  background: transparent;
-  padding-top: 16px;
+  background: #3e434df7;
+  /* padding-top: 16px; */
 }
 
 body.mechanic-body .mechanic-certifications-layout {
@@ -1884,7 +1886,7 @@ body.mechanic-body .mechanic-booking-card {
   gap: 12px;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 12px;
-  background: rgba(20, 27, 41, 0.72);
+  background: #3e434df7;
   overflow: hidden;
 }
 
@@ -1914,7 +1916,9 @@ body.mechanic-body .mechanic-booking-topbar-status[data-status="pending"] {
 }
 
 body.mechanic-body .mechanic-booking-topbar-status[data-status="declined"],
-body.mechanic-body .mechanic-booking-topbar-status[data-status="expired"] {
+body.mechanic-body .mechanic-booking-topbar-status[data-status="expired"],
+body.mechanic-body .mechanic-booking-topbar-status[data-status="cancelled"],
+body.mechanic-body .mechanic-booking-topbar-status[data-status="canceled"] {
   background: #6b7280;
 }
 
@@ -2030,6 +2034,24 @@ body.mechanic-body .mechanic-booking-status[data-status="expired"] {
   color: #f87171;
 }
 
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--pending {
+  background: var(--dashboard-badge-blue);
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--accepted {
+  background: var(--dashboard-badge-green);
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--declined,
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--expired,
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--cancelled,
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--canceled {
+  background: var(--dashboard-badge-red);
+  color: #ffffff;
+}
+
 body.mechanic-body .mechanic-booking-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2120,6 +2142,12 @@ body.mechanic-body .mechanic-dashboard-layout .user-welcome-corner-subtitle {
 body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-divider {
   height: 2px;
   background: rgba(255, 255, 255, 0.28);
+}
+
+body.mechanic-body .mechanic-content .settings-card.mechanic-dashboard-card {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 }
 
 body.mechanic-body .mechanic-content .mechanic-dashboard-card .mechanic-settings-row {

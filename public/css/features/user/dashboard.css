@@ -343,7 +343,6 @@ body.user-body .main-header.general-header {
 }
 
 body.user-body .user-content .settings-card,
-body.user-body .user-booking-card,
 body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-card,
 body.user-body :is(#userResolutionView, #userResolutionCaseView) .mechanic-resolution-sidebar-card,
 body.user-body #userSettingsSecurity .security-card,
@@ -860,7 +859,7 @@ body.user-body #userBookingsView .user-booking-empty {
 .user-table-layout {
   border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 14px;
-  background: rgba(34, 43, 58, 0.96);
+  background: #3e434df7;
   padding: 0;
   box-shadow: 0 18px 36px rgba(5, 10, 18, 0.24);
 }
@@ -869,7 +868,7 @@ body.user-body #userBookingsView .user-booking-empty {
   border: 0;
   border-radius: 0;
   background: transparent;
-  padding: 16px 0 0;
+  /* padding: 16px 0 0; */
 }
 
 .user-table-layout {
@@ -1137,20 +1136,21 @@ body.user-body #userBookingsView .user-booking-empty {
   display: none;
 }
 
-.user-booking-card {
+body.user-body .user-booking-card {
   border: 1px solid #ffffff;
   border-radius: 14px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.02);
+  background: #3e434df7;
 }
 
-.user-booking-toolbar {
+body.user-body .user-booking-toolbar {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 16px;
   padding: 16px 20px;
   border-bottom: 1px solid #ffffff;
+  background: transparent;
 }
 
 .user-booking-status {
@@ -2070,8 +2070,8 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
       border: 0;
       border-radius: var(--dashboard-panel-radius);
       box-shadow: none;
-    padding: 16px;
-  align-self: start;
+      padding: 0px;
+      align-self: start;
 }
 
 .car-panel {

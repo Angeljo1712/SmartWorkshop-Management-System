@@ -324,6 +324,7 @@ if (mechanicDashboard) {
   const getMechanicOfferStatusLabel = (entry) => {
     const status = getMechanicOfferStatusKey(entry);
     if (status === "accepted") return "Accepted";
+    if (status === "cancelled" || status === "canceled") return "Cancelled";
     if (status === "declined") return "Declined";
     if (status === "expired") return "Expired";
     return "Pending";
@@ -338,8 +339,14 @@ if (mechanicDashboard) {
       const customer = String(entry.customer?.name || "");
       const vehicle = [entry.vehicle?.registrationNumber, entry.vehicle?.make, entry.vehicle?.model].filter(Boolean).join(" ");
       const haystack = `${reference} ${customer} ${vehicle}`.toLowerCase();
+      const statusKey = getMechanicOfferStatusKey(entry);
+      const statusLabel = getMechanicOfferStatusLabel(entry);
       const matchesSearch = !searchValue || haystack.includes(searchValue);
-      const matchesStatus = statusValue === "all" ? true : getMechanicOfferStatusKey(entry) === statusValue;
+      const matchesStatus = statusValue === "all"
+        ? true
+        : statusLabel === statusValue || (
+          statusValue === "Cancelled" && ["declined", "expired", "cancelled", "canceled"].includes(statusKey)
+        );
       const matchesDate = dateValue === "all" ? true : matchesDateFilter(entry.sent_at || entry.booking?.created_at, dateValue);
       return matchesSearch && matchesStatus && matchesDate;
     });
@@ -392,8 +399,11 @@ if (mechanicDashboard) {
       )
       .join("");
     const reference = entry.booking?.reference || entry.booking?.id || "-";
+    const statusKey = getMechanicOfferStatusKey(entry);
     const topStatus = getMechanicOfferStatusLabel(entry).toUpperCase();
-    const isPending = getMechanicOfferStatusKey(entry) === "pending";
+    const isPending = statusKey === "pending";
+    const isAccepted = statusKey === "accepted";
+    const isCancelledState = ["declined", "expired", "cancelled", "canceled"].includes(statusKey);
     return `
       <article class="mechanic-booking-card">
         <div class="mechanic-booking-topbar">
@@ -415,17 +425,21 @@ if (mechanicDashboard) {
         </div>
         <div class="mechanic-booking-items">${itemsMarkup || '<div class="mechanic-booking-item"><strong>No work items</strong></div>'}</div>
         <div class="mechanic-booking-decision-row">
-          ${
-            isPending
-              ? `
+            ${
+              isPending
+                ? `
                 <button class="primary mechanic-offer-decision" type="button" data-offer-action="accept" data-offer-id="${escapeHtml(String(entry.offer_id || ""))}">Accept</button>
                 <button class="secondary mechanic-offer-decision mechanic-offer-decision--danger" type="button" data-offer-action="decline" data-offer-id="${escapeHtml(String(entry.offer_id || ""))}">Reject</button>
-              `
-              : `<p class="mechanic-offer-state-copy">This offer is ${escapeHtml(getMechanicOfferStatusLabel(entry).toLowerCase())}.</p>`
-          }
-        </div>
-      </article>
-    `;
+                `
+              : isAccepted
+                ? `<button class="secondary mechanic-offer-decision mechanic-offer-decision--danger" type="button" data-offer-action="cancel" data-offer-id="${escapeHtml(String(entry.offer_id || ""))}">Cancel</button>`
+              : isCancelledState
+                ? `<button class="secondary mechanic-offer-decision mechanic-offer-decision--danger" type="button" disabled>Cancelled</button>`
+                : `<p class="mechanic-offer-state-copy">This offer is ${escapeHtml(getMechanicOfferStatusLabel(entry).toLowerCase())}.</p>`
+            }
+          </div>
+        </article>
+      `;
   };
 
   const renderMechanicBookings = (offers) => {
@@ -436,7 +450,7 @@ if (mechanicDashboard) {
     if (!Array.isArray(bookingList) || !bookingList.length) {
       const emptyRow = document.createElement("tr");
       emptyRow.className = "mechanic-booking-empty-row";
-      emptyRow.innerHTML = '<td colspan="6" class="mechanic-bookings-empty">No matching bookings available.</td>';
+        emptyRow.innerHTML = '<td colspan="5" class="mechanic-bookings-empty">No matching bookings available.</td>';
       mechanicBookingsList.appendChild(emptyRow);
       if (mechanicBookingsFooterCount) mechanicBookingsFooterCount.textContent = "0 offers";
       if (mechanicBookingsPagination) mechanicBookingsPagination.innerHTML = "";
@@ -460,8 +474,10 @@ if (mechanicDashboard) {
     if (!pageBookings.length) {
       const emptyRow = document.createElement("tr");
       emptyRow.className = "mechanic-booking-empty-row";
-      emptyRow.innerHTML = `<td colspan="6" class="mechanic-bookings-empty">No matching bookings available.</td>`;
+        emptyRow.innerHTML = `<td colspan="5" class="mechanic-bookings-empty">No matching bookings available.</td>`;
       mechanicBookingsList.appendChild(emptyRow);
+      activeMechanicBookingOfferId = null;
+      if (mechanicBookingDetail) mechanicBookingDetail.innerHTML = "";
       if (mechanicBookingsFooterCount) mechanicBookingsFooterCount.textContent = `0-0 of ${total} rows`;
       if (mechanicBookingsPagination) mechanicBookingsPagination.innerHTML = "";
       return;
@@ -469,36 +485,28 @@ if (mechanicDashboard) {
 
     const selectedId = pageBookings.some((entry) => Number(entry.offer_id) === Number(activeMechanicBookingOfferId))
       ? activeMechanicBookingOfferId
-      : Number(pageBookings[0].offer_id);
+      : null;
     activeMechanicBookingOfferId = selectedId;
 
     pageBookings.forEach((entry) => {
       const reference = entry.booking?.reference || entry.booking?.id || "-";
       const canDecide = getMechanicOfferStatusKey(entry) === "pending";
       const item = document.createElement("tr");
-      item.className = `mechanic-booking-summary-row${Number(entry.offer_id) === Number(selectedId) ? " is-active" : ""}`;
+      item.className = `mechanic-booking-summary-row${selectedId !== null && Number(entry.offer_id) === Number(selectedId) ? " is-active" : ""}`;
       item.dataset.mechanicOfferId = String(entry.offer_id || "");
-      item.innerHTML = `
-        <td><strong class="mechanic-booking-summary-reference">${escapeHtml(String(reference))}</strong></td>
-        <td><span class="mechanic-booking-status mechanic-booking-status--${escapeHtml(getMechanicOfferStatusKey(entry) || "pending")}">${escapeHtml(getMechanicOfferStatusLabel(entry))}</span></td>
-        <td><span class="mechanic-booking-summary-customer">${escapeHtml(entry.customer?.name || "Customer")}</span></td>
-        <td><span class="mechanic-booking-summary-vehicle">${escapeHtml([entry.vehicle?.registrationNumber, entry.vehicle?.make, entry.vehicle?.model].filter(Boolean).join(" · ") || "-")}</span></td>
-        <td><span class="mechanic-booking-summary-date">${escapeHtml(formatDate(entry.sent_at || entry.booking?.created_at))}</span></td>
-        <td>
-          ${
-            canDecide
-              ? `<div class="mechanic-booking-row-actions">
-                  <button class="primary mechanic-offer-table-action" type="button" data-offer-action="accept" data-offer-id="${escapeHtml(String(entry.offer_id || ""))}">Accept</button>
-                  <button class="secondary mechanic-offer-table-action mechanic-offer-table-action--danger" type="button" data-offer-action="decline" data-offer-id="${escapeHtml(String(entry.offer_id || ""))}">Reject</button>
-                </div>`
-              : `<span class="mechanic-booking-row-state">${escapeHtml(getMechanicOfferStatusLabel(entry))}</span>`
-          }
-        </td>
-      `;
+        item.innerHTML = `
+          <td><strong class="mechanic-booking-summary-reference">${escapeHtml(String(reference))}</strong></td>
+          <td><span class="mechanic-booking-status mechanic-booking-status--${escapeHtml(getMechanicOfferStatusKey(entry) || "pending")}">${escapeHtml(getMechanicOfferStatusLabel(entry))}</span></td>
+          <td><span class="mechanic-booking-summary-customer">${escapeHtml(entry.customer?.name || "Customer")}</span></td>
+          <td><span class="mechanic-booking-summary-vehicle">${escapeHtml([entry.vehicle?.registrationNumber, entry.vehicle?.make, entry.vehicle?.model].filter(Boolean).join(" · ") || "-")}</span></td>
+          <td><span class="mechanic-booking-summary-date">${escapeHtml(formatDate(entry.sent_at || entry.booking?.created_at))}</span></td>
+        `;
       mechanicBookingsList.appendChild(item);
     });
 
-    const selectedBooking = filteredBookings.find((entry) => Number(entry.offer_id) === Number(selectedId)) || null;
+    const selectedBooking = selectedId === null
+      ? null
+      : filteredBookings.find((entry) => Number(entry.offer_id) === Number(selectedId)) || null;
     if (mechanicBookingDetail) mechanicBookingDetail.innerHTML = selectedBooking ? buildMechanicBookingDetailCard(selectedBooking) : "";
     if (mechanicBookingsFooterCount) {
       const from = startIndex + 1;

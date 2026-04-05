@@ -708,7 +708,7 @@ header.main-header:not(.home-header):not(.general-header):not(.basic-header) {
   background: #ffffff;
   border: 1px solid var(--border);
   border-radius: 20px;
-  padding: 24px;
+  padding: 0px;
   box-shadow: var(--shadow);
   display: grid;
   gap: 18px;
