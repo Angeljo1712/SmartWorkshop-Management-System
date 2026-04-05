@@ -339,26 +339,27 @@ block content
                             #userResolutionBookingCasesTable
 
                     .user-resolution-layout.is-hidden#userResolutionCaseView
-                      .mechanic-resolution-case-view
-                        .mechanic-resolution-case-intro
-                          .mechanic-resolution-detail-head
-                            h3#userResolutionCaseTitle General Enquiry
-                        .mechanic-resolution-case
-                          p.mechanic-resolution-case-copy.is-hidden#userResolutionCaseCopy You can use this page to discuss your booking with your mechanic. Your messages will be sent directly to the mechanic, and you will receive an email whenever there's an update.
-                          .mechanic-resolution-thread#userResolutionMessages
-                          .mechanic-resolution-compose
-                            textarea#userResolutionMessageInput(rows="5" placeholder="Add a new message here")
-                            .mechanic-resolution-compose-actions
-                              button.primary#userResolutionSendBtn(type="button") Send message
-                              button.mechanic-resolution-back#userResolutionCaseBackBtn(type="button") Back
-                        aside.mechanic-resolution-sidebar
-                          .mechanic-resolution-sidebar-card
-                            h4#userResolutionSidebarTitle Current status of booking
-                            .mechanic-resolution-sidebar-row
-                              strong Mechanic
-                              span#userResolutionSidebarMechanic -
-                            .mechanic-resolution-sidebar-row
-                              strong Car
+                        .settings-card.user-CaseView
+                          .mechanic-resolution-case-view
+                            .mechanic-resolution-case-intro
+                              .mechanic-resolution-detail-head
+                                h3#userResolutionCaseTitle General Enquiry
+                            .mechanic-resolution-case
+                              p.mechanic-resolution-case-copy.is-hidden#userResolutionCaseCopy You can use this page to discuss your booking with your mechanic. Your messages will be sent directly to the mechanic, and you will receive an email whenever there's an update.
+                              .mechanic-resolution-thread#userResolutionMessages
+                              .mechanic-resolution-compose
+                                textarea#userResolutionMessageInput(rows="5" placeholder="Add a new message here")
+                                .mechanic-resolution-compose-actions
+                                  button.primary#userResolutionSendBtn(type="button") Send message
+                                  button.mechanic-resolution-back#userResolutionCaseBackBtn(type="button") Back
+                            aside.mechanic-resolution-sidebar
+                              .mechanic-resolution-sidebar-card
+                                h4#userResolutionSidebarTitle Current status of booking
+                                .mechanic-resolution-sidebar-row
+                                  strong Mechanic
+                                  span#userResolutionSidebarMechanic -
+                                .mechanic-resolution-sidebar-row
+                                  strong Car
                               span#userResolutionSidebarCar -
                             .mechanic-resolution-sidebar-row
                               strong Address

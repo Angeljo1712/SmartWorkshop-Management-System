@@ -763,6 +763,7 @@ body.admin-body .settings-card {
   place-items: center;
   font-weight: 700;
   color: #7c2d12;
+  overflow: hidden;
 }
 
 .settings-avatar img,

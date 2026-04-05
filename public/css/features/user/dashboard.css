@@ -338,7 +338,7 @@ body.user-body .main-header.general-header {
 }
 
 #userPage.mainLayout .settings-card {
-  min-height: auto;
+  min-height: 100%;
 }
 
 body.user-body .user-content .settings-card,
@@ -349,10 +349,10 @@ body.user-body #userSettingsNotifications .notifications-card,
 body.user-body .user-car-summary,
 body.user-body .user-vehicle-info-card,
 body.user-body .user-verify-card {
-  /* background: var(--dashboard-panel-bg); */
+  background: var(--dashboard-panel-bg);
   /* border: 1px solid var(--dashboard-panel-border); */
-  /* border-radius: var(--dashboard-panel-radius); */
-  /* box-shadow: var(--dashboard-panel-shadow); */
+  border-radius: var(--dashboard-panel-radius);
+  box-shadow: var(--dashboard-panel-shadow);
 }
 
 body.user-body #userBookingsView .settings-card {
@@ -389,6 +389,8 @@ body.user-body #userBookingsView .settings-card {
 
 body.user-body #userSettingsView .settings-card {
   gap: 0;
+  background: #3e434df7;
+  height: 100%;
 }
 
 .user-settings-card {
@@ -403,6 +405,7 @@ body.user-body #userSettingsView .settings-card {
   gap: 24px;
   align-items: start;
   align-content: start;
+  padding: 20px;
 }
 
 body.user-body #userSettingsView .user-settings-panel {
@@ -1840,6 +1843,7 @@ body.user-body #userAccountView {
 body.user-body #userAccountView .user-account-layout {
   min-height: 100%;
   align-content: start;
+  padding: 20px;
 }
 
 .user-account-layout {
@@ -2036,7 +2040,7 @@ body.user-body #userDashboardView .user-quick-quote select {
 
 body.user-body #userDashboardView .user-car-summary,
 body.user-body #userDashboardView .user-verify-card {
-  background: rgba(255, 255, 255, 0.03);
+  /* background: rgba(255, 255, 255, 0.03); */
   border-color: #ffffff;
   color: #eaf0fb;
 }
@@ -2441,6 +2445,7 @@ body.user-body #userVehicleView .settings-card.user-vehicle-card {
     "meta"
     "cards";
   gap: 30px;
+  padding: 20px;
 }
 
 body.user-body #userVehicleView .settings-divider {
