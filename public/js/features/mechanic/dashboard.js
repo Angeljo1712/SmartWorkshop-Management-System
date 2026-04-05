@@ -98,6 +98,27 @@ if (mechanicDashboard) {
   const mechanicSettingsEmail = document.getElementById("mechanicSettingsEmail");
   const mechanicSettingsAddress = document.getElementById("mechanicSettingsAddress");
   const mechanicSettingsAvatarSettings = document.getElementById("mechanicSettingsAvatarSettings");
+  const mechanicSettingsPhotoButton = document.getElementById("mechanicSettingsPhotoButton");
+  const mechanicSettingsPhotoInput = document.getElementById("mechanicSettingsPhotoInput");
+  const mechanicSettingsEditButtons = mechanicDashboard.querySelectorAll("[data-mechanic-settings-field]");
+  const mechanicSettingsEditModal = document.getElementById("mechanicSettingsEditModal");
+  const mechanicSettingsEditClose = document.getElementById("mechanicSettingsEditClose");
+  const mechanicSettingsEditCancel = document.getElementById("mechanicSettingsEditCancel");
+  const mechanicSettingsEditSave = document.getElementById("mechanicSettingsEditSave");
+  const mechanicSettingsEditTitle = document.getElementById("mechanicSettingsEditTitle");
+  const mechanicSettingsEditDescription = document.getElementById("mechanicSettingsEditDescription");
+  const mechanicSettingsEditLabel = document.getElementById("mechanicSettingsEditLabel");
+  const mechanicSettingsEditInput = document.getElementById("mechanicSettingsEditInput");
+  const mechanicSettingsNameGrid = document.getElementById("mechanicSettingsNameGrid");
+  const mechanicSettingsAddressGrid = document.getElementById("mechanicSettingsAddressGrid");
+  const mechanicSettingsEditFirstName = document.getElementById("mechanicSettingsEditFirstName");
+  const mechanicSettingsEditMiddleName = document.getElementById("mechanicSettingsEditMiddleName");
+  const mechanicSettingsEditLastName = document.getElementById("mechanicSettingsEditLastName");
+  const mechanicSettingsEditAddressLine1 = document.getElementById("mechanicSettingsEditAddressLine1");
+  const mechanicSettingsEditAddressLine2 = document.getElementById("mechanicSettingsEditAddressLine2");
+  const mechanicSettingsEditCity = document.getElementById("mechanicSettingsEditCity");
+  const mechanicSettingsEditPostcode = document.getElementById("mechanicSettingsEditPostcode");
+  const mechanicSettingsEditMessage = document.getElementById("mechanicSettingsEditMessage");
   const mechanicSecurityUsername = document.getElementById("mechanicSecurityUsername");
   const mechanicResolutionOverview = document.getElementById("mechanicResolutionOverview");
   const mechanicResolutionMessageView = document.getElementById("mechanicResolutionMessageView");
@@ -135,6 +156,7 @@ if (mechanicDashboard) {
   let latestMechanicAssignedBookings = [];
   let latestMechanicOffers = [];
   let activeMechanicBookingOfferId = null;
+  let activeMechanicSettingsField = "";
   let mechanicBookingsPage = 1;
   let pendingResolutionBookingId = null;
   let pendingResolutionCaseId = null;
@@ -142,6 +164,19 @@ if (mechanicDashboard) {
   const formatCurrency = window.SWApp?.formatCurrency || ((value) => String(value || "0"));
   const escapeHtml = window.SWApp?.escapeHtml || ((value) => String(value ?? ""));
   const getInitials = window.SWApp?.getInitials || ((name) => String(name || "ME"));
+  const setAvatar = (el, initials, url) => {
+    if (!el) return;
+    el.innerHTML = "";
+    if (url) {
+      const resolvedUrl = String(url).startsWith("/uploads") ? `http://localhost:3000${url}` : String(url);
+      const img = document.createElement("img");
+      img.src = resolvedUrl;
+      img.alt = "";
+      el.appendChild(img);
+      return;
+    }
+    el.textContent = initials;
+  };
   const setLabeledText = (el, label, value) => {
     if (!el) return;
     el.innerHTML = `<span class="mechanic-account-label">${escapeHtml(label)}</span><span class="mechanic-account-value">${escapeHtml(value || "-")}</span>`;
@@ -208,7 +243,7 @@ if (mechanicDashboard) {
         .toUpperCase() || "ME";
       const roles = Array.isArray(user?.roles) && user.roles.length ? user.roles : [user?.role_name || "MECHANIC"];
       const activeRole = roles.includes("MECHANIC") ? "MECHANIC" : roles[0];
-      if (mechanicDashboardHeroAvatar) mechanicDashboardHeroAvatar.textContent = initials;
+      setAvatar(mechanicDashboardHeroAvatar, initials, user?.avatar_url);
       if (mechanicDashboardHeroName) mechanicDashboardHeroName.textContent = name;
       if (mechanicDashboardHeroRole) mechanicDashboardHeroRole.textContent = activeRole;
       if (nameEl) nameEl.textContent = name;
@@ -217,8 +252,8 @@ if (mechanicDashboard) {
         const base = (user.uuid_public || user.id || "0000").toString().slice(-4).toUpperCase();
         idEl.textContent = `AG${base}`;
       }
-      if (mechanicAccountAvatar) mechanicAccountAvatar.textContent = initials;
-      if (mechanicAccountAvatarSecondary) mechanicAccountAvatarSecondary.textContent = initials;
+      setAvatar(mechanicAccountAvatar, initials, user?.avatar_url);
+      setAvatar(mechanicAccountAvatarSecondary, initials, user?.avatar_url);
       setLabeledText(mechanicAccountPhone, "Phone:", user?.phone);
       setLabeledText(mechanicAccountPhoneSecondary, "Phone:", user?.phone);
       setLabeledText(mechanicAccountEmail, "Email:", user?.email);
@@ -230,7 +265,7 @@ if (mechanicDashboard) {
       if (mechanicAccountRole) mechanicAccountRole.textContent = activeRole;
       if (mechanicAccountRoleSecondary) mechanicAccountRoleSecondary.textContent = activeRole;
       if (mechanicSettingsWelcomeName) mechanicSettingsWelcomeName.textContent = name;
-      if (mechanicSettingsAvatarSettings) mechanicSettingsAvatarSettings.textContent = getInitials(name, activeRole);
+      setAvatar(mechanicSettingsAvatarSettings, getInitials(name, activeRole), user?.avatar_url);
       if (mechanicSettingsFullName) mechanicSettingsFullName.textContent = name;
       if (mechanicSettingsPhone) mechanicSettingsPhone.textContent = user?.phone || "-";
       if (mechanicSettingsUsername) mechanicSettingsUsername.textContent = user?.username || "-";
@@ -249,7 +284,7 @@ if (mechanicDashboard) {
       if (mechanicProfilePostcode) mechanicProfilePostcode.textContent = user?.address_details?.postal_code || "-";
       if (mechanicProfileRadius) mechanicProfileRadius.textContent = "5 miles";
       if (mechanicProfileServiceType) mechanicProfileServiceType.textContent = "Mobile mechanic";
-      if (mechanicProfileAvatar) mechanicProfileAvatar.textContent = initials || "ME";
+      setAvatar(mechanicProfileAvatar, initials || "ME", user?.avatar_url);
       if (mechanicProfileQualifications) {
         mechanicProfileQualifications.innerHTML = "<li>NVQ Level 3 Qualified</li>";
       }
@@ -328,6 +363,99 @@ if (mechanicDashboard) {
     if (status === "declined") return "Declined";
     if (status === "expired") return "Expired";
     return "Pending";
+  };
+
+  const mechanicSettingsFieldConfig = {
+    full_name: {
+      label: "Full name",
+      description: "Update your first, middle and last name.",
+      isNameField: true
+    },
+    phone: {
+      label: "Phone",
+      description: "Update your phone number.",
+      type: "tel",
+      getValue: (user) => user?.phone || ""
+    },
+    username: {
+      label: "Username",
+      description: "Update your username.",
+      type: "text",
+      getValue: (user) => user?.username || ""
+    },
+    email: {
+      label: "Email",
+      description: "Request an email change confirmation.",
+      type: "email",
+      getValue: (user) => user?.email || ""
+    },
+    address: {
+      label: "Address",
+      description: "Update your address.",
+      isAddressField: true
+    }
+  };
+
+  const getMechanicUserProfile = () => {
+    try {
+      return JSON.parse(getStoredAuthValue("userProfile") || "{}");
+    } catch {
+      return {};
+    }
+  };
+
+  const closeMechanicSettingsEditModal = () => {
+    activeMechanicSettingsField = "";
+    mechanicSettingsEditModal?.classList.add("is-hidden");
+    if (mechanicSettingsEditMessage) mechanicSettingsEditMessage.textContent = "";
+    if (mechanicSettingsEditInput) mechanicSettingsEditInput.value = "";
+    if (mechanicSettingsEditFirstName) mechanicSettingsEditFirstName.value = "";
+    if (mechanicSettingsEditMiddleName) mechanicSettingsEditMiddleName.value = "";
+    if (mechanicSettingsEditLastName) mechanicSettingsEditLastName.value = "";
+    if (mechanicSettingsEditAddressLine1) mechanicSettingsEditAddressLine1.value = "";
+    if (mechanicSettingsEditAddressLine2) mechanicSettingsEditAddressLine2.value = "";
+    if (mechanicSettingsEditCity) mechanicSettingsEditCity.value = "";
+    if (mechanicSettingsEditPostcode) mechanicSettingsEditPostcode.value = "";
+  };
+
+  const openMechanicSettingsEditModal = (field) => {
+    const config = mechanicSettingsFieldConfig[field];
+    const profileData = getMechanicUserProfile();
+    if (!config || !mechanicSettingsEditModal || !mechanicSettingsEditInput) return;
+    activeMechanicSettingsField = field;
+    if (mechanicSettingsEditTitle) mechanicSettingsEditTitle.textContent = `Update ${config.label}`;
+    if (mechanicSettingsEditDescription) mechanicSettingsEditDescription.textContent = config.description;
+    if (mechanicSettingsNameGrid) mechanicSettingsNameGrid.classList.toggle("is-hidden", !config.isNameField);
+    if (mechanicSettingsAddressGrid) mechanicSettingsAddressGrid.classList.toggle("is-hidden", !config.isAddressField);
+    if (mechanicSettingsEditInput.parentElement) {
+      mechanicSettingsEditInput.parentElement.classList.toggle("is-hidden", !!config.isNameField || !!config.isAddressField);
+    }
+    if (config.isNameField) {
+      if (mechanicSettingsEditFirstName) mechanicSettingsEditFirstName.value = profileData?.name || "";
+      const lastNameParts = String(profileData?.lastname || "").trim().split(/\s+/).filter(Boolean);
+      if (mechanicSettingsEditLastName) mechanicSettingsEditLastName.value = lastNameParts.pop() || "";
+      if (mechanicSettingsEditMiddleName) mechanicSettingsEditMiddleName.value = lastNameParts.join(" ");
+    } else if (config.isAddressField) {
+      const addressDetails = profileData?.address_details || {};
+      if (mechanicSettingsEditAddressLine1) mechanicSettingsEditAddressLine1.value = addressDetails.line1 || "";
+      if (mechanicSettingsEditAddressLine2) mechanicSettingsEditAddressLine2.value = addressDetails.line2 || "";
+      if (mechanicSettingsEditCity) mechanicSettingsEditCity.value = addressDetails.city || "";
+      if (mechanicSettingsEditPostcode) mechanicSettingsEditPostcode.value = addressDetails.postal_code || "";
+    } else {
+      if (mechanicSettingsEditLabel) mechanicSettingsEditLabel.textContent = config.label;
+      mechanicSettingsEditInput.type = config.type || "text";
+      mechanicSettingsEditInput.value = config.getValue ? config.getValue(profileData) || "" : "";
+    }
+    if (mechanicSettingsEditMessage) mechanicSettingsEditMessage.textContent = "";
+    mechanicSettingsEditModal.classList.remove("is-hidden");
+    if (config.isNameField) {
+      mechanicSettingsEditFirstName?.focus();
+    } else if (config.isAddressField) {
+      mechanicSettingsEditAddressLine1?.focus();
+    } else {
+      mechanicSettingsEditInput.focus();
+      mechanicSettingsEditInput.select();
+    }
   };
 
   const getFilteredMechanicOffers = (offers) => {
@@ -1074,6 +1202,127 @@ if (mechanicDashboard) {
     link.addEventListener("click", () => {
       setMechanicSettingsSubview(link.dataset.mechanicSettingsSubview || "general");
     });
+  });
+
+  mechanicSettingsPhotoButton?.addEventListener("click", () => {
+    mechanicSettingsPhotoInput?.click();
+  });
+
+  mechanicSettingsPhotoInput?.addEventListener("change", async (event) => {
+    const file = event.target.files?.[0];
+    if (!file || !mechanicToken) return;
+
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    try {
+      const response = await fetch("http://localhost:3000/api/users/me/avatar", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${mechanicToken}` },
+        body: formData
+      });
+      const payload = await response.json();
+      if (!response.ok) throw payload;
+      setStoredAuthValue("userProfile", JSON.stringify(payload));
+      setAvatar(mechanicDashboardHeroAvatar, getInitials([payload?.name, payload?.lastname].filter(Boolean).join(" ") || payload?.email || "Mechanic"), payload?.avatar_url);
+      setAvatar(mechanicAccountAvatar, getInitials([payload?.name, payload?.lastname].filter(Boolean).join(" ") || payload?.email || "Mechanic"), payload?.avatar_url);
+      setAvatar(mechanicAccountAvatarSecondary, getInitials([payload?.name, payload?.lastname].filter(Boolean).join(" ") || payload?.email || "Mechanic"), payload?.avatar_url);
+      setAvatar(mechanicSettingsAvatarSettings, getInitials([payload?.name, payload?.lastname].filter(Boolean).join(" ") || payload?.email || "Mechanic"), payload?.avatar_url);
+      setAvatar(mechanicProfileAvatar, getInitials([payload?.name, payload?.lastname].filter(Boolean).join(" ") || payload?.email || "Mechanic"), payload?.avatar_url);
+    } catch (err) {
+      window.alert(err?.error?.message || err?.message || "Unable to upload this image.");
+    } finally {
+      event.target.value = "";
+    }
+  });
+
+  mechanicSettingsEditButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      openMechanicSettingsEditModal(button.dataset.mechanicSettingsField || "");
+    });
+  });
+
+  mechanicSettingsEditCancel?.addEventListener("click", closeMechanicSettingsEditModal);
+  mechanicSettingsEditClose?.addEventListener("click", closeMechanicSettingsEditModal);
+  mechanicSettingsEditModal?.querySelectorAll("[data-close-modal]").forEach((element) => {
+    element.addEventListener("click", closeMechanicSettingsEditModal);
+  });
+
+  mechanicSettingsEditSave?.addEventListener("click", async () => {
+    const field = activeMechanicSettingsField;
+    const config = mechanicSettingsFieldConfig[field];
+    if (!mechanicToken || !config) return;
+    if (mechanicSettingsEditMessage) mechanicSettingsEditMessage.textContent = "";
+
+    try {
+      if (config.isNameField) {
+        const firstName = mechanicSettingsEditFirstName?.value?.trim() || "";
+        const middleName = mechanicSettingsEditMiddleName?.value?.trim() || "";
+        const lastName = mechanicSettingsEditLastName?.value?.trim() || "";
+        if (!firstName || !lastName) {
+          throw { message: "First name and last name are required." };
+        }
+        const payload = await apiAuth("/api/users/me", mechanicToken, {
+          method: "PATCH",
+          body: JSON.stringify({
+            name: firstName,
+            lastname: [middleName, lastName].filter(Boolean).join(" ")
+          })
+        });
+        setStoredAuthValue("userProfile", JSON.stringify(payload));
+        closeMechanicSettingsEditModal();
+        window.location.reload();
+        return;
+      }
+
+      if (config.isAddressField) {
+        const line1 = mechanicSettingsEditAddressLine1?.value?.trim() || "";
+        const line2 = mechanicSettingsEditAddressLine2?.value?.trim() || "";
+        const city = mechanicSettingsEditCity?.value?.trim() || "";
+        const postal_code = mechanicSettingsEditPostcode?.value?.trim() || "";
+        if (!line1 || !city || !postal_code) {
+          throw { message: "Address line 1, City and Postcode are required." };
+        }
+        const payload = await apiAuth("/api/users/me", mechanicToken, {
+          method: "PATCH",
+          body: JSON.stringify({
+            address: { line1, line2, city, postal_code }
+          })
+        });
+        setStoredAuthValue("userProfile", JSON.stringify(payload));
+        closeMechanicSettingsEditModal();
+        window.location.reload();
+        return;
+      }
+
+      const value = mechanicSettingsEditInput?.value?.trim() || "";
+      if (!value) {
+        throw { message: `${config.label} is required.` };
+      }
+
+      if (field === "email") {
+        const payload = await apiAuth("/api/users/me/email-change", mechanicToken, {
+          method: "POST",
+          body: JSON.stringify({ email: value })
+        });
+        if (mechanicSettingsEditMessage) {
+          mechanicSettingsEditMessage.textContent = payload?.message || "Confirmation email sent.";
+        }
+        return;
+      }
+
+      const payload = await apiAuth("/api/users/me", mechanicToken, {
+        method: "PATCH",
+        body: JSON.stringify({ [field]: value })
+      });
+      setStoredAuthValue("userProfile", JSON.stringify(payload));
+      closeMechanicSettingsEditModal();
+      window.location.reload();
+    } catch (err) {
+      if (mechanicSettingsEditMessage) {
+        mechanicSettingsEditMessage.textContent = err?.error?.message || err?.message || "Unable to update this field.";
+      }
+    }
   });
 
   mechanicSecurity2faEnable?.addEventListener("click", () => {

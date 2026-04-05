@@ -40,7 +40,7 @@
   background: rgba(9, 13, 21, 0.96);
   border: 0;
   border-radius: 0;
-  padding: 15px;
+  padding: 20px;
   overflow: hidden;
   min-height: auto;
   height: auto;
@@ -310,6 +310,7 @@ body.mechanic-body .mechanic-content {
 
 body.mechanic-body #mechanicSettingsView .settings-card {
   gap: 0;
+  background: #3e434df7;
 }
 
 body.mechanic-body .mechanic-content .settings-card,
@@ -336,6 +337,7 @@ body.mechanic-body #mechanicAccountView .settings-card.mechanic-account-card {
   height: 100%;
   background: #3e434df7;
   align-content: start;
+  padding: 15px;
 }
 
 body.mechanic-body #mechanicAccountView .settings-avatar {
@@ -343,6 +345,105 @@ body.mechanic-body #mechanicAccountView .settings-avatar {
   color: #44528d;
   font-size: 2rem;
   font-weight: 700;
+}
+
+body.mechanic-body .settings-edit-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+body.mechanic-body .settings-edit-modal.is-hidden {
+  display: none;
+}
+
+body.mechanic-body .settings-edit-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 10, 18, 0.68);
+}
+
+body.mechanic-body .settings-edit-card {
+  position: relative;
+  z-index: 1;
+  width: min(720px, 100%);
+  display: grid;
+  gap: 16px;
+  padding: 28px;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: 24px;
+  background: #111722;
+  color: #ffffff;
+}
+
+body.mechanic-body .settings-edit-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+body.mechanic-body .settings-edit-header {
+  display: grid;
+  gap: 6px;
+}
+
+body.mechanic-body .settings-edit-header h3 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+body.mechanic-body .settings-edit-header p {
+  margin: 0;
+  color: rgba(230, 236, 255, 0.78);
+}
+
+body.mechanic-body .settings-edit-field,
+body.mechanic-body .settings-edit-name-grid,
+body.mechanic-body .settings-edit-address-grid {
+  display: grid;
+  gap: 12px;
+}
+
+body.mechanic-body .settings-edit-name-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+body.mechanic-body .settings-edit-address-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body.mechanic-body .settings-edit-field span {
+  font-weight: 600;
+}
+
+body.mechanic-body .settings-edit-field input {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  background: #ffffff;
+  color: #0f1726;
+}
+
+body.mechanic-body .settings-edit-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+body.mechanic-body .settings-edit-actions .secondary,
+body.mechanic-body .settings-edit-actions .ghost {
+  color: #ffffff;
 }
 
 body.mechanic-body #mechanicAccountView .settings-avatar-lg {
@@ -1178,6 +1279,7 @@ body.mechanic-body .mechanic-types-actions .primary {
   gap: 24px;
   align-items: start;
   align-content: start;
+  padding: 20px;
 }
 
 body.mechanic-body #mechanicSettingsView .mechanic-settings-panel {
@@ -2145,7 +2247,7 @@ body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-divider 
 }
 
 body.mechanic-body .mechanic-content .settings-card.mechanic-dashboard-card {
-  background: transparent;
+  background: #3e434df7;
   border: 0;
   box-shadow: none;
 }

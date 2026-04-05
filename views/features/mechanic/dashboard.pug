@@ -69,14 +69,6 @@ block content
                   circle(cx="12" cy="8" r="4")
                   path(d="M5 20a7 7 0 0 1 14 0")
               span.rail-text Resolution center
-            button.rail-nav-link.rail-item(type="button" data-view="procedure")
-              span.rail-icon(aria-hidden="true")
-                svg(viewBox="0 0 24 24")
-                  path(d="M7 4h10")
-                  path(d="M7 8h10")
-                  path(d="M7 12h6")
-                  path(d="M5 18h14")
-              span.rail-text Procedure
             button.rail-nav-link.rail-item(type="button" data-view="payments")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
@@ -470,13 +462,6 @@ block content
                     h4 Integration
                     p No integrations connected
     
-            section.mechanic-content.is-hidden#mechanicPictureView
-              .settings-card.mechanic-dashboard-card
-                .settings-header
-                  div
-                    h2 Profile picture
-                    p Manage your profile picture.
-    
             section.mechanic-content.is-hidden#mechanicCertificationsView
               .settings-card.mechanic-dashboard-card
                 .settings-header
@@ -588,13 +573,14 @@ block content
                     section.mechanic-settings-subview#mechanicSettingsGeneral
                       .mechanic-settings-photo-row
                         .settings-avatar.settings-avatar-lg#mechanicSettingsAvatarSettings ME
-                        button.ghost(type="button") Update
+                        input.file-input#mechanicSettingsPhotoInput(type="file" accept="image/*")
+                        button.ghost#mechanicSettingsPhotoButton(type="button") Update
                       .settings-divider
                       .mechanic-settings-profile
                         .settings-meta
                           h4 Full name
                           p#mechanicSettingsFullName -
-                        button.secondary(type="button") Update
+                        button.secondary(type="button" data-mechanic-settings-field="full_name") Update
                       .settings-divider
                       .mechanic-settings-row
                         div
@@ -616,10 +602,10 @@ block content
                                 span.mechanic-settings-contact-label Address
                                 p#mechanicSettingsAddress -
                         .mechanic-settings-contact-actions
-                          button.secondary(type="button") Update
-                          button.secondary(type="button") Update
-                          button.secondary(type="button") Update
-                          button.secondary(type="button") Update
+                          button.secondary(type="button" data-mechanic-settings-field="phone") Update
+                          button.secondary(type="button" data-mechanic-settings-field="username") Update
+                          button.secondary(type="button" data-mechanic-settings-field="email") Update
+                          button.secondary(type="button" data-mechanic-settings-field="address") Update
                       .mechanic-settings-row
                         div
                           h4 Theme
@@ -669,6 +655,43 @@ block content
                                 span SMS
                             .security-actions
                               button.secondary#mechanicSecurity2faEnable(type="button") Enable 2FA
+              .settings-edit-modal.is-hidden#mechanicSettingsEditModal
+                .settings-edit-backdrop(data-close-modal)
+                .settings-edit-card
+                  button.settings-edit-close#mechanicSettingsEditClose(type="button" aria-label="Close") ×
+                  .settings-edit-header
+                    h3#mechanicSettingsEditTitle Update field
+                    p#mechanicSettingsEditDescription Update your information.
+                  label.settings-edit-field(for="mechanicSettingsEditInput")
+                    span#mechanicSettingsEditLabel Value
+                    input#mechanicSettingsEditInput(type="text")
+                  .settings-edit-name-grid.is-hidden#mechanicSettingsNameGrid
+                    label.settings-edit-field(for="mechanicSettingsEditFirstName")
+                      span First name
+                      input#mechanicSettingsEditFirstName(type="text")
+                    label.settings-edit-field(for="mechanicSettingsEditMiddleName")
+                      span Middle name
+                      input#mechanicSettingsEditMiddleName(type="text")
+                    label.settings-edit-field(for="mechanicSettingsEditLastName")
+                      span Last name
+                      input#mechanicSettingsEditLastName(type="text")
+                  .settings-edit-address-grid.is-hidden#mechanicSettingsAddressGrid
+                    label.settings-edit-field(for="mechanicSettingsEditAddressLine1")
+                      span Address line 1
+                      input#mechanicSettingsEditAddressLine1(type="text")
+                    label.settings-edit-field(for="mechanicSettingsEditAddressLine2")
+                      span Address line 2
+                      input#mechanicSettingsEditAddressLine2(type="text")
+                    label.settings-edit-field(for="mechanicSettingsEditCity")
+                      span City
+                      input#mechanicSettingsEditCity(type="text")
+                    label.settings-edit-field(for="mechanicSettingsEditPostcode")
+                      span Postcode
+                      input#mechanicSettingsEditPostcode(type="text")
+                  p.form-error#mechanicSettingsEditMessage(role="alert" aria-live="polite")
+                  .settings-edit-actions
+                    button.secondary#mechanicSettingsEditCancel(type="button") Cancel
+                    button.ghost#mechanicSettingsEditSave(type="button") Update
     
   include ../../partials/general-footer
 

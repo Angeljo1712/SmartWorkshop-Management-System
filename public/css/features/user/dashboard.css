@@ -156,7 +156,7 @@ body.user-body .page-shell-content {
   background: #090d15;
   border: 0;
   border-radius: 0;
-  padding: 15px;
+  padding: 20px;
   overflow: hidden;
   min-height: auto;
   height: auto;
@@ -307,13 +307,12 @@ body.user-body .main-header.general-header {
   gap: 10px;
   height: auto;
   min-height: 48px;
-  align-items: flex-start;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding: 0 14px;
+  align-items: center;
+  padding: 10px 14px;
 }
 
 #userPage .mainRail:hover .rail-text {
+  display: block;
   width: auto;
   opacity: 1;
   white-space: normal;
@@ -350,10 +349,10 @@ body.user-body #userSettingsNotifications .notifications-card,
 body.user-body .user-car-summary,
 body.user-body .user-vehicle-info-card,
 body.user-body .user-verify-card {
-  background: var(--dashboard-panel-bg);
-  border: 1px solid var(--dashboard-panel-border);
-  border-radius: var(--dashboard-panel-radius);
-  box-shadow: var(--dashboard-panel-shadow);
+  /* background: var(--dashboard-panel-bg); */
+  /* border: 1px solid var(--dashboard-panel-border); */
+  /* border-radius: var(--dashboard-panel-radius); */
+  /* box-shadow: var(--dashboard-panel-shadow); */
 }
 
 body.user-body #userBookingsView .settings-card {
@@ -907,6 +906,10 @@ body.user-body #userBookingsView .user-booking-empty {
   background: rgba(255, 255, 255, 0.72);
 }
 
+body.user-body #userBookingsView .user-table tbody td {
+  color: #ffffff;
+}
+
 .user-bookings-summary-title {
   margin: 0 0 14px;
   color: #eaf0fb;
@@ -1327,7 +1330,7 @@ body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessag
   color: #eaf0fb;
 }
 
-body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-layout {
+body.user-body #userResolutionOverview .user-resolution-layout {
   display: grid;
   gap: 20px;
 }
@@ -1688,10 +1691,10 @@ body.user-body #userResolutionOverview {
 body.user-body #userResolutionView .user-resolution-layout {
   display: grid;
   grid-template-rows: auto auto;
-  gap: 15px;
+  gap: 0px;
 }
 
-body.user-body #userResolutionView .mechanic-resolution-layout {
+body.user-body #userResolutionOverview .user-resolution-layout {
   display: grid;
   grid-template-columns: 1fr;
   gap: 22px;
@@ -1700,8 +1703,17 @@ body.user-body #userResolutionView .mechanic-resolution-layout {
 body.user-body #userResolutionView .mechanic-resolution-card {
   border: 0;
   border-radius: 22px;
-  background: rgba(34, 43, 58, 0.96);
+  background: #3e434df7;
   overflow: hidden;
+}
+
+body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-card,
+body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-detail,
+body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-case,
+body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-sidebar-card {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 }
 
 body.user-body #userResolutionMessageView .mechanic-resolution-card,
@@ -1814,6 +1826,11 @@ body.user-body #userResolutionView .mechanic-resolution-link {
 
 body.user-body #userAccountView .settings-card.user-account-card {
   background: #3e434df7;
+}
+
+body.user-body #userResolutionView .settings-card.user-resolution {
+  background: #3e434df7;
+  box-shadow: none;
 }
 
 body.user-body #userAccountView {

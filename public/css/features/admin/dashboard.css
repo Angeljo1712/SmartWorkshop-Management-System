@@ -204,13 +204,12 @@ body.admin-body .primari-shell {
   gap: 10px;
   height: auto;
   min-height: 48px;
-  align-items: flex-start;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding: 0 14px;
+  align-items: center;
+  padding: 10px 14px;
 }
 
 #adminPage .mainRail:hover .rail-text {
+  display: block;
   width: auto;
   opacity: 1;
   white-space: normal;

@@ -284,27 +284,25 @@ block content
                     #userBookingDetail.user-booking-detail
   
             section.user-view.is-hidden#userResolutionView
-                .user-resolution-layout
-                  .user-resolution-layout#userResolutionOverview
-                    .resolution-section.resolution-section--card
-                      .mechanic-resolution-layout
-                        .mechanic-resolution-card
-                          h3 Current cases
-                          .mechanic-resolution-card-body
-                            .mechanic-resolution-tabs
-                              button.mechanic-resolution-tab.is-active(type="button" data-user-resolution-filter="all") All
-                              button.mechanic-resolution-tab(type="button" data-user-resolution-filter="complaint") Complaint
-                              button.mechanic-resolution-tab(type="button" data-user-resolution-filter="general") General
-                            .mechanic-resolution-table
-                              .mechanic-resolution-table-head
-                                span Status
-                                span Reference
-                                span Updated at
-                                span Subject
-                                span
-                              #userResolutionCasesTable
-                  .user-resolution-layout.is-hidden#userResolutionMessageView
-                    .resolution-section.resolution-section--card
+                .settings-card.user-resolution
+                  .user-resolution-layout
+                    #userResolutionOverview.user-resolution-layout
+                      .mechanic-resolution-card
+                        h3 Current cases
+                        .mechanic-resolution-card-body
+                          .mechanic-resolution-tabs
+                            button.mechanic-resolution-tab.is-active(type="button" data-user-resolution-filter="all") All
+                            button.mechanic-resolution-tab(type="button" data-user-resolution-filter="complaint") Complaint
+                            button.mechanic-resolution-tab(type="button" data-user-resolution-filter="general") General
+                          .mechanic-resolution-table
+                            .mechanic-resolution-table-head
+                              span Status
+                              span Reference
+                              span Updated at
+                              span Subject
+                              span
+                            #userResolutionCasesTable
+                    .user-resolution-layout.is-hidden#userResolutionMessageView
                       .mechanic-resolution-detail
                         .mechanic-resolution-detail-head
                           button.mechanic-resolution-back#userResolutionBackBtn(type="button") Back
@@ -339,9 +337,8 @@ block content
                               span Subject
                               span
                             #userResolutionBookingCasesTable
-  
-                  .user-resolution-layout.is-hidden#userResolutionCaseView
-                    .resolution-section.resolution-section--card
+
+                    .user-resolution-layout.is-hidden#userResolutionCaseView
                       .mechanic-resolution-case-view
                         .mechanic-resolution-case-intro
                           .mechanic-resolution-detail-head
