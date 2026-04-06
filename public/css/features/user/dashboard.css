@@ -368,11 +368,8 @@ body.user-body #userBookingsView .settings-card {
 
 .user-resolution-layout {
   display: grid;
-  grid-template-areas:
-    "welcome"
-    "divider"
-    "card";
-  gap: 30px;
+  grid-template-rows: auto auto;
+  gap: 25px;
 }
 
 .resolution-section--welcome {
@@ -1333,9 +1330,8 @@ body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessag
   color: #eaf0fb;
 }
 
-body.user-body #userResolutionOverview .user-resolution-layout {
-  display: grid;
-  gap: 20px;
+body.user-body .mechanic-resolution-card {
+  /* grid removed */
 }
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-card {
@@ -1531,11 +1527,7 @@ body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-
 }
 
 body.user-body #userResolutionCaseView .mechanic-resolution-case-intro {
-  grid-area: intro;
-  display: grid;
-  justify-items: start;
-  align-content: start;
-  gap: 10px;
+  /* grid removed */
 }
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case {
@@ -1543,7 +1535,7 @@ body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-
   padding: 0;
 }
 
-body.user-body #userResolutionCaseView .mechanic-resolution-sidebar {
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-sidebar {
   grid-area: sidebar;
   align-self: start;
 }
@@ -1687,23 +1679,76 @@ body.user-body #userResolutionView .settings-header p {
   color: #eaf0fb;
 }
 
-body.user-body #userResolutionOverview {
-  /* background: rgba(34, 43, 58, 0.96); */
-}
-
 body.user-body #userResolutionView .user-resolution-layout {
   display: grid;
   grid-template-rows: auto auto;
+  gap: 25px;
+}
+
+body.user-body .mechanic-resolution-card {
+  /* grid removed */
+}
+
+body.user-body .user-resolution-detail-view {
+  /* display: grid; */
   gap: 20px;
 }
 
-body.user-body #userResolutionOverview .user-resolution-layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 22px;
+body.user-body #userResolutionCaseView.user-resolution-detail-view {
+  /* grid removed */
 }
 
-body.user-body #userResolutionView .mechanic-resolution-card {
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-detail-card {
+  /* grid removed */
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-case-intro {
+  /* grid removed */
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose textarea {
+  flex: 1;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-detail-head h3 {
+  margin: 0;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-detail-images {
+  display: flex;
+  gap: 8px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-image-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-image-btn img {
+  width: 24px;
+  height: 24px;
+  opacity: 0.7;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-image-btn:hover img {
+  opacity: 1;
+}
+
+body.user-body .user-resolution-layout .mechanic-resolution-card {
   border: 0;
   border-radius: 22px;
   background: #3e434df7;
@@ -1714,26 +1759,26 @@ body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolut
 body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-detail,
 body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-case,
 body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-sidebar-card {
-  background: transparent;
+  background: #3e434df7;
   border: 0;
   box-shadow: none;
 }
 
-body.user-body #userResolutionMessageView .mechanic-resolution-card,
-body.user-body #userResolutionCaseView .mechanic-resolution-card,
-body.user-body #userResolutionCaseView .mechanic-resolution-case {
+body.user-body #userResolutionMessageView.user-resolution-detail-view .mechanic-resolution-card,
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-card,
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-case {
   border: 0;
   background: transparent;
   box-shadow: none;
 }
 
-body.user-body #userResolutionCaseView .mechanic-resolution-sidebar-card {
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-sidebar-card {
   border: 0;
   background: rgba(34, 43, 58, 0.96);
   box-shadow: none;
 }
 
-body.user-body #userResolutionView .mechanic-resolution-card h3 {
+body.user-body .mechanic-resolution-card h3 {
   margin: 0;
   padding: 18px 22px;
   font-size: 1.05rem;
@@ -1741,19 +1786,19 @@ body.user-body #userResolutionView .mechanic-resolution-card h3 {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-body.user-body #userResolutionView .mechanic-resolution-card-body {
+body.user-body .mechanic-resolution-card .mechanic-resolution-card-body {
   padding: 22px;
   display: grid;
   gap: 18px;
 }
 
-body.user-body #userResolutionView .mechanic-resolution-tabs {
+body.user-body .mechanic-resolution-card .mechanic-resolution-tabs {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
 }
 
-body.user-body #userResolutionView .mechanic-resolution-tab {
+body.user-body .mechanic-resolution-card .mechanic-resolution-tab {
   min-height: 42px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
@@ -1763,39 +1808,39 @@ body.user-body #userResolutionView .mechanic-resolution-tab {
   cursor: pointer;
 }
 
-body.user-body #userResolutionView .mechanic-resolution-tab.is-active {
+body.user-body .mechanic-resolution-card .mechanic-resolution-tab.is-active {
   background: var(--dashboard-tab-active-bg);
   color: #ffffff;
   border-color: var(--dashboard-tab-active-border);
 }
 
-body.user-body #userResolutionView .mechanic-resolution-table {
+body.user-body .mechanic-resolution-card .mechanic-resolution-table {
   display: grid;
   gap: 12px;
 }
 
-body.user-body #userResolutionView .mechanic-resolution-table-head,
-body.user-body #userResolutionView .mechanic-resolution-table-row {
+body.user-body .mechanic-resolution-card .mechanic-resolution-table-head,
+body.user-body .mechanic-resolution-card .mechanic-resolution-table-row {
   display: grid;
   grid-template-columns: 150px 150px 160px minmax(0, 1fr) 80px;
   gap: 16px;
   align-items: center;
 }
 
-body.user-body #userResolutionView .mechanic-resolution-table-head {
+body.user-body .mechanic-resolution-card .mechanic-resolution-table-head {
   color: #d6dfef;
   font-weight: 700;
   font-size: 0.95rem;
 }
 
-body.user-body #userResolutionView .mechanic-resolution-table-row {
+body.user-body .mechanic-resolution-card .mechanic-resolution-table-row {
   min-height: 56px;
   padding: 12px 0 0;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   color: #ffffff;
 }
 
-body.user-body #userResolutionView .mechanic-resolution-status {
+body.user-body .mechanic-resolution-card .mechanic-resolution-status {
   justify-self: start;
   padding: 7px 12px;
   border-radius: 999px;
@@ -1806,7 +1851,7 @@ body.user-body #userResolutionView .mechanic-resolution-status {
   letter-spacing: 0.08em;
 }
 
-body.user-body #userResolutionView .mechanic-resolution-link {
+body.user-body .mechanic-resolution-card .mechanic-resolution-link {
   border: 0;
   background: transparent;
   color: #1e93f2;
@@ -1815,8 +1860,8 @@ body.user-body #userResolutionView .mechanic-resolution-link {
 }
 
 @media (max-width: 900px) {
-  body.user-body #userResolutionView .mechanic-resolution-table-head,
-  body.user-body #userResolutionView .mechanic-resolution-table-row {
+  body.user-body .mechanic-resolution-card .mechanic-resolution-table-head,
+  body.user-body .mechanic-resolution-card .mechanic-resolution-table-row {
     grid-template-columns: 1fr;
   }
 }
@@ -1831,9 +1876,11 @@ body.user-body #userAccountView .settings-card.user-account-card {
   background: #3e434df7;
 }
 
-body.user-body #userResolutionView .settings-card.user-resolution {
-  background: #3e434df7;
+body.user-body #userResolutionView .user-resolution-layout {
+  /* background: #3e434df7; */
   box-shadow: none;
+  padding: 20px;
+  border-radius: 22px;
 }
 
 body.user-body #userAccountView {

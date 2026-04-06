@@ -111,8 +111,7 @@ if (userPage) {
   const userBookingDetail = document.getElementById("userBookingDetail");
   const userBookingsWelcomeSection = document.querySelector("#userBookingsView .bookings-section--welcome");
   const userBookingsCardSection = document.querySelector("#userBookingsView .bookings-section--card");
-  const userResolutionOverview = document.getElementById("userResolutionOverview");
-  const userResolutionFilterTabs = document.querySelectorAll("#userResolutionOverview [data-user-resolution-filter]");
+  const userResolutionFilterTabs = document.querySelectorAll(".mechanic-resolution-card [data-user-resolution-filter]");
   const userResolutionCasesTable = document.getElementById("userResolutionCasesTable");
   const userResolutionMessageView = document.getElementById("userResolutionMessageView");
   const userResolutionBackBtn = document.getElementById("userResolutionBackBtn");
@@ -1053,11 +1052,9 @@ if (userPage) {
   };
 
   const setUserResolutionSubview = (view) => {
-    const isOverview = view === "overview";
     const isMessage = view === "message";
     const isCase = view === "case";
     userBookingsCardSection?.classList.toggle("is-hidden", isMessage || isCase);
-    userResolutionOverview?.classList.toggle("is-hidden", !(isOverview || isMessage || isCase));
     userResolutionMessageView?.classList.toggle("is-hidden", !isMessage);
     userResolutionCaseView?.classList.toggle("is-hidden", !isCase);
     if (isMessage || isCase) {
@@ -1096,11 +1093,9 @@ if (userPage) {
       const cases = await apiAuth("/api/users/me/resolution-cases", userToken);
       latestUserResolutionCases = Array.isArray(cases) ? cases : [];
       applyUserResolutionFilter();
-      userResolutionOverview?.classList.toggle("is-hidden", !latestUserResolutionCases.length);
     } catch (_err) {
       latestUserResolutionCases = [];
       renderUserResolutionCaseRows(userResolutionCasesTable, []);
-      userResolutionOverview?.classList.add("is-hidden");
     }
   };
 
