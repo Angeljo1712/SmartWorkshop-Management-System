@@ -13,6 +13,7 @@ const workshopsRouter = require("./features/workshops/routes/workshops.routes");
 const bookingsRouter = require("./features/bookings/routes/bookings.routes");
 const catalogRouter = require("./features/catalog/routes/catalog.routes");
 const contactRouter = require("./features/contact/routes/contact.routes");
+const invoicesRouter = require("./features/invoices/routes/invoice.routes");
 const { errorHandler } = require("./shared/middleware/error");
 const { cors } = require("./shared/middleware/cors");
 
@@ -37,6 +38,7 @@ app.use("/api/admin", adminRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/vehicle-enquiry", vehicleEnquiryRouter);
 app.use("/api/bookings", bookingsRouter);
+app.use("/api/invoices", invoicesRouter);
 app.use("/api/catalog", catalogRouter);
 app.use("/api/contact", contactRouter);
 app.use("/workshops", workshopsRouter);

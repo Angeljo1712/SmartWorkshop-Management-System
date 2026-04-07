@@ -2216,6 +2216,77 @@ body.mechanic-body .mechanic-booking-item {
   color: #d9e3f3;
 }
 
+body.mechanic-body .mechanic-completion-card {
+  display: grid;
+  gap: 14px;
+  margin: 0 18px 18px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(9, 13, 21, 0.42);
+}
+
+body.mechanic-body .mechanic-completion-card-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+body.mechanic-body .mechanic-completion-card-head h4 {
+  margin: 0 0 6px;
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-completion-card-head p {
+  margin: 0;
+  color: #a9b6cb;
+}
+
+body.mechanic-body .mechanic-completion-field {
+  display: grid;
+  gap: 8px;
+  color: #eef3fc;
+  font-weight: 600;
+}
+
+body.mechanic-body .mechanic-completion-field input[type="file"] {
+  color: #d9e3f3;
+}
+
+body.mechanic-body .mechanic-completion-parts-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+body.mechanic-body .mechanic-completion-parts {
+  display: grid;
+  gap: 10px;
+}
+
+body.mechanic-body .mechanic-completion-part-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px auto;
+  gap: 10px;
+}
+
+body.mechanic-body .mechanic-completion-part-input {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1f2937;
+  font: inherit;
+}
+
+body.mechanic-body .mechanic-completion-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
 body.mechanic-body .mechanic-booking-item span {
   color: #b8c5da;
 }
@@ -2260,8 +2331,8 @@ body.mechanic-body .mechanic-content .settings-card.mechanic-dashboard-card {
 }
 
 body.mechanic-body .mechanic-content .mechanic-dashboard-card .mechanic-settings-row {
-  border-bottom: 2px solid rgba(255, 255, 255, 0.24);
-  padding-bottom: 14px;
+  /* border-bottom: 2px solid rgba(255, 255, 255, 0.24); */
+  /* padding-bottom: 14px; */
 }
 
 body.mechanic-body .mechanic-content .settings-header h2,

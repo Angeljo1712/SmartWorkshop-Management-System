@@ -8,13 +8,16 @@ const write = (data) => {
   output.textContent = JSON.stringify(data, null, 2);
 };
 
-const api = (path, options = {}) =>
-  fetch(`http://localhost:3000${path}`, {
+const api = (path, options = {}) => {
+  const headers = {
+    ...(options.headers || {})
+  };
+  if (!(options.body instanceof FormData) && !Object.keys(headers).some((key) => key.toLowerCase() === "content-type")) {
+    headers["Content-Type"] = "application/json";
+  }
+  return fetch(`http://localhost:3000${path}`, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {})
-    }
+    headers
   }).then(async (response) => {
     const payload = await response.json();
     if (!response.ok) {
@@ -22,6 +25,7 @@ const api = (path, options = {}) =>
     }
     return payload;
   });
+};
 
 const AUTH_STORAGE_KEYS = ["userToken", "userProfile", "activeRole"];
 

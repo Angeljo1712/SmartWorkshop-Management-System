@@ -1,6 +1,7 @@
 const { pool } = require("../../../shared/config/pool");
 const { env } = require("../../../shared/config/env");
 const { AppError } = require("../../../shared/utils/appError");
+const { issueInvoiceForBooking } = require("../../invoices/services/invoice.service");
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 
@@ -456,7 +457,12 @@ const listUserBookings = async (userId) => {
      ) latest ON latest.latest_id = p.id`,
     [bookingIds]
   );
-
+  const [invoiceRows] = await pool.query(
+    `SELECT booking_id, number, issued_at, totals_json, pdf_url
+     FROM invoices
+     WHERE booking_id IN (?)`,
+    [bookingIds]
+  );
   const itemsByBooking = new Map();
   itemRows.forEach((row) => {
     const list = itemsByBooking.get(row.booking_id) || [];
@@ -478,10 +484,22 @@ const listUserBookings = async (userId) => {
   });
 
   const paymentsByBooking = new Map(paymentRows.map((row) => [row.booking_id, row]));
+  const invoicesByBooking = new Map(
+    invoiceRows.map((row) => {
+      let totals = null;
+      try {
+        totals = typeof row.totals_json === "string" ? JSON.parse(row.totals_json) : row.totals_json;
+      } catch (_error) {
+        totals = null;
+      }
+      return [row.booking_id, { number: row.number, issued_at: row.issued_at, pdf_url: row.pdf_url || null, totals }];
+    })
+  );
 
   return rows.map((row) => {
     const items = itemsByBooking.get(row.id) || [];
     const payment = paymentsByBooking.get(row.id) || null;
+    const invoice = invoicesByBooking.get(row.id) || null;
     return {
       id: row.id,
       uuid_public: row.uuid_public,
@@ -522,6 +540,7 @@ const listUserBookings = async (userId) => {
             provider_ref: payment.provider_ref
           }
         : null,
+      invoice,
       items
     };
   });
@@ -583,7 +602,6 @@ const listMechanicBookingOffers = async (mechanicId) => {
      WHERE bi.booking_id IN (?)`,
     [bookingIds]
   );
-
   const itemsByBooking = new Map();
   itemRows.forEach((row) => {
     const list = itemsByBooking.get(row.booking_id) || [];
@@ -691,10 +709,29 @@ const listMechanicAssignedBookings = async (mechanicId) => {
      ) latest ON latest.latest_id = p.id`,
     [bookingIds]
   );
+  const [invoiceRows] = await pool.query(
+    `SELECT booking_id, number, issued_at, totals_json, pdf_url
+     FROM invoices
+     WHERE booking_id IN (?)`,
+    [bookingIds]
+  );
+
   const paymentsByBooking = new Map(paymentRows.map((row) => [row.booking_id, row]));
+  const invoicesByBooking = new Map(
+    invoiceRows.map((row) => {
+      let totals = null;
+      try {
+        totals = typeof row.totals_json === "string" ? JSON.parse(row.totals_json) : row.totals_json;
+      } catch (_error) {
+        totals = null;
+      }
+      return [row.booking_id, { number: row.number, issued_at: row.issued_at, pdf_url: row.pdf_url || null, totals }];
+    })
+  );
 
   return rows.map((row) => {
     const payment = paymentsByBooking.get(row.booking_id) || null;
+    const invoice = invoicesByBooking.get(row.booking_id) || null;
     return {
       booking: {
         id: row.booking_id,
@@ -729,6 +766,7 @@ const listMechanicAssignedBookings = async (mechanicId) => {
             provider_ref: payment.provider_ref
           }
         : null,
+      invoice,
       items: itemsByBooking.get(row.booking_id) || []
     };
   });
@@ -1593,6 +1631,55 @@ const respondToMechanicBookingOffer = async (mechanicId, offerId, action) => {
   }
 };
 
+const completeMechanicAssignedBooking = async (mechanicId, bookingId, payload = {}, files = []) => {
+  const [rows] = await pool.query(
+    `SELECT b.id, b.status, b.mechanic_id
+     FROM bookings b
+     WHERE b.id = ?
+     LIMIT 1`,
+    [bookingId]
+  );
+
+  const booking = rows[0];
+  if (!booking) {
+    throw new AppError("BOOKING_NOT_FOUND", "Booking not found", 404);
+  }
+  if (Number(booking.mechanic_id || 0) !== Number(mechanicId)) {
+    throw new AppError("FORBIDDEN", "This booking is not assigned to you", 403);
+  }
+
+  const normalizedStatus = String(booking.status || "").toLowerCase();
+  if (!["accepted", "in_progress"].includes(normalizedStatus)) {
+    throw new AppError("BOOKING_STATUS_INVALID", "Only accepted or in-progress bookings can be completed", 409);
+  }
+
+  const rawParts = payload.parts_json || payload.parts || "[]";
+  let addedParts = [];
+  try {
+    const parsed = typeof rawParts === "string" ? JSON.parse(rawParts) : rawParts;
+    addedParts = Array.isArray(parsed) ? parsed : [];
+  } catch (_error) {
+    throw new AppError("VALIDATION_ERROR", "Invalid parts payload", 400);
+  }
+
+  const photoUrls = Array.isArray(files)
+    ? files.map((file) => `/uploads/booking-completion/${file.filename}`)
+    : [];
+
+  await pool.query("UPDATE bookings SET status = 'completed' WHERE id = ?", [bookingId]);
+
+  const invoice = await issueInvoiceForBooking(bookingId, {
+    photos: photoUrls,
+    added_parts: addedParts
+  });
+
+  const assignedBookings = await listMechanicAssignedBookings(mechanicId);
+  return {
+    booking: assignedBookings.find((entry) => Number(entry.booking?.id) === Number(bookingId)) || null,
+    invoice
+  };
+};
+
 const requestEmailChange = async (userId, newEmail) => {
   if (!newEmail) {
     throw new AppError("VALIDATION_ERROR", "email is required", 400);
@@ -1663,7 +1750,12 @@ module.exports = {
   listMechanicServiceCoverage,
   updateMechanicServiceCoverage,
   updateMechanicProfile,
-  respondToMechanicBookingOffer
+  respondToMechanicBookingOffer,
+  completeMechanicAssignedBooking
 };
+
+
+
+
 
 

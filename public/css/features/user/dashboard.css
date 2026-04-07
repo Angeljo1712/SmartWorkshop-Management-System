@@ -416,7 +416,6 @@ body.user-body #userSettingsView .user-settings-subview {
   align-content: start;
   align-items: start;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto auto auto auto auto auto auto;
 }
 
 body.user-body #userSettingsView .user-settings-panel-head {
@@ -497,7 +496,6 @@ body.user-body #userSettingsView .user-settings-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 16px;
 }
 
 body.user-body #userSettingsView .secondary {
@@ -1363,6 +1361,7 @@ body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table {
   display: grid;
+  padding: 18px;
 }
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-head,
@@ -1782,7 +1781,7 @@ body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolut
 body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-detail,
 body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-case,
 body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-sidebar-card {
-  /* display: grid; */
+  display: grid;
   grid-template-rows: auto auto 1fr;
   background: #3e434df7;
   gap: 20px;
@@ -1836,10 +1835,10 @@ body.user-body #userResolutionCaseView.user-resolution-detail-view #userResoluti
 }
 
 body.user-body #userResolutionCaseView .settings-card.user-CaseView {
-  background: transparent;
+  background: #3e434df7;
   border: 0;
   box-shadow: none;
-  padding: 0;
+  padding: 20px;
 }
 
 body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-main {
@@ -1900,10 +1899,11 @@ body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-res
 body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-sidebar {
   grid-area: sidebar;
   align-self: start;
+  /* background: #0d1220; */
 }
 
 body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-sidebar-card {
-  background: #3e434df7;
+  background: #0d1220;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 0;
   padding: 18px 20px;
@@ -1941,6 +1941,7 @@ body.user-body .mechanic-resolution-card .mechanic-resolution-tabs {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
+  padding: 18px;
 }
 
 body.user-body .mechanic-resolution-card .mechanic-resolution-tab {
@@ -2024,7 +2025,7 @@ body.user-body #userAccountView .settings-card.user-account-card {
 body.user-body #userResolutionView .user-resolution-layout {
   /* background: #3e434df7; */
   box-shadow: none;
-  padding: 20px;
+  /* padding: 20px; */
   border-radius: 22px;
 }
 

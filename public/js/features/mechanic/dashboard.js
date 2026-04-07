@@ -167,6 +167,7 @@ if (mechanicDashboard) {
   let latestMechanicOffers = [];
   let activeMechanicBookingOfferId = null;
   let activeMechanicPaymentBookingId = null;
+  let activeMechanicCompletionBookingId = null;
   let activeMechanicSettingsField = "";
   let mechanicBookingsPage = 1;
   let mechanicPaymentsPage = 1;
@@ -385,6 +386,8 @@ if (mechanicDashboard) {
   const getMechanicOfferStatusKey = (entry) => String(entry?.status || "").toLowerCase();
 
   const getMechanicOfferStatusLabel = (entry) => {
+    const bookingStatus = String(entry?.booking?.status || "").toLowerCase();
+    if (bookingStatus === "completed") return "Completed";
     const status = getMechanicOfferStatusKey(entry);
     if (status === "accepted") return "Accepted";
     if (status === "cancelled" || status === "canceled") return "Cancelled";
@@ -392,6 +395,19 @@ if (mechanicDashboard) {
     if (status === "expired") return "Expired";
     return "Pending";
   };
+
+  const buildMechanicCompletionPartRows = (parts = [{}]) =>
+    parts
+      .map(
+        (part, index) => `
+          <div class="mechanic-completion-part-row">
+            <input type="text" class="mechanic-completion-part-input" placeholder="Part description" data-mechanic-part-description value="${escapeHtml(part?.description || "")}">
+            <input type="number" class="mechanic-completion-part-input mechanic-completion-part-input--amount" placeholder="Amount" min="0" step="0.01" data-mechanic-part-amount value="${escapeHtml(part?.amount_eur ?? "")}">
+            <button type="button" class="secondary mechanic-completion-part-remove" data-mechanic-remove-part ${index === 0 ? "disabled" : ""}>Remove</button>
+          </div>
+        `
+      )
+      .join("");
 
   const mechanicSettingsFieldConfig = {
     full_name: {
@@ -576,10 +592,14 @@ if (mechanicDashboard) {
       .join("");
     const reference = entry.booking?.reference || entry.booking?.id || "-";
     const statusKey = getMechanicOfferStatusKey(entry);
+    const bookingStatusKey = String(entry.booking?.status || "").toLowerCase();
     const topStatus = getMechanicOfferStatusLabel(entry).toUpperCase();
     const isPending = statusKey === "pending";
-    const isAccepted = statusKey === "accepted";
+    const canComplete = ["accepted", "in_progress"].includes(bookingStatusKey);
+    const canCancel = bookingStatusKey === "accepted";
+    const isCompleted = bookingStatusKey === "completed";
     const isCancelledState = ["declined", "expired", "cancelled", "canceled"].includes(statusKey);
+    const showCompletionCard = canComplete && !isCompleted && Number(activeMechanicCompletionBookingId) === Number(entry.booking?.id);
     return `
       <article class="mechanic-booking-card">
         <div class="mechanic-booking-topbar">
@@ -607,13 +627,53 @@ if (mechanicDashboard) {
                 <button class="primary mechanic-offer-decision" type="button" data-offer-action="accept" data-offer-id="${escapeHtml(String(entry.offer_id || ""))}">Accept</button>
                 <button class="secondary mechanic-offer-decision mechanic-offer-decision--danger" type="button" data-offer-action="decline" data-offer-id="${escapeHtml(String(entry.offer_id || ""))}">Reject</button>
                 `
-              : isAccepted
-                ? `<button class="secondary mechanic-offer-decision mechanic-offer-decision--danger" type="button" data-offer-action="cancel" data-offer-id="${escapeHtml(String(entry.offer_id || ""))}">Cancel</button>`
+              : canComplete
+                ? `
+                  <button class="primary mechanic-offer-complete-toggle" type="button" data-mechanic-complete-toggle="${escapeHtml(String(entry.booking?.id || ""))}">Complete</button>
+                  ${
+                    canCancel
+                      ? `<button class="secondary mechanic-offer-decision mechanic-offer-decision--danger" type="button" data-offer-action="cancel" data-offer-id="${escapeHtml(String(entry.offer_id || ""))}">Cancel</button>`
+                      : ""
+                  }
+                `
+              : isCompleted
+                ? `<button class="secondary mechanic-offer-decision" type="button" disabled>Completed</button>`
               : isCancelledState
                 ? `<button class="secondary mechanic-offer-decision mechanic-offer-decision--danger" type="button" disabled>Cancelled</button>`
                 : `<p class="mechanic-offer-state-copy">This offer is ${escapeHtml(getMechanicOfferStatusLabel(entry).toLowerCase())}.</p>`
             }
           </div>
+          ${
+            showCompletionCard
+              ? `
+                <form class="mechanic-completion-card" data-mechanic-complete-form="${escapeHtml(String(entry.booking?.id || ""))}">
+                  <div class="mechanic-completion-card-head">
+                    <div>
+                      <h4>Complete booking</h4>
+                      <p>Upload work photos and list the parts used before finalizing the labour.</p>
+                    </div>
+                    <button class="secondary mechanic-completion-close" type="button" data-mechanic-complete-cancel>Close</button>
+                  </div>
+                  <label class="mechanic-completion-field">
+                    <span>Work photos</span>
+                    <input type="file" name="photos" accept="image/*" multiple data-mechanic-completion-photos>
+                  </label>
+                  <div class="mechanic-completion-field">
+                    <div class="mechanic-completion-parts-head">
+                      <span>Added parts</span>
+                      <button class="secondary mechanic-completion-add-part" type="button" data-mechanic-add-part>Add part</button>
+                    </div>
+                    <div class="mechanic-completion-parts" data-mechanic-completion-parts>
+                      ${buildMechanicCompletionPartRows()}
+                    </div>
+                  </div>
+                  <div class="mechanic-completion-actions">
+                    <button class="primary" type="submit">Finalize labour</button>
+                  </div>
+                </form>
+              `
+              : ""
+          }
         </article>
       `;
   };
@@ -1155,6 +1215,23 @@ if (mechanicDashboard) {
     }
   };
 
+  const completeMechanicBooking = async (bookingId, parts, files) => {
+    if (!mechanicToken || !bookingId) return;
+    const payload = new FormData();
+    payload.append("parts_json", JSON.stringify(parts));
+    Array.from(files || []).forEach((file) => payload.append("photos", file));
+    try {
+      await apiAuth(`/api/users/me/mechanic-bookings/${encodeURIComponent(bookingId)}/complete`, mechanicToken, {
+        method: "POST",
+        body: payload
+      });
+      activeMechanicCompletionBookingId = null;
+      await Promise.all([syncMechanicBookings(), syncMechanicResolutionOverview()]);
+    } catch (error) {
+      window.alert(error?.error?.message || error?.message || "Unable to complete this booking.");
+    }
+  };
+
   const openMechanicResolutionMessage = async (bookingId, type = "general") => {
     if (!bookingId) return;
     pendingResolutionBookingId = Number(bookingId);
@@ -1242,10 +1319,61 @@ if (mechanicDashboard) {
   });
 
   mechanicBookingDetail?.addEventListener("click", async (event) => {
+    const completionToggle = event.target.closest("[data-mechanic-complete-toggle]");
+    if (completionToggle) {
+      const bookingId = Number(completionToggle.dataset.mechanicCompleteToggle);
+      activeMechanicCompletionBookingId =
+        Number(activeMechanicCompletionBookingId) === Number(bookingId) ? null : bookingId;
+      renderMechanicBookings(latestMechanicOffers);
+      return;
+    }
+
+    const addPartButton = event.target.closest("[data-mechanic-add-part]");
+    if (addPartButton) {
+      const partsWrap = mechanicBookingDetail.querySelector("[data-mechanic-completion-parts]");
+      if (partsWrap) {
+        partsWrap.insertAdjacentHTML("beforeend", buildMechanicCompletionPartRows([{}]));
+      }
+      return;
+    }
+
+    const removePartButton = event.target.closest("[data-mechanic-remove-part]");
+    if (removePartButton) {
+      removePartButton.closest(".mechanic-completion-part-row")?.remove();
+      return;
+    }
+
+    const completeCancel = event.target.closest("[data-mechanic-complete-cancel]");
+    if (completeCancel) {
+      activeMechanicCompletionBookingId = null;
+      renderMechanicBookings(latestMechanicOffers);
+      return;
+    }
+
     const offerAction = event.target.closest(".mechanic-offer-decision[data-offer-id][data-offer-action]");
     if (offerAction) {
       await respondToMechanicOffer(Number(offerAction.dataset.offerId), offerAction.dataset.offerAction);
     }
+  });
+
+  mechanicBookingDetail?.addEventListener("submit", async (event) => {
+    const form = event.target.closest("[data-mechanic-complete-form]");
+    if (!form) return;
+    event.preventDefault();
+    const bookingId = Number(form.dataset.mechanicCompleteForm);
+    const parts = Array.from(form.querySelectorAll(".mechanic-completion-part-row"))
+      .map((row) => {
+        const description = row.querySelector("[data-mechanic-part-description]")?.value?.trim() || "";
+        const amount = Number(row.querySelector("[data-mechanic-part-amount]")?.value || 0);
+        if (!description) return null;
+        return {
+          description,
+          amount_eur: Number.isFinite(amount) ? amount : 0
+        };
+      })
+      .filter(Boolean);
+    const files = form.querySelector("[data-mechanic-completion-photos]")?.files || [];
+    await completeMechanicBooking(bookingId, parts, files);
   });
 
   mechanicBookingsSearch?.addEventListener("input", () => {

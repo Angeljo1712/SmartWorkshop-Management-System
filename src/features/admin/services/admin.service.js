@@ -1,5 +1,6 @@
 const { pool } = require("../../../shared/config/pool");
 const { AppError } = require("../../../shared/utils/appError");
+const { issueInvoiceForBooking } = require("../../invoices/services/invoice.service");
 
 const listWorkshops = async () => {
   const [rows] = await pool.query("SELECT * FROM workshops ORDER BY created_at DESC");
@@ -275,6 +276,9 @@ const updateBookingStatus = async ({ bookingId, action }) => {
   }
 
   await pool.query("UPDATE bookings SET status = ? WHERE id = ?", [nextStatus, bookingId]);
+  if (nextStatus === "completed") {
+    await issueInvoiceForBooking(bookingId);
+  }
   const bookings = await listBookings();
   return bookings.find((item) => Number(item.booking_id) === Number(bookingId)) || null;
 };

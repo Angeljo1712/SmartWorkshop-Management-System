@@ -429,8 +429,12 @@ if (userPage) {
   const getSelectedVehicleReg = () => sessionStorage.getItem("userSelectedVehicleReg");
 
   const formatBookingStatus = (status, paymentStatus) => {
+    const normalizedStatus = String(status || "requested").trim().toLowerCase();
+    if (normalizedStatus === "completed") return "COMPLETED";
+    if (normalizedStatus === "in_progress") return "IN PROGRESS";
+    if (normalizedStatus === "cancelled" || normalizedStatus === "canceled") return "CANCELLED";
     if (paymentStatus === "authorized" || paymentStatus === "auth_captured") return "PAID";
-    return String(status || "requested").replace(/_/g, " ").toUpperCase();
+    return normalizedStatus.replace(/_/g, " ").toUpperCase();
   };
 
   const titleCase = (value) =>
@@ -460,6 +464,23 @@ if (userPage) {
   };
 
   const formatCurrency = window.SWApp?.formatCurrency || ((amount) => String(amount || 0));
+  const formatCurrencyDisplay = (amount, currency) => {
+    const value = Number(amount || 0);
+    const normalized = String(currency || "GBP").toUpperCase();
+    if (normalized === "GBP" || normalized === "EUR" || normalized === "USD") {
+      try {
+        return new Intl.NumberFormat("en-GB", {
+          style: "currency",
+          currency: normalized,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(value);
+      } catch (_error) {
+        return formatCurrency(value, normalized);
+      }
+    }
+    return formatCurrency(value, normalized);
+  };
 
   const getDashboardVehicles = () => {
     const storedList = sessionStorage.getItem("userDashboardVehicles");
@@ -798,6 +819,12 @@ if (userPage) {
     const mechanicName = booking.mechanic || "Unassigned";
     const vehicleLabel = [booking.vehicle?.make, booking.vehicle?.model, booking.vehicle?.yearOfManufacture].filter(Boolean).join(" ");
     const parts = booking.items.flatMap((item) => (Array.isArray(item.parts) ? item.parts : []));
+    const invoiceParts = Array.isArray(booking.invoice?.totals?.completion?.added_parts) ? booking.invoice.totals.completion.added_parts : [];
+    const completionPhotos = Array.isArray(booking.invoice?.totals?.completion?.photos) ? booking.invoice.totals.completion.photos : [];
+    const allParts = [
+      ...parts.map((part) => (typeof part === "string" ? part : part?.name || JSON.stringify(part))),
+      ...invoiceParts.map((part) => part?.description).filter(Boolean)
+    ];
 
     return `
       <article class="user-booking-card">
@@ -810,6 +837,13 @@ if (userPage) {
               <button class="user-booking-actions-item" type="button" data-user-resolution-message="${booking.id}">
                 Resolution center
               </button>
+              ${
+                String(booking.status || "").toLowerCase() === "completed"
+                  ? `<button class="user-booking-actions-item" type="button" data-user-booking-invoice="${booking.id}">
+                      Invoice
+                    </button>`
+                  : ""
+              }
             </div>
           </div>
         </div>
@@ -839,17 +873,173 @@ if (userPage) {
             <h4>Services</h4>
             <ul>${booking.items.map((item) => `<li>${item.name}</li>`).join("") || "<li>No services attached</li>"}</ul>
             <h4>Parts</h4>
-            <ul>${parts.map((part) => `<li>${typeof part === "string" ? part : part?.name || JSON.stringify(part)}</li>`).join("") || "<li>No parts recorded</li>"}</ul>
+            <ul>${allParts.map((part) => `<li>${escapeHtml(part)}</li>`).join("") || "<li>No parts recorded</li>"}</ul>
             <h4>Documents</h4>
-            <p>${booking.payment?.provider_ref ? `Payment ref: ${booking.payment.provider_ref}` : "No documents available"}</p>
+            <p>${booking.invoice?.invoice_number ? `Invoice: ${escapeHtml(booking.invoice.invoice_number)}` : booking.payment?.provider_ref ? `Payment ref: ${escapeHtml(booking.payment.provider_ref)}` : "No documents available"}</p>
           </div>
         </div>
         <div class="user-booking-photos-inline">
           <h4>Photos</h4>
-          <p>No booking photos available.</p>
+          ${
+            completionPhotos.length
+              ? `<div class="user-booking-photo-grid">${completionPhotos
+                  .map((url) => {
+                    const resolved = String(url || "").startsWith("/uploads") ? `http://localhost:3000${url}` : String(url || "");
+                    return `<img src="${escapeHtml(resolved)}" alt="">`;
+                  })
+                  .join("")}</div>`
+              : "<p>No booking photos available.</p>"
+          }
         </div>
       </article>
     `;
+  };
+
+  const buildInvoiceDocument = (invoice) => {
+    const customerAddress = Array.isArray(invoice?.customer?.address) ? invoice.customer.address : [];
+    const currency = invoice?.payment?.currency || invoice?.totals?.totals?.currency || "GBP";
+    const labourLines = Array.isArray(invoice?.totals?.labour_lines) ? invoice.totals.labour_lines : [];
+    const partLines = Array.isArray(invoice?.totals?.parts_lines) ? invoice.totals.parts_lines : [];
+    const totals = invoice?.totals?.totals || {};
+    const escape = (value) => escapeHtml(String(value ?? ""));
+    const renderRows = (rows, emptyLabel) =>
+      rows.length
+        ? rows
+            .map(
+              (row) => `
+                <tr>
+                  <td>${escape(row.description)}</td>
+                  <td style="text-align:right">${escape(formatCurrencyDisplay(row.amount_eur, currency))}</td>
+                </tr>`
+            )
+            .join("")
+        : `<tr><td colspan="2">${escape(emptyLabel)}</td></tr>`;
+
+    return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Invoice ${escape(invoice?.invoice_number || "")}</title>
+    <style>
+      :root { color-scheme: light; }
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; background: #eceef2; color: #181c22; }
+      .page { max-width: 980px; margin: 32px auto; background: #fff; padding: 36px 42px 48px; box-shadow: 0 18px 45px rgba(15, 18, 28, 0.18); }
+      .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 28px; }
+      .brand { font-size: 34px; font-weight: 800; letter-spacing: 0.04em; }
+      .meta { text-align: right; }
+      .meta strong { display: block; font-size: 15px; color: #566073; }
+      .meta span { display: block; margin-top: 6px; font-size: 28px; font-weight: 800; color: #0f1726; }
+      .subhead { color: #5a6476; font-size: 14px; margin-top: 8px; }
+      .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 24px; }
+      .section-title { margin: 0 0 10px; font-size: 24px; font-weight: 800; }
+      .card-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #5a6476; margin-bottom: 10px; }
+      .block { border-top: 2px solid #1c2230; padding-top: 18px; margin-top: 18px; }
+      .line { margin: 4px 0; }
+      table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+      th, td { padding: 10px 0; border-bottom: 1px solid #dbe0e8; vertical-align: top; }
+      th { text-align: left; font-size: 14px; color: #3b4454; }
+      .totals { margin-left: auto; width: 320px; margin-top: 24px; }
+      .totals-row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px solid #dbe0e8; }
+      .totals-row strong { font-size: 16px; }
+      .footer { margin-top: 36px; color: #5a6476; font-size: 13px; }
+      @media print {
+        body { background: #fff; }
+        .page { box-shadow: none; margin: 0; max-width: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <div class="top">
+        <div>
+          <div class="brand">INVOICE</div>
+          <div class="subhead">Issued by SmartWorkshop on behalf of the assigned mechanic.</div>
+        </div>
+        <div class="meta">
+          <strong>Invoice number</strong>
+          <span>${escape(invoice?.invoice_number || "-")}</span>
+          <strong style="margin-top:12px">Issued</strong>
+          <div>${escape(new Date(invoice?.issued_at || Date.now()).toLocaleDateString("en-GB"))}</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <section>
+          <div class="card-title">Customer details</div>
+          <div class="line"><strong>${escape(invoice?.customer?.full_name || "-")}</strong></div>
+          ${customerAddress.map((line) => `<div class="line">${escape(line)}</div>`).join("")}
+          <div class="line">${escape(invoice?.customer?.email || "-")}</div>
+          <div class="line">${escape(invoice?.customer?.phone || "-")}</div>
+        </section>
+        <section>
+          <div class="card-title">Mechanic details</div>
+          <div class="line"><strong>${escape(invoice?.mechanic?.full_name || "-")}</strong></div>
+          <div class="line">${escape(invoice?.mechanic?.email || "-")}</div>
+          <div class="line">${escape(invoice?.mechanic?.phone || "-")}</div>
+        </section>
+      </div>
+
+      <section class="block">
+        <div class="grid-2">
+          <div>
+            <div class="card-title">Vehicle details</div>
+            <div class="line"><strong>Vehicle VRM:</strong> ${escape(invoice?.vehicle?.registration || "-")}</div>
+            <div class="line"><strong>Vehicle description:</strong> ${escape(invoice?.vehicle?.description || "-")}</div>
+          </div>
+          <div>
+            <div class="card-title">Booking details</div>
+            <div class="line"><strong>Booking reference:</strong> ${escape(invoice?.booking?.reference || "-")}</div>
+            <div class="line"><strong>Payment reference:</strong> ${escape(invoice?.payment?.provider_ref || "-")}</div>
+            <div class="line"><strong>Payment status:</strong> ${escape(String(invoice?.payment?.status || "-").replace(/_/g, " "))}</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="section-title">Labour</div>
+        <table>
+          <thead>
+            <tr><th>Description</th><th style="text-align:right">Amount</th></tr>
+          </thead>
+          <tbody>${renderRows(labourLines, "No labour lines recorded.")}</tbody>
+        </table>
+      </section>
+
+      <section class="block">
+        <div class="section-title">Parts included</div>
+        <table>
+          <thead>
+            <tr><th>Description</th><th style="text-align:right">Net price</th></tr>
+          </thead>
+          <tbody>${renderRows(partLines, "No parts recorded.")}</tbody>
+        </table>
+      </section>
+
+      <section class="totals">
+        <div class="totals-row"><span>Labour total</span><span>${escape(formatCurrencyDisplay(totals.labour_eur, currency))}</span></div>
+        <div class="totals-row"><span>Parts total</span><span>${escape(formatCurrencyDisplay(totals.parts_eur, currency))}</span></div>
+        <div class="totals-row"><span>VAT</span><span>${escape(formatCurrencyDisplay(totals.vat_eur, currency))}</span></div>
+        <div class="totals-row"><strong>Total</strong><strong>${escape(formatCurrencyDisplay(totals.total_eur, currency))}</strong></div>
+      </section>
+
+      <div class="footer">This document was generated automatically by SmartWorkshop.</div>
+    </main>
+  </body>
+</html>`;
+  };
+
+  const openBookingInvoice = async (bookingId, popup = null) => {
+    const token = getStoredAuthValue("userToken");
+    if (!token || !bookingId) return;
+    const invoice = await apiAuth(`/api/invoices/bookings/${encodeURIComponent(bookingId)}`, token);
+    const target = popup || window.open("", "_blank", "noopener,noreferrer");
+    if (!target) {
+      throw new Error("Please allow popups to open the invoice.");
+    }
+    target.document.open();
+    target.document.write(buildInvoiceDocument(invoice));
+    target.document.close();
   };
 
   const renderUserBookings = (bookings) => {
@@ -1347,6 +1537,21 @@ if (userPage) {
       setUserView("resolution");
       setActiveUserNav("resolution");
       await openUserResolutionMessage(bookingId, "general");
+      return;
+    }
+
+    const invoiceButton = event.target.closest("[data-user-booking-invoice]");
+    if (invoiceButton) {
+      const bookingId = Number(invoiceButton.dataset.userBookingInvoice);
+      if (!bookingId) return;
+      document.querySelectorAll(".user-booking-actions-panel").forEach((menu) => menu.classList.add("is-hidden"));
+      const popup = window.open("", "_blank", "noopener,noreferrer");
+      try {
+        await openBookingInvoice(bookingId, popup);
+      } catch (error) {
+        if (popup) popup.close();
+        window.alert(error?.message || "Unable to open the invoice.");
+      }
     }
   });
 

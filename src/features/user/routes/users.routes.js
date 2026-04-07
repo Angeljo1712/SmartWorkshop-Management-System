@@ -1,7 +1,7 @@
 const express = require("express");
 const { authenticate, authorizeRoles } = require("../../../shared/middleware/auth");
 const { asyncHandler } = require("../../../shared/utils/asyncHandler");
-const { uploadAvatar } = require("../../../shared/middleware/upload");
+const { uploadAvatar, uploadBookingCompletionPhotos } = require("../../../shared/middleware/upload");
 const {
   getMeHandler,
   changePasswordHandler,
@@ -27,7 +27,8 @@ const {
   getMyMechanicProfileHandler,
   updateMyMechanicProfileHandler,
   updateMyMechanicServiceCoverageHandler,
-  respondMyMechanicOfferHandler
+  respondMyMechanicOfferHandler,
+  completeMyMechanicBookingHandler
 } = require("../controllers/user.controller");
 
 const router = express.Router();
@@ -60,6 +61,13 @@ router.post(
   authenticate,
   authorizeRoles("MECHANIC"),
   asyncHandler(respondMyMechanicOfferHandler)
+);
+router.post(
+  "/me/mechanic-bookings/:bookingId/complete",
+  authenticate,
+  authorizeRoles("MECHANIC"),
+  uploadBookingCompletionPhotos.array("photos", 8),
+  asyncHandler(completeMyMechanicBookingHandler)
 );
 router.get("/confirm-email", asyncHandler(confirmEmailChangeHandler));
 
