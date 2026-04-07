@@ -168,6 +168,7 @@ if (mechanicDashboard) {
   let activeMechanicBookingOfferId = null;
   let activeMechanicPaymentBookingId = null;
   let activeMechanicCompletionBookingId = null;
+  const pendingMechanicCompletionFiles = new Map();
   let activeMechanicSettingsField = "";
   let mechanicBookingsPage = 1;
   let mechanicPaymentsPage = 1;
@@ -225,6 +226,20 @@ if (mechanicDashboard) {
     if (!mechanicPaymentsStatus) return;
     mechanicPaymentsStatus.textContent = message;
     mechanicPaymentsStatus.classList.toggle("is-hidden", !message);
+  };
+
+  const getMechanicCompletionFiles = (bookingId) =>
+    pendingMechanicCompletionFiles.get(Number(bookingId)) || [];
+
+  const setMechanicCompletionFiles = (bookingId, files) => {
+    pendingMechanicCompletionFiles.set(
+      Number(bookingId),
+      Array.from(files || []).filter((file) => String(file?.type || "").startsWith("image/"))
+    );
+  };
+
+  const clearMechanicCompletionFiles = (bookingId) => {
+    pendingMechanicCompletionFiles.delete(Number(bookingId));
   };
 
   const getMechanicPaymentStatusKey = (entry) => String(entry?.payment?.status || "unpaid").trim().toLowerCase();
@@ -654,10 +669,17 @@ if (mechanicDashboard) {
                     </div>
                     <button class="secondary mechanic-completion-close" type="button" data-mechanic-complete-cancel>Close</button>
                   </div>
-                  <label class="mechanic-completion-field">
+                  <div class="mechanic-completion-field mechanic-completion-field--photos">
                     <span>Work photos</span>
-                    <input type="file" name="photos" accept="image/*" multiple data-mechanic-completion-photos>
-                  </label>
+                    <div class="mechanic-completion-file-picker">
+                      <input class="mechanic-completion-file-input" type="file" name="photos" accept="image/*" multiple data-mechanic-completion-photos hidden>
+                      <button class="secondary mechanic-completion-file-trigger" type="button" data-mechanic-photo-trigger>Choose files</button>
+                      <span class="mechanic-completion-file-summary" data-mechanic-photo-summary>No files selected</span>
+                    </div>
+                  </div>
+                  <div class="mechanic-completion-photos-preview is-empty" data-mechanic-completion-photos-preview>
+                    <p>No photos selected yet.</p>
+                  </div>
                   <div class="mechanic-completion-field">
                     <div class="mechanic-completion-parts-head">
                       <span>Added parts</span>
@@ -847,7 +869,12 @@ if (mechanicDashboard) {
     const selectedBooking = selectedId === null
       ? null
       : filteredBookings.find((entry) => Number(entry.offer_id) === Number(selectedId)) || null;
-    if (mechanicBookingDetail) mechanicBookingDetail.innerHTML = selectedBooking ? buildMechanicBookingDetailCard(selectedBooking) : "";
+    if (mechanicBookingDetail) {
+      mechanicBookingDetail.innerHTML = selectedBooking ? buildMechanicBookingDetailCard(selectedBooking) : "";
+      if (selectedBooking && Number(activeMechanicCompletionBookingId) === Number(selectedBooking.booking?.id)) {
+        renderMechanicCompletionPhotoPreviewForBooking(selectedBooking.booking?.id);
+      }
+    }
     if (mechanicBookingsFooterCount) {
       const from = startIndex + 1;
       const to = startIndex + pageBookings.length;
@@ -1225,11 +1252,44 @@ if (mechanicDashboard) {
         method: "POST",
         body: payload
       });
+      clearMechanicCompletionFiles(bookingId);
       activeMechanicCompletionBookingId = null;
       await Promise.all([syncMechanicBookings(), syncMechanicResolutionOverview()]);
     } catch (error) {
       window.alert(error?.error?.message || error?.message || "Unable to complete this booking.");
     }
+  };
+
+  const renderMechanicCompletionPhotoPreviewForBooking = (bookingId) => {
+    const form = mechanicBookingDetail?.querySelector(`[data-mechanic-complete-form="${String(bookingId)}"]`);
+    const preview = form?.querySelector("[data-mechanic-completion-photos-preview]");
+    const summary = form?.querySelector("[data-mechanic-photo-summary]");
+    if (!preview) return;
+    const files = getMechanicCompletionFiles(bookingId);
+    if (!files.length) {
+      if (summary) summary.textContent = "No files selected";
+      preview.classList.add("is-empty");
+      preview.innerHTML = "<p>No photos selected yet.</p>";
+      return;
+    }
+
+    if (summary) summary.textContent = `${files.length} file${files.length === 1 ? "" : "s"} selected`;
+    preview.classList.remove("is-empty");
+    const thumbs = files
+      .map((file) => {
+        const previewUrl = URL.createObjectURL(file);
+        return `
+          <figure class="mechanic-completion-photo-thumb">
+            <img src="${escapeHtml(previewUrl)}" alt="${escapeHtml(file.name || "Work photo")}">
+            <figcaption>${escapeHtml(file.name || "Photo")}</figcaption>
+          </figure>
+        `;
+      })
+      .join("");
+    preview.innerHTML = `
+      <p class="mechanic-completion-photos-summary">${files.length} photo${files.length === 1 ? "" : "s"} selected</p>
+      <div class="mechanic-completion-photos-grid">${thumbs}</div>
+    `;
   };
 
   const openMechanicResolutionMessage = async (bookingId, type = "general") => {
@@ -1319,6 +1379,12 @@ if (mechanicDashboard) {
   });
 
   mechanicBookingDetail?.addEventListener("click", async (event) => {
+    const photoTrigger = event.target.closest("[data-mechanic-photo-trigger]");
+    if (photoTrigger) {
+      photoTrigger.closest(".mechanic-completion-file-picker")?.querySelector("[data-mechanic-completion-photos]")?.click();
+      return;
+    }
+
     const completionToggle = event.target.closest("[data-mechanic-complete-toggle]");
     if (completionToggle) {
       const bookingId = Number(completionToggle.dataset.mechanicCompleteToggle);
@@ -1345,6 +1411,8 @@ if (mechanicDashboard) {
 
     const completeCancel = event.target.closest("[data-mechanic-complete-cancel]");
     if (completeCancel) {
+      const bookingId = Number(completeCancel.closest("[data-mechanic-complete-form]")?.dataset.mechanicCompleteForm || 0);
+      clearMechanicCompletionFiles(bookingId);
       activeMechanicCompletionBookingId = null;
       renderMechanicBookings(latestMechanicOffers);
       return;
@@ -1354,6 +1422,14 @@ if (mechanicDashboard) {
     if (offerAction) {
       await respondToMechanicOffer(Number(offerAction.dataset.offerId), offerAction.dataset.offerAction);
     }
+  });
+
+  mechanicBookingDetail?.addEventListener("change", (event) => {
+    const photoInput = event.target.closest("[data-mechanic-completion-photos]");
+    if (!photoInput) return;
+    const bookingId = Number(photoInput.closest("[data-mechanic-complete-form]")?.dataset.mechanicCompleteForm || 0);
+    setMechanicCompletionFiles(bookingId, photoInput.files);
+    renderMechanicCompletionPhotoPreviewForBooking(bookingId);
   });
 
   mechanicBookingDetail?.addEventListener("submit", async (event) => {
@@ -1372,7 +1448,7 @@ if (mechanicDashboard) {
         };
       })
       .filter(Boolean);
-    const files = form.querySelector("[data-mechanic-completion-photos]")?.files || [];
+    const files = getMechanicCompletionFiles(bookingId);
     await completeMechanicBooking(bookingId, parts, files);
   });
 

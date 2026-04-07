@@ -1,5 +1,9 @@
 const { pool } = require("../../../shared/config/pool");
 const { AppError } = require("../../../shared/utils/appError");
+const {
+  ensureBookingCompletionTables,
+  getBookingCompletionArtifactsByBookingIds
+} = require("../../bookings/services/bookingCompletion.service");
 
 const formatBookingReference = (value) => String(Number(value) || 0).padStart(8, "0");
 
@@ -57,6 +61,7 @@ const getRoles = (roles, role) =>
   );
 
 const getInvoiceContext = async (bookingId) => {
+  await ensureBookingCompletionTables();
   const [rows] = await pool.query(
     `SELECT b.id AS booking_id,
             b.status AS booking_status,
@@ -149,7 +154,11 @@ const getInvoiceContext = async (bookingId) => {
 
   return {
     booking,
-    items
+    items,
+    completion: (await getBookingCompletionArtifactsByBookingIds([bookingId])).get(Number(bookingId)) || {
+      photos: [],
+      added_parts: []
+    }
   };
 };
 
@@ -195,7 +204,14 @@ const buildInvoiceTotals = (context, options = {}) => {
     });
   });
 
-  const addedParts = normalizeAddedParts(options.added_parts);
+  const completionFromStorage = context.completion || { photos: [], added_parts: [] };
+  const addedParts = normalizeAddedParts(
+    Array.isArray(options.added_parts) && options.added_parts.length
+      ? options.added_parts
+      : completionFromStorage.added_parts
+  );
+  const completionPhotos =
+    Array.isArray(options.photos) && options.photos.length ? options.photos : completionFromStorage.photos;
   addedParts.forEach((part) => {
     partLines.push(part);
     partsTotal += Number(part.amount_eur || 0);
@@ -210,7 +226,7 @@ const buildInvoiceTotals = (context, options = {}) => {
     labour_lines: labourLines,
     parts_lines: partLines,
     completion: {
-      photos: Array.isArray(options.photos) ? options.photos : [],
+      photos: Array.isArray(completionPhotos) ? completionPhotos : [],
       added_parts: addedParts
     },
     totals: {
@@ -226,9 +242,15 @@ const buildInvoiceTotals = (context, options = {}) => {
 
 const hydrateInvoice = (context) => {
   const booking = context.booking;
-  const totals =
-    parseJsonValue(booking.totals_json, null) ||
-    buildInvoiceTotals(context);
+  const rawTotals = parseJsonValue(booking.totals_json, null) || buildInvoiceTotals(context);
+  const completion = context.completion || { photos: [], added_parts: [] };
+  const totals = {
+    ...(rawTotals && typeof rawTotals === "object" ? rawTotals : {}),
+    completion: {
+      photos: Array.isArray(completion.photos) ? completion.photos : [],
+      added_parts: Array.isArray(completion.added_parts) ? completion.added_parts : []
+    }
+  };
 
   return {
     id: booking.invoice_id || null,

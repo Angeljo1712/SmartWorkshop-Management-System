@@ -819,8 +819,16 @@ if (userPage) {
     const mechanicName = booking.mechanic || "Unassigned";
     const vehicleLabel = [booking.vehicle?.make, booking.vehicle?.model, booking.vehicle?.yearOfManufacture].filter(Boolean).join(" ");
     const parts = booking.items.flatMap((item) => (Array.isArray(item.parts) ? item.parts : []));
-    const invoiceParts = Array.isArray(booking.invoice?.totals?.completion?.added_parts) ? booking.invoice.totals.completion.added_parts : [];
-    const completionPhotos = Array.isArray(booking.invoice?.totals?.completion?.photos) ? booking.invoice.totals.completion.photos : [];
+    const invoiceParts = Array.isArray(booking.invoice?.totals?.completion?.added_parts)
+      ? booking.invoice.totals.completion.added_parts
+      : Array.isArray(booking.completion?.added_parts)
+        ? booking.completion.added_parts
+        : [];
+    const completionPhotos = Array.isArray(booking.invoice?.totals?.completion?.photos)
+      ? booking.invoice.totals.completion.photos
+      : Array.isArray(booking.completion?.photos)
+        ? booking.completion.photos
+        : [];
     const allParts = [
       ...parts.map((part) => (typeof part === "string" ? part : part?.name || JSON.stringify(part))),
       ...invoiceParts.map((part) => part?.description).filter(Boolean)

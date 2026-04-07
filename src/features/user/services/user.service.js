@@ -2,6 +2,11 @@ const { pool } = require("../../../shared/config/pool");
 const { env } = require("../../../shared/config/env");
 const { AppError } = require("../../../shared/utils/appError");
 const { issueInvoiceForBooking } = require("../../invoices/services/invoice.service");
+const {
+  ensureBookingCompletionTables,
+  saveBookingCompletionArtifacts,
+  getBookingCompletionArtifactsByBookingIds
+} = require("../../bookings/services/bookingCompletion.service");
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 
@@ -398,6 +403,7 @@ const deleteUserVehicle = async (userId, registrationNumber) => {
 };
 
 const listUserBookings = async (userId) => {
+  await ensureBookingCompletionTables();
   const [rows] = await pool.query(
     `SELECT b.id,
             BIN_TO_UUID(b.uuid_public) AS uuid_public,
@@ -463,6 +469,7 @@ const listUserBookings = async (userId) => {
      WHERE booking_id IN (?)`,
     [bookingIds]
   );
+  const completionByBooking = await getBookingCompletionArtifactsByBookingIds(bookingIds);
   const itemsByBooking = new Map();
   itemRows.forEach((row) => {
     const list = itemsByBooking.get(row.booking_id) || [];
@@ -492,6 +499,21 @@ const listUserBookings = async (userId) => {
       } catch (_error) {
         totals = null;
       }
+      const completion = completionByBooking.get(Number(row.booking_id)) || { photos: [], added_parts: [] };
+      totals = totals && typeof totals === "object"
+        ? {
+            ...totals,
+            completion: {
+              photos: Array.isArray(completion.photos) ? completion.photos : [],
+              added_parts: Array.isArray(completion.added_parts) ? completion.added_parts : []
+            }
+          }
+        : {
+            completion: {
+              photos: Array.isArray(completion.photos) ? completion.photos : [],
+              added_parts: Array.isArray(completion.added_parts) ? completion.added_parts : []
+            }
+          };
       return [row.booking_id, { number: row.number, issued_at: row.issued_at, pdf_url: row.pdf_url || null, totals }];
     })
   );
@@ -500,6 +522,7 @@ const listUserBookings = async (userId) => {
     const items = itemsByBooking.get(row.id) || [];
     const payment = paymentsByBooking.get(row.id) || null;
     const invoice = invoicesByBooking.get(row.id) || null;
+    const completion = completionByBooking.get(Number(row.id)) || { photos: [], added_parts: [] };
     return {
       id: row.id,
       uuid_public: row.uuid_public,
@@ -541,6 +564,7 @@ const listUserBookings = async (userId) => {
           }
         : null,
       invoice,
+      completion,
       items
     };
   });
@@ -649,6 +673,7 @@ const listMechanicBookingOffers = async (mechanicId) => {
 };
 
 const listMechanicAssignedBookings = async (mechanicId) => {
+  await ensureBookingCompletionTables();
   const [rows] = await pool.query(
     `SELECT b.id AS booking_id,
             BIN_TO_UUID(b.uuid_public) AS booking_uuid_public,
@@ -715,6 +740,7 @@ const listMechanicAssignedBookings = async (mechanicId) => {
      WHERE booking_id IN (?)`,
     [bookingIds]
   );
+  const completionByBooking = await getBookingCompletionArtifactsByBookingIds(bookingIds);
 
   const paymentsByBooking = new Map(paymentRows.map((row) => [row.booking_id, row]));
   const invoicesByBooking = new Map(
@@ -725,6 +751,21 @@ const listMechanicAssignedBookings = async (mechanicId) => {
       } catch (_error) {
         totals = null;
       }
+      const completion = completionByBooking.get(Number(row.booking_id)) || { photos: [], added_parts: [] };
+      totals = totals && typeof totals === "object"
+        ? {
+            ...totals,
+            completion: {
+              photos: Array.isArray(completion.photos) ? completion.photos : [],
+              added_parts: Array.isArray(completion.added_parts) ? completion.added_parts : []
+            }
+          }
+        : {
+            completion: {
+              photos: Array.isArray(completion.photos) ? completion.photos : [],
+              added_parts: Array.isArray(completion.added_parts) ? completion.added_parts : []
+            }
+          };
       return [row.booking_id, { number: row.number, issued_at: row.issued_at, pdf_url: row.pdf_url || null, totals }];
     })
   );
@@ -732,6 +773,7 @@ const listMechanicAssignedBookings = async (mechanicId) => {
   return rows.map((row) => {
     const payment = paymentsByBooking.get(row.booking_id) || null;
     const invoice = invoicesByBooking.get(row.booking_id) || null;
+    const completion = completionByBooking.get(Number(row.booking_id)) || { photos: [], added_parts: [] };
     return {
       booking: {
         id: row.booking_id,
@@ -767,6 +809,7 @@ const listMechanicAssignedBookings = async (mechanicId) => {
           }
         : null,
       invoice,
+      completion,
       items: itemsByBooking.get(row.booking_id) || []
     };
   });
@@ -1667,11 +1710,14 @@ const completeMechanicAssignedBooking = async (mechanicId, bookingId, payload = 
     : [];
 
   await pool.query("UPDATE bookings SET status = 'completed' WHERE id = ?", [bookingId]);
-
-  const invoice = await issueInvoiceForBooking(bookingId, {
-    photos: photoUrls,
-    added_parts: addedParts
+  await saveBookingCompletionArtifacts({
+    bookingId,
+    userId: mechanicId,
+    photoUrls,
+    addedParts
   });
+
+  const invoice = await issueInvoiceForBooking(bookingId);
 
   const assignedBookings = await listMechanicAssignedBookings(mechanicId);
   return {
