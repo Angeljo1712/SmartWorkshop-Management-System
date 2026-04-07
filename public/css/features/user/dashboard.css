@@ -416,6 +416,7 @@ body.user-body #userSettingsView .user-settings-subview {
   align-content: start;
   align-items: start;
   grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto auto auto auto auto auto;
 }
 
 body.user-body #userSettingsView .user-settings-panel-head {
@@ -495,7 +496,7 @@ body.user-body #userSettingsView .user-settings-profile,
 body.user-body #userSettingsView .user-settings-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
+  align-items: center;
   gap: 16px;
 }
 
@@ -551,18 +552,33 @@ body.user-body #userSettingsView .user-settings-contact-item {
 }
 
 body.user-body #userSettingsView .user-settings-contact-copy {
-  display: grid;
-  gap: 6px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 body.user-body #userSettingsView .user-settings-contact-label {
   color: #ffffff;
   font-weight: 600;
+  width: 110px;
+  padding-right: 12px;
+  margin-right: 12px;
+  border-right: 2px solid rgba(255, 255, 255, 0.72);
+  font-size: 1rem;
+  line-height: 1.2;
+  flex: 0 0 110px;
+}
+
+body.user-body #userSettingsView .user-settings-contact-label::after {
+  content: ":";
 }
 
 body.user-body #userSettingsView .user-settings-contact-copy p {
   margin: 0;
   color: #ffffff;
+  flex: 1 1 auto;
+  font-size: 1.05rem;
+  line-height: 1.35;
 }
 
 body.user-body #userSettingsView .user-settings-contact-actions {
