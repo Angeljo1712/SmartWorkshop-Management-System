@@ -42,7 +42,17 @@ if (mechanicDashboard) {
   const mechanicDashboardOffersStatus = document.getElementById("mechanicDashboardOffersStatus");
   const mechanicDashboardRecentStatus = document.getElementById("mechanicDashboardRecentStatus");
   const mechanicBookingInformationStatus = document.getElementById("mechanicBookingInformationStatus");
+  const mechanicPaymentsStatus = document.getElementById("mechanicPaymentsStatus");
   const mechanicOverviewActionButtons = mechanicDashboard.querySelectorAll(".mechanic-overview-action[data-view]");
+  const mechanicPaymentsList = document.getElementById("mechanicPaymentsList");
+  const mechanicPaymentDetail = document.getElementById("mechanicPaymentDetail");
+  const mechanicPaymentsSearch = document.getElementById("mechanicPaymentsSearch");
+  const mechanicPaymentsStatusFilter = document.getElementById("mechanicPaymentsStatusFilter");
+  const mechanicPaymentsDateFilter = document.getElementById("mechanicPaymentsDateFilter");
+  const mechanicPaymentsRowsPerPage = document.getElementById("mechanicPaymentsRowsPerPage");
+  const mechanicPaymentsFooterCount = document.getElementById("mechanicPaymentsFooterCount");
+  const mechanicPaymentsPagination = document.getElementById("mechanicPaymentsPagination");
+  const mechanicPaymentsExport = mechanicDashboard.querySelector(".mechanic-payments-export");
   const mechanicAccountAvatar = document.getElementById("mechanicAccountAvatar");
   const mechanicAccountAvatarSecondary = document.getElementById("mechanicAccountAvatarSecondary");
   const mechanicAccountPhone = document.getElementById("mechanicAccountPhone");
@@ -156,8 +166,10 @@ if (mechanicDashboard) {
   let latestMechanicAssignedBookings = [];
   let latestMechanicOffers = [];
   let activeMechanicBookingOfferId = null;
+  let activeMechanicPaymentBookingId = null;
   let activeMechanicSettingsField = "";
   let mechanicBookingsPage = 1;
+  let mechanicPaymentsPage = 1;
   let pendingResolutionBookingId = null;
   let pendingResolutionCaseId = null;
   const formatDate = window.SWApp?.formatShortDate || ((value) => String(value || "-"));
@@ -206,6 +218,22 @@ if (mechanicDashboard) {
       element.textContent = message;
       element.classList.toggle("is-hidden", !message);
     });
+  };
+
+  const setMechanicPaymentsStatus = (message = "") => {
+    if (!mechanicPaymentsStatus) return;
+    mechanicPaymentsStatus.textContent = message;
+    mechanicPaymentsStatus.classList.toggle("is-hidden", !message);
+  };
+
+  const getMechanicPaymentStatusKey = (entry) => String(entry?.payment?.status || "unpaid").trim().toLowerCase();
+  const getMechanicPaymentStatusLabel = (entry) => {
+    const key = getMechanicPaymentStatusKey(entry);
+    if (key === "paid") return "Paid";
+    if (key === "pending") return "Pending";
+    if (key === "failed") return "Failed";
+    if (key === "refunded") return "Refunded";
+    return key.charAt(0).toUpperCase() + key.slice(1);
   };
 
   const setMechanicHeroByView = (view) => {
@@ -480,6 +508,26 @@ if (mechanicDashboard) {
     });
   };
 
+  const getFilteredMechanicPayments = (bookings) => {
+    const searchValue = String(mechanicPaymentsSearch?.value || "").trim().toLowerCase();
+    const statusValue = String(mechanicPaymentsStatusFilter?.value || "all");
+    const dateValue = String(mechanicPaymentsDateFilter?.value || "all");
+    return (Array.isArray(bookings) ? bookings : [])
+      .filter((entry) => entry?.payment)
+      .filter((entry) => {
+        const reference = String(entry.booking?.reference || entry.booking?.id || "");
+        const customer = String(entry.customer?.name || "");
+        const vehicle = [entry.vehicle?.registrationNumber, entry.vehicle?.make, entry.vehicle?.model].filter(Boolean).join(" ");
+        const paymentRef = String(entry.payment?.provider_ref || "");
+        const haystack = `${reference} ${customer} ${vehicle} ${paymentRef}`.toLowerCase();
+        const paymentStatus = getMechanicPaymentStatusLabel(entry);
+        const matchesSearch = !searchValue || haystack.includes(searchValue);
+        const matchesStatus = statusValue === "all" ? true : paymentStatus === statusValue;
+        const matchesDate = dateValue === "all" ? true : matchesDateFilter(entry.booking?.created_at, dateValue);
+        return matchesSearch && matchesStatus && matchesDate;
+      });
+  };
+
   const renderMechanicOverview = () => {
     const bookings = Array.isArray(latestMechanicOffers) ? latestMechanicOffers : [];
     const cases = Array.isArray(latestMechanicResolutionCases) ? latestMechanicResolutionCases : [];
@@ -568,6 +616,110 @@ if (mechanicDashboard) {
           </div>
         </article>
       `;
+  };
+
+  const buildMechanicPaymentDetailCard = (entry) => {
+    const reference = entry.booking?.reference || entry.booking?.id || "-";
+    return `
+      <article class="mechanic-booking-card">
+        <div class="mechanic-booking-topbar">
+          <span class="mechanic-booking-topbar-status" data-status="${escapeHtml(getMechanicPaymentStatusKey(entry))}">${escapeHtml(getMechanicPaymentStatusLabel(entry).toUpperCase())}</span>
+          <span class="mechanic-booking-topbar-reference">Reference: ${escapeHtml(String(reference))}</span>
+          <span class="mechanic-booking-topbar-date">Created: ${escapeHtml(formatDate(entry.booking?.created_at))}</span>
+        </div>
+        <div class="mechanic-booking-grid">
+          <div><strong>Customer</strong><div>${escapeHtml(entry.customer?.name || "Customer")}</div></div>
+          <div><strong>Total</strong><div>${escapeHtml(formatMechanicCurrency(entry.payment?.amount_eur ?? entry.booking?.total_eur))}</div></div>
+          <div><strong>Vehicle</strong><div>${escapeHtml([entry.vehicle?.registrationNumber, entry.vehicle?.make, entry.vehicle?.model].filter(Boolean).join(" · ") || "-")}</div></div>
+          <div><strong>Payment ref</strong><div>${escapeHtml(entry.payment?.provider_ref || "-")}</div></div>
+          <div><strong>Address</strong><div>${escapeHtml(formatMechanicAddress(entry.address) || "-")}</div></div>
+          <div><strong>Work types</strong><div>${escapeHtml((entry.items || []).map((item) => item.name).join(", ") || "-")}</div></div>
+        </div>
+      </article>
+    `;
+  };
+
+  const renderMechanicPayments = (bookings) => {
+    if (!mechanicPaymentsList) return;
+    const paymentBookings = Array.isArray(bookings) ? bookings : latestMechanicAssignedBookings;
+    mechanicPaymentsList.innerHTML = "";
+    if (mechanicPaymentDetail) mechanicPaymentDetail.innerHTML = "";
+
+    if (!Array.isArray(paymentBookings) || !paymentBookings.some((entry) => entry?.payment)) {
+      const emptyRow = document.createElement("tr");
+      emptyRow.className = "mechanic-booking-empty-row";
+      emptyRow.innerHTML = '<td colspan="6" class="mechanic-bookings-empty">No completed payments yet.</td>';
+      mechanicPaymentsList.appendChild(emptyRow);
+      if (mechanicPaymentsFooterCount) mechanicPaymentsFooterCount.textContent = "0 payments";
+      if (mechanicPaymentsPagination) mechanicPaymentsPagination.innerHTML = "";
+      return;
+    }
+
+    setSimpleOptions(
+      mechanicPaymentsStatusFilter,
+      paymentBookings.filter((entry) => entry?.payment).map((entry) => getMechanicPaymentStatusLabel(entry)),
+      "Status"
+    );
+
+    const filteredPayments = getFilteredMechanicPayments(paymentBookings);
+    const pageSize = Number(mechanicPaymentsRowsPerPage?.value || 10);
+    const total = filteredPayments.length;
+    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    mechanicPaymentsPage = Math.min(mechanicPaymentsPage, totalPages);
+    const startIndex = total ? (mechanicPaymentsPage - 1) * pageSize : 0;
+    const pagePayments = filteredPayments.slice(startIndex, startIndex + pageSize);
+
+    if (!pagePayments.length) {
+      const emptyRow = document.createElement("tr");
+      emptyRow.className = "mechanic-booking-empty-row";
+      emptyRow.innerHTML = '<td colspan="6" class="mechanic-bookings-empty">No payments match the selected filters.</td>';
+      mechanicPaymentsList.appendChild(emptyRow);
+      activeMechanicPaymentBookingId = null;
+      if (mechanicPaymentDetail) mechanicPaymentDetail.innerHTML = "";
+      if (mechanicPaymentsFooterCount) mechanicPaymentsFooterCount.textContent = `0-0 of ${total} rows`;
+      if (mechanicPaymentsPagination) mechanicPaymentsPagination.innerHTML = "";
+      return;
+    }
+
+    const selectedBookingId = pagePayments.some((entry) => Number(entry.booking?.id) === Number(activeMechanicPaymentBookingId))
+      ? activeMechanicPaymentBookingId
+      : Number(pagePayments[0]?.booking?.id || 0) || null;
+    activeMechanicPaymentBookingId = selectedBookingId;
+
+    pagePayments.forEach((entry) => {
+      const row = document.createElement("tr");
+      row.className = `mechanic-booking-summary-row${Number(entry.booking?.id) === Number(selectedBookingId) ? " is-active" : ""}`;
+      row.dataset.mechanicPaymentBookingId = String(entry.booking?.id || "");
+      row.innerHTML = `
+        <td><strong class="mechanic-booking-summary-reference">${escapeHtml(String(entry.booking?.reference || entry.booking?.id || "-"))}</strong></td>
+        <td><span class="mechanic-booking-status mechanic-booking-status--${escapeHtml(getMechanicPaymentStatusKey(entry))}">${escapeHtml(getMechanicPaymentStatusLabel(entry).toUpperCase())}</span></td>
+        <td><span class="mechanic-booking-summary-customer">${escapeHtml(entry.customer?.name || "Customer")}</span></td>
+        <td><span class="mechanic-booking-summary-vehicle">${escapeHtml([entry.vehicle?.registrationNumber, entry.vehicle?.make, entry.vehicle?.model].filter(Boolean).join(" · ") || "-")}</span></td>
+        <td><span class="mechanic-booking-summary-date">${escapeHtml(formatMechanicCurrency(entry.payment?.amount_eur ?? entry.booking?.total_eur))}</span></td>
+        <td><span class="mechanic-booking-summary-date">${escapeHtml(formatDate(entry.booking?.created_at))}</span></td>
+      `;
+      mechanicPaymentsList.appendChild(row);
+    });
+
+    const selectedPayment = filteredPayments.find((entry) => Number(entry.booking?.id) === Number(selectedBookingId)) || null;
+    if (mechanicPaymentDetail) mechanicPaymentDetail.innerHTML = selectedPayment ? buildMechanicPaymentDetailCard(selectedPayment) : "";
+
+    if (mechanicPaymentsFooterCount) {
+      const from = startIndex + 1;
+      const to = startIndex + pagePayments.length;
+      mechanicPaymentsFooterCount.textContent = `${from}-${to} of ${total} rows`;
+    }
+    if (mechanicPaymentsPagination) {
+      mechanicPaymentsPagination.innerHTML = "";
+      for (let page = 1; page <= totalPages; page += 1) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = String(page);
+        button.dataset.mechanicPaymentsPage = String(page);
+        button.classList.toggle("active", page === mechanicPaymentsPage);
+        mechanicPaymentsPagination.appendChild(button);
+      }
+    }
   };
 
   const renderMechanicBookings = (offers) => {
@@ -992,12 +1144,14 @@ if (mechanicDashboard) {
       renderMechanicOverview();
       renderMechanicResolutionCaseRows(mechanicResolutionCasesTable, latestMechanicResolutionCases);
       renderMechanicResolutionBookings(latestMechanicAssignedBookings);
+      renderMechanicPayments(latestMechanicAssignedBookings);
     } catch {
       latestMechanicResolutionCases = [];
       latestMechanicAssignedBookings = [];
       renderMechanicOverview();
       renderMechanicResolutionCaseRows(mechanicResolutionCasesTable, []);
       renderMechanicResolutionBookings([]);
+      renderMechanicPayments([]);
     }
   };
 
@@ -1130,6 +1284,53 @@ if (mechanicDashboard) {
       Sent: formatDate(entry.sent_at || entry.booking?.created_at)
     }));
     downloadCsv("mechanic-booking-offers.csv", rows);
+  });
+
+  mechanicPaymentsList?.addEventListener("click", (event) => {
+    const summaryRow = event.target.closest("[data-mechanic-payment-booking-id]");
+    if (!summaryRow) return;
+    activeMechanicPaymentBookingId = Number(summaryRow.dataset.mechanicPaymentBookingId);
+    renderMechanicPayments(latestMechanicAssignedBookings);
+  });
+
+  mechanicPaymentsSearch?.addEventListener("input", () => {
+    mechanicPaymentsPage = 1;
+    renderMechanicPayments(latestMechanicAssignedBookings);
+  });
+
+  mechanicPaymentsStatusFilter?.addEventListener("change", () => {
+    mechanicPaymentsPage = 1;
+    renderMechanicPayments(latestMechanicAssignedBookings);
+  });
+
+  mechanicPaymentsDateFilter?.addEventListener("change", () => {
+    mechanicPaymentsPage = 1;
+    renderMechanicPayments(latestMechanicAssignedBookings);
+  });
+
+  mechanicPaymentsRowsPerPage?.addEventListener("change", () => {
+    mechanicPaymentsPage = 1;
+    renderMechanicPayments(latestMechanicAssignedBookings);
+  });
+
+  mechanicPaymentsPagination?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-mechanic-payments-page]");
+    if (!button) return;
+    mechanicPaymentsPage = Number(button.dataset.mechanicPaymentsPage || 1);
+    renderMechanicPayments(latestMechanicAssignedBookings);
+  });
+
+  mechanicPaymentsExport?.addEventListener("click", () => {
+    const rows = getFilteredMechanicPayments(latestMechanicAssignedBookings).map((entry) => ({
+      Reference: entry.booking?.reference || entry.booking?.id || "-",
+      PaymentStatus: getMechanicPaymentStatusLabel(entry),
+      Customer: entry.customer?.name || "Customer",
+      Vehicle: [entry.vehicle?.registrationNumber, entry.vehicle?.make, entry.vehicle?.model].filter(Boolean).join(" · "),
+      Total: formatMechanicCurrency(entry.payment?.amount_eur ?? entry.booking?.total_eur),
+      Created: formatDate(entry.booking?.created_at),
+      PaymentRef: entry.payment?.provider_ref || "-"
+    }));
+    downloadCsv("mechanic-payments.csv", rows);
   });
 
   mechanicTypesTree?.addEventListener("change", (event) => {

@@ -680,34 +680,58 @@ const listMechanicAssignedBookings = async (mechanicId) => {
     itemsByBooking.set(row.booking_id, list);
   });
 
-  return rows.map((row) => ({
-    booking: {
-      id: row.booking_id,
-      reference: formatBookingReference(row.booking_id),
-      uuid_public: row.booking_uuid_public,
-      status: row.booking_status,
-      total_eur: Number(row.total_eur || 0),
-      created_at: row.created_at
-    },
-    customer: {
-      name: [row.customer_name, row.customer_lastname].filter(Boolean).join(" ") || "Customer",
-      email: row.customer_email || ""
-    },
-    vehicle: {
-      registrationNumber: row.license_plate || "",
-      make: row.make || "",
-      model: row.model || "",
-      yearOfManufacture: row.year || null
-    },
-    address: {
-      line1: row.line1 || "",
-      line2: row.line2 || "",
-      city: row.city || "",
-      postal_code: row.postal_code || "",
-      country: row.country || ""
-    },
-    items: itemsByBooking.get(row.booking_id) || []
-  }));
+  const [paymentRows] = await pool.query(
+    `SELECT p.booking_id, p.status, p.amount_eur, p.currency, p.provider_ref
+     FROM payments p
+     INNER JOIN (
+       SELECT booking_id, MAX(id) AS latest_id
+       FROM payments
+       WHERE booking_id IN (?)
+       GROUP BY booking_id
+     ) latest ON latest.latest_id = p.id`,
+    [bookingIds]
+  );
+  const paymentsByBooking = new Map(paymentRows.map((row) => [row.booking_id, row]));
+
+  return rows.map((row) => {
+    const payment = paymentsByBooking.get(row.booking_id) || null;
+    return {
+      booking: {
+        id: row.booking_id,
+        reference: formatBookingReference(row.booking_id),
+        uuid_public: row.booking_uuid_public,
+        status: row.booking_status,
+        total_eur: Number(row.total_eur || 0),
+        created_at: row.created_at
+      },
+      customer: {
+        name: [row.customer_name, row.customer_lastname].filter(Boolean).join(" ") || "Customer",
+        email: row.customer_email || ""
+      },
+      vehicle: {
+        registrationNumber: row.license_plate || "",
+        make: row.make || "",
+        model: row.model || "",
+        yearOfManufacture: row.year || null
+      },
+      address: {
+        line1: row.line1 || "",
+        line2: row.line2 || "",
+        city: row.city || "",
+        postal_code: row.postal_code || "",
+        country: row.country || ""
+      },
+      payment: payment
+        ? {
+            status: payment.status,
+            amount_eur: Number(payment.amount_eur || 0),
+            currency: payment.currency,
+            provider_ref: payment.provider_ref
+          }
+        : null,
+      items: itemsByBooking.get(row.booking_id) || []
+    };
+  });
 };
 
 const listMechanicResolutionCases = async (mechanicId, { bookingId } = {}) => {

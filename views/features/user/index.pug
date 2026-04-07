@@ -287,19 +287,18 @@ block content
                 .user-resolution-layout
                   .mechanic-resolution-card
                     h3 Current cases
-                    .mechanic-resolution-card-body
-                      .mechanic-resolution-tabs
-                        button.mechanic-resolution-tab.is-active(type="button" data-user-resolution-filter="all") All
-                        button.mechanic-resolution-tab(type="button" data-user-resolution-filter="complaint") Complaint
-                        button.mechanic-resolution-tab(type="button" data-user-resolution-filter="general") General
-                      .mechanic-resolution-table
-                        .mechanic-resolution-table-head
-                          span Status
-                          span Reference
-                          span Updated at
-                          span Subject
-                          span
-                        #userResolutionCasesTable
+                    .mechanic-resolution-tabs
+                      button.mechanic-resolution-tab.is-active(type="button" data-user-resolution-filter="all") All
+                      button.mechanic-resolution-tab(type="button" data-user-resolution-filter="complaint") Complaint
+                      button.mechanic-resolution-tab(type="button" data-user-resolution-filter="general") General
+                    .mechanic-resolution-table
+                      .mechanic-resolution-table-head
+                        span Status
+                        span Reference
+                        span Updated at
+                        span Subject
+                        span
+                      #userResolutionCasesTable
                   #userResolutionMessageView.user-resolution-detail-view
                     .mechanic-resolution-detail
                       .mechanic-resolution-detail-head
@@ -336,42 +335,37 @@ block content
                             span
                           #userResolutionBookingCasesTable
                   #userResolutionCaseView.user-resolution-detail-view.is-hidden
-                    .mechanic-detail-card
-                      .mechanic-resolution-card
-                        .mechanic-resolution-case-intro
-                          .mechanic-resolution-detail-head
-                            h3#userResolutionCaseTitle General Enquiry
-                            .mechanic-resolution-detail-images
-                              button(type="button" class="mechanic-resolution-image-btn")
-                                img(src="/images/camera-icon.png" alt="Image 1")
-                              button(type="button" class="mechanic-resolution-image-btn")
-                                img(src="/images/gallery-icon.png" alt="Image 2")
+                    .settings-card.user-CaseView
+                      .mechanic-detail-card
+                        .title-resolution-case
+                          h2#userResolutionCaseDetailTitle General Enquiry regarding booking
+                          span#userResolutionCaseStatusBadge Complaint
+                        .mechanic-resolution-main
+                          p.mechanic-resolution-case-copy.is-hidden#userResolutionCaseCopy You can use this page to discuss your booking with your mechanic. Your messages will be sent directly to the mechanic, and you will receive an email whenever there's an update.
+                          .mechanic-resolution-thread#userResolutionMessages
                           .mechanic-resolution-compose
                             textarea#userResolutionMessageInput(rows="5" placeholder="Add a new message here")
                             .mechanic-resolution-compose-actions
                               button.primary#userResolutionSendBtn(type="button") Send message
                               button.mechanic-resolution-back#userResolutionCaseBackBtn(type="button") Back
-                        .mechanic-resolution-case
-                          p.mechanic-resolution-case-copy.is-hidden#userResolutionCaseCopy You can use this page to discuss your booking with your mechanic. Your messages will be sent directly to the mechanic, and you will receive an email whenever there's an update.
-                          .mechanic-resolution-thread#userResolutionMessages
-                      .mechanic-resolution-sidebar
-                        .mechanic-resolution-sidebar-card
-                          h4#userResolutionSidebarTitle Current status of booking
-                          .mechanic-resolution-sidebar-row
-                            strong Mechanic
-                            span#userResolutionSidebarMechanic -
-                          .mechanic-resolution-sidebar-row
-                            strong Car
-                            span#userResolutionSidebarCar -
-                          .mechanic-resolution-sidebar-row
-                            strong Address
-                            span#userResolutionSidebarAddress -
-                          .mechanic-resolution-sidebar-row
-                            strong Work
-                            span#userResolutionSidebarWork -
-                          .mechanic-resolution-sidebar-row
-                            strong Total Price
-                            span#userResolutionSidebarTotal -
+                        aside.mechanic-resolution-sidebar
+                          .mechanic-resolution-sidebar-card
+                            h4#userResolutionSidebarTitle Current status of booking
+                            .mechanic-resolution-sidebar-row
+                              strong Mechanic
+                              span#userResolutionSidebarMechanic -
+                            .mechanic-resolution-sidebar-row
+                              strong Car
+                              span#userResolutionSidebarCar -
+                            .mechanic-resolution-sidebar-row
+                              strong Address
+                              span#userResolutionSidebarAddress -
+                            .mechanic-resolution-sidebar-row
+                              strong Work
+                              span#userResolutionSidebarWork -
+                            .mechanic-resolution-sidebar-row
+                              strong Total Price
+                              span#userResolutionSidebarTotal -
    
             section.user-view.is-hidden#userSettingsView
                 .settings-card.user-settings-card

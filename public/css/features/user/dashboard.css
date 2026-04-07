@@ -1700,6 +1700,13 @@ body.user-body #userResolutionCaseView.user-resolution-detail-view {
 
 body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-detail-card {
   /* grid removed */
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-areas:
+    "title title"
+    "card sidebar";
+  gap: 24px;
+  align-items: start;
 }
 
 body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-case-intro {
@@ -1759,7 +1766,10 @@ body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolut
 body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-detail,
 body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-case,
 body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-sidebar-card {
+  /* display: grid; */
+  grid-template-rows: auto auto 1fr;
   background: #3e434df7;
+  gap: 20px;
   border: 0;
   box-shadow: none;
 }
@@ -1773,9 +1783,128 @@ body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-res
 }
 
 body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-sidebar-card {
+    border: 0;
+    background: rgba(34, 43, 58, 0.96);
+    box-shadow: none;
+  }
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-detail-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.85fr);
+  grid-template-areas:
+    "title title"
+    "main sidebar";
+  gap: 24px;
+  align-items: start;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .title-resolution-case {
+  grid-area: title;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .title-resolution-case h2 {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1.15;
+  color: #ffffff;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view #userResolutionCaseStatusBadge {
+  color: rgba(234, 240, 251, 0.8);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+body.user-body #userResolutionCaseView .settings-card.user-CaseView {
+  background: transparent;
   border: 0;
-  background: rgba(34, 43, 58, 0.96);
   box-shadow: none;
+  padding: 0;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-main {
+  grid-area: main;
+  display: grid;
+  gap: 20px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-case-copy {
+  max-width: none;
+  margin: 0;
+  color: rgba(234, 240, 251, 0.82);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-thread {
+  gap: 18px;
+  margin-top: 0;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-message-row {
+  gap: 14px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-bubble {
+  max-width: 100%;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-message.is-customer .mechanic-resolution-bubble {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose {
+  display: grid;
+  gap: 12px;
+  margin-top: 0;
+  justify-items: start;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose textarea {
+  min-height: 140px;
+  max-width: 640px;
+  width: 100%;
+  flex: none;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose-actions {
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-sidebar {
+  grid-area: sidebar;
+  align-self: start;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-sidebar-card {
+  background: #3e434df7;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0;
+  padding: 18px 20px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-sidebar-card h4 {
+  margin: 0 0 8px;
+}
+
+@media (max-width: 980px) {
+  body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-detail-card {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "title"
+      "main"
+      "sidebar";
+  }
 }
 
 body.user-body .mechanic-resolution-card h3 {

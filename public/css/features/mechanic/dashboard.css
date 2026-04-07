@@ -2146,10 +2146,17 @@ body.mechanic-body .mechanic-booking-status.mechanic-booking-status--accepted {
   color: #ffffff;
 }
 
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--paid {
+  background: var(--dashboard-badge-green);
+  color: #ffffff;
+}
+
 body.mechanic-body .mechanic-booking-status.mechanic-booking-status--declined,
 body.mechanic-body .mechanic-booking-status.mechanic-booking-status--expired,
 body.mechanic-body .mechanic-booking-status.mechanic-booking-status--cancelled,
-body.mechanic-body .mechanic-booking-status.mechanic-booking-status--canceled {
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--canceled,
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--failed,
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--refunded {
   background: var(--dashboard-badge-red);
   color: #ffffff;
 }

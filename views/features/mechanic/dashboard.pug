@@ -312,11 +312,43 @@ block content
                     p Review your mechanic procedures and workflow.
     
             section.mechanic-content.is-hidden#mechanicPaymentsView
-              .settings-card.mechanic-dashboard-card
-                .settings-header
-                  div
-                    h2 Payments
-                    p Review payouts and payment activity.
+                p#mechanicPaymentsStatus.mechanic-status-note.is-hidden
+                .mechanic-table-layout
+                  .mechanic-table-head
+                    .mechanic-table-head-filters
+                      .mechanic-head-control.mechanic-head-control--search
+                        input#mechanicPaymentsSearch(type="search" placeholder="Search")
+                      .mechanic-head-control.mechanic-head-control--status
+                        select#mechanicPaymentsStatusFilter
+                          option(value="all") Status
+                      .mechanic-head-control.mechanic-head-control--date
+                        select#mechanicPaymentsDateFilter
+                          option(value="all") All time
+                          option(value="30d") Last 30 days
+                          option(value="90d") Last 90 days
+                          option(value="365d") Last year
+                      button.mechanic-payments-export(type="button") Export
+                  .mechanic-table-wrap
+                    table.mechanic-table
+                      thead
+                        tr
+                          th Reference
+                          th Payment status
+                          th Customer
+                          th Vehicle
+                          th Total
+                          th Created
+                      tbody#mechanicPaymentsList
+                  .mechanic-table-footer
+                    .mechanic-table-footer-meta
+                      label(for="mechanicPaymentsRowsPerPage") Rows per page
+                      select#mechanicPaymentsRowsPerPage
+                        option(value="10" selected) 10
+                        option(value="20") 20
+                        option(value="50") 50
+                      span#mechanicPaymentsFooterCount No payments
+                    .mechanic-pagination#mechanicPaymentsPagination
+                #mechanicPaymentDetail.mechanic-booking-detail
     
             section.mechanic-content.is-hidden#mechanicProfileView
               .settings-card.mechanic-dashboard-card
