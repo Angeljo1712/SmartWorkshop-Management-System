@@ -168,7 +168,9 @@ if (mechanicDashboard) {
   let activeMechanicBookingOfferId = null;
   let activeMechanicPaymentBookingId = null;
   let activeMechanicCompletionBookingId = null;
+  let pendingMechanicPhotoBookingId = null;
   const pendingMechanicCompletionFiles = new Map();
+  const pendingMechanicCompletionParts = new Map();
   let activeMechanicSettingsField = "";
   let mechanicBookingsPage = 1;
   let mechanicPaymentsPage = 1;
@@ -238,9 +240,36 @@ if (mechanicDashboard) {
     );
   };
 
+  const appendMechanicCompletionFiles = (bookingId, files) => {
+    const currentFiles = getMechanicCompletionFiles(bookingId);
+    const nextFiles = [
+      ...currentFiles,
+      ...Array.from(files || []).filter((file) => String(file?.type || "").startsWith("image/"))
+    ];
+    pendingMechanicCompletionFiles.set(Number(bookingId), nextFiles);
+  };
+
   const clearMechanicCompletionFiles = (bookingId) => {
     pendingMechanicCompletionFiles.delete(Number(bookingId));
   };
+
+  const getMechanicCompletionParts = (bookingId) =>
+    pendingMechanicCompletionParts.get(Number(bookingId)) || [{}];
+
+  const setMechanicCompletionParts = (bookingId, parts) => {
+    pendingMechanicCompletionParts.set(Number(bookingId), Array.isArray(parts) && parts.length ? parts : [{}]);
+  };
+
+  const clearMechanicCompletionParts = (bookingId) => {
+    pendingMechanicCompletionParts.delete(Number(bookingId));
+  };
+
+  const readMechanicCompletionPartsFromForm = (form) =>
+    Array.from(form?.querySelectorAll(".mechanic-completion-part-row") || [])
+      .map((row) => ({
+        description: row.querySelector("[data-mechanic-part-description]")?.value || "",
+        amount_eur: row.querySelector("[data-mechanic-part-amount]")?.value || ""
+      }));
 
   const getMechanicPaymentStatusKey = (entry) => String(entry?.payment?.status || "unpaid").trim().toLowerCase();
   const getMechanicPaymentStatusLabel = (entry) => {
@@ -454,6 +483,13 @@ if (mechanicDashboard) {
       isAddressField: true
     }
   };
+
+  const mechanicCompletionPhotoPicker = document.createElement("input");
+  mechanicCompletionPhotoPicker.type = "file";
+  mechanicCompletionPhotoPicker.accept = "image/*";
+  mechanicCompletionPhotoPicker.multiple = true;
+  mechanicCompletionPhotoPicker.className = "mechanic-completion-global-picker";
+  document.body.appendChild(mechanicCompletionPhotoPicker);
 
   const getMechanicUserProfile = () => {
     try {
@@ -672,7 +708,6 @@ if (mechanicDashboard) {
                   <div class="mechanic-completion-field mechanic-completion-field--photos">
                     <span>Work photos</span>
                     <div class="mechanic-completion-file-picker">
-                      <input class="mechanic-completion-file-input" type="file" name="photos" accept="image/*" multiple data-mechanic-completion-photos hidden>
                       <button class="secondary mechanic-completion-file-trigger" type="button" data-mechanic-photo-trigger>Choose files</button>
                       <span class="mechanic-completion-file-summary" data-mechanic-photo-summary>No files selected</span>
                     </div>
@@ -686,7 +721,7 @@ if (mechanicDashboard) {
                       <button class="secondary mechanic-completion-add-part" type="button" data-mechanic-add-part>Add part</button>
                     </div>
                     <div class="mechanic-completion-parts" data-mechanic-completion-parts>
-                      ${buildMechanicCompletionPartRows()}
+                      ${buildMechanicCompletionPartRows(getMechanicCompletionParts(entry.booking?.id))}
                     </div>
                   </div>
                   <div class="mechanic-completion-actions">
@@ -1253,6 +1288,7 @@ if (mechanicDashboard) {
         body: payload
       });
       clearMechanicCompletionFiles(bookingId);
+      clearMechanicCompletionParts(bookingId);
       activeMechanicCompletionBookingId = null;
       await Promise.all([syncMechanicBookings(), syncMechanicResolutionOverview()]);
     } catch (error) {
@@ -1260,12 +1296,10 @@ if (mechanicDashboard) {
     }
   };
 
-  const renderMechanicCompletionPhotoPreviewForBooking = (bookingId) => {
-    const form = mechanicBookingDetail?.querySelector(`[data-mechanic-complete-form="${String(bookingId)}"]`);
+  const renderMechanicCompletionPhotoPreview = (form, files) => {
     const preview = form?.querySelector("[data-mechanic-completion-photos-preview]");
     const summary = form?.querySelector("[data-mechanic-photo-summary]");
     if (!preview) return;
-    const files = getMechanicCompletionFiles(bookingId);
     if (!files.length) {
       if (summary) summary.textContent = "No files selected";
       preview.classList.add("is-empty");
@@ -1290,6 +1324,11 @@ if (mechanicDashboard) {
       <p class="mechanic-completion-photos-summary">${files.length} photo${files.length === 1 ? "" : "s"} selected</p>
       <div class="mechanic-completion-photos-grid">${thumbs}</div>
     `;
+  };
+
+  const renderMechanicCompletionPhotoPreviewForBooking = (bookingId) => {
+    const form = mechanicBookingDetail?.querySelector(`[data-mechanic-complete-form="${String(bookingId)}"]`);
+    renderMechanicCompletionPhotoPreview(form, getMechanicCompletionFiles(bookingId));
   };
 
   const openMechanicResolutionMessage = async (bookingId, type = "general") => {
@@ -1381,13 +1420,21 @@ if (mechanicDashboard) {
   mechanicBookingDetail?.addEventListener("click", async (event) => {
     const photoTrigger = event.target.closest("[data-mechanic-photo-trigger]");
     if (photoTrigger) {
-      photoTrigger.closest(".mechanic-completion-file-picker")?.querySelector("[data-mechanic-completion-photos]")?.click();
+      const form = photoTrigger.closest("[data-mechanic-complete-form]");
+      const bookingId = Number(form?.dataset.mechanicCompleteForm || 0);
+      pendingMechanicPhotoBookingId = bookingId;
+      setMechanicCompletionParts(bookingId, readMechanicCompletionPartsFromForm(form));
+      mechanicCompletionPhotoPicker.value = "";
+      mechanicCompletionPhotoPicker.click();
       return;
     }
 
     const completionToggle = event.target.closest("[data-mechanic-complete-toggle]");
     if (completionToggle) {
       const bookingId = Number(completionToggle.dataset.mechanicCompleteToggle);
+      if (Number(activeMechanicCompletionBookingId) !== Number(bookingId) && !pendingMechanicCompletionParts.has(Number(bookingId))) {
+        setMechanicCompletionParts(bookingId, [{}]);
+      }
       activeMechanicCompletionBookingId =
         Number(activeMechanicCompletionBookingId) === Number(bookingId) ? null : bookingId;
       renderMechanicBookings(latestMechanicOffers);
@@ -1396,16 +1443,23 @@ if (mechanicDashboard) {
 
     const addPartButton = event.target.closest("[data-mechanic-add-part]");
     if (addPartButton) {
-      const partsWrap = mechanicBookingDetail.querySelector("[data-mechanic-completion-parts]");
-      if (partsWrap) {
-        partsWrap.insertAdjacentHTML("beforeend", buildMechanicCompletionPartRows([{}]));
-      }
+      const form = addPartButton.closest("[data-mechanic-complete-form]");
+      const bookingId = Number(form?.dataset.mechanicCompleteForm || 0);
+      const nextParts = [...readMechanicCompletionPartsFromForm(form), {}];
+      setMechanicCompletionParts(bookingId, nextParts);
+      renderMechanicBookings(latestMechanicOffers);
       return;
     }
 
     const removePartButton = event.target.closest("[data-mechanic-remove-part]");
     if (removePartButton) {
-      removePartButton.closest(".mechanic-completion-part-row")?.remove();
+      const form = removePartButton.closest("[data-mechanic-complete-form]");
+      const bookingId = Number(form?.dataset.mechanicCompleteForm || 0);
+      const rows = Array.from(form?.querySelectorAll(".mechanic-completion-part-row") || []);
+      const rowIndex = rows.findIndex((row) => row.contains(removePartButton));
+      const nextParts = readMechanicCompletionPartsFromForm(form).filter((_, index) => index !== rowIndex);
+      setMechanicCompletionParts(bookingId, nextParts.length ? nextParts : [{}]);
+      renderMechanicBookings(latestMechanicOffers);
       return;
     }
 
@@ -1413,6 +1467,7 @@ if (mechanicDashboard) {
     if (completeCancel) {
       const bookingId = Number(completeCancel.closest("[data-mechanic-complete-form]")?.dataset.mechanicCompleteForm || 0);
       clearMechanicCompletionFiles(bookingId);
+      clearMechanicCompletionParts(bookingId);
       activeMechanicCompletionBookingId = null;
       renderMechanicBookings(latestMechanicOffers);
       return;
@@ -1424,12 +1479,29 @@ if (mechanicDashboard) {
     }
   });
 
-  mechanicBookingDetail?.addEventListener("change", (event) => {
-    const photoInput = event.target.closest("[data-mechanic-completion-photos]");
-    if (!photoInput) return;
-    const bookingId = Number(photoInput.closest("[data-mechanic-complete-form]")?.dataset.mechanicCompleteForm || 0);
-    setMechanicCompletionFiles(bookingId, photoInput.files);
+  mechanicCompletionPhotoPicker.addEventListener("change", () => {
+    const bookingId = Number(pendingMechanicPhotoBookingId || 0);
+    if (!bookingId) return;
+    const files = Array.from(mechanicCompletionPhotoPicker.files || []).filter((file) => String(file?.type || "").startsWith("image/"));
+    appendMechanicCompletionFiles(bookingId, files);
+    mechanicCompletionPhotoPicker.value = "";
     renderMechanicCompletionPhotoPreviewForBooking(bookingId);
+  });
+
+  mechanicBookingDetail?.addEventListener("change", (event) => {
+    const partInput = event.target.closest("[data-mechanic-part-description], [data-mechanic-part-amount]");
+    if (!partInput) return;
+    const form = partInput.closest("[data-mechanic-complete-form]");
+    const bookingId = Number(form?.dataset.mechanicCompleteForm || 0);
+    setMechanicCompletionParts(bookingId, readMechanicCompletionPartsFromForm(form));
+  });
+
+  mechanicBookingDetail?.addEventListener("input", (event) => {
+    const partInput = event.target.closest("[data-mechanic-part-description], [data-mechanic-part-amount]");
+    if (!partInput) return;
+    const form = partInput.closest("[data-mechanic-complete-form]");
+    const bookingId = Number(form?.dataset.mechanicCompleteForm || 0);
+    setMechanicCompletionParts(bookingId, readMechanicCompletionPartsFromForm(form));
   });
 
   mechanicBookingDetail?.addEventListener("submit", async (event) => {
