@@ -124,22 +124,33 @@ if (userPage) {
   const userResolutionComplaintCopy = document.getElementById("userResolutionComplaintCopy");
   const userResolutionComplaintInput = document.getElementById("userResolutionComplaintInput");
   const userResolutionComplaintSendBtn = document.getElementById("userResolutionComplaintSendBtn");
+  const userResolutionComplaintAttachBtn = document.getElementById("userResolutionComplaintAttachBtn");
+  const userResolutionComplaintAttachmentInput = document.getElementById("userResolutionComplaintAttachmentInput");
+  const userResolutionComplaintAttachmentPreview = document.getElementById("userResolutionComplaintAttachmentPreview");
   const userResolutionCaseListTitle = document.getElementById("userResolutionCaseListTitle");
   const userResolutionBookingCasesTable = document.getElementById("userResolutionBookingCasesTable");
   const userResolutionCaseView = document.getElementById("userResolutionCaseView");
   const userResolutionCaseBackBtn = document.getElementById("userResolutionCaseBackBtn");
   const userResolutionCaseTitle = document.getElementById("userResolutionCaseTitle");
+  const userResolutionCaseSubtitle = document.getElementById("userResolutionCaseSubtitle");
   const userResolutionCaseCopy = document.getElementById("userResolutionCaseCopy");
   const userResolutionMessages = document.getElementById("userResolutionMessages");
   const userResolutionMessageInput = document.getElementById("userResolutionMessageInput");
   const userResolutionSendBtn = document.getElementById("userResolutionSendBtn");
+  const userResolutionCaseAttachBtn = document.getElementById("userResolutionCaseAttachBtn");
+  const userResolutionCaseAttachmentInput = document.getElementById("userResolutionCaseAttachmentInput");
+  const userResolutionCaseAttachmentPreview = document.getElementById("userResolutionCaseAttachmentPreview");
   const userResolutionSidebarTitle = document.getElementById("userResolutionSidebarTitle");
   const userResolutionSidebarMechanic = document.getElementById("userResolutionSidebarMechanic");
   const userResolutionSidebarCar = document.getElementById("userResolutionSidebarCar");
+  const userResolutionSidebarArrivalTime = document.getElementById("userResolutionSidebarArrivalTime");
   const userResolutionSidebarAddress = document.getElementById("userResolutionSidebarAddress");
   const userResolutionSidebarWork = document.getElementById("userResolutionSidebarWork");
+  const userResolutionSidebarParts = document.getElementById("userResolutionSidebarParts");
   const userResolutionSidebarTotal = document.getElementById("userResolutionSidebarTotal");
   const userSettingsView = document.getElementById("userSettingsView");
+  const pendingUserResolutionCaseAttachments = new Map();
+  let pendingUserResolutionComplaintAttachments = [];
 
   const getInitials = window.SWApp?.getInitials || ((name) => String(name || "NA"));
 
@@ -1218,6 +1229,7 @@ if (userPage) {
   let latestUserResolutionCases = [];
   let pendingUserResolutionBookingId = null;
   let pendingUserResolutionCaseId = null;
+  let pendingUserResolutionCaseType = "general";
   let pendingUserResolutionOrigin = "bookings";
   let activeUserResolutionFilter = "all";
 
@@ -1254,6 +1266,90 @@ if (userPage) {
     return messages[issueValue] || "";
   };
 
+  const renderUserResolutionCaseAttachmentPreview = () => {
+    if (!userResolutionCaseAttachmentPreview) return;
+    const files = pendingUserResolutionCaseAttachments.get(pendingUserResolutionCaseId) || [];
+    userResolutionCaseAttachmentPreview.innerHTML = "";
+    userResolutionCaseAttachmentPreview.classList.toggle("is-hidden", !files.length);
+    if (!files.length) {
+      userResolutionCaseAttachmentPreview.innerHTML = '<span class="mechanic-resolution-compose-empty">No files selected yet.</span>';
+      return;
+    }
+
+    files.forEach((file) => {
+      const item = document.createElement("div");
+      item.className = "mechanic-resolution-compose-file";
+      const isImage = String(file.type || "").startsWith("image/");
+      if (isImage) {
+        const objectUrl = URL.createObjectURL(file);
+        item.innerHTML = `
+          <img alt="${escapeHtml(file.name || "Attachment")}" src="${objectUrl}">
+          <span>${escapeHtml(file.name || "Attachment")}</span>
+        `;
+        const img = item.querySelector("img");
+        if (img) {
+          img.addEventListener("load", () => URL.revokeObjectURL(objectUrl), { once: true });
+          img.addEventListener("error", () => URL.revokeObjectURL(objectUrl), { once: true });
+        }
+      } else {
+        item.innerHTML = `
+          <span class="mechanic-resolution-compose-file-icon">FILE</span>
+          <span>${escapeHtml(file.name || "Attachment")}</span>
+        `;
+      }
+      userResolutionCaseAttachmentPreview.appendChild(item);
+    });
+  };
+
+  const renderUserResolutionComplaintAttachmentPreview = () => {
+    if (!userResolutionComplaintAttachmentPreview) return;
+    const files = pendingUserResolutionComplaintAttachments || [];
+    userResolutionComplaintAttachmentPreview.innerHTML = "";
+    userResolutionComplaintAttachmentPreview.classList.toggle("is-hidden", !files.length);
+    if (!files.length) {
+      userResolutionComplaintAttachmentPreview.innerHTML = '<span class="mechanic-resolution-compose-empty">No files selected yet.</span>';
+      return;
+    }
+
+    files.forEach((file) => {
+      const item = document.createElement("div");
+      item.className = "mechanic-resolution-compose-file";
+      const isImage = String(file.type || "").startsWith("image/");
+      if (isImage) {
+        const objectUrl = URL.createObjectURL(file);
+        item.innerHTML = `
+          <img alt="${escapeHtml(file.name || "Attachment")}" src="${objectUrl}">
+          <span>${escapeHtml(file.name || "Attachment")}</span>
+        `;
+        const img = item.querySelector("img");
+        if (img) {
+          img.addEventListener("load", () => URL.revokeObjectURL(objectUrl), { once: true });
+          img.addEventListener("error", () => URL.revokeObjectURL(objectUrl), { once: true });
+        }
+      } else {
+        item.innerHTML = `
+          <span class="mechanic-resolution-compose-file-icon">FILE</span>
+          <span>${escapeHtml(file.name || "Attachment")}</span>
+        `;
+      }
+      userResolutionComplaintAttachmentPreview.appendChild(item);
+    });
+  };
+
+  const clearUserResolutionCaseAttachments = (caseId = pendingUserResolutionCaseId) => {
+    if (caseId) {
+      pendingUserResolutionCaseAttachments.set(Number(caseId), []);
+    }
+    if (userResolutionCaseAttachmentInput) userResolutionCaseAttachmentInput.value = "";
+    renderUserResolutionCaseAttachmentPreview();
+  };
+
+  const clearUserResolutionComplaintAttachments = () => {
+    pendingUserResolutionComplaintAttachments = [];
+    if (userResolutionComplaintAttachmentInput) userResolutionComplaintAttachmentInput.value = "";
+    renderUserResolutionComplaintAttachmentPreview();
+  };
+
   const syncUserResolutionIssueUi = () => {
     const issueValue = getUserResolutionIssueValue();
     const isComplaint = getUserResolutionCaseType() === "complaint";
@@ -1262,6 +1358,9 @@ if (userPage) {
     userResolutionNotice?.classList.toggle("is-hidden", isComplaint);
     userResolutionGoToCase?.classList.toggle("is-hidden", isComplaint);
     userResolutionComplaintComposer?.classList.toggle("is-hidden", !isComplaint);
+    if (!isComplaint) {
+      clearUserResolutionComplaintAttachments();
+    }
     if (userResolutionComplaintCopy) {
       userResolutionComplaintCopy.textContent = isComplaint ? getUserResolutionComplaintCopy(issueValue, mechanicName) : "";
     }
@@ -1290,7 +1389,7 @@ if (userPage) {
         <span>${formatResolutionReference(entry.reference, entry.booking_id)}</span>
         <span>${formatUserResolutionDateTime(entry.updated_at)}</span>
         <span>${entry.subject || "-"}</span>
-        <button class="mechanic-resolution-link" type="button" data-user-resolution-case-id="${entry.id}">View</button>
+        <button class="mechanic-resolution-link" type="button" data-user-resolution-case-id="${entry.id}" data-user-resolution-case-type="${String(entry.type || entry.case_type || "general").toLowerCase()}">View</button>
       `;
       target.appendChild(row);
     });
@@ -1317,6 +1416,7 @@ if (userPage) {
 
   const openUserResolutionMessage = async (bookingId, type = "general") => {
     pendingUserResolutionOrigin = "bookings";
+    pendingUserResolutionCaseType = String(type || "general").toLowerCase();
     pendingUserResolutionBookingId = Number(bookingId);
     pendingUserResolutionCaseId = null;
     if (userResolutionIssue) {
@@ -1326,7 +1426,7 @@ if (userPage) {
     const booking = latestUserBookings.find((entry) => Number(entry.id) === Number(bookingId));
     const reference = booking?.reference || formatBookingReference(bookingId);
     if (userResolutionDetailTitle) {
-      userResolutionDetailTitle.textContent = `Message mechanic regarding booking #${reference}`;
+      userResolutionDetailTitle.textContent = "Resolution Center";
     }
     if (userResolutionCaseListTitle) {
       userResolutionCaseListTitle.textContent = `Resolution cases already created for booking #${reference}`;
@@ -1347,10 +1447,17 @@ if (userPage) {
   const renderUserResolutionCaseDetail = (detail) => {
     pendingUserResolutionCaseId = detail?.id || null;
     pendingUserResolutionBookingId = detail?.booking?.id || detail?.booking_id || null;
-    const caseTitle = detail?.subject || "General Enquiry";
+    const caseType = String(pendingUserResolutionCaseType || detail?.type || detail?.case_type || "").toLowerCase();
+    pendingUserResolutionCaseType = caseType || pendingUserResolutionCaseType;
+    const caseTitle = caseType === "complaint" ? "Complaint" : (detail?.subject || "General Enquiry");
     if (userResolutionCaseTitle) userResolutionCaseTitle.textContent = caseTitle;
+    if (userResolutionCaseSubtitle) {
+      userResolutionCaseSubtitle.textContent = caseType === "complaint"
+        ? "Raise an issue about this booking"
+        : "Discuss your booking with your mechanic";
+    }
     if (userResolutionCaseCopy) {
-      userResolutionCaseCopy.classList.toggle("is-hidden", caseTitle.toLowerCase() !== "general enquiry");
+      userResolutionCaseCopy.classList.toggle("is-hidden", caseType !== "general");
     }
     if (userResolutionSidebarTitle) {
       userResolutionSidebarTitle.textContent = `Current status of booking #${detail?.booking?.reference || (detail?.booking_id ? formatBookingReference(detail.booking_id) : "-")}`;
@@ -1359,11 +1466,29 @@ if (userPage) {
     if (userResolutionSidebarCar) {
       userResolutionSidebarCar.textContent = [detail?.vehicle?.make, detail?.vehicle?.model, detail?.vehicle?.registrationNumber].filter(Boolean).join(" · ") || "-";
     }
+    if (userResolutionSidebarArrivalTime) {
+      userResolutionSidebarArrivalTime.textContent = detail?.booking?.arrival_time
+        ? new Intl.DateTimeFormat("en-GB", {
+            hour: "2-digit",
+            minute: "2-digit",
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+          }).format(new Date(detail.booking.arrival_time))
+        : (detail?.booking?.assigned_at ? `Assigned on ${formatUserResolutionDateTime(detail.booking.assigned_at)}` : "-");
+    }
     if (userResolutionSidebarAddress) {
       userResolutionSidebarAddress.textContent = [detail?.address?.line1, detail?.address?.line2, detail?.address?.city, detail?.address?.postal_code].filter(Boolean).join(", ") || "-";
     }
     if (userResolutionSidebarWork) {
       userResolutionSidebarWork.textContent = (detail?.items || []).map((item) => item.name).join(", ") || "-";
+    }
+    if (userResolutionSidebarParts) {
+      const invoiceParts = Array.isArray(detail?.invoice?.totals?.completion?.added_parts)
+        ? detail.invoice.totals.completion.added_parts
+        : [];
+      const bookingParts = invoiceParts.map((part) => part?.description).filter(Boolean);
+      userResolutionSidebarParts.textContent = bookingParts.length ? bookingParts.join(", ") : "-";
     }
     if (userResolutionSidebarTotal) {
       userResolutionSidebarTotal.textContent = formatCurrency(detail?.booking?.total_eur, "GBP");
@@ -1385,13 +1510,43 @@ if (userPage) {
         const avatarMarkup = resolvedAvatarUrl
           ? `<img src="${resolvedAvatarUrl}" alt="" />`
           : initials;
+        const bodyText = String(message.body || "").trim();
+        const attachments = Array.isArray(message.attachments) ? message.attachments : [];
+        const attachmentsMarkup = attachments.length
+          ? `
+            <div class="mechanic-resolution-message-attachments">
+              ${attachments
+                .map((attachment) => {
+                  const fileUrl = String(attachment.file_url || "").trim();
+                  const originalName = String(attachment.original_name || "").trim() || "Attachment";
+                  const mimeType = String(attachment.mime_type || "").trim();
+                  const isImage = mimeType.startsWith("image/");
+                  const resolvedUrl = fileUrl.startsWith("/uploads") ? `http://localhost:3000${fileUrl}` : fileUrl;
+                  return isImage
+                    ? `
+                      <a class="mechanic-resolution-message-attachment" href="${resolvedUrl}" target="_blank" rel="noopener noreferrer">
+                        <img src="${resolvedUrl}" alt="${escapeHtml(originalName)}" />
+                        <span>${escapeHtml(originalName)}</span>
+                      </a>
+                    `
+                    : `
+                      <a class="mechanic-resolution-message-attachment" href="${resolvedUrl}" target="_blank" rel="noopener noreferrer">
+                        <span>${escapeHtml(originalName)}</span>
+                      </a>
+                    `;
+                })
+                .join("")}
+            </div>
+          `
+          : "";
         const item = document.createElement("div");
         item.className = `mechanic-resolution-message ${message.sender_role === "customer" ? "is-customer" : "is-mechanic"}`;
         item.innerHTML = `
           <div class="mechanic-resolution-message-row">
             <div class="mechanic-resolution-message-avatar" aria-hidden="true">${avatarMarkup}</div>
             <div class="mechanic-resolution-message-content">
-              <div class="mechanic-resolution-bubble">${String(message.body || "").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>")}</div>
+              ${bodyText ? `<div class="mechanic-resolution-bubble">${bodyText.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>")}</div>` : ""}
+              ${attachmentsMarkup}
               <span class="mechanic-resolution-message-meta">${senderName}, ${formatUserResolutionDateTime(message.created_at)}</span>
             </div>
           </div>
@@ -1399,6 +1554,7 @@ if (userPage) {
         userResolutionMessages.appendChild(item);
       });
     }
+    renderUserResolutionCaseAttachmentPreview();
   };
 
   const handleVehicleCardAction = async (event) => {
@@ -1540,7 +1696,7 @@ if (userPage) {
       pendingUserResolutionOrigin = "resolution";
       setUserView("resolution");
       setActiveUserNav("resolution");
-      await openUserResolutionMessage(bookingId, "general");
+      await openUserResolutionMessage(bookingId, getUserResolutionCaseType());
     }
   });
 
@@ -1562,7 +1718,7 @@ if (userPage) {
       pendingUserResolutionOrigin = "resolution";
       setUserView("resolution");
       setActiveUserNav("resolution");
-      await openUserResolutionMessage(bookingId, "general");
+      await openUserResolutionMessage(bookingId, getUserResolutionCaseType());
       return;
     }
 
@@ -1777,6 +1933,7 @@ if (userPage) {
   });
 
   userResolutionCaseBackBtn?.addEventListener("click", async () => {
+    clearUserResolutionCaseAttachments();
     if (pendingUserResolutionOrigin === "resolution") {
       setUserView("resolution");
       setActiveUserNav("resolution");
@@ -1810,7 +1967,9 @@ if (userPage) {
 
   userResolutionComplaintSendBtn?.addEventListener("click", async () => {
     const body = String(userResolutionComplaintInput?.value || "").trim();
-    if (!body || !pendingUserResolutionBookingId || !userToken) return;
+    const attachments = pendingUserResolutionComplaintAttachments || [];
+    if ((!body && !attachments.length) || !pendingUserResolutionBookingId || !userToken) return;
+    pendingUserResolutionCaseType = "complaint";
     const detail = await apiAuth("/api/users/me/resolution-cases", userToken, {
       method: "POST",
       body: JSON.stringify({
@@ -1818,19 +1977,43 @@ if (userPage) {
         type: getUserResolutionCaseType()
       })
     });
-    const updatedDetail = await apiAuth(`/api/users/me/resolution-cases/${encodeURIComponent(detail.id)}/messages`, userToken, {
-      method: "POST",
-      body: JSON.stringify({ body })
-    });
+    const messageRoute = `/api/users/me/resolution-cases/${encodeURIComponent(detail.id)}/messages`;
+    const updatedDetail = attachments.length
+      ? await apiAuth(messageRoute, userToken, (() => {
+          const formData = new FormData();
+          formData.append("body", body);
+          attachments.forEach((file) => formData.append("attachments", file));
+          return {
+            method: "POST",
+            body: formData
+          };
+        })())
+      : await apiAuth(messageRoute, userToken, {
+          method: "POST",
+          body: JSON.stringify({ body })
+        });
     if (userResolutionComplaintInput) userResolutionComplaintInput.value = "";
+    clearUserResolutionComplaintAttachments();
     await syncUserResolutionOverview();
     renderUserResolutionCaseDetail(updatedDetail);
     setUserResolutionSubview("case");
   });
 
+  userResolutionComplaintAttachmentInput?.addEventListener("change", () => {
+    const selectedFiles = Array.from(userResolutionComplaintAttachmentInput?.files || []);
+    if (!selectedFiles.length) {
+      renderUserResolutionComplaintAttachmentPreview();
+      return;
+    }
+    pendingUserResolutionComplaintAttachments = [...pendingUserResolutionComplaintAttachments, ...selectedFiles];
+    if (userResolutionComplaintAttachmentInput) userResolutionComplaintAttachmentInput.value = "";
+    renderUserResolutionComplaintAttachmentPreview();
+  });
+
   userResolutionCasesTable?.addEventListener("click", async (event) => {
     const viewButton = event.target.closest("[data-user-resolution-case-id]");
     if (!viewButton || !userToken) return;
+    pendingUserResolutionCaseType = String(viewButton.dataset.userResolutionCaseType || pendingUserResolutionCaseType || "general").toLowerCase();
     const detail = await apiAuth(`/api/users/me/resolution-cases/${encodeURIComponent(viewButton.dataset.userResolutionCaseId)}`, userToken);
     pendingUserResolutionOrigin = "resolution";
     setUserView("resolution");
@@ -1850,19 +2033,50 @@ if (userPage) {
   userResolutionBookingCasesTable?.addEventListener("click", async (event) => {
     const viewButton = event.target.closest("[data-user-resolution-case-id]");
     if (!viewButton || !userToken) return;
+    pendingUserResolutionCaseType = String(viewButton.dataset.userResolutionCaseType || pendingUserResolutionCaseType || "general").toLowerCase();
     const detail = await apiAuth(`/api/users/me/resolution-cases/${encodeURIComponent(viewButton.dataset.userResolutionCaseId)}`, userToken);
     renderUserResolutionCaseDetail(detail);
     setUserResolutionSubview("case");
   });
 
+  userResolutionCaseAttachBtn?.addEventListener("click", () => {
+    userResolutionCaseAttachmentInput?.click();
+  });
+
+  userResolutionCaseAttachmentInput?.addEventListener("change", () => {
+    if (!pendingUserResolutionCaseId) return;
+    const selectedFiles = Array.from(userResolutionCaseAttachmentInput?.files || []);
+    if (!selectedFiles.length) {
+      renderUserResolutionCaseAttachmentPreview();
+      return;
+    }
+    const existingFiles = pendingUserResolutionCaseAttachments.get(pendingUserResolutionCaseId) || [];
+    pendingUserResolutionCaseAttachments.set(pendingUserResolutionCaseId, [...existingFiles, ...selectedFiles]);
+    if (userResolutionCaseAttachmentInput) userResolutionCaseAttachmentInput.value = "";
+    renderUserResolutionCaseAttachmentPreview();
+  });
+
   userResolutionSendBtn?.addEventListener("click", async () => {
     const body = String(userResolutionMessageInput?.value || "").trim();
-    if (!pendingUserResolutionCaseId || !body || !userToken) return;
-    const detail = await apiAuth(`/api/users/me/resolution-cases/${encodeURIComponent(pendingUserResolutionCaseId)}/messages`, userToken, {
-      method: "POST",
-      body: JSON.stringify({ body })
-    });
+    const attachments = pendingUserResolutionCaseAttachments.get(pendingUserResolutionCaseId) || [];
+    if (!pendingUserResolutionCaseId || (!body && !attachments.length) || !userToken) return;
+    const route = `/api/users/me/resolution-cases/${encodeURIComponent(pendingUserResolutionCaseId)}/messages`;
+    const detail = attachments.length
+      ? await apiAuth(route, userToken, (() => {
+          const formData = new FormData();
+          formData.append("body", body);
+          attachments.forEach((file) => formData.append("attachments", file));
+          return {
+            method: "POST",
+            body: formData
+          };
+        })())
+      : await apiAuth(route, userToken, {
+          method: "POST",
+          body: JSON.stringify({ body })
+        });
     if (userResolutionMessageInput) userResolutionMessageInput.value = "";
+    clearUserResolutionCaseAttachments(pendingUserResolutionCaseId);
     renderUserResolutionCaseDetail(detail);
     await syncUserResolutionOverview();
   });
@@ -2136,4 +2350,5 @@ if (userPage) {
     window.location.replace("/");
   });
 }
+
 

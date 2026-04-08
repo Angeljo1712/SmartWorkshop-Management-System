@@ -8,6 +8,10 @@ const {
   getBookingCompletionArtifactsByBookingIds
 } = require("../../bookings/services/bookingCompletion.service");
 const {
+  saveResolutionCaseMessageAttachments,
+  getResolutionCaseAttachmentsByMessageIds
+} = require("../../resolution/services/resolutionAttachment.service");
+const {
   ensureTwoFactorTables,
   setTwoFactorEmailEnabled
 } = require("../../../shared/infrastructure/security/twoFactor.service");
@@ -1037,6 +1041,7 @@ const getUserResolutionCaseDetail = async (userId, caseId) => {
      ORDER BY rcm.created_at ASC`,
     [id]
   );
+  const attachmentMap = await getResolutionCaseAttachmentsByMessageIds(messageRows.map((message) => message.id));
 
   return {
     id: row.id,
@@ -1081,21 +1086,28 @@ const getUserResolutionCaseDetail = async (userId, caseId) => {
       sender_id: message.sender_id,
       sender_name: [message.name, message.lastname].filter(Boolean).join(" ") || message.email || "User",
       avatar_url: message.avatar_url || "",
-      sender_role: message.sender_id === userId ? "customer" : "mechanic"
+      sender_role: message.sender_id === userId ? "customer" : "mechanic",
+      attachments: (attachmentMap.get(message.id) || []).map((attachment) => ({
+        file_url: attachment.file_url,
+        original_name: attachment.original_name || "",
+        mime_type: attachment.mime_type || ""
+      }))
     }))
   };
 };
 
-const addUserResolutionMessage = async (userId, caseId, body) => {
+const addUserResolutionMessage = async (userId, caseId, body, files = []) => {
   const text = String(body || "").trim();
-  if (!text) {
+  const normalizedFiles = Array.isArray(files) ? files : [];
+  if (!text && !normalizedFiles.length) {
     throw new AppError("VALIDATION_ERROR", "message is required", 400);
   }
   await getUserResolutionCaseDetail(userId, caseId);
-  await pool.query(
+  const [result] = await pool.query(
     "INSERT INTO resolution_case_messages (case_id, sender_id, body) VALUES (?, ?, ?)",
     [Number(caseId), userId, text]
   );
+  await saveResolutionCaseMessageAttachments({ messageId: result.insertId, files: normalizedFiles });
   return getUserResolutionCaseDetail(userId, caseId);
 };
 
@@ -1192,6 +1204,7 @@ const getMechanicResolutionCaseDetail = async (mechanicId, caseId) => {
      ORDER BY rcm.created_at ASC`,
     [id]
   );
+  const attachmentMap = await getResolutionCaseAttachmentsByMessageIds(messageRows.map((message) => message.id));
 
   return {
     id: row.id,
@@ -1236,21 +1249,28 @@ const getMechanicResolutionCaseDetail = async (mechanicId, caseId) => {
       sender_id: message.sender_id,
       sender_name: [message.name, message.lastname].filter(Boolean).join(" ") || message.email || "User",
       avatar_url: message.avatar_url || "",
-      sender_role: message.sender_id === mechanicId ? "mechanic" : "customer"
+      sender_role: message.sender_id === mechanicId ? "mechanic" : "customer",
+      attachments: (attachmentMap.get(message.id) || []).map((attachment) => ({
+        file_url: attachment.file_url,
+        original_name: attachment.original_name || "",
+        mime_type: attachment.mime_type || ""
+      }))
     }))
   };
 };
 
-const addMechanicResolutionMessage = async (mechanicId, caseId, body) => {
+const addMechanicResolutionMessage = async (mechanicId, caseId, body, files = []) => {
   const text = String(body || "").trim();
-  if (!text) {
+  const normalizedFiles = Array.isArray(files) ? files : [];
+  if (!text && !normalizedFiles.length) {
     throw new AppError("VALIDATION_ERROR", "message is required", 400);
   }
   await getMechanicResolutionCaseDetail(mechanicId, caseId);
-  await pool.query(
+  const [result] = await pool.query(
     "INSERT INTO resolution_case_messages (case_id, sender_id, body) VALUES (?, ?, ?)",
     [Number(caseId), mechanicId, text]
   );
+  await saveResolutionCaseMessageAttachments({ messageId: result.insertId, files: normalizedFiles });
   return getMechanicResolutionCaseDetail(mechanicId, caseId);
 };
 

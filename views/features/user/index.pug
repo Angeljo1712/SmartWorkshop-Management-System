@@ -285,25 +285,11 @@ block content
   
             section.user-view.is-hidden#userResolutionView
                 .user-resolution-layout
-                  .mechanic-resolution-card
-                    h3 Current cases
-                    .mechanic-resolution-tabs
-                      button.mechanic-resolution-tab.is-active(type="button" data-user-resolution-filter="all") All
-                      button.mechanic-resolution-tab(type="button" data-user-resolution-filter="complaint") Complaint
-                      button.mechanic-resolution-tab(type="button" data-user-resolution-filter="general") General
-                    .mechanic-resolution-table
-                      .mechanic-resolution-table-head
-                        span Status
-                        span Reference
-                        span Updated at
-                        span Subject
-                        span
-                      #userResolutionCasesTable
                   #userResolutionMessageView.user-resolution-detail-view
                     .mechanic-resolution-detail
                       .mechanic-resolution-detail-head
                         button.mechanic-resolution-back#userResolutionBackBtn(type="button") Back
-                        h3#userResolutionDetailTitle Message mechanic regarding booking
+                        h3#userResolutionDetailTitle Resolution Center
                       .mechanic-resolution-card
                         .mechanic-resolution-field
                           label(for="userResolutionIssue") Please select your issue from the list below:
@@ -320,26 +306,31 @@ block content
                         .mechanic-resolution-complaint.is-hidden#userResolutionComplaintComposer
                           p.mechanic-resolution-complaint-copy#userResolutionComplaintCopy
                           textarea#userResolutionComplaintInput(rows="5" placeholder="Write your message here")
-                          .mechanic-resolution-complaint-actions
-                            button.primary#userResolutionComplaintSendBtn(type="button") Send
-                          .mechanic-resolution-complaint-footer
-                            button.secondary#userResolutionComplaintAttachBtn(type="button") Attach file(s)
-                      .mechanic-resolution-card
-                        .mechanic-resolution-card-header#userResolutionCaseListTitle Resolution cases already created for booking
-                        .mechanic-resolution-table
-                          .mechanic-resolution-table-head
-                            span Status
-                            span Reference
-                            span Updated at
-                            span Subject
-                            span
-                          #userResolutionBookingCasesTable
+                        .mechanic-resolution-complaint-actions
+                          button.primary#userResolutionComplaintSendBtn(type="button") Send
+                        .mechanic-resolution-complaint-footer
+                          label.secondary#userResolutionComplaintAttachBtn(for="userResolutionComplaintAttachmentInput") Attach file(s)
+                        input#userResolutionComplaintAttachmentInput.is-hidden(type="file" multiple accept="image/*,application/pdf")
+                        .mechanic-resolution-compose-preview#userResolutionComplaintAttachmentPreview
+                  #userResolutionBookingCasesView
+                    h3 Current cases
+                    .mechanic-resolution-card
+                      .mechanic-resolution-card-header#userResolutionCaseListTitle Resolution cases already created for booking
+                      .mechanic-resolution-table
+                        .mechanic-resolution-table-head
+                          span Status
+                          span Reference
+                          span Updated at
+                          span Subject
+                          span
+                        #userResolutionBookingCasesTable
                   #userResolutionCaseView.user-resolution-detail-view.is-hidden
                     .settings-card.user-CaseView
                       .mechanic-detail-card
                         .title-resolution-case
                           h2#userResolutionCaseDetailTitle General Enquiry regarding booking
-                          span#userResolutionCaseStatusBadge Complaint
+                          span#userResolutionCaseSubtitle Discuss your booking with your mechanic
+                          span#userResolutionCaseStatusBadge
                         .mechanic-resolution-main
                           p.mechanic-resolution-case-copy.is-hidden#userResolutionCaseCopy You can use this page to discuss your booking with your mechanic. Your messages will be sent directly to the mechanic, and you will receive an email whenever there's an update.
                           .mechanic-resolution-thread#userResolutionMessages
@@ -348,6 +339,10 @@ block content
                             .mechanic-resolution-compose-actions
                               button.primary#userResolutionSendBtn(type="button") Send message
                               button.mechanic-resolution-back#userResolutionCaseBackBtn(type="button") Back
+                            .mechanic-resolution-compose-attachments
+                              label.secondary#userResolutionCaseAttachBtn(for="userResolutionCaseAttachmentInput") Attach file(s)
+                              input#userResolutionCaseAttachmentInput.is-hidden(type="file" multiple accept="image/*,application/pdf")
+                              .mechanic-resolution-compose-preview#userResolutionCaseAttachmentPreview
                         aside.mechanic-resolution-sidebar
                           .mechanic-resolution-sidebar-card
                             h4#userResolutionSidebarTitle Current status of booking
@@ -358,11 +353,17 @@ block content
                               strong Car
                               span#userResolutionSidebarCar -
                             .mechanic-resolution-sidebar-row
+                              strong Arrival Time
+                              span#userResolutionSidebarArrivalTime -
+                            .mechanic-resolution-sidebar-row
                               strong Address
                               span#userResolutionSidebarAddress -
                             .mechanic-resolution-sidebar-row
                               strong Work
                               span#userResolutionSidebarWork -
+                            .mechanic-resolution-sidebar-row
+                              strong Parts
+                              span#userResolutionSidebarParts -
                             .mechanic-resolution-sidebar-row
                               strong Total Price
                               span#userResolutionSidebarTotal -

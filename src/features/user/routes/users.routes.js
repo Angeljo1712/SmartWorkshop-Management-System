@@ -1,7 +1,11 @@
 const express = require("express");
 const { authenticate, authorizeRoles } = require("../../../shared/middleware/auth");
 const { asyncHandler } = require("../../../shared/utils/asyncHandler");
-const { uploadAvatar, uploadBookingCompletionPhotos } = require("../../../shared/middleware/upload");
+const {
+  uploadAvatar,
+  uploadBookingCompletionPhotos,
+  uploadResolutionCaseAttachments
+} = require("../../../shared/middleware/upload");
 const {
   getMeHandler,
   changePasswordHandler,
@@ -47,14 +51,25 @@ router.get("/me/bookings", authenticate, asyncHandler(listMyBookingsHandler));
 router.get("/me/resolution-cases", authenticate, asyncHandler(listMyResolutionCasesHandler));
 router.post("/me/resolution-cases", authenticate, asyncHandler(openMyResolutionCaseHandler));
 router.get("/me/resolution-cases/:caseId", authenticate, asyncHandler(getMyResolutionCaseHandler));
-router.post("/me/resolution-cases/:caseId/messages", authenticate, asyncHandler(addMyResolutionMessageHandler));
+router.post(
+  "/me/resolution-cases/:caseId/messages",
+  authenticate,
+  uploadResolutionCaseAttachments.array("attachments", 8),
+  asyncHandler(addMyResolutionMessageHandler)
+);
 router.get("/me/mechanic-offers", authenticate, authorizeRoles("MECHANIC"), asyncHandler(listMyMechanicOffersHandler));
 router.get("/me/mechanic-bookings", authenticate, authorizeRoles("MECHANIC"), asyncHandler(listMyMechanicAssignedBookingsHandler));
 router.get("/me/mechanic-service-coverage", authenticate, authorizeRoles("MECHANIC"), asyncHandler(listMyMechanicServiceCoverageHandler));
 router.get("/me/mechanic-resolution-cases", authenticate, authorizeRoles("MECHANIC"), asyncHandler(listMyMechanicResolutionCasesHandler));
 router.post("/me/mechanic-resolution-cases", authenticate, authorizeRoles("MECHANIC"), asyncHandler(openMyMechanicResolutionCaseHandler));
 router.get("/me/mechanic-resolution-cases/:caseId", authenticate, authorizeRoles("MECHANIC"), asyncHandler(getMyMechanicResolutionCaseHandler));
-router.post("/me/mechanic-resolution-cases/:caseId/messages", authenticate, authorizeRoles("MECHANIC"), asyncHandler(addMyMechanicResolutionMessageHandler));
+router.post(
+  "/me/mechanic-resolution-cases/:caseId/messages",
+  authenticate,
+  authorizeRoles("MECHANIC"),
+  uploadResolutionCaseAttachments.array("attachments", 8),
+  asyncHandler(addMyMechanicResolutionMessageHandler)
+);
 router.get("/me/mechanic-profile", authenticate, authorizeRoles("MECHANIC"), asyncHandler(getMyMechanicProfileHandler));
 router.patch("/me/mechanic-profile", authenticate, authorizeRoles("MECHANIC"), asyncHandler(updateMyMechanicProfileHandler));
 router.patch("/me/mechanic-service-coverage", authenticate, authorizeRoles("MECHANIC"), asyncHandler(updateMyMechanicServiceCoverageHandler));

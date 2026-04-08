@@ -140,11 +140,11 @@ body.admin-body .primari-shell {
 }
 
 #adminPage .mainRail .rail-item.active {
-  background: #1b1f27;
-  border-color: rgba(15, 23, 42, 0.08);
-  color: #ffffff;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
-}
+    background: #1b1f27;
+    border-color: rgba(15, 23, 42, 0.08);
+    color: #ffffff;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  }
 
 #adminPage .mainRail .rail-text {
   width: 0;
@@ -198,15 +198,23 @@ body.admin-body .primari-shell {
 }
 
 #adminPage .mainRail:hover .rail-item {
-  width: 100%;
-  max-width: 100%;
-  justify-content: flex-start;
+    width: 100%;
+    max-width: 100%;
+    justify-content: flex-start;
   gap: 10px;
   height: auto;
   min-height: 48px;
   align-items: center;
-  padding: 10px 14px;
-}
+    padding: 10px 14px;
+  }
+
+#adminPage .mainRail:hover .rail-item.active {
+    width: calc(100% + 16px);
+    max-width: calc(100% + 16px);
+    margin-left: 0;
+    margin-right: -16px;
+    border-radius: 0;
+  }
 
 #adminPage .mainRail:hover .rail-text {
   display: block;

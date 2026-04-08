@@ -6,9 +6,11 @@ const { AppError } = require("../utils/appError");
 const uploadRoot = path.join(__dirname, "../uploads/avatars");
 const documentsUploadRoot = path.join(__dirname, "../uploads/mechanic-documents");
 const bookingCompletionUploadRoot = path.join(__dirname, "../uploads/booking-completion");
+const resolutionCaseAttachmentUploadRoot = path.join(__dirname, "../uploads/resolution-case-attachments");
 fs.mkdirSync(uploadRoot, { recursive: true });
 fs.mkdirSync(documentsUploadRoot, { recursive: true });
 fs.mkdirSync(bookingCompletionUploadRoot, { recursive: true });
+fs.mkdirSync(resolutionCaseAttachmentUploadRoot, { recursive: true });
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {
@@ -78,4 +80,34 @@ const uploadBookingCompletionPhotos = multer({
   limits: { fileSize: 5 * 1024 * 1024, files: 8 }
 });
 
-module.exports = { uploadAvatar, uploadMechanicDocuments, uploadBookingCompletionPhotos };
+const resolutionCaseAttachmentStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, resolutionCaseAttachmentUploadRoot);
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname || "").toLowerCase();
+    const safeExt = ext && ext.length <= 8 ? ext : "";
+    cb(null, `resolution-${req.params?.caseId || "unknown"}-${Date.now()}-${Math.round(Math.random() * 1e9)}${safeExt}`);
+  }
+});
+
+const resolutionCaseAttachmentFileFilter = (_req, file, cb) => {
+  const allowedMimeTypes = new Set(["application/pdf"]);
+  if (file.mimetype?.startsWith("image/") || allowedMimeTypes.has(file.mimetype)) {
+    return cb(null, true);
+  }
+  return cb(new AppError("INVALID_FILE", "Only image or PDF uploads are allowed", 400));
+};
+
+const uploadResolutionCaseAttachments = multer({
+  storage: resolutionCaseAttachmentStorage,
+  fileFilter: resolutionCaseAttachmentFileFilter,
+  limits: { fileSize: 8 * 1024 * 1024, files: 8 }
+});
+
+module.exports = {
+  uploadAvatar,
+  uploadMechanicDocuments,
+  uploadBookingCompletionPhotos,
+  uploadResolutionCaseAttachments
+};

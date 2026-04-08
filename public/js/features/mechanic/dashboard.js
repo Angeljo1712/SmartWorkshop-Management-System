@@ -1400,12 +1400,40 @@ if (mechanicDashboard) {
         mechanicResolutionMessages.innerHTML = '<p class="mechanic-bookings-empty">No messages yet.</p>';
       } else {
         messages.forEach((message) => {
+          const bodyText = String(message.body || "").trim();
+          const attachments = Array.isArray(message.attachments) ? message.attachments : [];
+          const attachmentsMarkup = attachments.length
+            ? `
+              <div class="mechanic-resolution-message-attachments">
+                ${attachments
+                  .map((attachment) => {
+                    const fileUrl = String(attachment.file_url || "").trim();
+                    const originalName = String(attachment.original_name || "").trim() || "Attachment";
+                    const mimeType = String(attachment.mime_type || "").trim();
+                    const isImage = mimeType.startsWith("image/");
+                    const resolvedUrl = fileUrl.startsWith("/uploads") ? `http://localhost:3000${fileUrl}` : fileUrl;
+                    return isImage
+                      ? `
+                        <a class="mechanic-resolution-message-attachment" href="${resolvedUrl}" target="_blank" rel="noopener noreferrer">
+                          <img src="${resolvedUrl}" alt="${escapeHtml(originalName)}" />
+                          <span>${escapeHtml(originalName)}</span>
+                        </a>
+                      `
+                      : `
+                        <a class="mechanic-resolution-message-attachment" href="${resolvedUrl}" target="_blank" rel="noopener noreferrer">
+                          <span>${escapeHtml(originalName)}</span>
+                        </a>
+                      `;
+                  })
+                  .join("")}
+              </div>
+            `
+            : "";
           const item = document.createElement("div");
           item.className = `mechanic-resolution-message ${message.sender_role === "mechanic" ? "is-mechanic" : "is-customer"}`;
           item.innerHTML = `
-            <div class="mechanic-resolution-bubble">
-              <p>${String(message.body || "").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
-            </div>
+            ${bodyText ? `<div class="mechanic-resolution-bubble"><p>${bodyText.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p></div>` : ""}
+            ${attachmentsMarkup}
             <span class="mechanic-resolution-message-meta">${message.sender_name || "User"}, ${formatMechanicDateTime(message.created_at)}</span>
           `;
           mechanicResolutionMessages.appendChild(item);

@@ -147,7 +147,12 @@ const getMyResolutionCaseHandler = async (req, res) => {
 };
 
 const addMyResolutionMessageHandler = async (req, res) => {
-  const detail = await userService.addUserResolutionMessage(req.user.userId, req.params.caseId, req.body?.body);
+  const detail = await userService.addUserResolutionMessage(
+    req.user.userId,
+    req.params.caseId,
+    req.body?.body,
+    req.files || []
+  );
   res.json(detail);
 };
 
@@ -169,7 +174,12 @@ const getMyMechanicResolutionCaseHandler = async (req, res) => {
 };
 
 const addMyMechanicResolutionMessageHandler = async (req, res) => {
-  const detail = await userService.addMechanicResolutionMessage(req.user.userId, req.params.caseId, req.body?.body);
+  const detail = await userService.addMechanicResolutionMessage(
+    req.user.userId,
+    req.params.caseId,
+    req.body?.body,
+    req.files || []
+  );
   res.json(detail);
 };
 
