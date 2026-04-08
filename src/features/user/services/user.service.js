@@ -422,6 +422,7 @@ const listUserBookings = async (userId) => {
             v.make,
             v.model,
             v.year,
+            boa.responded_at AS booking_assigned_at,
             s.start_at AS slot_start_at,
             s.end_at AS slot_end_at,
             up.name AS mechanic_name,
@@ -429,6 +430,7 @@ const listUserBookings = async (userId) => {
      FROM bookings b
      LEFT JOIN addresses a ON a.id = b.address_id
      LEFT JOIN vehicles v ON v.id = b.vehicle_id
+     LEFT JOIN booking_offers boa ON boa.booking_id = b.id AND boa.status = 'accepted'
      LEFT JOIN availability_slots s ON s.id = b.slot_id
      LEFT JOIN user_profiles up ON up.user_id = b.mechanic_id
      WHERE b.customer_id = ?
@@ -554,6 +556,7 @@ const listUserBookings = async (userId) => {
         model: row.model || "",
         yearOfManufacture: row.year || null
       },
+      assigned_at: row.booking_assigned_at || null,
       mechanic: [row.mechanic_name, row.mechanic_lastname].filter(Boolean).join(" ") || null,
       payment: payment
         ? {

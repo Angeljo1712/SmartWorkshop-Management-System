@@ -445,8 +445,18 @@ if (userPage) {
       .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
       .join(" ");
 
-  const formatBookingDateTime = (slot) => {
-    if (!slot?.start_at || !slot?.end_at) return "Date and time not assigned yet";
+  const formatBookingDateTime = (slot, assignedAt = null) => {
+    if (!slot?.start_at || !slot?.end_at) {
+      if (!assignedAt) return "Date and time not assigned yet";
+      const assigned = new Date(assignedAt);
+      if (Number.isNaN(assigned.getTime())) return "Date and time not assigned yet";
+      return `Assigned on ${assigned.toLocaleDateString("en-GB", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      })} at ${assigned.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`;
+    }
     const start = new Date(slot.start_at);
     const end = new Date(slot.end_at);
     if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return "Date and time not assigned yet";
@@ -858,7 +868,7 @@ if (userPage) {
         <div class="user-booking-grid">
           <div class="user-booking-column">
             <h4>Date & Time</h4>
-            <p>${formatBookingDateTime(booking.slot)}</p>
+            <p>${formatBookingDateTime(booking.slot, booking.assigned_at)}</p>
             <h4>Location</h4>
             ${addressLines.map((line) => `<p>${line}</p>`).join("") || "<p>Address not available</p>"}
             <h4>Contact Details</h4>
