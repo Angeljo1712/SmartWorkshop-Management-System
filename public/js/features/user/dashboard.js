@@ -1041,7 +1041,7 @@ if (userPage) {
     const token = getStoredAuthValue("userToken");
     if (!token || !bookingId) return;
     const invoice = await apiAuth(`/api/invoices/bookings/${encodeURIComponent(bookingId)}`, token);
-    const target = popup || window.open("", "_blank", "noopener,noreferrer");
+    const target = popup || window.open("", "_blank");
     if (!target) {
       throw new Error("Please allow popups to open the invoice.");
     }
@@ -1553,7 +1553,7 @@ if (userPage) {
       const bookingId = Number(invoiceButton.dataset.userBookingInvoice);
       if (!bookingId) return;
       document.querySelectorAll(".user-booking-actions-panel").forEach((menu) => menu.classList.add("is-hidden"));
-      const popup = window.open("", "_blank", "noopener,noreferrer");
+      const popup = window.open("", "_blank");
       try {
         await openBookingInvoice(bookingId, popup);
       } catch (error) {

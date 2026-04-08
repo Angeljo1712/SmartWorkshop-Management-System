@@ -509,8 +509,7 @@ body.user-body #userSettingsView .settings-field h4,
 body.user-body #userSettingsView .user-settings-row h4,
 body.user-body #userSettingsView .user-settings-profile h4,
 body.user-body #userSettingsView .user-settings-profile p,
-body.user-body #userSettingsView .user-settings-row p,
-body.user-body #userSettingsView .form-error {
+body.user-body #userSettingsView .user-settings-row p {
   color: #ffffff;
 }
 
@@ -544,9 +543,8 @@ body.user-body #userSettingsView .user-settings-contact-list {
 }
 
 body.user-body #userSettingsView .user-settings-contact-item {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 104px;
-  gap: 14px;
+  display: flex;
+  gap: 12px;
   align-items: center;
   min-height: 44px;
 }
@@ -595,6 +593,7 @@ body.user-body #userSettingsView .user-settings-contact-actions {
   width: 104px;
   align-self: start;
   justify-self: end;
+  padding-top: 32px;
 }
 
 body.user-body #userSettingsView .user-settings-contact-actions .secondary {
@@ -865,13 +864,14 @@ body.user-body #userBookingsView .user-booking-column h4,
 body.user-body #userBookingsView .user-booking-photos h4,
 body.user-body #userBookingsView .user-booking-reference {
   color: #eaf0fb;
+  font-weight: 700;
 }
 
 body.user-body #userBookingsView .user-booking-column p,
 body.user-body #userBookingsView .user-booking-column li,
 body.user-body #userBookingsView .user-booking-column a,
 body.user-body #userBookingsView .user-booking-empty {
-  color: #c8d4e8;
+  color: #eaf0fb;
 }
 
 .user-bookings-list {
@@ -1168,6 +1168,11 @@ body.user-body .user-booking-card {
   border-radius: 14px;
   overflow: hidden;
   background: #3e434df7;
+  color: #ffffff;
+}
+
+body.user-body .user-booking-card :is(p, li, a, span, div) {
+  color: #ffffff;
 }
 
 body.user-body .user-booking-toolbar {
@@ -1219,6 +1224,14 @@ body.user-body .user-booking-toolbar {
 
 .user-booking-actions {
   min-width: 92px;
+  border: 0;
+  background: #5a6f90;
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 12px 24px;
+  min-height: 46px;
+  font-weight: 700;
+  box-shadow: none;
 }
 
 .user-booking-actions-wrap {
@@ -1236,20 +1249,21 @@ body.user-body .user-booking-toolbar {
   padding: 10px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
-  background: #171c24;
+  background: #f3f4f6;
   box-shadow: 0 18px 32px rgba(0, 0, 0, 0.28);
   z-index: 20;
+  justify-items: stretch;
 }
 
 .user-booking-actions-item {
   border: 0;
   border-radius: 12px;
   background: transparent;
-  color: #ffffff;
-  text-align: left;
+  text-align: center;
   padding: 10px 12px;
   font: inherit;
   cursor: pointer;
+  width: 100%;
 }
 
 .user-booking-actions-item:hover,
@@ -1274,7 +1288,9 @@ body.user-body .user-booking-toolbar {
 .user-booking-column h4,
 .user-booking-photos-inline h4 {
   margin: 10px 0 0;
-  font-size: 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
 }
 
 .user-booking-column p,
@@ -1301,11 +1317,12 @@ body.user-body .user-booking-toolbar {
   margin-top: 14px;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  gap: 8px;
+  justify-items: center;
 }
 
 .user-booking-photo-grid img {
-  width: 100%;
+  width: 50%;
   aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 8px;
