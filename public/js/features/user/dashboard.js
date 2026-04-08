@@ -855,13 +855,6 @@ if (userPage) {
               <button class="user-booking-actions-item" type="button" data-user-resolution-message="${booking.id}">
                 Resolution center
               </button>
-              ${
-                String(booking.status || "").toLowerCase() === "completed"
-                  ? `<button class="user-booking-actions-item" type="button" data-user-booking-invoice="${booking.id}">
-                      Invoice
-                    </button>`
-                  : ""
-              }
             </div>
           </div>
         </div>
@@ -893,7 +886,18 @@ if (userPage) {
             <h4>Parts</h4>
             <ul>${allParts.map((part) => `<li>${escapeHtml(part)}</li>`).join("") || "<li>No parts recorded</li>"}</ul>
             <h4>Documents</h4>
-            <p>${booking.invoice?.invoice_number ? `Invoice: ${escapeHtml(booking.invoice.invoice_number)}` : booking.payment?.provider_ref ? `Payment ref: ${escapeHtml(booking.payment.provider_ref)}` : "No documents available"}</p>
+            <p>${
+              booking.invoice?.invoice_number
+                ? `Invoice: ${escapeHtml(booking.invoice.invoice_number)}`
+                : booking.payment?.provider_ref
+                  ? `Payment ref: ${escapeHtml(booking.payment.provider_ref)}`
+                  : "No documents available"
+            }</p>
+            ${
+              String(booking.status || "").toLowerCase() === "completed" || booking.invoice?.invoice_number
+                ? `<button class="user-booking-receipt-link" type="button" data-user-booking-invoice="${booking.id}">View receipt</button>`
+                : ""
+            }
           </div>
         </div>
         <div class="user-booking-photos-inline">

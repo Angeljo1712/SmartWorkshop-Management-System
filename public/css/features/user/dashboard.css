@@ -1222,6 +1222,7 @@ body.user-body .user-booking-toolbar {
   justify-self: center;
 }
 
+body.user-body .user-booking-actions.primary,
 .user-booking-actions {
   min-width: 92px;
   border: 0;
@@ -1311,6 +1312,23 @@ body.user-body .user-booking-toolbar {
   padding: 0 20px 20px;
   display: grid;
   gap: 12px;
+}
+
+.user-booking-receipt-link {
+  border: 0;
+  background: transparent;
+  color: #3b82f6;
+  font: inherit;
+  font-weight: 700;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.user-booking-receipt-link:hover,
+.user-booking-receipt-link:focus-visible {
+  text-decoration: underline;
+  outline: none;
 }
 
 .user-booking-photo-grid {
