@@ -533,8 +533,7 @@ body.user-body #userSettingsView .user-settings-contact-copy p {
 }
 
 body.user-body #userSettingsView .settings-meta,
-body.user-body #userSettingsView .user-settings-row > div,
-body.user-body #userSettingsView .user-settings-contact-copy {
+body.user-body #userSettingsView .user-settings-row > div {
   display: grid;
   gap: 10px;
 }
@@ -545,7 +544,10 @@ body.user-body #userSettingsView .user-settings-contact-list {
 }
 
 body.user-body #userSettingsView .user-settings-contact-item {
-  display: block;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 104px;
+  gap: 14px;
+  align-items: center;
   min-height: 44px;
 }
 
@@ -553,18 +555,20 @@ body.user-body #userSettingsView .user-settings-contact-copy {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
 }
 
 body.user-body #userSettingsView .user-settings-contact-label {
   color: #ffffff;
   font-weight: 600;
   width: 110px;
+  flex: 0 0 110px;
   padding-right: 12px;
   margin-right: 12px;
   border-right: 2px solid rgba(255, 255, 255, 0.72);
   font-size: 1rem;
   line-height: 1.2;
-  flex: 0 0 110px;
+  white-space: nowrap;
 }
 
 body.user-body #userSettingsView .user-settings-contact-label::after {
@@ -577,6 +581,10 @@ body.user-body #userSettingsView .user-settings-contact-copy p {
   flex: 1 1 auto;
   font-size: 1.05rem;
   line-height: 1.35;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 body.user-body #userSettingsView .user-settings-contact-actions {
@@ -585,6 +593,8 @@ body.user-body #userSettingsView .user-settings-contact-actions {
   align-content: start;
   justify-items: end;
   width: 104px;
+  align-self: start;
+  justify-self: end;
 }
 
 body.user-body #userSettingsView .user-settings-contact-actions .secondary {
