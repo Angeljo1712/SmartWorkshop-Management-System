@@ -168,12 +168,14 @@ if (mechanicDashboard) {
   let latestMechanicResolutionCases = [];
   let latestMechanicAssignedBookings = [];
   let latestMechanicOffers = [];
-  let activeMechanicBookingOfferId = null;
-  let activeMechanicPaymentBookingId = null;
-  let activeMechanicCompletionBookingId = null;
-  let pendingMechanicPhotoBookingId = null;
-  const pendingMechanicCompletionFiles = new Map();
-  const pendingMechanicCompletionParts = new Map();
+    let activeMechanicBookingOfferId = null;
+    let activeMechanicPaymentBookingId = null;
+    let activeMechanicCompletionBookingId = null;
+    let activeMechanicCancelBookingId = null;
+    let pendingMechanicPhotoBookingId = null;
+    const pendingMechanicCompletionFiles = new Map();
+    const pendingMechanicCompletionParts = new Map();
+    const pendingMechanicCancellationReasons = new Map();
   let activeMechanicSettingsField = "";
   let mechanicBookingsPage = 1;
   let mechanicPaymentsPage = 1;
@@ -268,9 +270,22 @@ if (mechanicDashboard) {
     pendingMechanicCompletionParts.set(Number(bookingId), Array.isArray(parts) && parts.length ? parts : [{}]);
   };
 
-  const clearMechanicCompletionParts = (bookingId) => {
-    pendingMechanicCompletionParts.delete(Number(bookingId));
-  };
+    const clearMechanicCompletionParts = (bookingId) => {
+      pendingMechanicCompletionParts.delete(Number(bookingId));
+    };
+
+    const getMechanicCancellationReason = (bookingId) =>
+      pendingMechanicCancellationReasons.get(Number(bookingId)) || "";
+
+    const setMechanicCancellationReason = (bookingId, reason) => {
+      const value = String(reason || "").trim();
+      if (value) pendingMechanicCancellationReasons.set(Number(bookingId), value);
+      else pendingMechanicCancellationReasons.delete(Number(bookingId));
+    };
+
+    const clearMechanicCancellationReason = (bookingId) => {
+      pendingMechanicCancellationReasons.delete(Number(bookingId));
+    };
 
   const readMechanicCompletionPartsFromForm = (form) =>
     Array.from(form?.querySelectorAll(".mechanic-completion-part-row") || [])
@@ -446,9 +461,21 @@ if (mechanicDashboard) {
     const status = getMechanicOfferStatusKey(entry);
     if (status === "accepted") return "Accepted";
     if (status === "cancelled" || status === "canceled") return "Cancelled";
-    if (status === "declined") return "Declined";
+    if (status === "declined") return "Cancelled";
     if (status === "expired") return "Expired";
     return "Pending";
+  };
+
+  const getMechanicDetailStatusKey = (entry) => {
+    const bookingStatus = String(entry?.booking?.status || "").toLowerCase();
+    if (bookingStatus === "completed") return "completed";
+    if (bookingStatus === "in_progress") return "in_progress";
+    if (bookingStatus === "accepted") return "accepted";
+    if (bookingStatus === "cancelled" || bookingStatus === "canceled") return "cancelled";
+    const status = getMechanicOfferStatusKey(entry);
+    if (status === "declined") return "declined";
+    if (status === "expired") return "expired";
+    return "pending";
   };
 
   const getMechanicTableStatusKey = (entry) => {
@@ -653,7 +680,7 @@ if (mechanicDashboard) {
       .join("");
   };
 
-  const buildMechanicBookingDetailCard = (entry) => {
+    const buildMechanicBookingDetailCard = (entry) => {
     const itemsMarkup = (entry.items || [])
       .map(
         (item) => `
@@ -667,19 +694,35 @@ if (mechanicDashboard) {
     const reference = entry.booking?.reference || entry.booking?.id || "-";
     const statusKey = getMechanicOfferStatusKey(entry);
     const bookingStatusKey = String(entry.booking?.status || "").toLowerCase();
-    const topStatus = getMechanicOfferStatusLabel(entry).toUpperCase();
+    const topStatusKey = bookingStatusKey === "completed"
+      ? "completed"
+      : getMechanicDetailStatusKey(entry);
+    const topStatus = topStatusKey === "completed"
+      ? "Completed"
+      : topStatusKey === "accepted"
+        ? "Accepted"
+        : topStatusKey === "in_progress"
+          ? "In progress"
+          : topStatusKey === "cancelled"
+            ? "Cancelled"
+            : topStatusKey === "declined"
+              ? "Cancelled"
+              : topStatusKey === "expired"
+                ? "Expired"
+                : "Requested";
     const isPending = statusKey === "pending";
     const canComplete = ["accepted", "in_progress"].includes(bookingStatusKey);
     const canCancel = bookingStatusKey === "accepted";
     const isCompleted = bookingStatusKey === "completed";
     const isCancelledState = ["cancelled", "canceled"].includes(statusKey);
-    const isDeclinedState = statusKey === "declined";
-    const isExpiredState = statusKey === "expired";
-    const showCompletionCard = canComplete && !isCompleted && Number(activeMechanicCompletionBookingId) === Number(entry.booking?.id);
-    return `
+      const isDeclinedState = statusKey === "declined";
+      const isExpiredState = statusKey === "expired";
+      const showCancelCard = canCancel && Number(activeMechanicCancelBookingId) === Number(entry.booking?.id) && !isCompleted;
+      const showCompletionCard = canComplete && !isCompleted && Number(activeMechanicCompletionBookingId) === Number(entry.booking?.id);
+      return `
       <article class="mechanic-booking-card">
         <div class="mechanic-booking-topbar">
-          <span class="mechanic-booking-topbar-status" data-status="${escapeHtml(getMechanicOfferStatusKey(entry))}">${escapeHtml(topStatus)}</span>
+          <span class="mechanic-booking-topbar-status" data-status="${escapeHtml(topStatusKey)}">${escapeHtml(topStatus)}</span>
           <span class="mechanic-booking-topbar-reference">Reference: ${escapeHtml(String(reference))}</span>
           <span class="mechanic-booking-topbar-date">Sent: ${escapeHtml(formatDate(entry.sent_at || entry.booking?.created_at))}</span>
         </div>
@@ -703,29 +746,29 @@ if (mechanicDashboard) {
                 <button class="primary mechanic-offer-decision" type="button" data-offer-action="accept" data-offer-id="${escapeHtml(String(entry.offer_id || ""))}">Accept</button>
                 <button class="secondary mechanic-offer-decision mechanic-offer-decision--danger" type="button" data-offer-action="decline" data-offer-id="${escapeHtml(String(entry.offer_id || ""))}">Reject</button>
                 `
-              : canComplete
-                ? `
-                  <button class="primary mechanic-offer-complete-toggle" type="button" data-mechanic-complete-toggle="${escapeHtml(String(entry.booking?.id || ""))}">Complete</button>
-                  ${
-                    canCancel
-                      ? `<button class="secondary mechanic-offer-decision mechanic-offer-decision--danger" type="button" data-offer-action="cancel" data-offer-id="${escapeHtml(String(entry.offer_id || ""))}">Cancel</button>`
-                      : ""
-                  }
-                `
-              : isCompleted
-                ? `<button class="secondary mechanic-offer-decision mechanic-offer-decision--success" type="button" disabled>Completed</button>`
-              : isDeclinedState
-                ? ``
-              : isExpiredState
-                ? `<p class="mechanic-offer-state-copy">Expired.</p>`
-              : isCancelledState
+                  : canComplete
+                    ? `
+                    <button class="primary mechanic-offer-complete-toggle" type="button" data-mechanic-complete-toggle="${escapeHtml(String(entry.booking?.id || ""))}">Complete</button>
+                    ${
+                      canCancel
+                        ? `<button class="secondary mechanic-offer-cancel-toggle" type="button" data-mechanic-cancel-toggle="${escapeHtml(String(entry.booking?.id || ""))}">Cancel</button>`
+                        : ""
+                    }
+                  `
+                : isCompleted
+                  ? ""
+                : isDeclinedState
+                  ? `<button class="secondary mechanic-offer-decision mechanic-offer-decision--danger" type="button" disabled>Cancelled</button>`
+                : isExpiredState
+                  ? `<p class="mechanic-offer-state-copy">Expired.</p>`
+                : isCancelledState
                 ? `<button class="secondary mechanic-offer-decision mechanic-offer-decision--danger" type="button" disabled>Cancelled</button>`
                 : `<p class="mechanic-offer-state-copy">This offer is ${escapeHtml(getMechanicOfferStatusLabel(entry).toLowerCase())}.</p>`
             }
           </div>
-          ${
-            showCompletionCard
-              ? `
+            ${
+              showCompletionCard
+                ? `
                 <form class="mechanic-completion-card" data-mechanic-complete-form="${escapeHtml(String(entry.booking?.id || ""))}">
                   <div class="mechanic-completion-card-head">
                     <div>
@@ -756,13 +799,35 @@ if (mechanicDashboard) {
                   <div class="mechanic-completion-actions">
                     <button class="primary" type="submit">Finalize labour</button>
                   </div>
-                </form>
-              `
-              : ""
-          }
-        </article>
-      `;
-  };
+                  </form>
+                `
+                : ""
+            }
+            ${
+              showCancelCard
+                ? `
+                  <form class="mechanic-cancel-card" data-mechanic-cancel-form="${escapeHtml(String(entry.booking?.id || ""))}">
+                    <div class="mechanic-completion-card-head">
+                      <div>
+                        <h4>Reason of cancellation</h4>
+                        <p>Explain why you are cancelling this accepted booking.</p>
+                      </div>
+                      <button class="secondary mechanic-completion-close" type="button" data-mechanic-cancel-close>Close</button>
+                    </div>
+                    <div class="mechanic-completion-field">
+                      <span>Cancellation reason</span>
+                      <textarea class="mechanic-completion-textarea" data-mechanic-cancel-reason rows="4" placeholder="Add a reason for cancelling this booking" required>${escapeHtml(getMechanicCancellationReason(entry.booking?.id))}</textarea>
+                    </div>
+                    <div class="mechanic-completion-actions">
+                      <button class="primary mechanic-cancel-submit" type="submit">Confirm cancellation</button>
+                    </div>
+                  </form>
+                `
+                : ""
+            }
+          </article>
+        `;
+    };
 
   const buildMechanicPaymentDetailCard = (entry) => {
     const reference = entry.booking?.reference || entry.booking?.id || "-";
@@ -957,17 +1022,17 @@ if (mechanicDashboard) {
       }
     }
   };
-  const respondToMechanicOffer = async (offerId, action) => {
-    if (!mechanicToken || !offerId) return;
-    try {
-      await apiAuth(`/api/users/me/mechanic-offers/${encodeURIComponent(offerId)}/respond`, mechanicToken, {
-        method: "POST",
-        body: JSON.stringify({ action })
-      });
-      await Promise.all([syncMechanicBookings(), syncMechanicResolutionOverview()]);
-    } catch (error) {
-      window.alert(error?.message || "Unable to update this booking offer.");
-    }
+    const respondToMechanicOffer = async (offerId, action, reason = "") => {
+      if (!mechanicToken || !offerId) return;
+      try {
+        await apiAuth(`/api/users/me/mechanic-offers/${encodeURIComponent(offerId)}/respond`, mechanicToken, {
+          method: "POST",
+          body: JSON.stringify({ action, reason })
+        });
+        await Promise.all([syncMechanicBookings(), syncMechanicResolutionOverview()]);
+      } catch (error) {
+        window.alert(error?.message || "Unable to update this booking offer.");
+      }
   };
 
   const syncMechanicBookings = async () => {
@@ -1475,29 +1540,43 @@ if (mechanicDashboard) {
     }
   });
 
-  mechanicBookingDetail?.addEventListener("click", async (event) => {
-    const photoTrigger = event.target.closest("[data-mechanic-photo-trigger]");
-    if (photoTrigger) {
-      const form = photoTrigger.closest("[data-mechanic-complete-form]");
-      const bookingId = Number(form?.dataset.mechanicCompleteForm || 0);
-      pendingMechanicPhotoBookingId = bookingId;
+    mechanicBookingDetail?.addEventListener("click", async (event) => {
+      const cancelToggle = event.target.closest("[data-mechanic-cancel-toggle]");
+      if (cancelToggle) {
+        const bookingId = Number(cancelToggle.dataset.mechanicCancelToggle);
+        activeMechanicCancelBookingId = Number(activeMechanicCancelBookingId) === Number(bookingId) ? null : bookingId;
+        if (Number(activeMechanicCancelBookingId) === Number(bookingId)) {
+          activeMechanicCompletionBookingId = null;
+        }
+        renderMechanicBookings(latestMechanicOffers);
+        return;
+      }
+
+      const photoTrigger = event.target.closest("[data-mechanic-photo-trigger]");
+      if (photoTrigger) {
+        const form = photoTrigger.closest("[data-mechanic-complete-form]");
+        const bookingId = Number(form?.dataset.mechanicCompleteForm || 0);
+        pendingMechanicPhotoBookingId = bookingId;
       setMechanicCompletionParts(bookingId, readMechanicCompletionPartsFromForm(form));
       mechanicCompletionPhotoPicker.value = "";
       mechanicCompletionPhotoPicker.click();
       return;
     }
 
-    const completionToggle = event.target.closest("[data-mechanic-complete-toggle]");
-    if (completionToggle) {
-      const bookingId = Number(completionToggle.dataset.mechanicCompleteToggle);
-      if (Number(activeMechanicCompletionBookingId) !== Number(bookingId) && !pendingMechanicCompletionParts.has(Number(bookingId))) {
-        setMechanicCompletionParts(bookingId, [{}]);
+      const completionToggle = event.target.closest("[data-mechanic-complete-toggle]");
+      if (completionToggle) {
+        const bookingId = Number(completionToggle.dataset.mechanicCompleteToggle);
+        if (Number(activeMechanicCompletionBookingId) !== Number(bookingId) && !pendingMechanicCompletionParts.has(Number(bookingId))) {
+          setMechanicCompletionParts(bookingId, [{}]);
+        }
+        activeMechanicCompletionBookingId =
+          Number(activeMechanicCompletionBookingId) === Number(bookingId) ? null : bookingId;
+        if (Number(activeMechanicCompletionBookingId) === Number(bookingId)) {
+          activeMechanicCancelBookingId = null;
+        }
+        renderMechanicBookings(latestMechanicOffers);
+        return;
       }
-      activeMechanicCompletionBookingId =
-        Number(activeMechanicCompletionBookingId) === Number(bookingId) ? null : bookingId;
-      renderMechanicBookings(latestMechanicOffers);
-      return;
-    }
 
     const addPartButton = event.target.closest("[data-mechanic-add-part]");
     if (addPartButton) {
@@ -1521,21 +1600,31 @@ if (mechanicDashboard) {
       return;
     }
 
-    const completeCancel = event.target.closest("[data-mechanic-complete-cancel]");
-    if (completeCancel) {
-      const bookingId = Number(completeCancel.closest("[data-mechanic-complete-form]")?.dataset.mechanicCompleteForm || 0);
-      clearMechanicCompletionFiles(bookingId);
-      clearMechanicCompletionParts(bookingId);
-      activeMechanicCompletionBookingId = null;
-      renderMechanicBookings(latestMechanicOffers);
-      return;
-    }
+      const completeCancel = event.target.closest("[data-mechanic-complete-cancel]");
+      if (completeCancel) {
+        const bookingId = Number(completeCancel.closest("[data-mechanic-complete-form]")?.dataset.mechanicCompleteForm || 0);
+        clearMechanicCompletionFiles(bookingId);
+        clearMechanicCompletionParts(bookingId);
+        activeMechanicCompletionBookingId = null;
+        renderMechanicBookings(latestMechanicOffers);
+        return;
+      }
 
-    const offerAction = event.target.closest(".mechanic-offer-decision[data-offer-id][data-offer-action]");
-    if (offerAction) {
-      await respondToMechanicOffer(Number(offerAction.dataset.offerId), offerAction.dataset.offerAction);
-    }
-  });
+      const cancelClose = event.target.closest("[data-mechanic-cancel-close]");
+      if (cancelClose) {
+        const form = cancelClose.closest("[data-mechanic-cancel-form]");
+        const bookingId = Number(form?.dataset.mechanicCancelForm || 0);
+        clearMechanicCancellationReason(bookingId);
+        activeMechanicCancelBookingId = null;
+        renderMechanicBookings(latestMechanicOffers);
+        return;
+      }
+
+      const offerAction = event.target.closest(".mechanic-offer-decision[data-offer-id][data-offer-action]");
+      if (offerAction) {
+        await respondToMechanicOffer(Number(offerAction.dataset.offerId), offerAction.dataset.offerAction);
+      }
+    });
 
   mechanicCompletionPhotoPicker.addEventListener("change", () => {
     const bookingId = Number(pendingMechanicPhotoBookingId || 0);
@@ -1554,18 +1643,26 @@ if (mechanicDashboard) {
     setMechanicCompletionParts(bookingId, readMechanicCompletionPartsFromForm(form));
   });
 
-  mechanicBookingDetail?.addEventListener("input", (event) => {
-    const partInput = event.target.closest("[data-mechanic-part-description], [data-mechanic-part-amount]");
-    if (!partInput) return;
-    const form = partInput.closest("[data-mechanic-complete-form]");
-    const bookingId = Number(form?.dataset.mechanicCompleteForm || 0);
-    setMechanicCompletionParts(bookingId, readMechanicCompletionPartsFromForm(form));
-  });
+    mechanicBookingDetail?.addEventListener("input", (event) => {
+      const partInput = event.target.closest("[data-mechanic-part-description], [data-mechanic-part-amount]");
+      if (!partInput) return;
+      const form = partInput.closest("[data-mechanic-complete-form]");
+      const bookingId = Number(form?.dataset.mechanicCompleteForm || 0);
+      setMechanicCompletionParts(bookingId, readMechanicCompletionPartsFromForm(form));
+    });
 
-  mechanicBookingDetail?.addEventListener("submit", async (event) => {
-    const form = event.target.closest("[data-mechanic-complete-form]");
-    if (!form) return;
-    event.preventDefault();
+    mechanicBookingDetail?.addEventListener("input", (event) => {
+      const cancelReason = event.target.closest("[data-mechanic-cancel-reason]");
+      if (!cancelReason) return;
+      const form = cancelReason.closest("[data-mechanic-cancel-form]");
+      const bookingId = Number(form?.dataset.mechanicCancelForm || 0);
+      setMechanicCancellationReason(bookingId, cancelReason.value);
+    });
+
+    mechanicBookingDetail?.addEventListener("submit", async (event) => {
+      const form = event.target.closest("[data-mechanic-complete-form]");
+      if (!form) return;
+      event.preventDefault();
     const bookingId = Number(form.dataset.mechanicCompleteForm);
     const parts = Array.from(form.querySelectorAll(".mechanic-completion-part-row"))
       .map((row) => {
@@ -1578,9 +1675,27 @@ if (mechanicDashboard) {
         };
       })
       .filter(Boolean);
-    const files = getMechanicCompletionFiles(bookingId);
-    await completeMechanicBooking(bookingId, parts, files);
-  });
+      const files = getMechanicCompletionFiles(bookingId);
+      await completeMechanicBooking(bookingId, parts, files);
+    });
+
+    mechanicBookingDetail?.addEventListener("submit", async (event) => {
+      const form = event.target.closest("[data-mechanic-cancel-form]");
+      if (!form) return;
+      event.preventDefault();
+      const bookingId = Number(form.dataset.mechanicCancelForm);
+      const selectedBooking = latestMechanicOffers.find((entry) => Number(entry.booking?.id) === Number(bookingId));
+      const reason = form.querySelector("[data-mechanic-cancel-reason]")?.value?.trim() || "";
+      if (!reason) {
+        window.alert("Please add a reason for cancelling this booking.");
+        return;
+      }
+      if (selectedBooking) {
+        await respondToMechanicOffer(Number(selectedBooking.offer_id || 0), "cancel", reason);
+      }
+      clearMechanicCancellationReason(bookingId);
+      activeMechanicCancelBookingId = null;
+    });
 
   mechanicBookingsSearch?.addEventListener("input", () => {
     mechanicBookingsPage = 1;

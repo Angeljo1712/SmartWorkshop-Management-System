@@ -934,8 +934,8 @@ body.mechanic-body .mechanic-pagination button.active {
 
 body.mechanic-body .mechanic-booking-detail {
   border: 0;
-  border-radius: 0;
-  background: #3e434df7;
+  border-radius: 0px;
+  background: #0d1220;
   /* padding-top: 16px; */
 }
 
@@ -2069,11 +2069,29 @@ body.mechanic-body .mechanic-booking-topbar-status[data-status="accepted"] {
   background: #5a6f90;
 }
 
+body.mechanic-body .mechanic-booking-card .mechanic-booking-topbar-status[data-status="completed"] {
+  background: var(--dashboard-badge-green) !important;
+  color: #ffffff;
+}
+
 body.mechanic-body .mechanic-booking-topbar-status[data-status="declined"],
 body.mechanic-body .mechanic-booking-topbar-status[data-status="expired"],
 body.mechanic-body .mechanic-booking-topbar-status[data-status="cancelled"],
 body.mechanic-body .mechanic-booking-topbar-status[data-status="canceled"] {
   background: var(--dashboard-badge-red);
+}
+
+body.mechanic-body .mechanic-booking-topbar-status[data-status="declined"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  width: fit-content;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #ffffff;
 }
 
 body.mechanic-body .mechanic-booking-topbar-reference {
@@ -2203,9 +2221,14 @@ body.mechanic-body .mechanic-booking-status.mechanic-booking-status--completed {
   color: #ffffff;
 }
 
-body.mechanic-body .mechanic-table .mechanic-booking-status.mechanic-booking-status--accepted {
+body.mechanic-body .mechanic-table .mechanic-booking-status.mechanic-booking-status--accepted,
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--accepted {
   background: #5a6f90;
   color: #ffffff;
+}
+
+span.mechanic-booking-status.mechanic-booking-status--accepted {
+    background: #5a6f90;
 }
 
 body.mechanic-body .mechanic-table .mechanic-booking-status.mechanic-booking-status--completed {
@@ -2299,6 +2322,16 @@ body.mechanic-body .mechanic-completion-card {
   /* background: rgba(9, 13, 21, 0.42); */
 }
 
+body.mechanic-body .mechanic-cancel-card {
+  display: grid;
+  gap: 14px;
+  margin: 0 18px 18px;
+  padding: 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #0d1220;
+}
+
 body.mechanic-body .mechanic-completion-card-head {
   display: flex;
   align-items: start;
@@ -2355,6 +2388,23 @@ body.mechanic-body .mechanic-completion-file-trigger {
   justify-content: center;
   min-width: 140px;
   cursor: pointer;
+  background: #5a6f90;
+  border-color: #5a6f90;
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-completion-close,
+body.mechanic-body .mechanic-completion-add-part,
+body.mechanic-body .mechanic-completion-remove-part {
+  background: #5a6f90;
+  border-color: #5a6f90;
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-completion-actions .primary {
+  background: #5a6f90;
+  border-color: #5a6f90;
+  color: #ffffff;
 }
 
 body.mechanic-body .mechanic-completion-file-summary {
@@ -2445,6 +2495,12 @@ body.mechanic-body .mechanic-completion-actions {
   justify-content: flex-end;
 }
 
+body.mechanic-body .mechanic-offer-cancel-toggle {
+  background: var(--dashboard-badge-red);
+  border-color: var(--dashboard-badge-red);
+  color: #ffffff;
+}
+
 body.mechanic-body .mechanic-booking-item span {
   color: #b8c5da;
 }
@@ -2516,6 +2572,7 @@ body.mechanic-body .mechanic-content .mechanic-id span {
 body.mechanic-body .mechanic-content form {
   display: grid;
   gap: 12px;
+  background: #0f172a;
 }
 
 body.mechanic-body .mechanic-content input[type="password"] {
