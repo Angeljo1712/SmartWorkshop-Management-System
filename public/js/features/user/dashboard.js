@@ -112,7 +112,7 @@ if (userPage) {
   const userBookingDetail = document.getElementById("userBookingDetail");
   const userBookingsWelcomeSection = document.querySelector("#userBookingsView .bookings-section--welcome");
   const userBookingsCardSection = document.querySelector("#userBookingsView .bookings-section--card");
-  const userResolutionFilterTabs = document.querySelectorAll(".mechanic-resolution-card [data-user-resolution-filter]");
+  const userResolutionFilterTabs = document.querySelectorAll(".user-resolution-card [data-user-resolution-filter]");
   const userResolutionCasesTable = document.getElementById("userResolutionCasesTable");
   const userResolutionMessageView = document.getElementById("userResolutionMessageView");
   const userResolutionBackBtn = document.getElementById("userResolutionBackBtn");
@@ -131,8 +131,6 @@ if (userPage) {
   const userResolutionBookingCasesTable = document.getElementById("userResolutionBookingCasesTable");
   const userResolutionCaseView = document.getElementById("userResolutionCaseView");
   const userResolutionCaseBackBtn = document.getElementById("userResolutionCaseBackBtn");
-  const userResolutionCaseTitle = document.getElementById("userResolutionCaseTitle");
-  const userResolutionCaseSubtitle = document.getElementById("userResolutionCaseSubtitle");
   const userResolutionCaseCopy = document.getElementById("userResolutionCaseCopy");
   const userResolutionMessages = document.getElementById("userResolutionMessages");
   const userResolutionMessageInput = document.getElementById("userResolutionMessageInput");
@@ -1382,10 +1380,12 @@ if (userPage) {
     target.innerHTML = "";
     if (!Array.isArray(cases) || !cases.length) return;
     cases.forEach((entry) => {
+      const caseType = String(entry.type || entry.case_type || "general").toLowerCase();
+      const statusLabel = caseType === "complaint" ? "COMPLAINT" : "GENERAL ENQUIRY";
       const row = document.createElement("div");
       row.className = "mechanic-resolution-table-row";
       row.innerHTML = `
-        <span class="mechanic-resolution-status">${String(entry.subject || entry.type || "General enquiry").toUpperCase()}</span>
+        <span class="mechanic-resolution-status ${caseType === "complaint" ? "is-complaint" : "is-general"}">${statusLabel}</span>
         <span>${formatResolutionReference(entry.reference, entry.booking_id)}</span>
         <span>${formatUserResolutionDateTime(entry.updated_at)}</span>
         <span>${entry.subject || "-"}</span>
@@ -1447,17 +1447,17 @@ if (userPage) {
   const renderUserResolutionCaseDetail = (detail) => {
     pendingUserResolutionCaseId = detail?.id || null;
     pendingUserResolutionBookingId = detail?.booking?.id || detail?.booking_id || null;
-    const caseType = String(pendingUserResolutionCaseType || detail?.type || detail?.case_type || "").toLowerCase();
+    const caseType = String(detail?.case_type || detail?.type || pendingUserResolutionCaseType || "").toLowerCase();
     pendingUserResolutionCaseType = caseType || pendingUserResolutionCaseType;
     const rawCaseTitle = String(detail?.subject || "General Enquiry").trim();
+    const normalizedTitle = rawCaseTitle.replace(/\s*regarding booking$/i, "").trim();
     const caseTitle = caseType === "complaint"
       ? "Complaint"
-      : rawCaseTitle.replace(/\s*regarding booking$/i, "").trim();
-    if (userResolutionCaseTitle) userResolutionCaseTitle.textContent = caseTitle;
-    if (userResolutionCaseSubtitle) {
-      userResolutionCaseSubtitle.textContent = caseType === "complaint"
-        ? "Raise an issue about this booking"
-        : "Discuss your booking with your mechanic";
+      : normalizedTitle || "General Enquiry";
+    if (userResolutionCaseStatusBadge) {
+      userResolutionCaseStatusBadge.textContent = caseType === "complaint" ? "COMPLAINT" : "GENERAL ENQUIRY";
+      userResolutionCaseStatusBadge.classList.toggle("is-complaint", caseType === "complaint");
+      userResolutionCaseStatusBadge.classList.toggle("is-general", caseType !== "complaint");
     }
     if (userResolutionCaseCopy) {
       userResolutionCaseCopy.classList.toggle("is-hidden", caseType !== "general");
@@ -2353,5 +2353,6 @@ if (userPage) {
     window.location.replace("/");
   });
 }
+
 
 

@@ -290,7 +290,7 @@ block content
                       .mechanic-resolution-detail-head
                         button.mechanic-resolution-back#userResolutionBackBtn(type="button") Back
                         h3#userResolutionDetailTitle Resolution Center
-                      .mechanic-resolution-card
+                      .user-resolution-card
                         .mechanic-resolution-field
                           label(for="userResolutionIssue") Please select your issue from the list below:
                           select#userResolutionIssue
@@ -312,7 +312,7 @@ block content
                           label.secondary#userResolutionComplaintAttachBtn(for="userResolutionComplaintAttachmentInput") Attach file(s)
                         input#userResolutionComplaintAttachmentInput.is-hidden(type="file" multiple accept="image/*,application/pdf")
                         .mechanic-resolution-compose-preview#userResolutionComplaintAttachmentPreview
-                  .mechanic-resolution-card
+                  .user-resolution-card
                     h3 Current cases
                     .mechanic-resolution-tabs
                       button.mechanic-resolution-tab.is-active(type="button" data-user-resolution-filter="all") All
@@ -326,26 +326,11 @@ block content
                         span Subject
                         span
                       #userResolutionCasesTable
-                  #userResolutionBookingCasesView
-                    h3 Current cases
-                    .mechanic-resolution-card
-                      .mechanic-resolution-card-header#userResolutionCaseListTitle Resolution cases already created for booking
-                      .mechanic-resolution-table
-                        .mechanic-resolution-table-head
-                          span Status
-                          span Reference
-                          span Updated at
-                          span Subject
-                          span
-                        #userResolutionBookingCasesTable
                   #userResolutionCaseView.user-resolution-detail-view.is-hidden
                     .settings-card.user-CaseView
                       .mechanic-detail-card
-                        .title-resolution-case
-                          h2#userResolutionCaseDetailTitle General Enquiry
-                          span#userResolutionCaseSubtitle Discuss your booking with your mechanic
-                          span#userResolutionCaseStatusBadge
                         .mechanic-resolution-main
+                          span#userResolutionCaseStatusBadge
                           p.mechanic-resolution-case-copy.is-hidden#userResolutionCaseCopy You can use this page to discuss your booking with your mechanic. Your messages will be sent directly to the mechanic, and you will receive an email whenever there's an update.
                           .mechanic-resolution-thread#userResolutionMessages
                           .mechanic-resolution-compose
@@ -528,6 +513,7 @@ block content
 
 append scripts
   script(src="/js/features/user/dashboard.js")
+
 
 
 

@@ -350,7 +350,7 @@ body.user-body .main-header.general-header {
 }
 
 body.user-body .user-content .settings-card,
-body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-card,
+body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .user-resolution-card,
 body.user-body :is(#userResolutionView, #userResolutionCaseView) .mechanic-resolution-sidebar-card,
 body.user-body #userSettingsSecurity .security-card,
 body.user-body #userSettingsNotifications .notifications-card,
@@ -1387,7 +1387,7 @@ body.user-body :is(#userBookingsView, #userResolutionView) .bookings-section--re
   padding: 0 20px 20px;
 }
 
-body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-card,
+body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .user-resolution-card,
 body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-detail,
 body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-case,
 body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-sidebar-card {
@@ -1397,15 +1397,15 @@ body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessag
   color: #eaf0fb;
 }
 
-body.user-body .mechanic-resolution-card {
+body.user-body .user-resolution-card {
   /* grid removed */
 }
 
-body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-card {
+body.user-body :is(#userBookingsView, #userResolutionView) .user-resolution-card {
   overflow: hidden;
 }
 
-body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-card-header {
+body.user-body :is(#userBookingsView, #userResolutionView) .user-resolution-card-header {
   padding: 18px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   font-weight: 700;
@@ -1442,7 +1442,6 @@ body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-
   min-width: 120px;
   padding: 8px 12px;
   border-radius: 999px;
-  background: #2b8f57;
   color: #ffffff;
   font-size: 0.75rem;
   font-weight: 800;
@@ -1778,7 +1777,7 @@ body.user-body #userResolutionView .user-resolution-layout {
   gap: 25px;
 }
 
-body.user-body .mechanic-resolution-card {
+body.user-body .user-resolution-card {
   /* grid removed */
 }
 
@@ -1848,14 +1847,14 @@ body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-res
   opacity: 1;
 }
 
-body.user-body .user-resolution-layout .mechanic-resolution-card {
+body.user-body .user-resolution-layout .user-resolution-card {
   border: 0;
   border-radius: 22px;
   background: #3e434df7;
   overflow: hidden;
 }
 
-body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-card,
+body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .user-resolution-card,
 body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-detail,
 body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-case,
 body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-sidebar-card {
@@ -1868,8 +1867,8 @@ body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolut
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-body.user-body #userResolutionMessageView.user-resolution-detail-view .mechanic-resolution-card,
-body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-card,
+body.user-body #userResolutionMessageView.user-resolution-detail-view .user-resolution-card,
+body.user-body #userResolutionCaseView.user-resolution-detail-view .user-resolution-card,
 body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-case {
   border: 0;
   background: transparent;
@@ -1900,23 +1899,25 @@ body.user-body #userResolutionCaseView.user-resolution-detail-view .title-resolu
   text-align: center;
 }
 
-body.user-body #userResolutionCaseView.user-resolution-detail-view .title-resolution-case h2 {
-  margin: 0;
-  font-size: 2rem;
-  line-height: 1.15;
-  color: #ffffff;
-}
-
-body.user-body #userResolutionCaseView.user-resolution-detail-view #userResolutionCaseSubtitle {
-  color: rgba(234, 240, 251, 0.8);
-  font-size: 0.95rem;
-  line-height: 1.35;
-}
-
 body.user-body #userResolutionCaseView.user-resolution-detail-view #userResolutionCaseStatusBadge {
-  color: rgba(234, 240, 251, 0.8);
-  font-size: 1rem;
+  display: inline-flex;
+  justify-content: center;
+  align-self: flex-start;
+  padding: 10px 16px;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 1.15rem;
   font-weight: 500;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view #userResolutionCaseStatusBadge.is-general {
+  color: #ffffff;
+  background: #2f7d4f;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view #userResolutionCaseStatusBadge.is-complaint {
+  color: #ffffff;
+  background: #c84d5d;
 }
 
 body.user-body #userResolutionCaseView .settings-card.user-CaseView {
@@ -2170,7 +2171,7 @@ body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-res
   }
 }
 
-body.user-body .mechanic-resolution-card h3 {
+body.user-body .user-resolution-card h3 {
   margin: 0;
   padding: 18px 22px;
   font-size: 1.05rem;
@@ -2178,20 +2179,20 @@ body.user-body .mechanic-resolution-card h3 {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-body.user-body .mechanic-resolution-card .mechanic-resolution-card-body {
+body.user-body .user-resolution-card .user-resolution-card-body {
   padding: 22px;
   display: grid;
   gap: 18px;
 }
 
-body.user-body .mechanic-resolution-card .mechanic-resolution-tabs {
+body.user-body .user-resolution-card .mechanic-resolution-tabs {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   padding: 18px;
 }
 
-body.user-body .mechanic-resolution-card .mechanic-resolution-tab {
+body.user-body .user-resolution-card .mechanic-resolution-tab {
   min-height: 42px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
@@ -2201,50 +2202,60 @@ body.user-body .mechanic-resolution-card .mechanic-resolution-tab {
   cursor: pointer;
 }
 
-body.user-body .mechanic-resolution-card .mechanic-resolution-tab.is-active {
+body.user-body .user-resolution-card .mechanic-resolution-tab.is-active {
   background: var(--dashboard-tab-active-bg);
   color: #ffffff;
   border-color: var(--dashboard-tab-active-border);
 }
 
-body.user-body .mechanic-resolution-card .mechanic-resolution-table {
+body.user-body .user-resolution-card .mechanic-resolution-table {
   display: grid;
   gap: 12px;
 }
 
-body.user-body .mechanic-resolution-card .mechanic-resolution-table-head,
-body.user-body .mechanic-resolution-card .mechanic-resolution-table-row {
+body.user-body .user-resolution-card .mechanic-resolution-table-head,
+body.user-body .user-resolution-card .mechanic-resolution-table-row {
   display: grid;
   grid-template-columns: 150px 150px 160px minmax(0, 1fr) 80px;
   gap: 16px;
   align-items: center;
 }
 
-body.user-body .mechanic-resolution-card .mechanic-resolution-table-head {
+body.user-body .user-resolution-card .mechanic-resolution-table-head {
   color: #d6dfef;
   font-weight: 700;
   font-size: 0.95rem;
 }
 
-body.user-body .mechanic-resolution-card .mechanic-resolution-table-row {
+body.user-body .user-resolution-card .mechanic-resolution-table-row {
   min-height: 56px;
   padding: 12px 0 0;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   color: #ffffff;
 }
 
-body.user-body .mechanic-resolution-card .mechanic-resolution-status {
+body.user-body .user-resolution-card .mechanic-resolution-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   justify-self: start;
   padding: 7px 12px;
   border-radius: 999px;
-  background: #2f7d4f;
   color: #ffffff;
   font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: 0.08em;
 }
 
-body.user-body .mechanic-resolution-card .mechanic-resolution-link {
+body.user-body .user-resolution-card .mechanic-resolution-status.is-general {
+  background: #2f7d4f !important;
+}
+
+body.user-body .user-resolution-card .mechanic-resolution-status.is-complaint {
+  background: #c84d5d !important;
+}
+
+body.user-body .user-resolution-card .mechanic-resolution-link {
   border: 0;
   background: transparent;
   color: #1e93f2;
@@ -2253,8 +2264,8 @@ body.user-body .mechanic-resolution-card .mechanic-resolution-link {
 }
 
 @media (max-width: 900px) {
-  body.user-body .mechanic-resolution-card .mechanic-resolution-table-head,
-  body.user-body .mechanic-resolution-card .mechanic-resolution-table-row {
+  body.user-body .user-resolution-card .mechanic-resolution-table-head,
+  body.user-body .user-resolution-card .mechanic-resolution-table-row {
     grid-template-columns: 1fr;
   }
 }
@@ -3564,6 +3575,7 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
   }
 }
   
+
 
 
 
