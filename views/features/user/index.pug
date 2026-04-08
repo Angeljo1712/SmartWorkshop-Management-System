@@ -312,6 +312,20 @@ block content
                           label.secondary#userResolutionComplaintAttachBtn(for="userResolutionComplaintAttachmentInput") Attach file(s)
                         input#userResolutionComplaintAttachmentInput.is-hidden(type="file" multiple accept="image/*,application/pdf")
                         .mechanic-resolution-compose-preview#userResolutionComplaintAttachmentPreview
+                  .mechanic-resolution-card
+                    h3 Current cases
+                    .mechanic-resolution-tabs
+                      button.mechanic-resolution-tab.is-active(type="button" data-user-resolution-filter="all") All
+                      button.mechanic-resolution-tab(type="button" data-user-resolution-filter="complaint") Complaint
+                      button.mechanic-resolution-tab(type="button" data-user-resolution-filter="general") General
+                    .mechanic-resolution-table
+                      .mechanic-resolution-table-head
+                        span Status
+                        span Reference
+                        span Updated at
+                        span Subject
+                        span
+                      #userResolutionCasesTable
                   #userResolutionBookingCasesView
                     h3 Current cases
                     .mechanic-resolution-card
@@ -328,7 +342,7 @@ block content
                     .settings-card.user-CaseView
                       .mechanic-detail-card
                         .title-resolution-case
-                          h2#userResolutionCaseDetailTitle General Enquiry regarding booking
+                          h2#userResolutionCaseDetailTitle General Enquiry
                           span#userResolutionCaseSubtitle Discuss your booking with your mechanic
                           span#userResolutionCaseStatusBadge
                         .mechanic-resolution-main

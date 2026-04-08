@@ -1449,7 +1449,10 @@ if (userPage) {
     pendingUserResolutionBookingId = detail?.booking?.id || detail?.booking_id || null;
     const caseType = String(pendingUserResolutionCaseType || detail?.type || detail?.case_type || "").toLowerCase();
     pendingUserResolutionCaseType = caseType || pendingUserResolutionCaseType;
-    const caseTitle = caseType === "complaint" ? "Complaint" : (detail?.subject || "General Enquiry");
+    const rawCaseTitle = String(detail?.subject || "General Enquiry").trim();
+    const caseTitle = caseType === "complaint"
+      ? "Complaint"
+      : rawCaseTitle.replace(/\s*regarding booking$/i, "").trim();
     if (userResolutionCaseTitle) userResolutionCaseTitle.textContent = caseTitle;
     if (userResolutionCaseSubtitle) {
       userResolutionCaseSubtitle.textContent = caseType === "complaint"
