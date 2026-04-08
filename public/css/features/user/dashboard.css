@@ -202,7 +202,7 @@ body.user-body .main-header.general-header {
 
 #userPage .mainRail .rail-brand {
   width: 100%;
-  padding: 0 0 10px;
+  /* padding: 0 0 10px; */
 }
 
 #userPage .mainRail .rail-brand .logo {
