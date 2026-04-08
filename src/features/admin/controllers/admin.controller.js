@@ -1,5 +1,6 @@
 const adminService = require("../services/admin.service");
 const authService = require("../../auth/services/auth.service");
+const { sendAccountChangeNotification } = require("../../../shared/infrastructure/email/email.service");
 
 const listWorkshopsHandler = async (_req, res) => {
   const workshops = await adminService.listWorkshops();
@@ -34,7 +35,20 @@ const listApplicationsHandler = async (_req, res) => {
 const updateApplicationStatusHandler = async (req, res) => {
   const userId = Number(req.params.userId);
   const { action } = req.body || {};
+  const previousApplications = await adminService.listApplications();
+  const previous = previousApplications.find((item) => Number(item.user_id) === Number(userId)) || null;
   const result = await adminService.updateApplicationStatus({ userId, action });
+  if (previous?.email && result) {
+    try {
+      await sendAccountChangeNotification({
+        to: previous.email,
+        title: "SmartWorkshop - Application status changed",
+        changes: ["Application status"]
+      });
+    } catch (error) {
+      console.error("Unable to send application status notification", error);
+    }
+  }
   res.json(result);
 };
 
@@ -94,20 +108,80 @@ const createUserHandler = async (req, res) => {
 const setUserRoleHandler = async (req, res) => {
   const userId = Number(req.params.userId);
   const { role, action } = req.body || {};
+  const previousUsers = await adminService.listUsers();
+  const previous = previousUsers.find((item) => Number(item.user_id) === Number(userId)) || null;
   const result = await adminService.setUserRole({ userId, role, action });
+  if (previous?.email && result) {
+    try {
+      await sendAccountChangeNotification({
+        to: previous.email,
+        title: "SmartWorkshop - Role changed",
+        changes: ["Role"]
+      });
+    } catch (error) {
+      console.error("Unable to send role change notification", error);
+    }
+  }
   res.json(result);
 };
 
 const setUserStatusHandler = async (req, res) => {
   const userId = Number(req.params.userId);
   const { status } = req.body || {};
+  const previousUsers = await adminService.listUsers();
+  const previous = previousUsers.find((item) => Number(item.user_id) === Number(userId)) || null;
   const result = await adminService.setUserStatus({ userId, status });
+  if (previous?.email && result) {
+    try {
+      await sendAccountChangeNotification({
+        to: previous.email,
+        title: "SmartWorkshop - Status changed",
+        changes: ["Status"]
+      });
+    } catch (error) {
+      console.error("Unable to send status change notification", error);
+    }
+  }
   res.json(result);
 };
 
 const updateUserHandler = async (req, res) => {
   const userId = Number(req.params.userId);
+  const previousUsers = await adminService.listUsers();
+  const previous = previousUsers.find((item) => Number(item.user_id) === Number(userId)) || null;
   const result = await adminService.updateUser({ userId, ...req.body });
+  if (previous?.email && result) {
+    const changes = [];
+    if (req.body?.full_name !== undefined && String(req.body.full_name || "").trim() !== String(previous.full_name || "").trim()) {
+      changes.push("Full name");
+    }
+    if (req.body?.phone !== undefined && String(req.body.phone || "").trim() !== String(previous.phone || "").trim()) {
+      changes.push("Phone");
+    }
+    if (req.body?.username !== undefined && String(req.body.username || "").trim().toLowerCase() !== String(previous.username || "").trim().toLowerCase()) {
+      changes.push("Username");
+    }
+    if (req.body?.address !== undefined && String(req.body.address || "").trim() !== String(previous.address || "").trim()) {
+      changes.push("Address");
+    }
+    if (req.body?.role !== undefined && String(req.body.role || "").trim().toLowerCase() !== String(previous.role_name || "").trim().toLowerCase()) {
+      changes.push("Role");
+    }
+    if (req.body?.status !== undefined && String(req.body.status || "").trim().toLowerCase() !== String(previous.status || "").trim().toLowerCase()) {
+      changes.push("Status");
+    }
+    if (changes.length) {
+      try {
+        await sendAccountChangeNotification({
+          to: previous.email,
+          title: "SmartWorkshop - Account details changed by administrator",
+          changes
+        });
+      } catch (error) {
+        console.error("Unable to send admin account change notification", error);
+      }
+    }
+  }
   res.json(result);
 };
 

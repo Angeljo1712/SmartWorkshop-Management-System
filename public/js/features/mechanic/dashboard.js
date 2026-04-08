@@ -155,9 +155,12 @@ if (mechanicDashboard) {
   const mechanicResolutionSidebarTotal = document.getElementById("mechanicResolutionSidebarTotal");
   const mechanicSettingsSubnavLinks = mechanicDashboard.querySelectorAll("[data-mechanic-settings-subview]");
   const mechanicSettingsGeneral = document.getElementById("mechanicSettingsGeneral");
-  const mechanicSettingsNotifications = document.getElementById("mechanicSettingsNotifications");
-  const mechanicSettingsSecurity = document.getElementById("mechanicSettingsSecurity");
-  const mechanicSecurity2faEnable = document.getElementById("mechanicSecurity2faEnable");
+    const mechanicSettingsNotifications = document.getElementById("mechanicSettingsNotifications");
+    const mechanicSettingsSecurity = document.getElementById("mechanicSettingsSecurity");
+    const mechanicSecurity2faEmail = document.getElementById("mechanicSecurity2faEmail");
+    const mechanicSecurity2faSms = document.getElementById("mechanicSecurity2faSms");
+    const mechanicSecurity2faEnable = document.getElementById("mechanicSecurity2faEnable");
+    const mechanicSecurity2faMessage = document.getElementById("mechanicSecurity2faMessage");
   const editLink = document.getElementById("mechanicEditProfile");
   const viewLink = document.getElementById("mechanicViewProfile");
   const profile = getStoredAuthValue("userProfile");
@@ -196,6 +199,11 @@ if (mechanicDashboard) {
   const setLabeledText = (el, label, value) => {
     if (!el) return;
     el.innerHTML = `<span class="mechanic-account-label">${escapeHtml(label)}</span><span class="mechanic-account-value">${escapeHtml(value || "-")}</span>`;
+  };
+  const syncMechanicSecurity2faButton = () => {
+    if (!mechanicSecurity2faEnable) return;
+    const hasSelection = Boolean(mechanicSecurity2faEmail?.checked || mechanicSecurity2faSms?.checked);
+    mechanicSecurity2faEnable.classList.toggle("is-active", hasSelection);
   };
 
   const setSimpleOptions = (select, labels, defaultLabel) => {
@@ -344,6 +352,9 @@ if (mechanicDashboard) {
       if (mechanicSettingsUsername) mechanicSettingsUsername.textContent = user?.username || "-";
       if (mechanicSettingsEmail) mechanicSettingsEmail.textContent = user?.email || "-";
       if (mechanicSettingsAddress) mechanicSettingsAddress.textContent = user?.address || "-";
+      if (mechanicSecurity2faEmail) mechanicSecurity2faEmail.checked = Boolean(user?.two_factor_email_enabled);
+      if (mechanicSecurity2faSms) mechanicSecurity2faSms.checked = false;
+      syncMechanicSecurity2faButton();
       if (mechanicSecurityUsername) mechanicSecurityUsername.value = user?.email || user?.username || "";
       if (mechanicProfileHeading) {
         const location = user?.address_details?.city || user?.address || "Surrey";
@@ -1802,12 +1813,36 @@ if (mechanicDashboard) {
     }
   });
 
-  mechanicSecurity2faEnable?.addEventListener("click", () => {
-    mechanicSecurity2faEnable.classList.toggle("is-active");
-    mechanicSecurity2faEnable.textContent = mechanicSecurity2faEnable.classList.contains("is-active")
-      ? "2FA Enabled"
-      : "Enable 2FA";
+  mechanicSecurity2faEnable?.addEventListener("click", async () => {
+    const token = getStoredAuthValue("userToken");
+    if (!token) return;
+    if (mechanicSecurity2faMessage) mechanicSecurity2faMessage.textContent = "";
+    try {
+      const result = await apiAuth("/api/users/me/security/two-factor", token, {
+        method: "PATCH",
+        body: JSON.stringify({
+          two_factor_email_enabled: Boolean(mechanicSecurity2faEmail?.checked)
+        })
+      });
+      if (result) {
+        setStoredAuthValue("userProfile", JSON.stringify(result));
+      }
+      syncMechanicSecurity2faButton();
+      if (mechanicSecurity2faMessage) {
+        mechanicSecurity2faMessage.textContent = mechanicSecurity2faEmail?.checked
+          ? "Email 2FA enabled."
+          : "Email 2FA disabled.";
+      }
+    } catch (err) {
+      console.error("Unable to update mechanic two factor settings", err);
+      if (mechanicSecurity2faMessage) {
+        mechanicSecurity2faMessage.textContent = err?.error?.message || err?.message || "Unable to update two factor settings.";
+      }
+    }
   });
+
+  mechanicSecurity2faEmail?.addEventListener("change", syncMechanicSecurity2faButton);
+  mechanicSecurity2faSms?.addEventListener("change", syncMechanicSecurity2faButton);
 
   mechanicResolutionBackBtn?.addEventListener("click", () => {
     setMechanicResolutionSubview("overview");

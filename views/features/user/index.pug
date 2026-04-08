@@ -470,8 +470,9 @@ block content
                             label.security-check
                               input#userSecurity2faSms(type="checkbox")
                               span SMS
+                          p.form-error#userSecurity2faMessage(role="alert" aria-live="polite")
                           .security-actions
-                            button.secondary#userSecurity2faEnable(type="button") Enable 2FA
+                            button.secondary#userSecurity2faEnable(type="button") Save 2FA
                 .settings-edit-modal.is-hidden#userSettingsEditModal
                   .settings-edit-backdrop(data-close-modal="true")
                   .settings-edit-dialog(role="dialog" aria-modal="true" aria-labelledby="userSettingsEditTitle")

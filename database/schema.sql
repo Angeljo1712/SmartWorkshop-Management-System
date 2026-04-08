@@ -94,6 +94,26 @@ CREATE TABLE IF NOT EXISTS email_change_requests (
   CONSTRAINT fk_ecr_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS user_security_settings (
+  user_id BIGINT UNSIGNED PRIMARY KEY,
+  two_factor_email_enabled TINYINT(1) NOT NULL DEFAULT 0,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_uss_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS login_two_factor_challenges (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT UNSIGNED NOT NULL,
+  challenge_token CHAR(64) NOT NULL UNIQUE,
+  code_hash TEXT NOT NULL,
+  expires_at DATETIME NOT NULL,
+  consumed_at DATETIME NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY idx_l2fc_user (user_id, created_at),
+  KEY idx_l2fc_expires (expires_at),
+  CONSTRAINT fk_l2fc_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS mechanic_profiles (
   user_id BIGINT UNSIGNED PRIMARY KEY,
   display_name VARCHAR(120) NOT NULL,

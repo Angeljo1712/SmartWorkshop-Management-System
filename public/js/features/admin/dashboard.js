@@ -177,6 +177,7 @@ if (adminPage) {
   const adminSecurity2faEmail = document.getElementById("adminSecurity2faEmail");
   const adminSecurity2faSms = document.getElementById("adminSecurity2faSms");
   const adminSecurity2faEnable = document.getElementById("adminSecurity2faEnable");
+  const adminSecurity2faMessage = document.getElementById("adminSecurity2faMessage");
 
 
   let adminUsers = [];
@@ -287,6 +288,9 @@ if (adminPage) {
     if (adminSettingsViewUsername) adminSettingsViewUsername.textContent = user?.username || "-";
     if (adminSettingsViewEmail) adminSettingsViewEmail.textContent = user?.email || "admin@smartworkshop.local";
     if (adminSettingsViewAddress) adminSettingsViewAddress.textContent = addressText || "-";
+    if (adminSecurity2faEmail) adminSecurity2faEmail.checked = Boolean(user?.two_factor_email_enabled);
+    if (adminSecurity2faSms) adminSecurity2faSms.checked = false;
+    syncAdminSecurity2faButton();
   };
 
   const setAdminSettingsSubview = (subview) => {
@@ -309,7 +313,7 @@ if (adminPage) {
   const syncAdminSecurity2faButton = () => {
     if (!adminSecurity2faEnable) return;
     const hasSelection = Boolean(adminSecurity2faEmail?.checked || adminSecurity2faSms?.checked);
-    adminSecurity2faEnable.disabled = !hasSelection;
+    adminSecurity2faEnable.disabled = false;
     adminSecurity2faEnable.classList.toggle("is-active", hasSelection);
   };
 
@@ -2568,6 +2572,33 @@ if (adminPage) {
 
   adminSecurity2faEmail?.addEventListener("change", syncAdminSecurity2faButton);
   adminSecurity2faSms?.addEventListener("change", syncAdminSecurity2faButton);
+  adminSecurity2faEnable?.addEventListener("click", async () => {
+    const token = getAdminToken();
+    if (!token) return;
+    if (adminSecurity2faMessage) adminSecurity2faMessage.textContent = "";
+    try {
+      const result = await apiAuth("/api/users/me/security/two-factor", token, {
+        method: "PATCH",
+        body: JSON.stringify({
+          two_factor_email_enabled: Boolean(adminSecurity2faEmail?.checked)
+        })
+      });
+      if (result) {
+        setStoredAuthValue("userProfile", JSON.stringify(result));
+      }
+      syncAdminSecurity2faButton();
+      if (adminSecurity2faMessage) {
+        adminSecurity2faMessage.textContent = adminSecurity2faEmail?.checked
+          ? "Email 2FA enabled."
+          : "Email 2FA disabled.";
+      }
+    } catch (err) {
+      console.error("Unable to update admin two factor settings", err);
+      if (adminSecurity2faMessage) {
+        adminSecurity2faMessage.textContent = err?.error?.message || err?.message || "Unable to update two factor settings.";
+      }
+    }
+  });
 
   adminDashboardView?.addEventListener("click", (event) => {
     const targetButton = event.target.closest("[data-admin-dashboard-target]");

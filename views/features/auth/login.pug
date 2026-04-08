@@ -36,6 +36,21 @@ block content
           a.auth-link(href="/auth/forgot-password") Forgot your password
           p.form-error#signInError(role="alert" aria-live="polite")
           button.primary.auth-submit(type="submit") Sign in
+        .auth-two-factor.is-hidden#twoFactorPanel
+          h2 Verify your email
+          p.auth-two-factor-copy#twoFactorMessage We sent a verification code to your email.
+          form.auth-form#twoFactorForm(autocomplete="off")
+            label
+              input#twoFactorCode(
+                type="text"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                placeholder="6-digit code"
+                maxlength="6"
+              )
+            p.form-error#twoFactorError(role="alert" aria-live="polite")
+            button.primary.auth-submit(type="submit") Verify code
+          button.auth-link#twoFactorBack(type="button") Back to sign in
       .auth-content.auth-content--create
         .auth-vehicle-card
           h2 Let’s go!

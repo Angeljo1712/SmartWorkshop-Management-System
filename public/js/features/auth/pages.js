@@ -4,6 +4,37 @@
     const signInEmail = document.getElementById("signInEmail");
     const signInPassword = document.getElementById("signInPassword");
     const signInError = document.getElementById("signInError");
+    const twoFactorPanel = document.getElementById("twoFactorPanel");
+    const twoFactorForm = document.getElementById("twoFactorForm");
+    const twoFactorCode = document.getElementById("twoFactorCode");
+    const twoFactorError = document.getElementById("twoFactorError");
+    const twoFactorMessage = document.getElementById("twoFactorMessage");
+    const twoFactorBack = document.getElementById("twoFactorBack");
+
+    let pendingChallengeToken = "";
+    let pendingLoginIdentifier = "";
+
+    const showTwoFactorPanel = (message, challengeToken) => {
+      pendingChallengeToken = challengeToken || "";
+      if (twoFactorMessage) twoFactorMessage.textContent = message || "We sent a verification code to your email.";
+      signInForm.classList.add("is-hidden");
+      twoFactorPanel?.classList.remove("is-hidden");
+      if (twoFactorError) twoFactorError.textContent = "";
+      if (twoFactorCode) twoFactorCode.value = "";
+      setTimeout(() => {
+        twoFactorCode?.focus();
+      }, 0);
+    };
+
+    const hideTwoFactorPanel = () => {
+      pendingChallengeToken = "";
+      pendingLoginIdentifier = "";
+      twoFactorPanel?.classList.add("is-hidden");
+      signInForm.classList.remove("is-hidden");
+      if (twoFactorError) twoFactorError.textContent = "";
+      if (signInError) signInError.textContent = "";
+      if (twoFactorCode) twoFactorCode.value = "";
+    };
 
     signInForm.reset();
     if (signInEmail) signInEmail.value = "";
@@ -30,6 +61,70 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ identifier, password })
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          throw result;
+        }
+
+        if (result?.requires_2fa) {
+          pendingLoginIdentifier = identifier;
+          showTwoFactorPanel(result?.message || "Check your email for the verification code.", result.challenge_token);
+          return;
+        }
+
+        setStoredAuthValue("userToken", result.token);
+        setStoredAuthValue("userProfile", JSON.stringify(result.user));
+        const rawRoles = Array.isArray(result.user?.roles) && result.user.roles.length
+          ? result.user.roles
+          : [result.user?.role_name || "CUSTOMER"];
+        const roles = rawRoles.map((role) => String(role || "").toUpperCase());
+        const hasCustomerRole = roles.includes("CUSTOMER") || roles.includes("USER");
+        const hasMechanicRole = roles.includes("MECHANIC");
+
+        if (roles.includes("ADMIN")) {
+          setStoredAuthValue("activeRole", "ADMIN");
+          window.location.href = "/admin";
+          return;
+        }
+        if (hasMechanicRole && hasCustomerRole) {
+          window.location.href = "/auth/select-role";
+          return;
+        }
+        if (hasMechanicRole) {
+          setStoredAuthValue("activeRole", "MECHANIC");
+          window.location.href = "/mechanic/dashboard";
+          return;
+        }
+
+        setStoredAuthValue("activeRole", "CUSTOMER");
+        window.location.href = "/user/dashboard";
+      } catch (err) {
+        if (signInError) signInError.textContent = err?.error?.message || "Login failed. Check your credentials.";
+      }
+    });
+
+    twoFactorBack?.addEventListener("click", () => {
+      hideTwoFactorPanel();
+    });
+
+    twoFactorForm?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (twoFactorError) twoFactorError.textContent = "";
+      const code = twoFactorCode?.value.trim() || "";
+      if (!pendingChallengeToken || !code) {
+        if (twoFactorError) twoFactorError.textContent = "Please enter the verification code sent to your email.";
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:3000/api/auth/login/verify-2fa", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            challenge_token: pendingChallengeToken,
+            code
+          })
         });
         const result = await response.json();
         if (!response.ok) {
@@ -63,7 +158,7 @@
         setStoredAuthValue("activeRole", "CUSTOMER");
         window.location.href = "/user/dashboard";
       } catch (err) {
-        if (signInError) signInError.textContent = err?.error?.message || "Login failed. Check your credentials.";
+        if (twoFactorError) twoFactorError.textContent = err?.error?.message || "Invalid verification code.";
       }
     });
   }

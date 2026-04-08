@@ -1,4 +1,4 @@
-const { register, login, requestPasswordReset, resetPassword } = require("../services/auth.service");
+const { register, login, verifyTwoFactorLogin, requestPasswordReset, resetPassword } = require("../services/auth.service");
 const { checkEmailExists } = require("../services/auth.service");
 const { sendPasswordResetEmail } = require("../../../shared/infrastructure/email/email.service");
 const { env } = require("../../../shared/config/env");
@@ -10,6 +10,12 @@ const registerHandler = async (req, res) => {
 
 const loginHandler = async (req, res) => {
   const result = await login(req.body);
+  res.json(result);
+};
+
+const verifyTwoFactorLoginHandler = async (req, res) => {
+  const { challenge_token, code } = req.body || {};
+  const result = await verifyTwoFactorLogin({ challenge_token, code });
   res.json(result);
 };
 
@@ -50,6 +56,7 @@ const checkEmailHandler = async (req, res) => {
 module.exports = {
   registerHandler,
   loginHandler,
+  verifyTwoFactorLoginHandler,
   requestPasswordResetHandler,
   resetPasswordHandler,
   checkEmailHandler

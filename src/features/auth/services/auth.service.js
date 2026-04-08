@@ -4,6 +4,13 @@ const { pool } = require("../../../shared/config/pool");
 const { env } = require("../../../shared/config/env");
 const { AppError } = require("../../../shared/utils/appError");
 const crypto = require("crypto");
+const {
+  ensureTwoFactorTables,
+  createLoginTwoFactorChallenge,
+  clearLoginTwoFactorChallenge,
+  verifyLoginTwoFactorChallenge
+} = require("../../../shared/infrastructure/security/twoFactor.service");
+const { sendLoginTwoFactorEmail } = require("../../../shared/infrastructure/email/email.service");
 
 const roleToLabel = (role) => {
   const normalized = String(role || "").toLowerCase();
@@ -34,6 +41,54 @@ const getUserRoles = async (userId, fallbackRole) => {
   if (roles.length) return roles;
   if (fallbackRole) return [normalizeRole(fallbackRole)];
   return [];
+};
+
+const getAuthUserById = async (userId) => {
+  await ensureTwoFactorTables();
+  const [rows] = await pool.query(
+    `SELECT u.id, BIN_TO_UUID(u.uuid_public) AS uuid_public, u.email, u.username, u.phone, u.password_hash, u.role, u.status, u.last_login_at,
+            p.name, p.lastname, p.avatar_url,
+            COALESCE(MAX(uss.two_factor_email_enabled), 0) AS two_factor_email_enabled
+     FROM users u
+     LEFT JOIN user_profiles p ON p.user_id = u.id
+     LEFT JOIN user_security_settings uss ON uss.user_id = u.id
+     WHERE u.id = ?`,
+    [userId]
+  );
+  const user = rows[0];
+  if (!user) {
+    throw new AppError("NOT_FOUND", "User not found", 404);
+  }
+  const roles = await getUserRoles(user.id, user.role);
+  const roleLabels = sortRoles(roles.map(roleToLabel));
+  const primaryRole = roleLabels[0] || roleToLabel(user.role);
+  return {
+    user: {
+      id: user.id,
+      uuid_public: user.uuid_public,
+      name: user.name,
+      lastname: user.lastname,
+      email: user.email,
+      username: user.username,
+      phone: user.phone,
+      avatar_url: user.avatar_url,
+      role: user.role,
+      status: user.status,
+      role_name: primaryRole,
+      roles: roleLabels,
+      last_login_at: user.last_login_at,
+      two_factor_email_enabled: Boolean(user.two_factor_email_enabled)
+    },
+    roleLabels,
+    primaryRole
+  };
+};
+
+const issueAuthResult = async (userId) => {
+  await pool.query("UPDATE users SET last_login_at = NOW() WHERE id = ?", [userId]);
+  const { user, roleLabels, primaryRole } = await getAuthUserById(userId);
+  const token = createToken({ id: user.id, role: primaryRole, roles: roleLabels });
+  return { user, token };
 };
 
 const sortRoles = (roles) => {
@@ -108,11 +163,15 @@ const login = async ({ email, username, identifier, password }) => {
     throw new AppError("VALIDATION_ERROR", "email or username and password are required", 400);
   }
 
+  await ensureTwoFactorTables();
+
   const [rows] = await pool.query(
     `SELECT u.id, BIN_TO_UUID(u.uuid_public) AS uuid_public, u.email, u.username, u.phone, u.password_hash, u.role, u.status, u.last_login_at,
-            p.name, p.lastname, p.avatar_url
+            p.name, p.lastname, p.avatar_url,
+            COALESCE(uss.two_factor_email_enabled, 0) AS two_factor_email_enabled
      FROM users u
      LEFT JOIN user_profiles p ON p.user_id = u.id
+     LEFT JOIN user_security_settings uss ON uss.user_id = u.id
      WHERE u.email = ? OR u.username = ?`,
     [loginId, loginId]
   );
@@ -127,29 +186,36 @@ const login = async ({ email, username, identifier, password }) => {
     throw new AppError("AUTH_FAILED", "Invalid credentials", 401);
   }
 
-  await pool.query("UPDATE users SET last_login_at = NOW() WHERE id = ?", [user.id]);
-  const roles = await getUserRoles(user.id, user.role);
-  const roleLabels = sortRoles(roles.map(roleToLabel));
-  const primaryRole = roleLabels[0] || roleToLabel(user.role);
-  const token = createToken({ id: user.id, role: primaryRole, roles: roleLabels });
+  if (Boolean(user.two_factor_email_enabled)) {
+    const challenge = await createLoginTwoFactorChallenge(user.id);
+    try {
+      await sendLoginTwoFactorEmail({
+        to: user.email,
+        code: challenge.code,
+        expiresMinutes: 10
+      });
+    } catch (error) {
+      await clearLoginTwoFactorChallenge(challenge.challengeToken);
+      throw new AppError("EMAIL_FAILED", "Unable to send verification email. Please try again.", 502);
+    }
+    return {
+      requires_2fa: true,
+      challenge_token: challenge.challengeToken,
+      delivery: "email",
+      message: "Check your email for the verification code."
+    };
+  }
+
+  const { user: sessionUser, token } = await issueAuthResult(user.id);
   return {
-    user: {
-      id: user.id,
-      uuid_public: user.uuid_public,
-      name: user.name,
-      lastname: user.lastname,
-      email: user.email,
-      username: user.username,
-      phone: user.phone,
-      avatar_url: user.avatar_url,
-      role: user.role,
-      status: user.status,
-      role_name: primaryRole,
-      roles: roleLabels,
-      last_login_at: user.last_login_at
-    },
+    user: sessionUser,
     token
   };
+};
+
+const verifyTwoFactorLogin = async ({ challenge_token, code }) => {
+  const result = await verifyLoginTwoFactorChallenge({ challengeToken: challenge_token, code });
+  return issueAuthResult(result.user_id);
 };
 
 const checkEmailExists = async (email) => {
@@ -220,7 +286,14 @@ const resetPassword = async ({ token, password }) => {
   await pool.query("DELETE FROM password_reset_requests WHERE id = ?", [request.id]);
 };
 
-module.exports = { register, login, requestPasswordReset, resetPassword, checkEmailExists };
+module.exports = {
+  register,
+  login,
+  verifyTwoFactorLogin,
+  requestPasswordReset,
+  resetPassword,
+  checkEmailExists
+};
 
 
 

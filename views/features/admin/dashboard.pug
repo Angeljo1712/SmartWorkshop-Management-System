@@ -676,15 +676,16 @@ block content
                       .security-card
                         .security-card-head
                           h3 Two Factor Authentication
-                        .security-2fa-grid
-                          label.security-check(for="adminSecurity2faEmail")
-                            input#adminSecurity2faEmail(type="checkbox")
-                            span Email
-                          label.security-check(for="adminSecurity2faSms")
-                            input#adminSecurity2faSms(type="checkbox")
-                            span SMS
-                        .security-actions
-                          button#adminSecurity2faEnable.ghost(type="button" disabled) Enable 2FA
+                          .security-2fa-grid
+                            label.security-check(for="adminSecurity2faEmail")
+                              input#adminSecurity2faEmail(type="checkbox")
+                              span Email
+                            label.security-check(for="adminSecurity2faSms")
+                              input#adminSecurity2faSms(type="checkbox")
+                              span SMS
+                          p.form-error#adminSecurity2faMessage(role="alert" aria-live="polite")
+                          .security-actions
+                            button#adminSecurity2faEnable.ghost(type="button") Save 2FA
 
             section.admin-panel.is-hidden#adminAddUserPanel
               .admin-panel-head

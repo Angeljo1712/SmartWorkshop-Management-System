@@ -7,6 +7,10 @@ const {
   saveBookingCompletionArtifacts,
   getBookingCompletionArtifactsByBookingIds
 } = require("../../bookings/services/bookingCompletion.service");
+const {
+  ensureTwoFactorTables,
+  setTwoFactorEmailEnabled
+} = require("../../../shared/infrastructure/security/twoFactor.service");
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 
@@ -121,12 +125,15 @@ const geocodeAddress = async ({ line1, line2, city, postal_code, country }) => {
 };
 
 const getUserById = async (userId) => {
+  await ensureTwoFactorTables();
   const [rows] = await pool.query(
     `SELECT u.id, BIN_TO_UUID(u.uuid_public) AS uuid_public, u.email, u.username, u.phone, u.role, u.status, u.created_at, u.last_login_at,
             p.name, p.lastname, p.avatar_url,
+            COALESCE(MAX(uss.two_factor_email_enabled), 0) AS two_factor_email_enabled,
             GROUP_CONCAT(ur.role) AS roles
      FROM users u
      LEFT JOIN user_profiles p ON p.user_id = u.id
+     LEFT JOIN user_security_settings uss ON uss.user_id = u.id
      LEFT JOIN user_roles ur ON ur.user_id = u.id
      WHERE u.id = ?
      GROUP BY u.id`,
@@ -155,8 +162,14 @@ const getUserById = async (userId) => {
         }
       : null,
     role_name: primaryRole,
-    roles
+    roles,
+    two_factor_email_enabled: Boolean(user.two_factor_email_enabled)
   };
+};
+
+const updateUserSecuritySettings = async (userId, { two_factor_email_enabled }) => {
+  await setTwoFactorEmailEnabled(userId, Boolean(two_factor_email_enabled));
+  return getUserById(userId);
 };
 
 const resolveNames = (payload) => {
@@ -1777,6 +1790,7 @@ const confirmEmailChange = async (token) => {
 module.exports = {
   getUserById,
   updateUserProfile,
+  updateUserSecuritySettings,
   updateUserAvatar,
   changeUserPassword,
   requestEmailChange,

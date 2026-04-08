@@ -72,6 +72,7 @@ if (userPage) {
   const userSecurityPasswordMessage = document.getElementById("userSecurityPasswordMessage");
   const userSecurity2faEmail = document.getElementById("userSecurity2faEmail");
   const userSecurity2faSms = document.getElementById("userSecurity2faSms");
+  const userSecurity2faMessage = document.getElementById("userSecurity2faMessage");
   const userSecurity2faEnable = document.getElementById("userSecurity2faEnable");
   const userNavLinks = document.querySelectorAll(".user-nav-link");
   const userDashboardView = document.getElementById("userDashboardView");
@@ -172,6 +173,12 @@ if (userPage) {
     return roles[0] || "CUSTOMER";
   };
 
+  const syncSecurity2faButton = () => {
+    const hasSelection = Boolean(userSecurity2faEmail?.checked || userSecurity2faSms?.checked);
+    userSecurity2faEnable?.classList.toggle("is-active", hasSelection);
+    if (userSecurity2faEnable) userSecurity2faEnable.disabled = false;
+  };
+
   const setUserHeader = (user) => {
     const joinedName = [user?.name, user?.lastname].filter(Boolean).join(" ").trim();
     const displayName = user?.full_name || joinedName || user?.email || "User";
@@ -204,6 +211,9 @@ if (userPage) {
     if (userSettingsUsernameValueSettings) userSettingsUsernameValueSettings.textContent = user?.username || "-";
     if (userSettingsEmailValueSettings) userSettingsEmailValueSettings.textContent = user?.email || "-";
     if (userSettingsAddressValueSettings) userSettingsAddressValueSettings.textContent = user?.address || "-";
+    if (userSecurity2faEmail) userSecurity2faEmail.checked = Boolean(user?.two_factor_email_enabled);
+    if (userSecurity2faSms) userSecurity2faSms.checked = false;
+    syncSecurity2faButton();
     if (userDashboardName) userDashboardName.textContent = displayName;
     userWelcomeNames.forEach((element) => {
       element.textContent = displayName;
@@ -843,6 +853,7 @@ if (userPage) {
       ...parts.map((part) => (typeof part === "string" ? part : part?.name || JSON.stringify(part))),
       ...invoiceParts.map((part) => part?.description).filter(Boolean)
     ];
+    const invoiceNumber = booking.invoice?.invoice_number || booking.invoice?.number || null;
 
     return `
       <article class="user-booking-card">
@@ -886,17 +897,10 @@ if (userPage) {
             <h4>Parts</h4>
             <ul>${allParts.map((part) => `<li>${escapeHtml(part)}</li>`).join("") || "<li>No parts recorded</li>"}</ul>
             <h4>Documents</h4>
-            <p>${
-              booking.invoice?.invoice_number
-                ? `Invoice: ${escapeHtml(booking.invoice.invoice_number)}`
-                : booking.payment?.provider_ref
-                  ? `Payment ref: ${escapeHtml(booking.payment.provider_ref)}`
-                  : "No documents available"
-            }</p>
             ${
-              String(booking.status || "").toLowerCase() === "completed" || booking.invoice?.invoice_number
+              invoiceNumber
                 ? `<button class="user-booking-receipt-link" type="button" data-user-booking-invoice="${booking.id}">View receipt</button>`
-                : ""
+                : "<p>No documents available</p>"
             }
           </div>
         </div>
@@ -1879,15 +1883,37 @@ if (userPage) {
     });
   });
 
-  const syncSecurity2faButton = () => {
-    const hasSelection = Boolean(userSecurity2faEmail?.checked || userSecurity2faSms?.checked);
-    userSecurity2faEnable?.classList.toggle("is-active", hasSelection);
-    if (userSecurity2faEnable) userSecurity2faEnable.disabled = !hasSelection;
-  };
-
   userSecurity2faEmail?.addEventListener("change", syncSecurity2faButton);
   userSecurity2faSms?.addEventListener("change", syncSecurity2faButton);
   syncSecurity2faButton();
+
+  userSecurity2faEnable?.addEventListener("click", async () => {
+    const token = getStoredAuthValue("userToken");
+    if (!token) return;
+    if (userSecurity2faMessage) userSecurity2faMessage.textContent = "";
+    try {
+      const result = await apiAuth("/api/users/me/security/two-factor", token, {
+        method: "PATCH",
+        body: JSON.stringify({
+          two_factor_email_enabled: Boolean(userSecurity2faEmail?.checked)
+        })
+      });
+      if (result) {
+        setStoredAuthValue("userProfile", JSON.stringify(result));
+      }
+      syncSecurity2faButton();
+      if (userSecurity2faMessage) {
+        userSecurity2faMessage.textContent = userSecurity2faEmail?.checked
+          ? "Email 2FA enabled."
+          : "Email 2FA disabled.";
+      }
+    } catch (err) {
+      console.error("Unable to update two factor settings", err);
+      if (userSecurity2faMessage) {
+        userSecurity2faMessage.textContent = err?.error?.message || err?.message || "Unable to update two factor settings.";
+      }
+    }
+  });
 
   userSecurityPasswordForm?.addEventListener("submit", async (event) => {
     event.preventDefault();

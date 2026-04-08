@@ -331,6 +331,43 @@
   border: none;
 }
 
+.auth-two-factor {
+  width: 100%;
+  max-width: 360px;
+  margin: 18px auto 0;
+  display: grid;
+  gap: 12px;
+  text-align: center;
+}
+
+.auth-two-factor h2 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.auth-two-factor-copy {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.auth-two-factor .auth-form {
+  max-width: 100%;
+}
+
+.auth-two-factor .auth-submit {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.auth-two-factor .auth-link {
+  margin: 0;
+  width: auto;
+}
+
 .auth-remember {
   margin-top: 6px;
   font-size: 12px;

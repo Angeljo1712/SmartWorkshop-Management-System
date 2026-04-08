@@ -1,6 +1,9 @@
 const { AppError } = require("../../../shared/utils/appError");
 const userService = require("../services/user.service");
-const { sendEmailChangeConfirmation } = require("../../../shared/infrastructure/email/email.service");
+const {
+  sendEmailChangeConfirmation,
+  sendAccountChangeNotification
+} = require("../../../shared/infrastructure/email/email.service");
 const { env } = require("../../../shared/config/env");
 
 const getMeHandler = async (req, res) => {
@@ -13,12 +16,21 @@ const getMeHandler = async (req, res) => {
 
 const changePasswordHandler = async (req, res) => {
   const { old_password, new_password } = req.body || {};
+  const currentUser = await userService.getUserById(req.user.userId);
   const result = await userService.changeUserPassword(req.user.userId, { old_password, new_password });
+  if (currentUser?.email) {
+    await sendAccountChangeNotification({
+      to: currentUser.email,
+      title: "SmartWorkshop - Password changed",
+      changes: ["Password"]
+    });
+  }
   res.json(result);
 };
 
 const updateMeHandler = async (req, res) => {
   const { name, lastname, full_name, phone, username, address } = req.body || {};
+  const currentUser = await userService.getUserById(req.user.userId);
   const user = await userService.updateUserProfile(req.user.userId, {
     name,
     lastname,
@@ -27,6 +39,34 @@ const updateMeHandler = async (req, res) => {
     username,
     address
   });
+  if (currentUser?.email) {
+    const changes = [];
+    if (phone !== undefined && String(phone || "").trim() !== String(currentUser.phone || "").trim()) {
+      changes.push("Phone");
+    }
+    if (username !== undefined && String(username || "").trim().toLowerCase() !== String(currentUser.username || "").trim().toLowerCase()) {
+      changes.push("Username");
+    }
+    if (address !== undefined) {
+      changes.push("Address");
+    }
+    if (name !== undefined || lastname !== undefined || full_name !== undefined) {
+      changes.push("Full name");
+    }
+    if (changes.length) {
+      await sendAccountChangeNotification({
+        to: currentUser.email,
+        title: "SmartWorkshop - Account details changed",
+        changes
+      });
+    }
+  }
+  res.json(user);
+};
+
+const updateSecuritySettingsHandler = async (req, res) => {
+  const { two_factor_email_enabled } = req.body || {};
+  const user = await userService.updateUserSecuritySettings(req.user.userId, { two_factor_email_enabled });
   res.json(user);
 };
 
@@ -142,7 +182,46 @@ const getMyMechanicProfileHandler = async (req, res) => {
 };
 
 const updateMyMechanicProfileHandler = async (req, res) => {
+  const currentUser = await userService.getUserById(req.user.userId);
+  const previousProfile = await userService.getMechanicProfile(req.user.userId);
   const profile = await userService.updateMechanicProfile(req.user.userId, req.body || {});
+  if (currentUser?.email && profile) {
+    const changes = [];
+    const next = req.body || {};
+    const prev = previousProfile || {};
+    if (next.years_experience !== undefined && String(next.years_experience || "").trim() !== String(prev.years_experience || "").trim()) {
+      changes.push("Years of experience");
+    }
+    if (next.work_history !== undefined && String(next.work_history || "").trim() !== String(prev.work_history || "").trim()) {
+      changes.push("Work history");
+    }
+    if (next.travel_radius_miles !== undefined && String(next.travel_radius_miles || "").trim() !== String(prev.travel_radius_miles || "").trim()) {
+      changes.push("Travel radius");
+    }
+    if (next.is_mobile !== undefined && Boolean(next.is_mobile) !== Boolean(prev.is_mobile)) {
+      changes.push("Mobile service");
+    }
+    const prevContact = prev.address || prev.contact_address || {};
+    const nextContact = next.contact_address || {};
+    if (next.contact_address && JSON.stringify(nextContact) !== JSON.stringify(prevContact)) {
+      changes.push("Contact address");
+    }
+    const prevPremises = prev.premises_address || {};
+    const nextPremises = next.premises_address || {};
+    if (next.premises_address && JSON.stringify(nextPremises) !== JSON.stringify(prevPremises)) {
+      changes.push("Premises address");
+    }
+    if (Array.isArray(next.services_offered) && JSON.stringify(next.services_offered) !== JSON.stringify(prev.services_offered || [])) {
+      changes.push("Services offered");
+    }
+    if (changes.length) {
+      await sendAccountChangeNotification({
+        to: currentUser.email,
+        title: "SmartWorkshop - Mechanic profile changed",
+        changes
+      });
+    }
+  }
   res.json(profile);
 };
 
@@ -173,6 +252,7 @@ module.exports = {
   getMeHandler,
   changePasswordHandler,
   updateMeHandler,
+  updateSecuritySettingsHandler,
   uploadAvatarHandler,
   requestEmailChangeHandler,
   confirmEmailChangeHandler,

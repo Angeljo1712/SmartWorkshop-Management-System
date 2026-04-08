@@ -680,15 +680,16 @@ block content
                           .security-card
                             .security-card-head
                               h3 Two Factor Authentication
-                            .security-2fa-grid
-                              label.security-check
-                                input#mechanicSecurity2faEmail(type="checkbox")
-                                span Email
-                              label.security-check
-                                input#mechanicSecurity2faSms(type="checkbox")
-                                span SMS
-                            .security-actions
-                              button.secondary#mechanicSecurity2faEnable(type="button") Enable 2FA
+                              .security-2fa-grid
+                                label.security-check
+                                  input#mechanicSecurity2faEmail(type="checkbox")
+                                  span Email
+                                label.security-check
+                                  input#mechanicSecurity2faSms(type="checkbox")
+                                  span SMS
+                              p.form-error#mechanicSecurity2faMessage(role="alert" aria-live="polite")
+                              .security-actions
+                                button.secondary#mechanicSecurity2faEnable(type="button") Save 2FA
               .settings-edit-modal.is-hidden#mechanicSettingsEditModal
                 .settings-edit-backdrop(data-close-modal)
                 .settings-edit-card

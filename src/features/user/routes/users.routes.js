@@ -6,6 +6,7 @@ const {
   getMeHandler,
   changePasswordHandler,
   updateMeHandler,
+  updateSecuritySettingsHandler,
   uploadAvatarHandler,
   requestEmailChangeHandler,
   confirmEmailChangeHandler,
@@ -35,6 +36,7 @@ const router = express.Router();
 
 router.get("/me", authenticate, asyncHandler(getMeHandler));
 router.patch("/me", authenticate, asyncHandler(updateMeHandler));
+router.patch("/me/security/two-factor", authenticate, asyncHandler(updateSecuritySettingsHandler));
 router.post("/me/change-password", authenticate, asyncHandler(changePasswordHandler));
 router.post("/me/avatar", authenticate, uploadAvatar.single("avatar"), asyncHandler(uploadAvatarHandler));
 router.post("/me/email-change", authenticate, asyncHandler(requestEmailChangeHandler));
