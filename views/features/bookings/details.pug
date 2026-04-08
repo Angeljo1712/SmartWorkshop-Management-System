@@ -132,6 +132,15 @@ block content
               input#detailsAuthPassword(type="password" autocomplete="current-password" required)
             button.primary(type="submit") Sign in
           a.details-auth-modal__forgot(href="/auth/forgot-password") Forgot your password?
+          .details-auth-twofactor.is-hidden#detailsAuthTwoFactorPanel(hidden)
+            p.details-auth-modal__lead#detailsAuthTwoFactorMessage Check your email for the verification code.
+            p.form-error.is-hidden#detailsAuthTwoFactorError(role="alert" aria-live="polite")
+            form#detailsAuthTwoFactorForm.details-auth-form
+              label
+                | Verification code
+                input#detailsAuthTwoFactorCode(type="text" inputmode="numeric" autocomplete="one-time-code" required)
+              button.primary(type="submit") Verify code
+            button.details-auth-modal__back(type="button" id="detailsAuthBackToLogin") Back to sign in
   include ../../partials/general-footer
 
 append scripts

@@ -451,6 +451,18 @@ if (mechanicDashboard) {
     return "Pending";
   };
 
+  const getMechanicTableStatusKey = (entry) => {
+    const bookingStatus = String(entry?.booking?.status || "").toLowerCase();
+    if (bookingStatus === "completed") return "completed";
+    if (bookingStatus === "cancelled" || bookingStatus === "canceled") return "cancelled";
+    const status = getMechanicOfferStatusKey(entry);
+    if (status === "accepted") return "accepted";
+    if (status === "declined") return "declined";
+    if (status === "expired") return "expired";
+    if (status === "cancelled" || status === "canceled") return "cancelled";
+    return "pending";
+  };
+
   const buildMechanicCompletionPartRows = (parts = [{}]) =>
     parts
       .map(
@@ -647,7 +659,7 @@ if (mechanicDashboard) {
         (item) => `
           <div class="mechanic-booking-item">
             <strong>${item.name}</strong>
-            <span>${formatMechanicLabour(item.labour_minutes)}</span>
+            <span>${formatMechanicLabour(item.labour_minutes || item.base_labour_minutes)}</span>
           </div>
         `
       )
@@ -660,7 +672,9 @@ if (mechanicDashboard) {
     const canComplete = ["accepted", "in_progress"].includes(bookingStatusKey);
     const canCancel = bookingStatusKey === "accepted";
     const isCompleted = bookingStatusKey === "completed";
-    const isCancelledState = ["declined", "expired", "cancelled", "canceled"].includes(statusKey);
+    const isCancelledState = ["cancelled", "canceled"].includes(statusKey);
+    const isDeclinedState = statusKey === "declined";
+    const isExpiredState = statusKey === "expired";
     const showCompletionCard = canComplete && !isCompleted && Number(activeMechanicCompletionBookingId) === Number(entry.booking?.id);
     return `
       <article class="mechanic-booking-card">
@@ -699,7 +713,11 @@ if (mechanicDashboard) {
                   }
                 `
               : isCompleted
-                ? `<button class="secondary mechanic-offer-decision" type="button" disabled>Completed</button>`
+                ? `<button class="secondary mechanic-offer-decision mechanic-offer-decision--success" type="button" disabled>Completed</button>`
+              : isDeclinedState
+                ? ``
+              : isExpiredState
+                ? `<p class="mechanic-offer-state-copy">Expired.</p>`
               : isCancelledState
                 ? `<button class="secondary mechanic-offer-decision mechanic-offer-decision--danger" type="button" disabled>Cancelled</button>`
                 : `<p class="mechanic-offer-state-copy">This offer is ${escapeHtml(getMechanicOfferStatusLabel(entry).toLowerCase())}.</p>`
@@ -899,12 +917,13 @@ if (mechanicDashboard) {
     pageBookings.forEach((entry) => {
       const reference = entry.booking?.reference || entry.booking?.id || "-";
       const canDecide = getMechanicOfferStatusKey(entry) === "pending";
+      const tableStatusKey = getMechanicTableStatusKey(entry);
       const item = document.createElement("tr");
       item.className = `mechanic-booking-summary-row${selectedId !== null && Number(entry.offer_id) === Number(selectedId) ? " is-active" : ""}`;
       item.dataset.mechanicOfferId = String(entry.offer_id || "");
         item.innerHTML = `
           <td><strong class="mechanic-booking-summary-reference">${escapeHtml(String(reference))}</strong></td>
-          <td><span class="mechanic-booking-status mechanic-booking-status--${escapeHtml(getMechanicOfferStatusKey(entry) || "pending")}">${escapeHtml(getMechanicOfferStatusLabel(entry))}</span></td>
+          <td><span class="mechanic-booking-status mechanic-booking-status--${escapeHtml(tableStatusKey)}">${escapeHtml(getMechanicOfferStatusLabel(entry))}</span></td>
           <td><span class="mechanic-booking-summary-customer">${escapeHtml(entry.customer?.name || "Customer")}</span></td>
           <td><span class="mechanic-booking-summary-vehicle">${escapeHtml([entry.vehicle?.registrationNumber, entry.vehicle?.make, entry.vehicle?.model].filter(Boolean).join(" · ") || "-")}</span></td>
           <td><span class="mechanic-booking-summary-date">${escapeHtml(formatDate(entry.sent_at || entry.booking?.created_at))}</span></td>

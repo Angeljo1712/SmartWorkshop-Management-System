@@ -639,6 +639,7 @@ const listMechanicBookingOffers = async (mechanicId) => {
   const [itemRows] = await pool.query(
     `SELECT bi.booking_id,
             sc.name,
+            sc.base_labour_minutes,
             bi.labour_minutes,
             bi.line_total_eur
      FROM booking_items bi
@@ -651,6 +652,7 @@ const listMechanicBookingOffers = async (mechanicId) => {
     const list = itemsByBooking.get(row.booking_id) || [];
     list.push({
       name: row.name,
+      base_labour_minutes: Number(row.base_labour_minutes || 0),
       labour_minutes: row.labour_minutes,
       line_total_eur: Number(row.line_total_eur || 0)
     });

@@ -641,6 +641,14 @@ if (bookingDetailsForm) {
   const detailsAuthEmail = document.getElementById("detailsAuthEmail");
   const detailsAuthPassword = document.getElementById("detailsAuthPassword");
   const detailsAuthModalError = document.getElementById("detailsAuthModalError");
+  const detailsAuthTwoFactorPanel = document.getElementById("detailsAuthTwoFactorPanel");
+  const detailsAuthTwoFactorForm = document.getElementById("detailsAuthTwoFactorForm");
+  const detailsAuthTwoFactorCode = document.getElementById("detailsAuthTwoFactorCode");
+  const detailsAuthTwoFactorMessage = document.getElementById("detailsAuthTwoFactorMessage");
+  const detailsAuthTwoFactorError = document.getElementById("detailsAuthTwoFactorError");
+  const detailsAuthBackToLogin = document.getElementById("detailsAuthBackToLogin");
+  let pendingDetailsChallengeToken = "";
+  let pendingDetailsLoginIdentifier = "";
   const availabilityGrid = bookingDetailsForm.querySelector("#availabilityGrid");
   const availabilityMonthLabel = bookingDetailsForm.querySelector("#availabilityMonthLabel");
   const availabilityPrevMonth = bookingDetailsForm.querySelector("#availabilityPrevMonth");
@@ -692,6 +700,20 @@ if (bookingDetailsForm) {
       detailsAuthModalError.textContent = "";
       detailsAuthModalError.classList.add("is-hidden");
     }
+    if (detailsAuthTwoFactorError) {
+      detailsAuthTwoFactorError.textContent = "";
+      detailsAuthTwoFactorError.classList.add("is-hidden");
+    }
+    if (detailsAuthTwoFactorPanel) {
+      detailsAuthTwoFactorPanel.hidden = true;
+      detailsAuthTwoFactorPanel.classList.add("is-hidden");
+    }
+    if (detailsAuthForm) {
+      detailsAuthForm.hidden = false;
+      detailsAuthForm.classList.remove("is-hidden");
+    }
+    pendingDetailsChallengeToken = "";
+    pendingDetailsLoginIdentifier = "";
     if (detailsAuthEmail && !detailsAuthEmail.value.trim() && detailsEmailInput?.value?.trim()) {
       detailsAuthEmail.value = detailsEmailInput.value.trim();
     }
@@ -707,6 +729,20 @@ if (bookingDetailsForm) {
       detailsAuthModalError.textContent = "";
       detailsAuthModalError.classList.add("is-hidden");
     }
+    if (detailsAuthTwoFactorError) {
+      detailsAuthTwoFactorError.textContent = "";
+      detailsAuthTwoFactorError.classList.add("is-hidden");
+    }
+    if (detailsAuthTwoFactorPanel) {
+      detailsAuthTwoFactorPanel.hidden = true;
+      detailsAuthTwoFactorPanel.classList.add("is-hidden");
+    }
+    if (detailsAuthForm) {
+      detailsAuthForm.hidden = false;
+      detailsAuthForm.classList.remove("is-hidden");
+    }
+    pendingDetailsChallengeToken = "";
+    pendingDetailsLoginIdentifier = "";
   };
 
   const formatOrdinalDay = (dayNumber) => {
@@ -853,6 +889,31 @@ if (bookingDetailsForm) {
         body: JSON.stringify({ identifier, password })
       });
 
+      if (loginResult?.requires_2fa) {
+        pendingDetailsChallengeToken = String(loginResult.challenge_token || "");
+        pendingDetailsLoginIdentifier = identifier;
+        if (detailsAuthTwoFactorMessage) {
+          detailsAuthTwoFactorMessage.textContent = loginResult?.message || "Check your email for the verification code.";
+        }
+        if (detailsAuthModalError) {
+          detailsAuthModalError.textContent = "";
+          detailsAuthModalError.classList.add("is-hidden");
+        }
+        if (detailsAuthForm) {
+          detailsAuthForm.hidden = true;
+          detailsAuthForm.classList.add("is-hidden");
+        }
+        if (detailsAuthTwoFactorPanel) {
+          detailsAuthTwoFactorPanel.hidden = false;
+          detailsAuthTwoFactorPanel.classList.remove("is-hidden");
+        }
+        if (detailsAuthTwoFactorCode) {
+          detailsAuthTwoFactorCode.value = "";
+          window.requestAnimationFrame(() => detailsAuthTwoFactorCode.focus());
+        }
+        return;
+      }
+
       setStoredAuthValue("userToken", loginResult.token);
       setStoredAuthValue("userProfile", JSON.stringify(loginResult.user));
       setStoredAuthValue("activeRole", "CUSTOMER");
@@ -869,6 +930,69 @@ if (bookingDetailsForm) {
         detailsAuthModalError.textContent =
           err?.error?.message || err?.message || "Unable to sign in with that account.";
         detailsAuthModalError.classList.remove("is-hidden");
+      }
+    }
+  });
+
+  detailsAuthBackToLogin?.addEventListener("click", () => {
+    pendingDetailsChallengeToken = "";
+    pendingDetailsLoginIdentifier = "";
+    if (detailsAuthTwoFactorPanel) {
+      detailsAuthTwoFactorPanel.hidden = true;
+      detailsAuthTwoFactorPanel.classList.add("is-hidden");
+    }
+    if (detailsAuthForm) {
+      detailsAuthForm.hidden = false;
+      detailsAuthForm.classList.remove("is-hidden");
+    }
+    if (detailsAuthTwoFactorError) {
+      detailsAuthTwoFactorError.textContent = "";
+      detailsAuthTwoFactorError.classList.add("is-hidden");
+    }
+    detailsAuthPassword?.focus();
+  });
+
+  detailsAuthTwoFactorForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const code = String(detailsAuthTwoFactorCode?.value || "").trim();
+    if (!pendingDetailsChallengeToken || !code) {
+      if (detailsAuthTwoFactorError) {
+        detailsAuthTwoFactorError.textContent = "Enter the verification code sent to your email.";
+        detailsAuthTwoFactorError.classList.remove("is-hidden");
+      }
+      return;
+    }
+
+    if (detailsAuthTwoFactorError) {
+      detailsAuthTwoFactorError.textContent = "";
+      detailsAuthTwoFactorError.classList.add("is-hidden");
+    }
+
+    try {
+      const loginResult = await api("/api/auth/login/verify-2fa", {
+        method: "POST",
+        body: JSON.stringify({
+          challenge_token: pendingDetailsChallengeToken,
+          code
+        })
+      });
+
+      setStoredAuthValue("userToken", loginResult.token);
+      setStoredAuthValue("userProfile", JSON.stringify(loginResult.user));
+      setStoredAuthValue("activeRole", "CUSTOMER");
+
+      const freshUser = await apiAuth("/api/users/me", loginResult.token);
+      setStoredAuthValue("userProfile", JSON.stringify(freshUser));
+      applyBookingDetailsUserData(freshUser);
+      if (detailsEmailInput && !detailsEmailInput.value.trim()) {
+        detailsEmailInput.value = pendingDetailsLoginIdentifier;
+      }
+      closeDetailsAuthModal();
+    } catch (err) {
+      if (detailsAuthTwoFactorError) {
+        detailsAuthTwoFactorError.textContent =
+          err?.error?.message || err?.message || "Invalid verification code.";
+        detailsAuthTwoFactorError.classList.remove("is-hidden");
       }
     }
   });
