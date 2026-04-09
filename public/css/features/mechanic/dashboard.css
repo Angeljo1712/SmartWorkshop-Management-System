@@ -1147,12 +1147,14 @@ body.mechanic-body .mechanic-types-copy h3 {
 
 body.mechanic-body .mechanic-types-copy p {
   margin: 0 0 20px;
-  color: #d6dfef;
+  color: #ffffff;
   line-height: 1.65;
   max-width: 980px;
 }
 
 body.mechanic-body .mechanic-types-card {
+  display: grid;
+  gap: 0;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 22px;
   background: #3e434df7;
@@ -1267,7 +1269,10 @@ body.mechanic-body .mechanic-types-service:has(input:not(:checked)) {
 body.mechanic-body .mechanic-types-actions {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 16px;
+  padding: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 body.mechanic-body #mechanicTypesStatus {

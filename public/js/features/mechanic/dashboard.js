@@ -1288,7 +1288,6 @@ if (mechanicDashboard) {
 
       const details = document.createElement("details");
       details.className = "mechanic-types-group";
-      if (groupIndex < 4) details.open = true;
 
       const summary = document.createElement("summary");
       summary.className = "mechanic-types-row";
