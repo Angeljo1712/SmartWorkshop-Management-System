@@ -409,7 +409,7 @@ body.user-body #userSettingsView .settings-card {
   grid-template-columns: minmax(0, 1fr);
   gap: 24px;
   align-items: start;
-  align-content: start;
+  /* align-content: start; */
   padding: 20px;
 }
 
