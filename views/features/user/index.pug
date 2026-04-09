@@ -509,6 +509,23 @@ block content
                     .settings-edit-actions
                       button.secondary#userSettingsEditCancel(type="button") Cancel
                       button.ghost#userSettingsEditSave(type="button") Update
+                .settings-edit-modal.user-booking-review-modal.is-hidden#userBookingReviewModal
+                  .settings-edit-backdrop(data-user-booking-review-close="true")
+                  .settings-edit-dialog(role="dialog" aria-modal="true" aria-labelledby="userBookingReviewTitle")
+                    .settings-edit-head
+                      h3#userBookingReviewTitle Rate mechanic
+                      button.settings-edit-close(type="button" data-user-booking-review-close="true" aria-label="Close review modal") ×
+                    p#userBookingReviewDescription Share your experience with the mechanic.
+                    p.form-error#userBookingReviewMessage(role="alert" aria-live="polite")
+                    .user-booking-review-stars(role="radiogroup" aria-label="Mechanic rating")
+                      each star in [1, 2, 3, 4, 5]
+                        button.user-booking-review-star(type="button" data-user-booking-review-star=star aria-pressed="false" aria-label=`${star} star${star === 1 ? '' : 's'}`) ★
+                    label.settings-edit-field(for="userBookingReviewComment")
+                      span Comment
+                      textarea#userBookingReviewComment(rows="4" placeholder="Write your review")
+                    .settings-edit-actions.user-booking-review-actions
+                      button.secondary#userBookingReviewCancel(type="button") Cancel
+                      button.ghost#userBookingReviewSave(type="button") Save review
   include ../../partials/general-footer
 
 append scripts

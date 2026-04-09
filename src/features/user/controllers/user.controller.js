@@ -259,6 +259,12 @@ const completeMyMechanicBookingHandler = async (req, res) => {
   res.json(result);
 };
 
+const createBookingReviewHandler = async (req, res) => {
+  const bookingId = Number(req.params.bookingId);
+  const result = await userService.createBookingReview(req.user.userId, bookingId, req.body || {});
+  res.json(result);
+};
+
 module.exports = {
   getMeHandler,
   changePasswordHandler,
@@ -286,6 +292,7 @@ module.exports = {
   updateMyMechanicProfileHandler,
   updateMyMechanicServiceCoverageHandler,
   respondMyMechanicOfferHandler,
-  completeMyMechanicBookingHandler
+  completeMyMechanicBookingHandler,
+  createBookingReviewHandler
 };
 

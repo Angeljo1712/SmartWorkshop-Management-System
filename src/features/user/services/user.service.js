@@ -521,6 +521,12 @@ const listUserBookings = async (userId) => {
      WHERE booking_id IN (?)`,
     [bookingIds]
   );
+  const [reviewRows] = await pool.query(
+    `SELECT booking_id, rating, comment, created_at
+     FROM reviews
+     WHERE booking_id IN (?)`,
+    [bookingIds]
+  );
   const completionByBooking = await getBookingCompletionArtifactsByBookingIds(bookingIds);
   const itemsByBooking = new Map();
   itemRows.forEach((row) => {
@@ -543,6 +549,7 @@ const listUserBookings = async (userId) => {
   });
 
   const paymentsByBooking = new Map(paymentRows.map((row) => [row.booking_id, row]));
+  const reviewsByBooking = new Map(reviewRows.map((row) => [row.booking_id, row]));
   const invoicesByBooking = new Map(
     invoiceRows.map((row) => {
       let totals = null;
@@ -573,6 +580,7 @@ const listUserBookings = async (userId) => {
   return rows.map((row) => {
     const items = itemsByBooking.get(row.id) || [];
     const payment = paymentsByBooking.get(row.id) || null;
+    const review = reviewsByBooking.get(row.id) || null;
     const invoice = invoicesByBooking.get(row.id) || null;
     const completion = completionByBooking.get(Number(row.id)) || { photos: [], added_parts: [] };
     return {
@@ -620,6 +628,13 @@ const listUserBookings = async (userId) => {
             amount_eur: Number(payment.amount_eur || 0),
             currency: payment.currency,
             provider_ref: payment.provider_ref
+          }
+        : null,
+      review: review
+        ? {
+            rating: Number(review.rating || 0),
+            comment: review.comment || "",
+            created_at: review.created_at || null
           }
         : null,
       invoice,
@@ -1814,6 +1829,87 @@ const completeMechanicAssignedBooking = async (mechanicId, bookingId, payload = 
   };
 };
 
+const createBookingReview = async (userId, bookingId, payload = {}) => {
+  const rating = Number(payload.rating);
+  const comment = String(payload.comment || "").trim();
+
+  if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+    throw new AppError("VALIDATION_ERROR", "rating must be between 1 and 5", 400);
+  }
+
+  const [rows] = await pool.query(
+    `SELECT id, customer_id, mechanic_id, status
+     FROM bookings
+     WHERE id = ?
+     LIMIT 1`,
+    [bookingId]
+  );
+
+  const booking = rows[0];
+  if (!booking) {
+    throw new AppError("BOOKING_NOT_FOUND", "Booking not found", 404);
+  }
+  if (Number(booking.customer_id || 0) !== Number(userId)) {
+    throw new AppError("FORBIDDEN", "This booking does not belong to you", 403);
+  }
+  if (String(booking.status || "").toLowerCase() !== "completed") {
+    throw new AppError("VALIDATION_ERROR", "Only completed bookings can be reviewed", 400);
+  }
+  if (!Number(booking.mechanic_id || 0)) {
+    throw new AppError("CONFLICT", "This booking has no assigned mechanic to review", 409);
+  }
+
+  await pool.query(
+    `INSERT INTO reviews (booking_id, customer_id, mechanic_id, rating, comment)
+     VALUES (?, ?, ?, ?, ?)
+     ON DUPLICATE KEY UPDATE
+       rating = VALUES(rating),
+       comment = VALUES(comment),
+       created_at = CURRENT_TIMESTAMP`,
+    [bookingId, userId, booking.mechanic_id, rating, comment || null]
+  );
+
+  const [ratingRows] = await pool.query(
+    `SELECT ROUND(COALESCE(AVG(rating), 0), 2) AS rating_avg
+     FROM reviews
+     WHERE mechanic_id = ?`,
+    [booking.mechanic_id]
+  );
+  const ratingAvg = Number(ratingRows[0]?.rating_avg || 0);
+
+  await pool.query(
+    `UPDATE mechanic_profiles
+     SET rating_avg = ?
+     WHERE user_id = ?`,
+    [ratingAvg, booking.mechanic_id]
+  );
+
+  const [reviewRows] = await pool.query(
+    `SELECT booking_id, customer_id, mechanic_id, rating, comment, created_at
+     FROM reviews
+     WHERE booking_id = ?
+     LIMIT 1`,
+    [bookingId]
+  );
+
+  return {
+    review: reviewRows[0]
+      ? {
+          booking_id: Number(reviewRows[0].booking_id),
+          customer_id: Number(reviewRows[0].customer_id),
+          mechanic_id: Number(reviewRows[0].mechanic_id),
+          rating: Number(reviewRows[0].rating),
+          comment: reviewRows[0].comment || "",
+          created_at: reviewRows[0].created_at || null
+        }
+      : null,
+    mechanic: {
+      user_id: Number(booking.mechanic_id),
+      rating_avg: ratingAvg
+    }
+  };
+};
+
 const requestEmailChange = async (userId, newEmail) => {
   if (!newEmail) {
     throw new AppError("VALIDATION_ERROR", "email is required", 400);
@@ -1886,7 +1982,8 @@ module.exports = {
   updateMechanicServiceCoverage,
   updateMechanicProfile,
   respondToMechanicBookingOffer,
-  completeMechanicAssignedBooking
+  completeMechanicAssignedBooking,
+  createBookingReview
 };
 
 

@@ -721,6 +721,7 @@ body.admin-body .settings-card {
   border-radius: var(--dashboard-panel-radius);
   box-shadow: var(--dashboard-panel-shadow);
   color: #eaf0fb;
+  align-self: start;
 }
 
 :is(body.user-body, body.mechanic-body, body.admin-body) {

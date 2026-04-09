@@ -47,6 +47,15 @@ if (userPage) {
   const userSettingsEditSave = document.getElementById("userSettingsEditSave");
   const userSettingsEditCancel = document.getElementById("userSettingsEditCancel");
   const userSettingsEditClose = document.getElementById("userSettingsEditClose");
+  const userBookingReviewModal = document.getElementById("userBookingReviewModal");
+  const userBookingReviewTitle = document.getElementById("userBookingReviewTitle");
+  const userBookingReviewDescription = document.getElementById("userBookingReviewDescription");
+  const userBookingReviewMessage = document.getElementById("userBookingReviewMessage");
+  const userBookingReviewComment = document.getElementById("userBookingReviewComment");
+  const userBookingReviewSave = document.getElementById("userBookingReviewSave");
+  const userBookingReviewCancel = document.getElementById("userBookingReviewCancel");
+  const userBookingReviewClose = document.querySelector('[data-user-booking-review-close="true"]');
+  const userBookingReviewStars = document.querySelectorAll("[data-user-booking-review-star]");
   const userRoleSwitcher = document.getElementById("userRoleSwitcher");
   const userSettingsPhotoButton = document.getElementById("userSettingsPhotoButton");
   const userSettingsPhotoInput = document.getElementById("userSettingsPhotoInput");
@@ -149,6 +158,8 @@ if (userPage) {
   const userSettingsView = document.getElementById("userSettingsView");
   const pendingUserResolutionCaseAttachments = new Map();
   let pendingUserResolutionComplaintAttachments = [];
+  let pendingUserBookingReviewId = null;
+  let pendingUserBookingReviewRating = 5;
 
   const getInitials = window.SWApp?.getInitials || ((name) => String(name || "NA"));
 
@@ -880,6 +891,13 @@ if (userPage) {
               <button class="user-booking-actions-item" type="button" data-user-resolution-message="${booking.id}">
                 Resolution center
               </button>
+              ${
+                String(booking.status || "").toLowerCase() === "completed"
+                  ? `<button class="user-booking-actions-item" type="button" data-user-booking-review="${booking.id}">
+                      ${booking.review ? "Edit review" : "Rate mechanic"}
+                    </button>`
+                  : ""
+              }
             </div>
           </div>
         </div>
@@ -1085,6 +1103,88 @@ if (userPage) {
     target.document.open();
     target.document.write(buildInvoiceDocument(invoice));
     target.document.close();
+  };
+
+  const setUserBookingReviewMessage = (message = "", tone = "error") => {
+    if (!userBookingReviewMessage) return;
+    userBookingReviewMessage.textContent = message;
+    userBookingReviewMessage.classList.toggle("is-hidden", !message);
+    userBookingReviewMessage.dataset.tone = tone;
+  };
+
+  const mountUserBookingReviewModal = () => {
+    if (!userBookingReviewModal) return;
+    if (userBookingReviewModal.parentElement !== document.body) {
+      document.body.appendChild(userBookingReviewModal);
+    }
+  };
+
+  const renderUserBookingReviewStars = (rating = 0) => {
+    const safeRating = Math.max(0, Math.min(5, Number(rating) || 0));
+    userBookingReviewStars.forEach((button) => {
+      const value = Number(button.dataset.userBookingReviewStar || 0);
+      const isActive = value <= safeRating;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
+  };
+
+  const closeUserBookingReviewModal = () => {
+    pendingUserBookingReviewId = null;
+    pendingUserBookingReviewRating = 5;
+    if (userBookingReviewComment) userBookingReviewComment.value = "";
+    setUserBookingReviewMessage("");
+    renderUserBookingReviewStars(0);
+    userBookingReviewModal?.classList.add("is-hidden");
+  };
+
+  const openUserBookingReviewModal = (bookingId) => {
+    const booking = latestUserBookings.find((entry) => Number(entry.id) === Number(bookingId));
+    if (!booking) {
+      window.alert("Booking not found.");
+      return;
+    }
+    if (String(booking.status || "").toLowerCase() !== "completed") {
+      window.alert("Only completed bookings can be reviewed.");
+      return;
+    }
+    pendingUserBookingReviewId = Number(booking.id);
+    pendingUserBookingReviewRating = Number(booking.review?.rating || 0);
+    mountUserBookingReviewModal();
+    if (userBookingReviewTitle) userBookingReviewTitle.textContent = booking.review ? "Edit review" : "Rate mechanic";
+    if (userBookingReviewDescription) {
+      userBookingReviewDescription.textContent = `Share your experience with ${booking.mechanic || "the mechanic"}.`;
+    }
+    if (userBookingReviewComment) {
+      userBookingReviewComment.value = String(booking.review?.comment || "");
+    }
+    setUserBookingReviewMessage("");
+    renderUserBookingReviewStars(pendingUserBookingReviewRating);
+    userBookingReviewModal?.classList.remove("is-hidden");
+    userBookingReviewComment?.focus();
+  };
+
+  const submitUserBookingReview = async () => {
+    if (!pendingUserBookingReviewId || !userToken) return;
+    const rating = Number(pendingUserBookingReviewRating || 0);
+    const comment = String(userBookingReviewComment?.value || "").trim();
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+      setUserBookingReviewMessage("Please select a rating between 1 and 5.");
+      return;
+    }
+    if (userBookingReviewSave) userBookingReviewSave.disabled = true;
+    try {
+      await apiAuth(`/api/users/me/bookings/${encodeURIComponent(pendingUserBookingReviewId)}/review`, userToken, {
+        method: "POST",
+        body: JSON.stringify({ rating, comment })
+      });
+      closeUserBookingReviewModal();
+      await syncUserBookingsFromApi();
+    } catch (error) {
+      setUserBookingReviewMessage(error?.error?.message || error?.message || "Unable to save review.");
+    } finally {
+      if (userBookingReviewSave) userBookingReviewSave.disabled = false;
+    }
   };
 
   const renderUserBookings = (bookings) => {
@@ -1735,6 +1835,15 @@ if (userPage) {
       return;
     }
 
+    const reviewButton = event.target.closest("[data-user-booking-review]");
+    if (reviewButton) {
+      const bookingId = Number(reviewButton.dataset.userBookingReview);
+      if (!bookingId) return;
+      document.querySelectorAll(".user-booking-actions-panel").forEach((menu) => menu.classList.add("is-hidden"));
+      openUserBookingReviewModal(bookingId);
+      return;
+    }
+
     const invoiceButton = event.target.closest("[data-user-booking-invoice]");
     if (invoiceButton) {
       const bookingId = Number(invoiceButton.dataset.userBookingInvoice);
@@ -1750,6 +1859,19 @@ if (userPage) {
     }
   });
 
+  userBookingReviewStars.forEach((button) => {
+    button.addEventListener("click", () => {
+      pendingUserBookingReviewRating = Number(button.dataset.userBookingReviewStar || 0);
+      renderUserBookingReviewStars(pendingUserBookingReviewRating);
+    });
+  });
+
+  userBookingReviewCancel?.addEventListener("click", () => closeUserBookingReviewModal());
+  userBookingReviewClose?.addEventListener("click", () => closeUserBookingReviewModal());
+  userBookingReviewSave?.addEventListener("click", async () => {
+    await submitUserBookingReview();
+  });
+
   document.addEventListener("click", (event) => {
     if (!event.target.closest(".user-car-menu-wrap")) {
       document.querySelectorAll(".user-car-menu-panel").forEach((menu) => menu.classList.add("is-hidden"));
@@ -1761,6 +1883,16 @@ if (userPage) {
 
     if (!event.target.closest(".user-vehicle-heading")) {
       userVehicleDropdownMenu?.classList.add("is-hidden");
+    }
+
+    if (event.target.closest("[data-user-booking-review-close='true']")) {
+      closeUserBookingReviewModal();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !userBookingReviewModal?.classList.contains("is-hidden")) {
+      closeUserBookingReviewModal();
     }
   });
 

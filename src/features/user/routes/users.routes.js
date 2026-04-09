@@ -33,7 +33,8 @@ const {
   updateMyMechanicProfileHandler,
   updateMyMechanicServiceCoverageHandler,
   respondMyMechanicOfferHandler,
-  completeMyMechanicBookingHandler
+  completeMyMechanicBookingHandler,
+  createBookingReviewHandler
 } = require("../controllers/user.controller");
 
 const router = express.Router();
@@ -86,6 +87,7 @@ router.post(
   uploadBookingCompletionPhotos.array("photos", 8),
   asyncHandler(completeMyMechanicBookingHandler)
 );
+router.post("/me/bookings/:bookingId/review", authenticate, asyncHandler(createBookingReviewHandler));
 router.get("/confirm-email", asyncHandler(confirmEmailChangeHandler));
 
 module.exports = router;

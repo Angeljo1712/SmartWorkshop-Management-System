@@ -848,6 +848,67 @@ body.user-body .settings-edit-actions {
   gap: 12px;
 }
 
+body.user-body .user-booking-review-modal .settings-edit-dialog {
+  width: min(620px, calc(100vw - 32px));
+}
+
+body.user-body .user-booking-review-modal {
+  z-index: 120;
+}
+
+body.user-body .user-booking-review-message {
+  margin: 0;
+  text-align: center;
+}
+
+body.user-body #userBookingReviewDescription {
+  text-align: center;
+}
+
+body.user-body .user-booking-review-stars {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: -4px 0 0;
+}
+
+body.user-body .user-booking-review-star {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 2rem;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+body.user-body .user-booking-review-star:hover,
+body.user-body .user-booking-review-star:focus-visible {
+  transform: translateY(-1px);
+  outline: none;
+}
+
+body.user-body .user-booking-review-star.is-active {
+  color: #f5c451;
+}
+
+body.user-body .user-booking-review-modal textarea {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #ffffff;
+  color: #0f172a;
+  min-height: 120px;
+  resize: vertical;
+}
+
+body.user-body .user-booking-review-actions {
+  justify-content: flex-end;
+}
+
 body.user-body .settings-edit-actions .secondary,
 body.user-body .settings-edit-actions .ghost {
   color: #ffffff;
