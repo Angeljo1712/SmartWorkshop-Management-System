@@ -659,7 +659,7 @@ block content
                               h3 Email Preferences
                             label.notifications-check(for="mechanicNotificationsMarketing")
                               input#mechanicNotificationsMarketing(type="checkbox")
-                              span Don't miss out! Subscribe to get special offers/promotions and updates about jobs and platform changes.
+                              span Don’t miss out! Subscribe to get special offers/promotions and updates about our services.
                             .notifications-actions
                               button.ghost(type="button") Update
                     section.mechanic-settings-subview.is-hidden#mechanicSettingsSecurity
@@ -667,16 +667,16 @@ block content
                             .security-card-head
                               h3 Change Password
                             form.security-form#mechanicSecurityPasswordForm
-                              input#mechanicSecurityUsername(type="text" name="username" autocomplete="username" hidden)
+                              input#mechanicSecurityUsername(type="text" name="username" autocomplete="off" hidden)
                               label.security-field(for="mechanicSecurityOldPassword")
                                 span Old Password
-                                input#mechanicSecurityOldPassword(type="password" autocomplete="current-password")
+                                input#mechanicSecurityOldPassword(type="password" autocomplete="off")
                               label.security-field(for="mechanicSecurityNewPassword")
                                 span New Password
-                                input#mechanicSecurityNewPassword(type="password" autocomplete="new-password")
+                                input#mechanicSecurityNewPassword(type="password" autocomplete="off")
                               label.security-field(for="mechanicSecurityConfirmPassword")
                                 span Confirm Password
-                                input#mechanicSecurityConfirmPassword(type="password" autocomplete="new-password")
+                                input#mechanicSecurityConfirmPassword(type="password" autocomplete="off")
                               p.form-error#mechanicSecurityPasswordMessage(role="alert" aria-live="polite")
                               .security-actions
                                 button.ghost#mechanicSecurityPasswordSubmit(type="submit") Change

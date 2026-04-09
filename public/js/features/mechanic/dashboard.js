@@ -1908,6 +1908,13 @@ if (mechanicDashboard) {
     mechanicSettingsNotifications?.classList.toggle("is-hidden", subview !== "notifications");
     mechanicSettingsSecurity?.classList.toggle("is-hidden", subview !== "security");
     mechanicSettingsSubnavLinks.forEach((btn) => btn.classList.toggle("active", btn.dataset.mechanicSettingsSubview === subview));
+    if (subview !== "security") {
+      if (mechanicSecurityUsername) mechanicSecurityUsername.value = "";
+      if (mechanicSecurityOldPassword) mechanicSecurityOldPassword.value = "";
+      if (mechanicSecurityNewPassword) mechanicSecurityNewPassword.value = "";
+      if (mechanicSecurityConfirmPassword) mechanicSecurityConfirmPassword.value = "";
+      if (mechanicSecurityPasswordMessage) mechanicSecurityPasswordMessage.textContent = "";
+    }
     if (mechanicSettingsPanelTitle) {
       mechanicSettingsPanelTitle.textContent =
         subview === "notifications" ? "Notifications" : subview === "security" ? "Login & security" : "General";

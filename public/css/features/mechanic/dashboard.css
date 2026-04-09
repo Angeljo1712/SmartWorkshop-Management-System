@@ -1155,7 +1155,7 @@ body.mechanic-body .mechanic-types-copy p {
 body.mechanic-body .mechanic-types-card {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 22px;
-  background: #171c24;
+  background: #3e434df7;
   overflow: hidden;
 }
 
@@ -1246,7 +1246,7 @@ body.mechanic-body .mechanic-types-service {
   min-height: 40px;
   padding: 0 12px;
   border-radius: 10px;
-  background: #1e93f2;
+  background: #0d1220;
   color: #ffffff;
 }
 
@@ -1285,7 +1285,7 @@ body.mechanic-body .mechanic-types-actions .primary {
 .mechanic-settings-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 24px;
+  gap: 25px;
   align-items: start;
   /* align-content: start; */
   padding: 20px;
@@ -1293,7 +1293,7 @@ body.mechanic-body .mechanic-types-actions .primary {
 
 body.mechanic-body #mechanicSettingsView .mechanic-settings-panel {
   display: grid;
-  gap: 22px;
+  gap: 20px;
 }
 
 body.mechanic-body #mechanicSettingsView .mechanic-settings-subview {
@@ -1380,6 +1380,7 @@ body.mechanic-body #mechanicSettingsView .mechanic-settings-photo-row .ghost {
   border-color: var(--dashboard-action-bg);
   color: #ffffff;
   width: 104px;
+  align-self: center;
 }
 
 body.mechanic-body #mechanicSettingsView .mechanic-settings-profile,
@@ -1490,7 +1491,7 @@ body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-actions {
   width: 104px;
   align-self: start;
   justify-self: end;
-  /* padding-top: 32px; */
+  padding-top: 50px;
 }
 
 body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-actions .secondary {
@@ -1501,6 +1502,7 @@ body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-actions .sec
 body.mechanic-body #mechanicSettingsView .mechanic-settings-profile .secondary,
 body.mechanic-body #mechanicSettingsView .mechanic-settings-row > .secondary {
   width: 104px;
+  align-self: center;
 }
 
 body.mechanic-body #mechanicSettingsNotifications .notifications-card {
@@ -1510,7 +1512,39 @@ body.mechanic-body #mechanicSettingsNotifications .notifications-card {
   border: 2px solid #ffffff;
   border-radius: 14px;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
-  background: #0d1220;
+  background: rgba(34, 43, 58, 0.96);
+}
+
+body.mechanic-body #mechanicSettingsNotifications {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: min-content;
+  height: auto;
+  min-height: 0;
+  align-self: start;
+  justify-self: stretch;
+  align-content: start;
+  justify-content: start;
+  align-items: start;
+  justify-items: stretch;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+body.mechanic-body #mechanicSettingsNotifications .notifications-card {
+  align-self: start;
+  justify-self: stretch;
+  width: 100%;
+  margin-top: 0;
+  min-height: 0;
+}
+
+body.mechanic-body #mechanicSettingsNotifications,
+body.mechanic-body #mechanicSettingsNotifications .notifications-card,
+body.mechanic-body #mechanicSettingsNotifications .notifications-card-head,
+body.mechanic-body #mechanicSettingsNotifications .notifications-check,
+body.mechanic-body #mechanicSettingsNotifications .notifications-actions {
+  height: auto;
 }
 
 body.mechanic-body #mechanicSettingsNotifications .notifications-card-head h3,
@@ -1518,9 +1552,34 @@ body.mechanic-body #mechanicSettingsNotifications .notifications-check {
   color: #ffffff;
 }
 
+body.mechanic-body #mechanicSettingsNotifications .notifications-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+body.mechanic-body #mechanicSettingsNotifications .notifications-check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  min-height: 18px;
+  margin-top: 2px;
+  accent-color: #5a6f90;
+  flex: 0 0 18px;
+}
+
+body.mechanic-body #mechanicSettingsNotifications .notifications-check span {
+  color: #ffffff !important;
+  font-size: 1.02rem;
+}
+
 body.mechanic-body #mechanicSettingsNotifications .notifications-actions {
   display: flex;
   justify-content: flex-end;
+  align-self: stretch;
+  margin-top: 4px;
 }
 
 body.mechanic-body #mechanicSettingsSecurity {
@@ -1534,7 +1593,7 @@ body.mechanic-body #mechanicSettingsSecurity .security-card {
   border: 2px solid #ffffff;
   border-radius: 14px;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
-  background: #0d1220;
+  background: rgba(34, 43, 58, 0.96);
 }
 
 body.mechanic-body #mechanicSettingsSecurity .security-card-head h3,
@@ -2595,7 +2654,7 @@ body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-meta p,
 body.mechanic-body .mechanic-content .mechanic-note,
 body.mechanic-body .mechanic-content .subtle,
 body.mechanic-body .mechanic-content label span {
-  color: #a9b6cb;
+  color: #ffffff;
 }
 
 body.mechanic-body .mechanic-content .mechanic-id,
@@ -2606,7 +2665,7 @@ body.mechanic-body .mechanic-content .mechanic-id span {
 body.mechanic-body .mechanic-content form {
   display: grid;
   gap: 12px;
-  background: #0f172a;
+  background: rgba(34, 43, 58, 0.96);
 }
 
 body.mechanic-body .mechanic-content input[type="password"] {

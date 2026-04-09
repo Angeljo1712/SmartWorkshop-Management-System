@@ -601,7 +601,7 @@ body.user-body #userSettingsView .user-settings-contact-actions {
   width: 104px;
   align-self: start;
   justify-self: end;
-  padding-top: 32px;
+  padding-top: 50px;
 }
 
 body.user-body #userSettingsView .user-settings-contact-actions .secondary {
