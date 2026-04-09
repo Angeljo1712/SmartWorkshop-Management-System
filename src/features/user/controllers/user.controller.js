@@ -243,7 +243,8 @@ const updateMyMechanicServiceCoverageHandler = async (req, res) => {
 const respondMyMechanicOfferHandler = async (req, res) => {
   const offerId = Number(req.params.offerId);
   const action = String(req.body?.action || "");
-  const result = await userService.respondToMechanicBookingOffer(req.user.userId, offerId, action);
+  const reason = String(req.body?.reason || "");
+  const result = await userService.respondToMechanicBookingOffer(req.user.userId, offerId, action, reason);
   res.json(result);
 };
 

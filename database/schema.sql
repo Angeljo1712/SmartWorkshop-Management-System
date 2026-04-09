@@ -265,6 +265,8 @@ CREATE TABLE IF NOT EXISTS bookings (
   vehicle_id BIGINT UNSIGNED NOT NULL,
   slot_id BIGINT UNSIGNED NULL,
   status ENUM('requested','accepted','in_progress','completed','disputed','refunded','cancelled') NOT NULL,
+  mechanic_cancelled_reason TEXT NULL,
+  mechanic_cancelled_at DATETIME NULL,
   subtotal_eur DECIMAL(10,2) NOT NULL,
   vat_eur DECIMAL(10,2) NOT NULL,
   total_eur DECIMAL(10,2) NOT NULL,

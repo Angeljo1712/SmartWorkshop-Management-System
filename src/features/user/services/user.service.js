@@ -33,6 +33,36 @@ const formatAddressRow = (row) =>
 
 const formatBookingReference = (value) => String(Number(value) || 0).padStart(8, "0");
 
+let ensureBookingCancellationFieldsPromise = null;
+
+const ensureBookingCancellationFields = async () => {
+  if (!ensureBookingCancellationFieldsPromise) {
+    ensureBookingCancellationFieldsPromise = (async () => {
+      const [rows] = await pool.query(
+        `SELECT COLUMN_NAME
+         FROM information_schema.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = 'bookings'
+           AND COLUMN_NAME IN ('mechanic_cancelled_reason', 'mechanic_cancelled_at')`
+      );
+
+      const existing = new Set(rows.map((row) => row.COLUMN_NAME));
+
+      if (!existing.has("mechanic_cancelled_reason")) {
+        await pool.query("ALTER TABLE bookings ADD COLUMN mechanic_cancelled_reason TEXT NULL AFTER status");
+      }
+      if (!existing.has("mechanic_cancelled_at")) {
+        await pool.query("ALTER TABLE bookings ADD COLUMN mechanic_cancelled_at DATETIME NULL AFTER mechanic_cancelled_reason");
+      }
+    })().catch((error) => {
+      ensureBookingCancellationFieldsPromise = null;
+      throw error;
+    });
+  }
+
+  return ensureBookingCancellationFieldsPromise;
+};
+
 const getLatestAddress = async (userId) => {
   const [rows] = await pool.query(
     `SELECT line1, line2, city, postal_code, country,
@@ -421,10 +451,13 @@ const deleteUserVehicle = async (userId, registrationNumber) => {
 
 const listUserBookings = async (userId) => {
   await ensureBookingCompletionTables();
+  await ensureBookingCancellationFields();
   const [rows] = await pool.query(
     `SELECT b.id,
             BIN_TO_UUID(b.uuid_public) AS uuid_public,
             b.status,
+            b.mechanic_cancelled_reason,
+            b.mechanic_cancelled_at,
             b.notes,
             b.subtotal_eur,
             b.vat_eur,
@@ -554,6 +587,12 @@ const listUserBookings = async (userId) => {
         total_eur: Number(row.total_eur || 0)
       },
       created_at: row.created_at,
+      mechanic_cancellation: row.mechanic_cancelled_reason
+        ? {
+            reason: row.mechanic_cancelled_reason,
+            cancelled_at: row.mechanic_cancelled_at || null
+          }
+        : null,
       slot: row.slot_start_at
         ? {
             start_at: row.slot_start_at,
@@ -1492,11 +1531,13 @@ const updateMechanicProfile = async (userId, payload) => {
   return getMechanicProfile(userId);
 };
 
-const respondToMechanicBookingOffer = async (mechanicId, offerId, action) => {
+const respondToMechanicBookingOffer = async (mechanicId, offerId, action, reason = "") => {
   const normalizedAction = String(action || "").trim().toLowerCase();
   if (!["accept", "decline", "cancel"].includes(normalizedAction)) {
     throw new AppError("VALIDATION_ERROR", "action must be accept, decline or cancel", 400);
   }
+  const normalizedReason = String(reason || "").trim();
+  await ensureBookingCancellationFields();
 
   const connection = await pool.getConnection();
   try {
@@ -1545,7 +1586,10 @@ const respondToMechanicBookingOffer = async (mechanicId, offerId, action) => {
 
       await connection.query(
         `UPDATE bookings
-         SET mechanic_id = ?, status = 'accepted'
+         SET mechanic_id = ?,
+             status = 'accepted',
+             mechanic_cancelled_reason = NULL,
+             mechanic_cancelled_at = NULL
          WHERE id = ?`,
         [mechanicId, offer.booking_id]
       );
@@ -1563,6 +1607,9 @@ const respondToMechanicBookingOffer = async (mechanicId, offerId, action) => {
       if (offer.status !== "accepted") {
         throw new AppError("VALIDATION_ERROR", "Only accepted offers can be cancelled", 400);
       }
+      if (!normalizedReason) {
+        throw new AppError("VALIDATION_ERROR", "Cancellation reason is required", 400);
+      }
       if (Number(offer.mechanic_id || 0) !== Number(mechanicId) || offer.booking_status !== "accepted") {
         throw new AppError("CONFLICT", "This booking can no longer be cancelled by this mechanic", 409);
       }
@@ -1576,9 +1623,12 @@ const respondToMechanicBookingOffer = async (mechanicId, offerId, action) => {
 
       await connection.query(
         `UPDATE bookings
-         SET mechanic_id = NULL, status = 'requested'
+         SET mechanic_id = NULL,
+             status = 'requested',
+             mechanic_cancelled_reason = ?,
+             mechanic_cancelled_at = CURRENT_TIMESTAMP
          WHERE id = ?`,
-        [offer.booking_id]
+        [normalizedReason, offer.booking_id]
       );
 
       const [serviceRows] = await connection.query(

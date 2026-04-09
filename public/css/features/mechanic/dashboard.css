@@ -2539,9 +2539,9 @@ body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-divider 
 }
 
 body.mechanic-body .mechanic-content .settings-card.mechanic-dashboard-card {
-  background: #3e434df7;
   border: 0;
   box-shadow: none;
+  background: transparent;
 }
 
 body.mechanic-body .mechanic-content .mechanic-dashboard-card .mechanic-settings-row {

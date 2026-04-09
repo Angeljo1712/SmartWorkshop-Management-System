@@ -447,8 +447,12 @@ if (userPage) {
 
   const getSelectedVehicleReg = () => sessionStorage.getItem("userSelectedVehicleReg");
 
-  const formatBookingStatus = (status, paymentStatus) => {
+  const getBookingCancellationReason = (booking) =>
+    String(booking?.mechanic_cancellation?.reason || booking?.mechanic_cancelled_reason || "").trim();
+
+  const formatBookingStatus = (status, paymentStatus, cancellationReason = "") => {
     const normalizedStatus = String(status || "requested").trim().toLowerCase();
+    if (String(cancellationReason || "").trim()) return "CANCELLED";
     if (normalizedStatus === "completed") return "COMPLETED";
     if (normalizedStatus === "in_progress") return "IN PROGRESS";
     if (normalizedStatus === "cancelled" || normalizedStatus === "canceled") return "CANCELLED";
@@ -801,7 +805,7 @@ if (userPage) {
     return "Repairs";
   };
   const getBookingStatusClass = (booking) => {
-    const label = formatBookingStatus(booking.status, booking.payment?.status);
+    const label = formatBookingStatus(booking.status, booking.payment?.status, getBookingCancellationReason(booking));
     return String(label || "")
       .trim()
       .toLowerCase()
@@ -827,7 +831,7 @@ if (userPage) {
       const matchesType = typeValue === "all" || getUserBookingType(booking) === typeValue;
       const matchesStatus =
         statusValue === "all" ||
-        titleCase(String(formatBookingStatus(booking.status, booking.payment?.status) || "").toLowerCase()) === statusValue;
+        titleCase(String(formatBookingStatus(booking.status, booking.payment?.status, getBookingCancellationReason(booking)) || "").toLowerCase()) === statusValue;
 
       let matchesDate = true;
       if (dateValue !== "all") {
@@ -858,6 +862,7 @@ if (userPage) {
       : Array.isArray(booking.completion?.photos)
         ? booking.completion.photos
         : [];
+    const cancellationReason = getBookingCancellationReason(booking);
     const allParts = [
       ...parts.map((part) => (typeof part === "string" ? part : part?.name || JSON.stringify(part))),
       ...invoiceParts.map((part) => part?.description).filter(Boolean)
@@ -867,7 +872,7 @@ if (userPage) {
     return `
       <article class="user-booking-card">
         <div class="user-booking-toolbar">
-          <span class="user-booking-status user-booking-status--${getBookingStatusClass(booking)}">${formatBookingStatus(booking.status, booking.payment?.status)}</span>
+          <span class="user-booking-status user-booking-status--${getBookingStatusClass(booking)}">${formatBookingStatus(booking.status, booking.payment?.status, cancellationReason)}</span>
           <strong class="user-booking-reference">Reference: ${booking.reference}</strong>
           <div class="user-booking-actions-wrap">
             <button class="primary user-booking-actions" type="button" data-booking-actions-toggle="${booking.id}">Actions</button>
@@ -895,6 +900,11 @@ if (userPage) {
             <p>${booking.vehicle?.registrationNumber || "-"}</p>
             <h4>Mechanic</h4>
             <p>${mechanicName}</p>
+            ${
+              cancellationReason
+                ? `<h4>Cancellation reason</h4><p class="user-booking-cancellation-reason">${escapeHtml(cancellationReason)}</p>`
+                : ""
+            }
             <h4>Total Price</h4>
             <p class="user-booking-price">${formatCurrency(booking.totals?.total_eur, booking.payment?.currency)}</p>
             <h4>Amount Paid</h4>
@@ -1103,7 +1113,7 @@ if (userPage) {
       userBookingsStatusFilter,
       [
         ...bookingList.map((booking) =>
-          titleCase(String(formatBookingStatus(booking.status, booking.payment?.status) || "").toLowerCase())
+          titleCase(String(formatBookingStatus(booking.status, booking.payment?.status, getBookingCancellationReason(booking)) || "").toLowerCase())
         ),
         "Cancelled"
       ],
@@ -1140,7 +1150,7 @@ if (userPage) {
       item.dataset.bookingSummaryId = booking.id;
       item.innerHTML = `
         <td><strong class="user-booking-summary-reference">${booking.reference}</strong></td>
-        <td><span class="user-booking-status user-booking-status--${getBookingStatusClass(booking)}">${formatBookingStatus(booking.status, booking.payment?.status)}</span></td>
+        <td><span class="user-booking-status user-booking-status--${getBookingStatusClass(booking)}">${formatBookingStatus(booking.status, booking.payment?.status, getBookingCancellationReason(booking))}</span></td>
         <td><span class="user-booking-summary-vehicle">${vehicleLabel}</span></td>
         <td><span class="user-booking-summary-mechanic">${mechanicLabel}</span></td>
         <td><span class="user-booking-summary-date">${formatDate(booking.created_at)}</span></td>
@@ -1664,7 +1674,7 @@ if (userPage) {
       ["Reference", "Status", "Created"],
       ...rows.map((booking) => [
         booking.reference,
-        formatBookingStatus(booking.status, booking.payment?.status),
+        formatBookingStatus(booking.status, booking.payment?.status, getBookingCancellationReason(booking)),
         formatDate(booking.created_at)
       ])
     ]
