@@ -185,6 +185,27 @@ if (mechanicDashboard) {
   const formatCurrency = window.SWApp?.formatCurrency || ((value) => String(value || "0"));
   const escapeHtml = window.SWApp?.escapeHtml || ((value) => String(value ?? ""));
   const getInitials = window.SWApp?.getInitials || ((name) => String(name || "ME"));
+  const formatBookingReference = (value) => String(Number(value) || 0).padStart(8, "0");
+  const formatResolutionReference = (value, bookingId) => {
+    if (value) {
+      const rawValue = String(value).trim();
+      const parts = rawValue.split("/");
+      if (parts.length === 2) {
+        return `${formatBookingReference(parts[0])}/${parts[1]}`;
+      }
+      return rawValue;
+    }
+    if (!bookingId) return "-";
+    return `${formatBookingReference(bookingId)}/1`;
+  };
+  const normalizeMechanicListPayload = (value) => {
+    if (Array.isArray(value)) return value;
+    if (Array.isArray(value?.data)) return value.data;
+    if (Array.isArray(value?.items)) return value.items;
+    if (Array.isArray(value?.cases)) return value.cases;
+    if (Array.isArray(value?.bookings)) return value.bookings;
+    return [];
+  };
   const setAvatar = (el, initials, url) => {
     if (!el) return;
     el.innerHTML = "";
@@ -301,7 +322,41 @@ if (mechanicDashboard) {
     if (key === "pending") return "Pending";
     if (key === "failed") return "Failed";
     if (key === "refunded") return "Refunded";
+    if (key === "completed") return "Completed";
     return key.charAt(0).toUpperCase() + key.slice(1);
+  };
+
+  const getMechanicPaymentMethodLabel = (entry) => {
+    const value = String(entry?.payment?.payment_method || entry?.booking?.payment_method || "").trim().toLowerCase();
+    if (value.includes("american express") || value === "amex") return "American Express";
+    if (value.includes("mastercard") || value.includes("master card")) return "Mastercard";
+    if (value.includes("visa")) return "Visa";
+    if (value) return value.charAt(0).toUpperCase() + value.slice(1);
+    return "-";
+  };
+
+  const getMechanicPaymentNumber = (entry) =>
+    String(entry?.payment?.provider_ref || entry?.booking?.payment_number || entry?.invoice?.number || "-").trim() || "-";
+
+  const getMechanicCardLast4 = (entry) =>
+    String(entry?.payment?.card_last4 || entry?.booking?.payment_last4 || "").replace(/\D+/g, "").slice(-4).padStart(4, "0").slice(-4) || "-";
+
+  const normalizeMechanicPaymentEntry = (entry) => {
+    if (!entry) return null;
+    if (entry.payment) return entry;
+    const bookingStatus = String(entry.booking?.status || "").trim().toLowerCase();
+    if (bookingStatus !== "completed" && !entry.invoice) return null;
+    return {
+      ...entry,
+      payment: {
+        status: "completed",
+        amount_eur: Number(entry.booking?.total_eur || 0),
+        currency: "GBP",
+        provider_ref: entry.invoice?.number || entry.invoice?.pdf_url || `BOOKING-${entry.booking?.reference || entry.booking?.id || "-"}`,
+        payment_method: entry.booking?.payment_method || null,
+        card_last4: entry.booking?.payment_last4 || null
+      }
+    };
   };
 
   const setMechanicHeroByView = (view) => {
@@ -634,9 +689,10 @@ if (mechanicDashboard) {
       .filter((entry) => {
         const reference = String(entry.booking?.reference || entry.booking?.id || "");
         const customer = String(entry.customer?.name || "");
-        const vehicle = [entry.vehicle?.registrationNumber, entry.vehicle?.make, entry.vehicle?.model].filter(Boolean).join(" ");
-        const paymentRef = String(entry.payment?.provider_ref || "");
-        const haystack = `${reference} ${customer} ${vehicle} ${paymentRef}`.toLowerCase();
+        const paymentMethod = String(getMechanicPaymentMethodLabel(entry));
+        const paymentRef = String(getMechanicPaymentNumber(entry));
+        const cardLast4 = String(getMechanicCardLast4(entry));
+        const haystack = `${reference} ${customer} ${paymentMethod} ${paymentRef} ${cardLast4}`.toLowerCase();
         const paymentStatus = getMechanicPaymentStatusLabel(entry);
         const matchesSearch = !searchValue || haystack.includes(searchValue);
         const matchesStatus = statusValue === "all" ? true : paymentStatus === statusValue;
@@ -841,8 +897,9 @@ if (mechanicDashboard) {
         <div class="mechanic-booking-grid">
           <div><strong>Customer</strong><div>${escapeHtml(entry.customer?.name || "Customer")}</div></div>
           <div><strong>Total</strong><div>${escapeHtml(formatMechanicCurrency(entry.payment?.amount_eur ?? entry.booking?.total_eur))}</div></div>
-          <div><strong>Vehicle</strong><div>${escapeHtml([entry.vehicle?.registrationNumber, entry.vehicle?.make, entry.vehicle?.model].filter(Boolean).join(" · ") || "-")}</div></div>
-          <div><strong>Payment ref</strong><div>${escapeHtml(entry.payment?.provider_ref || "-")}</div></div>
+          <div><strong>Payment method</strong><div>${escapeHtml(getMechanicPaymentMethodLabel(entry))}</div></div>
+          <div><strong>Payment number</strong><div>${escapeHtml(getMechanicPaymentNumber(entry))}</div></div>
+          <div><strong>Card last 4</strong><div>${escapeHtml(getMechanicCardLast4(entry))}</div></div>
           <div><strong>Address</strong><div>${escapeHtml(formatMechanicAddress(entry.address) || "-")}</div></div>
           <div><strong>Work types</strong><div>${escapeHtml((entry.items || []).map((item) => item.name).join(", ") || "-")}</div></div>
         </div>
@@ -852,14 +909,16 @@ if (mechanicDashboard) {
 
   const renderMechanicPayments = (bookings) => {
     if (!mechanicPaymentsList) return;
-    const paymentBookings = Array.isArray(bookings) ? bookings : latestMechanicAssignedBookings;
+    const paymentBookings = (Array.isArray(bookings) ? bookings : latestMechanicAssignedBookings)
+      .map((entry) => normalizeMechanicPaymentEntry(entry))
+      .filter(Boolean);
     mechanicPaymentsList.innerHTML = "";
     if (mechanicPaymentDetail) mechanicPaymentDetail.innerHTML = "";
 
-    if (!Array.isArray(paymentBookings) || !paymentBookings.some((entry) => entry?.payment)) {
+    if (!Array.isArray(paymentBookings) || !paymentBookings.length) {
       const emptyRow = document.createElement("tr");
       emptyRow.className = "mechanic-booking-empty-row";
-      emptyRow.innerHTML = '<td colspan="6" class="mechanic-bookings-empty">No completed payments yet.</td>';
+      emptyRow.innerHTML = '<td colspan="8" class="mechanic-bookings-empty">No completed payments yet.</td>';
       mechanicPaymentsList.appendChild(emptyRow);
       if (mechanicPaymentsFooterCount) mechanicPaymentsFooterCount.textContent = "0 payments";
       if (mechanicPaymentsPagination) mechanicPaymentsPagination.innerHTML = "";
@@ -868,7 +927,7 @@ if (mechanicDashboard) {
 
     setSimpleOptions(
       mechanicPaymentsStatusFilter,
-      paymentBookings.filter((entry) => entry?.payment).map((entry) => getMechanicPaymentStatusLabel(entry)),
+      paymentBookings.map((entry) => getMechanicPaymentStatusLabel(entry)),
       "Status"
     );
 
@@ -883,7 +942,7 @@ if (mechanicDashboard) {
     if (!pagePayments.length) {
       const emptyRow = document.createElement("tr");
       emptyRow.className = "mechanic-booking-empty-row";
-      emptyRow.innerHTML = '<td colspan="6" class="mechanic-bookings-empty">No payments match the selected filters.</td>';
+      emptyRow.innerHTML = '<td colspan="8" class="mechanic-bookings-empty">No payments match the selected filters.</td>';
       mechanicPaymentsList.appendChild(emptyRow);
       activeMechanicPaymentBookingId = null;
       if (mechanicPaymentDetail) mechanicPaymentDetail.innerHTML = "";
@@ -905,7 +964,9 @@ if (mechanicDashboard) {
         <td><strong class="mechanic-booking-summary-reference">${escapeHtml(String(entry.booking?.reference || entry.booking?.id || "-"))}</strong></td>
         <td><span class="mechanic-booking-status mechanic-booking-status--${escapeHtml(getMechanicPaymentStatusKey(entry))}">${escapeHtml(getMechanicPaymentStatusLabel(entry).toUpperCase())}</span></td>
         <td><span class="mechanic-booking-summary-customer">${escapeHtml(entry.customer?.name || "Customer")}</span></td>
-        <td><span class="mechanic-booking-summary-vehicle">${escapeHtml([entry.vehicle?.registrationNumber, entry.vehicle?.make, entry.vehicle?.model].filter(Boolean).join(" · ") || "-")}</span></td>
+        <td><span class="mechanic-booking-summary-date">${escapeHtml(getMechanicPaymentMethodLabel(entry))}</span></td>
+        <td><span class="mechanic-booking-summary-date">${escapeHtml(getMechanicPaymentNumber(entry))}</span></td>
+        <td><span class="mechanic-booking-summary-date">${escapeHtml(getMechanicCardLast4(entry))}</span></td>
         <td><span class="mechanic-booking-summary-date">${escapeHtml(formatMechanicCurrency(entry.payment?.amount_eur ?? entry.booking?.total_eur))}</span></td>
         <td><span class="mechanic-booking-summary-date">${escapeHtml(formatDate(entry.booking?.created_at))}</span></td>
       `;
@@ -1287,26 +1348,29 @@ if (mechanicDashboard) {
 
   const renderMechanicResolutionCaseRows = (target, cases) => {
     if (!target) return;
-    target.querySelectorAll(".mechanic-resolution-table-row").forEach((row) => row.remove());
+    const headMarkup = target.querySelector(".mechanic-resolution-table-head")?.outerHTML || "";
     if (!Array.isArray(cases) || !cases.length) {
-      const empty = document.createElement("p");
-      empty.className = "mechanic-bookings-empty";
-      empty.textContent = "No cases created yet.";
-      target.appendChild(empty);
+      target.innerHTML = `
+        ${headMarkup}
+        <p class="mechanic-bookings-empty">No cases created yet.</p>
+      `;
       return;
     }
-    cases.forEach((entry) => {
-      const row = document.createElement("div");
-      row.className = "mechanic-resolution-table-row";
-      row.innerHTML = `
-        <span class="mechanic-resolution-status">${String(entry.subject || entry.type || "General enquiry").toUpperCase()}</span>
-        <span>${formatResolutionReference(entry.reference, entry.booking_id)}</span>
-        <span>${formatMechanicDateTime(entry.updated_at)}</span>
-        <span>${entry.subject || "-"}</span>
-        <button class="mechanic-resolution-link" type="button" data-resolution-case-id="${entry.id}">View</button>
-      `;
-      target.appendChild(row);
-    });
+    const rowsMarkup = cases
+      .map((entry) => `
+        <div class="mechanic-resolution-table-row">
+          <span class="mechanic-resolution-status">${String(entry.subject || entry.type || "General enquiry").toUpperCase()}</span>
+          <span>${formatResolutionReference(entry.reference, entry.booking_id)}</span>
+          <span>${formatMechanicDateTime(entry.updated_at)}</span>
+          <span>${entry.subject || "-"}</span>
+          <button class="mechanic-resolution-link" type="button" data-resolution-case-id="${entry.id}">View</button>
+        </div>
+      `)
+      .join("");
+    target.innerHTML = `
+      ${headMarkup}
+      ${rowsMarkup}
+    `;
   };
 
   const renderMechanicResolutionBookings = (bookings) => {
@@ -1352,12 +1416,22 @@ if (mechanicDashboard) {
   const syncMechanicResolutionOverview = async () => {
     if (!mechanicToken) return;
     try {
-      const [cases, bookings] = await Promise.all([
+      const [casesResult, bookingsResult] = await Promise.allSettled([
         apiAuth("/api/users/me/mechanic-resolution-cases", mechanicToken),
         apiAuth("/api/users/me/mechanic-bookings", mechanicToken)
       ]);
-      latestMechanicResolutionCases = Array.isArray(cases) ? cases : [];
-      latestMechanicAssignedBookings = Array.isArray(bookings) ? bookings : [];
+      latestMechanicResolutionCases = casesResult.status === "fulfilled"
+        ? normalizeMechanicListPayload(casesResult.value)
+        : [];
+      latestMechanicAssignedBookings = bookingsResult.status === "fulfilled"
+        ? normalizeMechanicListPayload(bookingsResult.value)
+        : [];
+      if (casesResult.status === "rejected") {
+        console.error("Unable to load mechanic resolution cases", casesResult.reason);
+      }
+      if (bookingsResult.status === "rejected") {
+        console.error("Unable to load mechanic bookings", bookingsResult.reason);
+      }
       renderMechanicOverview();
       renderMechanicResolutionCaseRows(mechanicResolutionCasesTable, latestMechanicResolutionCases);
       renderMechanicResolutionBookings(latestMechanicAssignedBookings);
@@ -1774,10 +1848,11 @@ if (mechanicDashboard) {
       Reference: entry.booking?.reference || entry.booking?.id || "-",
       PaymentStatus: getMechanicPaymentStatusLabel(entry),
       Customer: entry.customer?.name || "Customer",
-      Vehicle: [entry.vehicle?.registrationNumber, entry.vehicle?.make, entry.vehicle?.model].filter(Boolean).join(" · "),
+      PaymentMethod: getMechanicPaymentMethodLabel(entry),
+      PaymentNumber: getMechanicPaymentNumber(entry),
+      CardLast4: getMechanicCardLast4(entry),
       Total: formatMechanicCurrency(entry.payment?.amount_eur ?? entry.booking?.total_eur),
       Created: formatDate(entry.booking?.created_at),
-      PaymentRef: entry.payment?.provider_ref || "-"
     }));
     downloadCsv("mechanic-payments.csv", rows);
   });
@@ -2113,19 +2188,25 @@ if (mechanicDashboard) {
   };
 
   mechanicNavLinks.forEach((link) => {
-    link.addEventListener("click", () => {
+    link.addEventListener("click", async () => {
       const view = link.dataset.view || "account";
       syncMechanicNavState(view);
       setMechanicView(view);
+      if (view === "resolution") {
+        await syncMechanicResolutionOverview();
+      }
     });
   });
 
   mechanicOverviewActionButtons.forEach((button) => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", async () => {
       const view = button.dataset.view;
       if (!view) return;
       syncMechanicNavState(view);
       setMechanicView(view);
+      if (view === "resolution") {
+        await syncMechanicResolutionOverview();
+      }
     });
   });
 

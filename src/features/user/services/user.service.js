@@ -34,6 +34,7 @@ const formatAddressRow = (row) =>
 const formatBookingReference = (value) => String(Number(value) || 0).padStart(8, "0");
 
 let ensureBookingCancellationFieldsPromise = null;
+let ensurePaymentMetadataFieldsPromise = null;
 
 const ensureBookingCancellationFields = async () => {
   if (!ensureBookingCancellationFieldsPromise) {
@@ -61,6 +62,34 @@ const ensureBookingCancellationFields = async () => {
   }
 
   return ensureBookingCancellationFieldsPromise;
+};
+
+const ensurePaymentMetadataFields = async () => {
+  if (!ensurePaymentMetadataFieldsPromise) {
+    ensurePaymentMetadataFieldsPromise = (async () => {
+      const [rows] = await pool.query(
+        `SELECT COLUMN_NAME
+         FROM information_schema.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = 'payments'
+           AND COLUMN_NAME IN ('payment_method', 'card_last4')`
+      );
+
+      const existing = new Set(rows.map((row) => row.COLUMN_NAME));
+
+      if (!existing.has("payment_method")) {
+        await pool.query("ALTER TABLE payments ADD COLUMN payment_method VARCHAR(32) NULL AFTER currency");
+      }
+      if (!existing.has("card_last4")) {
+        await pool.query("ALTER TABLE payments ADD COLUMN card_last4 CHAR(4) NULL AFTER payment_method");
+      }
+    })().catch((error) => {
+      ensurePaymentMetadataFieldsPromise = null;
+      throw error;
+    });
+  }
+
+  return ensurePaymentMetadataFieldsPromise;
 };
 
 const getLatestAddress = async (userId) => {
@@ -450,6 +479,7 @@ const deleteUserVehicle = async (userId, registrationNumber) => {
 };
 
 const listUserBookings = async (userId) => {
+  await ensurePaymentMetadataFields();
   await ensureBookingCompletionTables();
   await ensureBookingCancellationFields();
   const [rows] = await pool.query(
@@ -505,7 +535,7 @@ const listUserBookings = async (userId) => {
   );
 
   const [paymentRows] = await pool.query(
-    `SELECT p.booking_id, p.status, p.amount_eur, p.currency, p.provider_ref
+    `SELECT p.booking_id, p.status, p.amount_eur, p.currency, p.provider_ref, p.payment_method, p.card_last4
      FROM payments p
      INNER JOIN (
        SELECT booking_id, MAX(id) AS latest_id
@@ -627,7 +657,9 @@ const listUserBookings = async (userId) => {
             status: payment.status,
             amount_eur: Number(payment.amount_eur || 0),
             currency: payment.currency,
-            provider_ref: payment.provider_ref
+            provider_ref: payment.provider_ref,
+            payment_method: payment.payment_method || null,
+            card_last4: payment.card_last4 || null
           }
         : null,
       review: review
@@ -749,6 +781,7 @@ const listMechanicBookingOffers = async (mechanicId) => {
 };
 
 const listMechanicAssignedBookings = async (mechanicId) => {
+  await ensurePaymentMetadataFields();
   await ensureBookingCompletionTables();
   const [rows] = await pool.query(
     `SELECT b.id AS booking_id,
@@ -769,11 +802,14 @@ const listMechanicAssignedBookings = async (mechanicId) => {
             up.lastname AS customer_lastname,
             u.email AS customer_email
      FROM bookings b
+     INNER JOIN booking_offers bo
+       ON bo.booking_id = b.id
+      AND bo.mechanic_id = ?
+      AND bo.status IN ('accepted', 'completed')
      INNER JOIN users u ON u.id = b.customer_id
      LEFT JOIN user_profiles up ON up.user_id = b.customer_id
      LEFT JOIN addresses a ON a.id = b.address_id
      LEFT JOIN vehicles v ON v.id = b.vehicle_id
-     WHERE b.mechanic_id = ?
      ORDER BY b.created_at DESC`,
     [mechanicId]
   );
@@ -800,7 +836,7 @@ const listMechanicAssignedBookings = async (mechanicId) => {
   });
 
   const [paymentRows] = await pool.query(
-    `SELECT p.booking_id, p.status, p.amount_eur, p.currency, p.provider_ref
+    `SELECT p.booking_id, p.status, p.amount_eur, p.currency, p.provider_ref, p.payment_method, p.card_last4
      FROM payments p
      INNER JOIN (
        SELECT booking_id, MAX(id) AS latest_id
@@ -881,7 +917,9 @@ const listMechanicAssignedBookings = async (mechanicId) => {
             status: payment.status,
             amount_eur: Number(payment.amount_eur || 0),
             currency: payment.currency,
-            provider_ref: payment.provider_ref
+            provider_ref: payment.provider_ref,
+            payment_method: payment.payment_method || null,
+            card_last4: payment.card_last4 || null
           }
         : null,
       invoice,
@@ -910,7 +948,7 @@ const listMechanicResolutionCases = async (mechanicId, { bookingId } = {}) => {
      LEFT JOIN user_profiles up ON up.user_id = rc.customer_id
      LEFT JOIN addresses a ON a.id = b.address_id
      LEFT JOIN vehicles v ON v.id = b.vehicle_id
-     WHERE rc.mechanic_id = ? ${bookingFilter}
+     WHERE COALESCE(rc.mechanic_id, b.mechanic_id) = ? ${bookingFilter}
      ORDER BY rc.updated_at DESC`,
     params
   );
@@ -962,8 +1000,8 @@ const listUserResolutionCases = async (userId, { bookingId } = {}) => {
             up.name AS mechanic_name, up.lastname AS mechanic_lastname, u.email AS mechanic_email
      FROM resolution_cases rc
      INNER JOIN bookings b ON b.id = rc.booking_id
-     INNER JOIN users u ON u.id = rc.mechanic_id
-     LEFT JOIN user_profiles up ON up.user_id = rc.mechanic_id
+     INNER JOIN users u ON u.id = COALESCE(rc.mechanic_id, b.mechanic_id)
+     LEFT JOIN user_profiles up ON up.user_id = COALESCE(rc.mechanic_id, b.mechanic_id)
      LEFT JOIN addresses a ON a.id = b.address_id
      LEFT JOIN vehicles v ON v.id = b.vehicle_id
      WHERE rc.customer_id = ? ${bookingFilter}
@@ -1067,8 +1105,8 @@ const getUserResolutionCaseDetail = async (userId, caseId) => {
             up.name AS mechanic_name, up.lastname AS mechanic_lastname, u.email AS mechanic_email
      FROM resolution_cases rc
      INNER JOIN bookings b ON b.id = rc.booking_id
-     INNER JOIN users u ON u.id = rc.mechanic_id
-     LEFT JOIN user_profiles up ON up.user_id = rc.mechanic_id
+     INNER JOIN users u ON u.id = COALESCE(rc.mechanic_id, b.mechanic_id)
+     LEFT JOIN user_profiles up ON up.user_id = COALESCE(rc.mechanic_id, b.mechanic_id)
      LEFT JOIN addresses a ON a.id = b.address_id
      LEFT JOIN vehicles v ON v.id = b.vehicle_id
      WHERE rc.id = ? AND rc.customer_id = ?
@@ -1234,7 +1272,7 @@ const getMechanicResolutionCaseDetail = async (mechanicId, caseId) => {
      LEFT JOIN user_profiles up ON up.user_id = rc.customer_id
      LEFT JOIN addresses a ON a.id = b.address_id
      LEFT JOIN vehicles v ON v.id = b.vehicle_id
-     WHERE rc.id = ? AND rc.mechanic_id = ?
+     WHERE rc.id = ? AND COALESCE(rc.mechanic_id, b.mechanic_id) = ?
      LIMIT 1`,
     [id, mechanicId]
   );

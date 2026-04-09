@@ -319,6 +319,8 @@ CREATE TABLE IF NOT EXISTS payments (
   status ENUM('authorized','auth_captured','refunded','failed') NOT NULL,
   amount_eur DECIMAL(10,2) NOT NULL,
   currency CHAR(3) NOT NULL DEFAULT 'EUR',
+  payment_method VARCHAR(32) NULL,
+  card_last4 CHAR(4) NULL,
   provider_ref VARCHAR(128) NOT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY uq_provider_ref (provider, provider_ref),

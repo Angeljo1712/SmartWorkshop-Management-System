@@ -410,6 +410,14 @@ if (workSummary) {
   const cvcInput = document.getElementById("paymentCvc");
   const paymentFormError = document.getElementById("paymentFormError");
 
+  const detectCardBrand = (cardNumber) => {
+    const digits = String(cardNumber || "").replace(/\D+/g, "");
+    if (/^4\d{12}(\d{3})?$/.test(digits)) return "Visa";
+    if (/^3[47]\d{13}$/.test(digits)) return "American Express";
+    if (/^(5[1-5]\d{14}|2(2[2-9]\d{13}|[3-6]\d{14}|7([01]\d{13}|20\d{12})))$/.test(digits)) return "Mastercard";
+    return "Card";
+  };
+
   cardNumberInput?.addEventListener("input", () => {
     const digitsOnly = String(cardNumberInput.value || "").replace(/\D+/g, "").slice(0, 16);
     const grouped = digitsOnly.replace(/(.{4})/g, "$1 ").trim();
@@ -453,7 +461,7 @@ if (workSummary) {
       return;
     }
 
-    if (!/^\d{16}$/.test(cardNumber)) {
+    if (!/^\d{15,16}$/.test(cardNumber)) {
       if (paymentFormError) paymentFormError.textContent = "Please enter a valid card number.";
       return;
     }
@@ -476,9 +484,17 @@ if (workSummary) {
     }
 
     try {
+      const paymentMethod = detectCardBrand(cardNumber);
+      const cardLast4 = cardNumber.slice(-4);
       const result = await api("/api/bookings/draft/pay", {
         method: "POST",
-        body: JSON.stringify({ session_id: getSessionId(), provider: "mock", currency: "GBP" })
+        body: JSON.stringify({
+          session_id: getSessionId(),
+          provider: "mock",
+          currency: "GBP",
+          payment_method: paymentMethod,
+          card_last4: cardLast4
+        })
       });
       if (result?.booking_id) {
         sessionStorage.setItem("latestBookingReference", String(result.booking_id));

@@ -5,6 +5,37 @@ const { AppError } = require("../../../shared/utils/appError");
 
 const normalizeName = (value) => String(value || "").trim();
 
+let paymentMetadataColumnsEnsured = false;
+
+const ensurePaymentMetadataColumns = async () => {
+  if (paymentMetadataColumnsEnsured) return;
+  const statements = [
+    "ALTER TABLE payments ADD COLUMN payment_method VARCHAR(32) NULL AFTER currency",
+    "ALTER TABLE payments ADD COLUMN card_last4 CHAR(4) NULL AFTER payment_method"
+  ];
+  for (const statement of statements) {
+    try {
+      await pool.query(statement);
+    } catch (error) {
+      if (!/Duplicate column name/i.test(String(error?.message || ""))) {
+        throw error;
+      }
+    }
+  }
+  paymentMetadataColumnsEnsured = true;
+};
+
+const normalizePaymentMethod = (value) => {
+  const method = String(value || "").trim().toLowerCase();
+  if (!method) return "Card";
+  if (method.includes("american express") || method.includes("amex")) return "American Express";
+  if (method.includes("mastercard") || method.includes("master card")) return "Mastercard";
+  if (method.includes("visa")) return "Visa";
+  return String(value || "").trim();
+};
+
+const normalizeCardLast4 = (value) => String(value || "").replace(/\D+/g, "").slice(-4).padStart(4, "0").slice(-4);
+
 const geocodePostcode = async (postcode) => {
   const encoded = encodeURIComponent(postcode);
   const url = `https://api.postcodes.io/postcodes/${encoded}`;
@@ -308,7 +339,7 @@ const removeDraftItem = async ({ sessionId, serviceId }) => {
   return getDraft(sessionId);
 };
 
-const payDraft = async ({ session_id, provider = "mock", currency = "GBP" }) => {
+const payDraft = async ({ session_id, provider = "mock", currency = "GBP", payment_method = "", card_last4 = "" }) => {
   if (!session_id) {
     throw new AppError("VALIDATION_ERROR", "session_id is required", 400);
   }
@@ -377,6 +408,36 @@ const payDraft = async ({ session_id, provider = "mock", currency = "GBP" }) => 
       draft.vat,
       draft.total,
       draft.notes || null
+    ]
+  );
+
+  await ensurePaymentMetadataColumns();
+
+  const paymentMethod = normalizePaymentMethod(payment_method || provider);
+  const paymentLast4 = normalizeCardLast4(card_last4);
+  const paymentNumber = `PAY-${String(bookingResult.insertId).padStart(8, "0")}`;
+
+  await pool.query(
+    `INSERT INTO payments
+     (booking_id, provider, status, amount_eur, currency, provider_ref, payment_method, card_last4)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+     ON DUPLICATE KEY UPDATE
+       provider = VALUES(provider),
+       status = VALUES(status),
+       amount_eur = VALUES(amount_eur),
+       currency = VALUES(currency),
+       provider_ref = VALUES(provider_ref),
+       payment_method = VALUES(payment_method),
+       card_last4 = VALUES(card_last4)`,
+    [
+      bookingResult.insertId,
+      provider,
+      "auth_captured",
+      draft.total,
+      currency,
+      paymentNumber,
+      paymentMethod,
+      paymentLast4 || null
     ]
   );
 
