@@ -861,6 +861,10 @@ body.mechanic-body .mechanic-table td {
   color: #c8d4e8;
 }
 
+body.mechanic-body .mechanic-table tbody td {
+  color: #ffffff;
+}
+
 body.mechanic-body .mechanic-table thead th {
   background: #ffffff;
   color: #0f172a;
@@ -2168,7 +2172,7 @@ body.mechanic-body .mechanic-resolution-booking-row strong {
 }
 
 body.mechanic-body .mechanic-resolution-booking-row span {
-  color: #d6dfef;
+  color: #ffffff;
   line-height: 1.5;
 }
 
