@@ -83,6 +83,7 @@ if (mechanicDashboard) {
   const mechanicProfileRadius = document.getElementById("mechanicProfileRadius");
   const mechanicProfileServiceType = document.getElementById("mechanicProfileServiceType");
   const mechanicProfileMapEl = document.getElementById("mechanicProfileMap");
+  const mechanicProfileReviewsList = document.getElementById("mechanicProfileReviewsList");
   const mechanicEditProfileView = document.getElementById("mechanicEditProfileView");
   const mechanicEditYears = document.getElementById("mechanicEditYears");
   const mechanicEditWorkHistory = document.getElementById("mechanicEditWorkHistory");
@@ -245,6 +246,36 @@ if (mechanicDashboard) {
   const setLabeledText = (el, label, value) => {
     if (!el) return;
     el.innerHTML = `<span class="mechanic-account-label">${escapeHtml(label)}</span><span class="mechanic-account-value">${escapeHtml(value || "-")}</span>`;
+  };
+  const renderMechanicProfileReviews = (reviews = []) => {
+    if (!mechanicProfileReviewsList) return;
+    if (!Array.isArray(reviews) || !reviews.length) {
+      mechanicProfileReviewsList.innerHTML = '<p class="mechanic-profile-reviews-empty">No reviews yet.</p>';
+      return;
+    }
+    mechanicProfileReviewsList.innerHTML = reviews.map((entry) => {
+      const name = String(entry?.customer_name || "Customer");
+      const initials = getInitials(name);
+      const avatar = String(entry?.customer_avatar_url || "").trim();
+      const rating = Math.max(0, Math.min(5, Number(entry?.rating || 0))) || 0;
+      const stars = "★".repeat(rating) + "☆".repeat(Math.max(0, 5 - rating));
+      const dateText = entry?.created_at ? formatMechanicDateTime(entry.created_at) : "-";
+      return `
+        <article class="mechanic-profile-review-item">
+          <div class="mechanic-profile-review-avatar">
+            ${avatar ? `<img src="${escapeHtml(avatar)}" alt="${escapeHtml(name)}">` : escapeHtml(initials)}
+          </div>
+          <div>
+            <div class="mechanic-profile-review-head">
+              <span class="mechanic-profile-review-name">${escapeHtml(name)}</span>
+              <span class="mechanic-profile-review-stars" aria-label="${rating} out of 5 stars">${stars}</span>
+            </div>
+            <p class="mechanic-profile-review-comment">${escapeHtml(entry?.comment || "No comment provided.")}</p>
+            <div class="mechanic-profile-review-date">${escapeHtml(dateText)}</div>
+          </div>
+        </article>
+      `;
+    }).join("");
   };
 
   const setMechanicAccountStatus = (el, value) => {
@@ -1393,6 +1424,7 @@ if (mechanicDashboard) {
         accreditations: profileData.accreditations,
         memberships: profileData.memberships
       });
+      renderMechanicProfileReviews(profileData.reviews || []);
       if (mechanicEditYears) mechanicEditYears.value = profileData.years_experience || "";
       if (mechanicEditWorkHistory) mechanicEditWorkHistory.value = profileData.work_history || "";
       if (mechanicEditContactLine1) mechanicEditContactLine1.value = profileData.address?.line1 || "";

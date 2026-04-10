@@ -1446,6 +1446,16 @@ const getMechanicProfile = async (userId) => {
      ORDER BY created_at DESC`,
     [userId]
   );
+  const [reviewRows] = await pool.query(
+    `SELECT r.rating, r.comment, r.created_at,
+            up.name, up.lastname, up.avatar_url
+     FROM reviews r
+     LEFT JOIN user_profiles up ON up.user_id = r.customer_id
+     WHERE r.mechanic_id = ?
+     ORDER BY r.created_at DESC
+     LIMIT 20`,
+    [userId]
+  );
 
   const name = user.display_name || [user.name, user.lastname].filter(Boolean).join(" ") || user.email;
   const location = contactAddress?.city || "Surrey";
@@ -1478,7 +1488,14 @@ const getMechanicProfile = async (userId) => {
     qualifications: qualificationRows.map((row) => row.name).filter(Boolean),
     accreditations: accreditationRows.map((row) => row.name).filter(Boolean),
     memberships: membershipRows.map((row) => row.name).filter(Boolean),
-    services_offered: serviceRows.map((row) => row.service_type).filter(Boolean)
+    services_offered: serviceRows.map((row) => row.service_type).filter(Boolean),
+    reviews: reviewRows.map((row) => ({
+      rating: Number(row.rating || 0),
+      comment: row.comment || "",
+      created_at: row.created_at || null,
+      customer_name: [row.name, row.lastname].filter(Boolean).join(" ").trim() || "Customer",
+      customer_avatar_url: row.avatar_url || ""
+    }))
   };
 };
 

@@ -359,7 +359,6 @@ block content
                     .mechanic-profile-avatar-card
                       .mechanic-profile-avatar#mechanicProfileAvatar 🔧
                     .mechanic-profile-info-card
-                      span#mechanicProfileRatings (0 ratings)
                       ul
                         li#mechanicProfileExperience 5 years professional experience
                         li#mechanicProfileActiveSince Active since February 2026
@@ -396,6 +395,11 @@ block content
                         span#mechanicProfileServiceType Mobile mechanic
                     .mechanic-profile-map
                       #mechanicProfileMap(data-geoapify-key=(geoapify && geoapify.apiKey) || "" data-geoapify-style=(geoapify && geoapify.mapStyle) || "osm-carto")
+                    .mechanic-profile-reviews-card
+                      h3 Reviews
+                      #mechanicProfileReviewsList
+                        p.mechanic-profile-reviews-empty No reviews yet.
+                      #mechanicProfileReviewsPagination.mechanic-profile-reviews-pagination
     
             section.mechanic-content.is-hidden#mechanicEditProfileView
               form.settings-card.mechanic-dashboard-card.mechanic-edit-profile-layout#mechanicEditProfileForm

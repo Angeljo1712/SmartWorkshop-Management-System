@@ -1031,10 +1031,17 @@ body.mechanic-body .mechanic-cert-chip--empty {
 body.mechanic-body .mechanic-cert-chip-remove {
   border: 0;
   background: transparent;
-  color: #8ec5ff;
+  color: #ffffff;
   padding: 0;
   font: inherit;
   cursor: pointer;
+}
+
+body.mechanic-body .mechanic-profile-info-card .mechanic-cert-chip--profile {
+  display: block;
+  background: transparent;
+  border-radius: 0;
+  padding: 0 0 0 34px;
 }
 
 body.mechanic-body .mechanic-cert-entry {
@@ -2889,7 +2896,7 @@ body.mechanic-body .mechanic-profile-sidebar {
 body.mechanic-body .mechanic-profile-avatar-card,
 body.mechanic-body .mechanic-profile-info-card,
 body.mechanic-body .mechanic-profile-map {
-  background: rgba(20, 27, 41, 0.72);
+  background: #3e434df7;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 16px;
 }
@@ -2928,7 +2935,7 @@ body.mechanic-body .mechanic-profile-info-card {
   display: grid;
   gap: 14px;
   padding: 18px;
-  color: #d7dfeb;
+  /* color: #d7dfeb; */
 }
 
 body.mechanic-body .mechanic-profile-info-card h4 {
@@ -2980,7 +2987,7 @@ body.mechanic-body .mechanic-profile-main h1 {
 }
 
 body.mechanic-body .mechanic-profile-tabs {
-  background: rgba(20, 27, 41, 0.72);
+  background: #3e434df7;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 16px;
   padding: 14px;
@@ -2988,8 +2995,8 @@ body.mechanic-body .mechanic-profile-tabs {
 
 body.mechanic-body .mechanic-profile-tabs button {
   border: none;
-  background: rgba(77, 163, 255, 0.12);
-  color: #4da3ff;
+  background: rgba(34, 43, 58, 0.96);
+  color: #ffffff;
   font-size: 1rem;
   font-weight: 600;
   padding: 16px 32px;
@@ -3006,9 +3013,11 @@ body.mechanic-body .mechanic-profile-coverage-item {
   display: grid;
   gap: 6px;
   padding: 14px 16px;
-  background: rgba(20, 27, 41, 0.72);
+  background: #3e434df7;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 14px;
+  text-align: center;
+  justify-items: center;
 }
 
 body.mechanic-body .mechanic-profile-coverage-item strong {
@@ -3017,12 +3026,96 @@ body.mechanic-body .mechanic-profile-coverage-item strong {
 }
 
 body.mechanic-body .mechanic-profile-coverage-item span {
-  color: #c9d5e8;
+  color: #ffffff;
 }
 
 body.mechanic-body .mechanic-profile-map {
   min-height: 420px;
   overflow: hidden;
+}
+
+body.mechanic-body .mechanic-profile-reviews-card {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  background: #3e434df7;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+}
+
+body.mechanic-body .mechanic-profile-reviews-card h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.2rem;
+}
+
+body.mechanic-body #mechanicProfileReviewsList {
+  display: grid;
+  gap: 12px;
+}
+
+body.mechanic-body .mechanic-profile-review-item {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(10, 17, 30, 0.45);
+}
+
+body.mechanic-body .mechanic-profile-review-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #cfd6fb;
+  color: #44528d;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+
+body.mechanic-body .mechanic-profile-review-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+body.mechanic-body .mechanic-profile-review-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+body.mechanic-body .mechanic-profile-review-name {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+body.mechanic-body .mechanic-profile-review-stars {
+  color: #ffd667;
+  letter-spacing: 0.08em;
+  font-size: 0.95rem;
+}
+
+body.mechanic-body .mechanic-profile-review-comment {
+  margin: 6px 0 0;
+  color: #e7eefb;
+  line-height: 1.45;
+}
+
+body.mechanic-body .mechanic-profile-review-date {
+  margin-top: 6px;
+  color: #a8b8d2;
+  font-size: 0.88rem;
+}
+
+body.mechanic-body .mechanic-profile-reviews-empty {
+  margin: 0;
+  color: #d9e3f3;
 }
 
 body.mechanic-body .mechanic-edit-profile-layout {
@@ -3041,7 +3134,7 @@ body.mechanic-body .mechanic-edit-profile-card {
   gap: 14px;
   padding: 20px;
   /* background: rgba(20, 27, 41, 0.72); */
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  /* border: 1px solid rgba(255, 255, 255, 0.16); */
   border-radius: 16px;
 }
 
@@ -3131,7 +3224,7 @@ body.mechanic-body .mechanic-edit-profile-submit {
 
 body.mechanic-body #mechanicProfileMap {
   width: 100%;
-  min-height: 420px;
+  min-height: 490px;
   height: 100%;
   position: relative;
 }
