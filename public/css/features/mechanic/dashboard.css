@@ -2902,15 +2902,15 @@ body.mechanic-body .mechanic-profile-map {
 }
 
 body.mechanic-body .mechanic-profile-avatar-card {
-  min-height: 220px;
+  min-height: 340px;
   display: grid;
   place-items: center;
   padding: 24px;
 }
 
 body.mechanic-body .mechanic-profile-avatar {
-  width: 120px;
-  height: 120px;
+  width: 240px;
+  height: 240px;
   border-radius: 24px;
   display: grid;
   place-items: center;
@@ -3116,6 +3116,27 @@ body.mechanic-body .mechanic-profile-review-date {
 body.mechanic-body .mechanic-profile-reviews-empty {
   margin: 0;
   color: #d9e3f3;
+}
+
+body.mechanic-body .mechanic-profile-reviews-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+body.mechanic-body .mechanic-profile-reviews-dot {
+  width: 10px;
+  height: 10px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  padding: 0;
+}
+
+body.mechanic-body .mechanic-profile-reviews-dot.is-active {
+  background: #ffffff;
 }
 
 body.mechanic-body .mechanic-edit-profile-layout {

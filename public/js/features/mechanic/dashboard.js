@@ -84,6 +84,7 @@ if (mechanicDashboard) {
   const mechanicProfileServiceType = document.getElementById("mechanicProfileServiceType");
   const mechanicProfileMapEl = document.getElementById("mechanicProfileMap");
   const mechanicProfileReviewsList = document.getElementById("mechanicProfileReviewsList");
+  const mechanicProfileReviewsPagination = document.getElementById("mechanicProfileReviewsPagination");
   const mechanicEditProfileView = document.getElementById("mechanicEditProfileView");
   const mechanicEditYears = document.getElementById("mechanicEditYears");
   const mechanicEditWorkHistory = document.getElementById("mechanicEditWorkHistory");
@@ -251,9 +252,15 @@ if (mechanicDashboard) {
     if (!mechanicProfileReviewsList) return;
     if (!Array.isArray(reviews) || !reviews.length) {
       mechanicProfileReviewsList.innerHTML = '<p class="mechanic-profile-reviews-empty">No reviews yet.</p>';
+      if (mechanicProfileReviewsPagination) mechanicProfileReviewsPagination.innerHTML = "";
       return;
     }
-    mechanicProfileReviewsList.innerHTML = reviews.map((entry) => {
+    const totalPages = Math.max(1, Math.ceil(reviews.length / mechanicProfileReviewsPageSize));
+    mechanicProfileReviewsPage = Math.min(Math.max(1, mechanicProfileReviewsPage), totalPages);
+    const startIndex = (mechanicProfileReviewsPage - 1) * mechanicProfileReviewsPageSize;
+    const visibleReviews = reviews.slice(startIndex, startIndex + mechanicProfileReviewsPageSize);
+
+    mechanicProfileReviewsList.innerHTML = visibleReviews.map((entry) => {
       const name = String(entry?.customer_name || "Customer");
       const initials = getInitials(name);
       const avatar = String(entry?.customer_avatar_url || "").trim();
@@ -275,6 +282,18 @@ if (mechanicDashboard) {
           </div>
         </article>
       `;
+    }).join("");
+
+    if (!mechanicProfileReviewsPagination) return;
+    if (totalPages <= 1) {
+      mechanicProfileReviewsPagination.innerHTML = "";
+      return;
+    }
+    mechanicProfileReviewsPagination.innerHTML = Array.from({ length: totalPages }, (_, index) => {
+      const page = index + 1;
+      return `<button type="button" class="mechanic-profile-reviews-dot${
+        page === mechanicProfileReviewsPage ? " is-active" : ""
+      }" data-mechanic-profile-reviews-page="${page}" aria-label="Go to review page ${page}"></button>`;
     }).join("");
   };
 
@@ -546,6 +565,8 @@ if (mechanicDashboard) {
   const mechanicToken = getStoredAuthValue("userToken");
   let mechanicProfileMap = null;
   let latestMechanicProfile = null;
+  let mechanicProfileReviewsPage = 1;
+  const mechanicProfileReviewsPageSize = 1;
   const formatMonthYear = (value) => {
     if (!value) return "February 2026";
     const date = new Date(value);
@@ -1424,6 +1445,7 @@ if (mechanicDashboard) {
         accreditations: profileData.accreditations,
         memberships: profileData.memberships
       });
+      mechanicProfileReviewsPage = 1;
       renderMechanicProfileReviews(profileData.reviews || []);
       if (mechanicEditYears) mechanicEditYears.value = profileData.years_experience || "";
       if (mechanicEditWorkHistory) mechanicEditWorkHistory.value = profileData.work_history || "";
@@ -2419,6 +2441,14 @@ if (mechanicDashboard) {
       syncMechanicResolutionFilterTabs();
       renderMechanicResolutionOverviewCases();
     });
+  });
+  mechanicProfileReviewsPagination?.addEventListener("click", (event) => {
+    const dot = event.target.closest("[data-mechanic-profile-reviews-page]");
+    if (!dot) return;
+    const nextPage = Number(dot.dataset.mechanicProfileReviewsPage || 1);
+    if (!Number.isFinite(nextPage) || nextPage < 1) return;
+    mechanicProfileReviewsPage = nextPage;
+    renderMechanicProfileReviews(latestMechanicProfile?.reviews || []);
   });
   mechanicResolutionCaseBackBtn?.addEventListener("click", () => {
     if (pendingResolutionBookingId) {
