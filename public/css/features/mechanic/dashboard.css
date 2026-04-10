@@ -2129,11 +2129,18 @@ body.mechanic-body .mechanic-resolution-sidebar-row span {
 }
 
 body.mechanic-body .mechanic-resolution-booking {
-  width: min(520px, 100%);
+  width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   overflow: hidden;
   background: #0d1220;
+}
+
+body.mechanic-body #mechanicResolutionBookings {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
 }
 
 body.mechanic-body .mechanic-resolution-booking-head {
@@ -2173,6 +2180,10 @@ body.mechanic-body .mechanic-resolution-booking .primary {
 }
 
 @media (max-width: 900px) {
+  body.mechanic-body #mechanicResolutionBookings {
+    grid-template-columns: 1fr;
+  }
+
   body.mechanic-body .mechanic-overview-metrics,
   body.mechanic-body .mechanic-overview-booking-list {
     grid-template-columns: 1fr 1fr;
