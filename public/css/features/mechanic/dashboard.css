@@ -489,6 +489,37 @@ body.mechanic-body #mechanicAccountView .mechanic-account-label {
   border-right: 2px solid rgba(255, 255, 255, 0.72);
 }
 
+body.mechanic-body #mechanicAccountView .mechanic-account-status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: start;
+  width: fit-content;
+  min-width: 92px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #ffffff;
+  background: #5a6f90;
+}
+
+body.mechanic-body #mechanicAccountView .mechanic-account-status-pill[data-status="active"] {
+  background: var(--dashboard-badge-green);
+  padding: 10px;
+}
+
+body.mechanic-body #mechanicAccountView .mechanic-account-status-pill[data-status="pending"] {
+  background: #5a6f90;
+}
+
+body.mechanic-body #mechanicAccountView .mechanic-account-status-pill[data-status="inactive"],
+body.mechanic-body #mechanicAccountView .mechanic-account-status-pill[data-status="disabled"],
+body.mechanic-body #mechanicAccountView .mechanic-account-status-pill[data-status="suspended"] {
+  background: var(--dashboard-badge-red);
+}
+
 body.mechanic-body #mechanicAccountView .settings-profile,
 body.mechanic-body #mechanicAccountView .settings-row {
   padding-bottom: 25px;

@@ -68,6 +68,7 @@ if (mechanicDashboard) {
   const mechanicAccountAddressSecondary = document.getElementById("mechanicAccountAddressSecondary");
   const mechanicAccountRole = document.getElementById("mechanicAccountRole");
   const mechanicAccountRoleSecondary = document.getElementById("mechanicAccountRoleSecondary");
+  const mechanicAccountStatusSecondary = document.getElementById("mechanicAccountStatusSecondary");
   const mechanicProfileAvatar = document.getElementById("mechanicProfileAvatar");
   const mechanicProfileHeading = document.getElementById("mechanicProfileHeading");
   const mechanicProfileRatings = document.getElementById("mechanicProfileRatings");
@@ -242,6 +243,21 @@ if (mechanicDashboard) {
   const setLabeledText = (el, label, value) => {
     if (!el) return;
     el.innerHTML = `<span class="mechanic-account-label">${escapeHtml(label)}</span><span class="mechanic-account-value">${escapeHtml(value || "-")}</span>`;
+  };
+
+  const setMechanicAccountStatus = (el, value) => {
+    if (!el) return;
+    const key = String(value || "").trim().toLowerCase();
+    const normalized = key || "pending";
+    const label = normalized === "active"
+      ? "Active"
+      : normalized === "pending"
+        ? "Pending"
+        : normalized === "inactive"
+          ? "Inactive"
+          : normalized.charAt(0).toUpperCase() + normalized.slice(1);
+    el.textContent = label;
+    el.dataset.status = normalized;
   };
   const syncMechanicSecurity2faButton = () => {
     if (!mechanicSecurity2faEnable) return;
@@ -441,11 +457,12 @@ if (mechanicDashboard) {
       setLabeledText(mechanicAccountEmailSecondary, "Email:", user?.email);
       setLabeledText(mechanicAccountUsername, "Username:", user?.username);
       setLabeledText(mechanicAccountUsernameSecondary, "Username:", user?.username);
-      setLabeledText(mechanicAccountAddress, "Address:", user?.address);
-      setLabeledText(mechanicAccountAddressSecondary, "Address:", user?.address);
-      if (mechanicAccountRole) mechanicAccountRole.textContent = activeRole;
-      if (mechanicAccountRoleSecondary) mechanicAccountRoleSecondary.textContent = activeRole;
-      if (mechanicSettingsWelcomeName) mechanicSettingsWelcomeName.textContent = name;
+        setLabeledText(mechanicAccountAddress, "Address:", user?.address);
+        setLabeledText(mechanicAccountAddressSecondary, "Address:", user?.address);
+        if (mechanicAccountRole) mechanicAccountRole.textContent = activeRole;
+        if (mechanicAccountRoleSecondary) mechanicAccountRoleSecondary.textContent = activeRole;
+        setMechanicAccountStatus(mechanicAccountStatusSecondary, user?.status);
+        if (mechanicSettingsWelcomeName) mechanicSettingsWelcomeName.textContent = name;
       setAvatar(mechanicSettingsAvatarSettings, getInitials(name, activeRole), user?.avatar_url);
       if (mechanicSettingsFullName) mechanicSettingsFullName.textContent = name;
       if (mechanicSettingsPhone) mechanicSettingsPhone.textContent = user?.phone || "-";
