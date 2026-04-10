@@ -30,6 +30,9 @@ const {
   getMyMechanicResolutionCaseHandler,
   addMyMechanicResolutionMessageHandler,
   getMyMechanicProfileHandler,
+  updateMyMechanicCertificationsHandler,
+  updateMyMechanicTaxHandler,
+  listMyMechanicDocumentsHandler,
   updateMyMechanicProfileHandler,
   updateMyMechanicServiceCoverageHandler,
   respondMyMechanicOfferHandler,
@@ -72,6 +75,9 @@ router.post(
   asyncHandler(addMyMechanicResolutionMessageHandler)
 );
 router.get("/me/mechanic-profile", authenticate, authorizeRoles("MECHANIC"), asyncHandler(getMyMechanicProfileHandler));
+router.patch("/me/mechanic-certifications", authenticate, authorizeRoles("MECHANIC"), asyncHandler(updateMyMechanicCertificationsHandler));
+router.get("/me/mechanic-documents", authenticate, authorizeRoles("MECHANIC"), asyncHandler(listMyMechanicDocumentsHandler));
+router.patch("/me/mechanic-tax", authenticate, authorizeRoles("MECHANIC"), asyncHandler(updateMyMechanicTaxHandler));
 router.patch("/me/mechanic-profile", authenticate, authorizeRoles("MECHANIC"), asyncHandler(updateMyMechanicProfileHandler));
 router.patch("/me/mechanic-service-coverage", authenticate, authorizeRoles("MECHANIC"), asyncHandler(updateMyMechanicServiceCoverageHandler));
 router.post(

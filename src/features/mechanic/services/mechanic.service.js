@@ -110,6 +110,26 @@ const ensureMechanicDocumentsTable = async () => {
   );
 };
 
+const listMechanicDocumentsByUserId = async (userId) => {
+  await ensureMechanicDocumentsTable();
+  const [rows] = await pool.query(
+    `SELECT id, original_name, file_path, mime_type, file_size, created_at
+     FROM mechanic_documents
+     WHERE user_id = ?
+     ORDER BY created_at DESC, id DESC`,
+    [userId]
+  );
+
+  return rows.map((row) => ({
+    id: Number(row.id),
+    original_name: row.original_name,
+    file_path: row.file_path,
+    mime_type: row.mime_type,
+    file_size: Number(row.file_size || 0),
+    created_at: row.created_at
+  }));
+};
+
 const savePremisesAddress = async ({ userId, line1, city, postalCode }) => {
   const street = String(line1 || "").trim();
   const locality = String(city || "").trim();
@@ -436,7 +456,7 @@ const getProfile = async (userId) => {
   const [rows] = await pool.query(
     `SELECT u.id, u.email, u.created_at,
             p.name, p.lastname, p.avatar_url,
-            mp.display_name, mp.about, mp.jobs_done, mp.rating_avg, mp.is_mobile, mp.vat_id,
+            mp.display_name, mp.about, mp.jobs_done, mp.rating_avg, mp.is_mobile, mp.vat_id, mp.vat_registered,
             mp.years_experience, mp.work_history
      FROM users u
      LEFT JOIN user_profiles p ON p.user_id = u.id
@@ -464,6 +484,7 @@ const getProfile = async (userId) => {
     created_at: user.created_at,
     is_mobile: user.is_mobile === null ? true : Boolean(user.is_mobile),
     vat_id: user.vat_id || null,
+    vat_registered: Boolean(user.vat_registered),
     years_experience: user.years_experience || null,
     work_history: user.work_history || "",
     address,
@@ -478,6 +499,7 @@ module.exports = {
   updateProfile,
   saveApplication,
   saveUploadedDocumentsByEmail,
+  listMechanicDocumentsByUserId,
   completeApplication,
   setPasswordByEmail
 };

@@ -15,6 +15,7 @@ const {
   ensureTwoFactorTables,
   setTwoFactorEmailEnabled
 } = require("../../../shared/infrastructure/security/twoFactor.service");
+const { verifyVatNumber, normalizeVatNumber, isLikelyUkVatNumber } = require("../../../shared/infrastructure/external/tax-api.service");
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 
@@ -35,6 +36,7 @@ const formatBookingReference = (value) => String(Number(value) || 0).padStart(8,
 
 let ensureBookingCancellationFieldsPromise = null;
 let ensurePaymentMetadataFieldsPromise = null;
+let ensureMechanicAccreditationsTablePromise = null;
 
 const ensureBookingCancellationFields = async () => {
   if (!ensureBookingCancellationFieldsPromise) {
@@ -90,6 +92,43 @@ const ensurePaymentMetadataFields = async () => {
   }
 
   return ensurePaymentMetadataFieldsPromise;
+};
+
+const ensureMechanicAccreditationsTable = async () => {
+  if (!ensureMechanicAccreditationsTablePromise) {
+    ensureMechanicAccreditationsTablePromise = (async () => {
+      await pool.query(
+        `CREATE TABLE IF NOT EXISTS mechanic_accreditations (
+          id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+          user_id BIGINT UNSIGNED NOT NULL,
+          name VARCHAR(160) NOT NULL,
+          created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          KEY idx_ma_user (user_id),
+          CONSTRAINT fk_ma_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB`
+      );
+    })().catch((error) => {
+      ensureMechanicAccreditationsTablePromise = null;
+      throw error;
+    });
+  }
+
+  return ensureMechanicAccreditationsTablePromise;
+};
+
+const normalizeMechanicCertificationItems = (value) => {
+  const source = Array.isArray(value) ? value : value === undefined || value === null ? [] : [value];
+  const seen = new Set();
+  const items = [];
+  for (const entry of source) {
+    const item = String(entry || "").trim();
+    if (!item) continue;
+    const key = item.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    items.push(item);
+  }
+  return items;
 };
 
 const getLatestAddress = async (userId) => {
@@ -1369,10 +1408,11 @@ const addMechanicResolutionMessage = async (mechanicId, caseId, body, files = []
 };
 
 const getMechanicProfile = async (userId) => {
+  await ensureMechanicAccreditationsTable();
   const [rows] = await pool.query(
     `SELECT u.id, u.email, u.created_at,
             p.name, p.lastname, p.avatar_url,
-            mp.display_name, mp.about, mp.jobs_done, mp.rating_avg, mp.is_mobile, mp.vat_id,
+            mp.display_name, mp.about, mp.jobs_done, mp.rating_avg, mp.is_mobile, mp.vat_id, mp.vat_registered,
             mp.years_experience, mp.work_history, mp.travel_radius_miles
      FROM users u
      LEFT JOIN user_profiles p ON p.user_id = u.id
@@ -1399,6 +1439,13 @@ const getMechanicProfile = async (userId) => {
      ORDER BY created_at DESC`,
     [userId]
   );
+  const [accreditationRows] = await pool.query(
+    `SELECT name
+     FROM mechanic_accreditations
+     WHERE user_id = ?
+     ORDER BY created_at DESC`,
+    [userId]
+  );
 
   const name = user.display_name || [user.name, user.lastname].filter(Boolean).join(" ") || user.email;
   const location = contactAddress?.city || "Surrey";
@@ -1421,6 +1468,7 @@ const getMechanicProfile = async (userId) => {
     created_at: user.created_at,
     is_mobile: user.is_mobile === null ? true : Boolean(user.is_mobile),
     vat_id: user.vat_id || null,
+    vat_registered: Boolean(user.vat_registered),
     years_experience: user.years_experience || null,
     work_history: user.work_history || "",
     travel_radius_miles: user.travel_radius_miles || null,
@@ -1428,9 +1476,47 @@ const getMechanicProfile = async (userId) => {
     contact_address: contactAddress,
     premises_address: premisesAddress,
     qualifications: qualificationRows.map((row) => row.name).filter(Boolean),
+    accreditations: accreditationRows.map((row) => row.name).filter(Boolean),
     memberships: membershipRows.map((row) => row.name).filter(Boolean),
     services_offered: serviceRows.map((row) => row.service_type).filter(Boolean)
   };
+};
+
+const updateMechanicCertifications = async (userId, payload = {}) => {
+  await ensureMechanicAccreditationsTable();
+
+  const qualifications = normalizeMechanicCertificationItems(payload.qualifications || payload.certifications);
+  const accreditations = normalizeMechanicCertificationItems(payload.accreditations);
+  const memberships = normalizeMechanicCertificationItems(payload.memberships);
+
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    await connection.query("DELETE FROM mechanic_qualifications WHERE user_id = ?", [userId]);
+    for (const name of qualifications) {
+      await connection.query("INSERT INTO mechanic_qualifications (user_id, name) VALUES (?, ?)", [userId, name]);
+    }
+
+    await connection.query("DELETE FROM mechanic_accreditations WHERE user_id = ?", [userId]);
+    for (const name of accreditations) {
+      await connection.query("INSERT INTO mechanic_accreditations (user_id, name) VALUES (?, ?)", [userId, name]);
+    }
+
+    await connection.query("DELETE FROM mechanic_memberships WHERE user_id = ?", [userId]);
+    for (const name of memberships) {
+      await connection.query("INSERT INTO mechanic_memberships (user_id, name) VALUES (?, ?)", [userId, name]);
+    }
+
+    await connection.commit();
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
+
+  return getMechanicProfile(userId);
 };
 
 const listMechanicServiceCoverage = async (userId) => {
@@ -1582,6 +1668,47 @@ const updateMechanicProfile = async (userId, payload) => {
   }
 
   return getMechanicProfile(userId);
+};
+
+const updateMechanicTaxDetails = async (userId, payload = {}) => {
+  const vatInput = String(payload.vat_id ?? payload.vat_number ?? "").trim();
+  const vatId = normalizeVatNumber(vatInput);
+
+  if (!vatId) {
+    await pool.query(
+      `INSERT INTO mechanic_profiles (user_id, display_name, legal_name, vat_id, vat_registered)
+       VALUES (?, '-', '-', NULL, 0)
+       ON DUPLICATE KEY UPDATE
+         vat_id = VALUES(vat_id),
+         vat_registered = VALUES(vat_registered)`,
+      [userId]
+    );
+    return getMechanicProfile(userId);
+  }
+
+  if (!isLikelyUkVatNumber(vatId)) {
+    throw new AppError("VALIDATION_ERROR", "Enter a valid UK VAT number", 400);
+  }
+
+  const verification = await verifyVatNumber(vatId);
+  if (!verification.valid) {
+    throw new AppError("VALIDATION_ERROR", "VAT number could not be verified", 400);
+  }
+
+  await pool.query(
+    `INSERT INTO mechanic_profiles (user_id, display_name, legal_name, vat_id, vat_registered)
+     VALUES (?, '-', '-', ?, 1)
+     ON DUPLICATE KEY UPDATE
+       vat_id = VALUES(vat_id),
+       vat_registered = VALUES(vat_registered)`,
+    [userId, vatId]
+  );
+
+  const profile = await getMechanicProfile(userId);
+  return {
+    ...profile,
+    vat_verification_reference: verification.reference || null
+  };
 };
 
 const respondToMechanicBookingOffer = async (mechanicId, offerId, action, reason = "") => {
@@ -2016,6 +2143,8 @@ module.exports = {
   getMechanicResolutionCaseDetail,
   addMechanicResolutionMessage,
   getMechanicProfile,
+  updateMechanicCertifications,
+  updateMechanicTaxDetails,
   listMechanicServiceCoverage,
   updateMechanicServiceCoverage,
   updateMechanicProfile,

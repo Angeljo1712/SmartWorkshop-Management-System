@@ -1,10 +1,15 @@
 const { AppError } = require("../../../shared/utils/appError");
 const userService = require("../services/user.service");
+const mechanicService = require("../../mechanic/services/mechanic.service");
 const {
   sendEmailChangeConfirmation,
   sendAccountChangeNotification
 } = require("../../../shared/infrastructure/email/email.service");
 const { env } = require("../../../shared/config/env");
+const {
+  normalizeVatNumber,
+  isLikelyUkVatNumber
+} = require("../../../shared/infrastructure/external/tax-api.service");
 
 const getMeHandler = async (req, res) => {
   const user = await userService.getUserById(req.user.userId);
@@ -191,6 +196,11 @@ const getMyMechanicProfileHandler = async (req, res) => {
   res.json(profile);
 };
 
+const listMyMechanicDocumentsHandler = async (req, res) => {
+  const documents = await mechanicService.listMechanicDocumentsByUserId(req.user.userId);
+  res.json(documents);
+};
+
 const updateMyMechanicProfileHandler = async (req, res) => {
   const currentUser = await userService.getUserById(req.user.userId);
   const previousProfile = await userService.getMechanicProfile(req.user.userId);
@@ -232,6 +242,29 @@ const updateMyMechanicProfileHandler = async (req, res) => {
       });
     }
   }
+  res.json(profile);
+};
+
+const updateMyMechanicCertificationsHandler = async (req, res) => {
+  const profile = await userService.updateMechanicCertifications(req.user.userId, req.body || {});
+  res.json(profile);
+};
+
+const updateMyMechanicTaxHandler = async (req, res) => {
+  const vatInput = String(req.body?.vat_id ?? req.body?.vat_number ?? "").trim();
+  if (vatInput) {
+    const vatId = normalizeVatNumber(vatInput);
+    if (!isLikelyUkVatNumber(vatId)) {
+      return res.status(400).json({
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "Enter a valid UK VAT number"
+        }
+      });
+    }
+  }
+
+  const profile = await userService.updateMechanicTaxDetails(req.user.userId, req.body || {});
   res.json(profile);
 };
 
@@ -289,7 +322,10 @@ module.exports = {
   getMyMechanicResolutionCaseHandler,
   addMyMechanicResolutionMessageHandler,
   getMyMechanicProfileHandler,
+  updateMyMechanicTaxHandler,
+  listMyMechanicDocumentsHandler,
   updateMyMechanicProfileHandler,
+  updateMyMechanicCertificationsHandler,
   updateMyMechanicServiceCoverageHandler,
   respondMyMechanicOfferHandler,
   completeMyMechanicBookingHandler,

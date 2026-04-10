@@ -18,6 +18,9 @@ if (mechanicDashboard) {
   const mechanicPictureView = document.getElementById("mechanicPictureView");
   const mechanicCertificationsView = document.getElementById("mechanicCertificationsView");
   const mechanicTaxView = document.getElementById("mechanicTaxView");
+  const mechanicTaxVat = document.getElementById("mechanicTaxVat");
+  const mechanicTaxSaveBtn = document.getElementById("mechanicTaxSaveBtn");
+  const mechanicTaxStatus = document.getElementById("mechanicTaxStatus");
   const mechanicDocumentsView = document.getElementById("mechanicDocumentsView");
   const mechanicPreferencesView = document.getElementById("mechanicPreferencesView");
   const mechanicTypesView = document.getElementById("mechanicTypesView");
@@ -72,6 +75,7 @@ if (mechanicDashboard) {
   const mechanicProfileActiveSince = document.getElementById("mechanicProfileActiveSince");
   const mechanicProfileJobsCompleted = document.getElementById("mechanicProfileJobsCompleted");
   const mechanicProfileQualifications = document.getElementById("mechanicProfileQualifications");
+  const mechanicProfileAccreditations = document.getElementById("mechanicProfileAccreditations");
   const mechanicProfileMemberships = document.getElementById("mechanicProfileMemberships");
   const mechanicProfileBaseLocation = document.getElementById("mechanicProfileBaseLocation");
   const mechanicProfilePostcode = document.getElementById("mechanicProfilePostcode");
@@ -100,6 +104,17 @@ if (mechanicDashboard) {
   const mechanicTypesTree = document.getElementById("mechanicTypesTree");
   const mechanicTypesSaveBtn = document.getElementById("mechanicTypesSaveBtn");
   const mechanicTypesStatus = document.getElementById("mechanicTypesStatus");
+  const mechanicCertQualificationsList = document.getElementById("mechanicCertQualificationsList");
+  const mechanicCertAccreditationsList = document.getElementById("mechanicCertAccreditationsList");
+  const mechanicCertMembershipsList = document.getElementById("mechanicCertMembershipsList");
+  const mechanicCertStatus = document.getElementById("mechanicCertStatus");
+  const mechanicCertificationQualification = document.getElementById("mechanicCertificationQualification");
+  const mechanicCertificationQualificationAdd = document.getElementById("mechanicCertificationQualificationAdd");
+  const mechanicCertificationAccreditation = document.getElementById("mechanicCertificationAccreditation");
+  const mechanicCertificationAccreditationAdd = document.getElementById("mechanicCertificationAccreditationAdd");
+  const mechanicCertificationMembership = document.getElementById("mechanicCertificationMembership");
+  const mechanicCertificationMembershipAdd = document.getElementById("mechanicCertificationMembershipAdd");
+  const mechanicCertSaveBtn = document.getElementById("mechanicCertSaveBtn");
   const mechanicSettingsWelcomeName = document.getElementById("mechanicSettingsWelcomeName");
   const mechanicSettingsPanelTitle = document.getElementById("mechanicSettingsPanelTitle");
   const mechanicSettingsFullName = document.getElementById("mechanicSettingsFullName");
@@ -168,6 +183,11 @@ if (mechanicDashboard) {
   let latestMechanicResolutionCases = [];
   let latestMechanicAssignedBookings = [];
   let latestMechanicOffers = [];
+  let latestMechanicCertificationState = {
+    qualifications: [],
+    accreditations: [],
+    memberships: []
+  };
     let activeMechanicBookingOfferId = null;
     let activeMechanicPaymentBookingId = null;
     let activeMechanicCompletionBookingId = null;
@@ -259,6 +279,16 @@ if (mechanicDashboard) {
     if (!mechanicPaymentsStatus) return;
     mechanicPaymentsStatus.textContent = message;
     mechanicPaymentsStatus.classList.toggle("is-hidden", !message);
+  };
+
+  const setMechanicTaxStatus = (message = "", tone = "") => {
+    if (!mechanicTaxStatus) return;
+    mechanicTaxStatus.textContent = message;
+    mechanicTaxStatus.classList.toggle("is-hidden", !message);
+    mechanicTaxStatus.classList.remove("is-success", "is-warning", "is-error");
+    if (message && tone) {
+      mechanicTaxStatus.classList.add(`is-${tone}`);
+    }
   };
 
   const getMechanicCompletionFiles = (bookingId) =>
@@ -439,12 +469,7 @@ if (mechanicDashboard) {
       if (mechanicProfileRadius) mechanicProfileRadius.textContent = "5 miles";
       if (mechanicProfileServiceType) mechanicProfileServiceType.textContent = "Mobile mechanic";
       setAvatar(mechanicProfileAvatar, initials || "ME", user?.avatar_url);
-      if (mechanicProfileQualifications) {
-        mechanicProfileQualifications.innerHTML = "<li>NVQ Level 3 Qualified</li>";
-      }
-      if (mechanicProfileMemberships) {
-        mechanicProfileMemberships.innerHTML = "<li>No memberships added yet</li>";
-      }
+      renderMechanicCertificationState();
       if (mechanicEditContactCity) mechanicEditContactCity.value = user?.address_details?.city || "";
       if (mechanicEditContactPostcode) mechanicEditContactPostcode.value = user?.address_details?.postal_code || "";
       if (mechanicEditMobileService) mechanicEditMobileService.checked = true;
@@ -498,6 +523,106 @@ if (mechanicDashboard) {
       hour: "2-digit",
       minute: "2-digit"
     });
+  };
+  const normalizeMechanicCertificationItems = (value) => {
+    const source = Array.isArray(value) ? value : value === undefined || value === null ? [] : [value];
+    const seen = new Set();
+    const items = [];
+    source.forEach((entry) => {
+      const item = String(entry || "").trim();
+      if (!item) return;
+      const key = item.toLowerCase();
+      if (seen.has(key)) return;
+      seen.add(key);
+      items.push(item);
+    });
+    return items;
+  };
+  const setMechanicCertStatus = (message = "", tone = "") => {
+    if (!mechanicCertStatus) return;
+    const text = String(message || "").trim();
+    mechanicCertStatus.textContent = text;
+    mechanicCertStatus.classList.toggle("is-hidden", !text);
+    mechanicCertStatus.classList.remove("is-success", "is-warning", "is-error");
+    if (tone) mechanicCertStatus.classList.add(`is-${tone}`);
+  };
+  const renderMechanicCertChips = (container, items, emptyText, kind, showRemove = true) => {
+    if (!container) return;
+    const list = normalizeMechanicCertificationItems(items);
+    container.innerHTML = "";
+    if (!list.length) {
+      const emptyItem = document.createElement("li");
+      emptyItem.className = "mechanic-cert-chip mechanic-cert-chip--empty";
+      emptyItem.textContent = emptyText;
+      container.appendChild(emptyItem);
+      return;
+    }
+    list.forEach((item, index) => {
+      const li = document.createElement("li");
+      li.className = showRemove ? "mechanic-cert-chip" : "mechanic-cert-chip mechanic-cert-chip--profile";
+      const label = document.createElement("span");
+      label.textContent = item;
+      li.appendChild(label);
+      if (showRemove) {
+        const removeBtn = document.createElement("button");
+        removeBtn.type = "button";
+        removeBtn.className = "mechanic-cert-chip-remove";
+        removeBtn.dataset.certKind = kind;
+        removeBtn.dataset.certIndex = String(index);
+        removeBtn.textContent = "Remove";
+        li.appendChild(removeBtn);
+      }
+      container.appendChild(li);
+    });
+  };
+  const renderMechanicCertificationState = () => {
+    renderMechanicCertChips(
+      mechanicCertQualificationsList,
+      latestMechanicCertificationState.qualifications,
+      "No qualifications added yet.",
+      "qualifications"
+    );
+    renderMechanicCertChips(
+      mechanicCertAccreditationsList,
+      latestMechanicCertificationState.accreditations,
+      "No accreditations added yet.",
+      "accreditations"
+    );
+    renderMechanicCertChips(
+      mechanicCertMembershipsList,
+      latestMechanicCertificationState.memberships,
+      "No memberships added yet.",
+      "memberships"
+    );
+    renderMechanicCertChips(
+      mechanicProfileQualifications,
+      latestMechanicCertificationState.qualifications,
+      "Qualifications not added yet",
+      "qualifications-profile",
+      false
+    );
+    renderMechanicCertChips(
+      mechanicProfileAccreditations,
+      latestMechanicCertificationState.accreditations,
+      "No accreditations added yet",
+      "accreditations-profile",
+      false
+    );
+    renderMechanicCertChips(
+      mechanicProfileMemberships,
+      latestMechanicCertificationState.memberships,
+      "No memberships added yet",
+      "memberships-profile",
+      false
+    );
+  };
+  const setMechanicCertificationState = (next = {}) => {
+    latestMechanicCertificationState = {
+      qualifications: normalizeMechanicCertificationItems(next.qualifications),
+      accreditations: normalizeMechanicCertificationItems(next.accreditations),
+      memberships: normalizeMechanicCertificationItems(next.memberships)
+    };
+    renderMechanicCertificationState();
   };
   const getMechanicBookingStatusLabel = (entry) => {
     const status = String(entry?.booking?.status || "").toLowerCase();
@@ -1220,6 +1345,17 @@ if (mechanicDashboard) {
       if (mechanicProfileServiceType) {
         mechanicProfileServiceType.textContent = profileData.is_mobile ? "Mobile mechanic" : "Workshop service";
       }
+      if (mechanicTaxVat) {
+        mechanicTaxVat.value = profileData.vat_id || "";
+      }
+      if (profileData.vat_id) {
+        setMechanicTaxStatus(
+          profileData.vat_registered ? "VAT number verified." : "VAT number saved, not verified.",
+          profileData.vat_registered ? "success" : "warning"
+        );
+      } else {
+        setMechanicTaxStatus("", "");
+      }
       if (mechanicProfileAvatar) {
         if (profileData.avatar_url) {
           mechanicProfileAvatar.innerHTML = `<img src="${profileData.avatar_url}" alt="Profile photo">`;
@@ -1233,18 +1369,11 @@ if (mechanicDashboard) {
           mechanicProfileAvatar.textContent = initials;
         }
       }
-      if (mechanicProfileQualifications) {
-        const qualifications = Array.isArray(profileData.qualifications) && profileData.qualifications.length
-          ? profileData.qualifications
-          : ["Qualifications not added yet"];
-        mechanicProfileQualifications.innerHTML = qualifications.map((item) => `<li>${item}</li>`).join("");
-      }
-      if (mechanicProfileMemberships) {
-        const memberships = Array.isArray(profileData.memberships) && profileData.memberships.length
-          ? profileData.memberships
-          : ["No memberships added yet"];
-        mechanicProfileMemberships.innerHTML = memberships.map((item) => `<li>${item}</li>`).join("");
-      }
+      setMechanicCertificationState({
+        qualifications: profileData.qualifications,
+        accreditations: profileData.accreditations,
+        memberships: profileData.memberships
+      });
       if (mechanicEditYears) mechanicEditYears.value = profileData.years_experience || "";
       if (mechanicEditWorkHistory) mechanicEditWorkHistory.value = profileData.work_history || "";
       if (mechanicEditContactLine1) mechanicEditContactLine1.value = profileData.address?.line1 || "";
@@ -1902,6 +2031,95 @@ if (mechanicDashboard) {
     }
   });
 
+  const setMechanicCertificationsDraft = (next = {}) => {
+    latestMechanicCertificationState = {
+      qualifications: normalizeMechanicCertificationItems(next.qualifications),
+      accreditations: normalizeMechanicCertificationItems(next.accreditations),
+      memberships: normalizeMechanicCertificationItems(next.memberships)
+    };
+    renderMechanicCertificationState();
+  };
+
+  const addMechanicCertificationValue = (kind, rawValue) => {
+    const value = String(rawValue || "").trim();
+    if (!value) return;
+    const next = { ...latestMechanicCertificationState };
+    const items = normalizeMechanicCertificationItems(next[kind]);
+    const exists = items.some((item) => item.toLowerCase() === value.toLowerCase());
+    if (exists) {
+      setMechanicCertStatus("That item is already added.", "warning");
+      return;
+    }
+    items.push(value);
+    next[kind] = items;
+    setMechanicCertificationsDraft(next);
+    setMechanicCertStatus("Unsaved changes.", "warning");
+  };
+
+  const removeMechanicCertificationValue = (kind, index) => {
+    const items = normalizeMechanicCertificationItems(latestMechanicCertificationState[kind]);
+    if (!Number.isInteger(index) || index < 0 || index >= items.length) return;
+    items.splice(index, 1);
+    const next = { ...latestMechanicCertificationState, [kind]: items };
+    setMechanicCertificationsDraft(next);
+    setMechanicCertStatus("Unsaved changes.", "warning");
+  };
+
+  const bindMechanicCertListRemoval = (container) => {
+    container?.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-cert-kind][data-cert-index]");
+      if (!button) return;
+      const kind = button.dataset.certKind;
+      const index = Number(button.dataset.certIndex);
+      removeMechanicCertificationValue(kind, index);
+    });
+  };
+
+  bindMechanicCertListRemoval(mechanicCertQualificationsList);
+  bindMechanicCertListRemoval(mechanicCertAccreditationsList);
+  bindMechanicCertListRemoval(mechanicCertMembershipsList);
+
+  mechanicCertificationQualificationAdd?.addEventListener("click", () => {
+    addMechanicCertificationValue("qualifications", mechanicCertificationQualification?.value);
+  });
+  mechanicCertificationAccreditationAdd?.addEventListener("click", () => {
+    addMechanicCertificationValue("accreditations", mechanicCertificationAccreditation?.value);
+    if (mechanicCertificationAccreditation) mechanicCertificationAccreditation.value = "";
+  });
+  mechanicCertificationMembershipAdd?.addEventListener("click", () => {
+    addMechanicCertificationValue("memberships", mechanicCertificationMembership?.value);
+    if (mechanicCertificationMembership) mechanicCertificationMembership.value = "";
+  });
+
+  mechanicCertSaveBtn?.addEventListener("click", async () => {
+    if (!mechanicToken) return;
+    if (mechanicCertStatus) mechanicCertStatus.textContent = "";
+    try {
+      mechanicCertSaveBtn.disabled = true;
+      const profileData = await apiAuth("/api/users/me/mechanic-certifications", mechanicToken, {
+        method: "PATCH",
+        body: JSON.stringify(latestMechanicCertificationState)
+      });
+      if (profileData) {
+        latestMechanicProfile = profileData;
+        setStoredAuthValue("userProfile", JSON.stringify(profileData));
+        setMechanicCertificationsDraft({
+          qualifications: profileData.qualifications,
+          accreditations: profileData.accreditations,
+          memberships: profileData.memberships
+        });
+        if (mechanicProfileHeading) {
+          mechanicProfileHeading.textContent = `${profileData.name || "Mechanic"}, ${profileData.location || "Surrey"}`;
+        }
+      }
+      setMechanicCertStatus("Certifications updated.", "success");
+    } catch (err) {
+      setMechanicCertStatus(err?.error?.message || err?.message || "Unable to save certifications.", "error");
+    } finally {
+      mechanicCertSaveBtn.disabled = false;
+    }
+  });
+
   const setMechanicSettingsSubview = (subview) => {
     mechanicSettingsGeneral?.classList.toggle("is-hidden", subview !== "general");
     mechanicSettingsNotifications?.classList.toggle("is-hidden", subview !== "notifications");
@@ -2086,6 +2304,33 @@ if (mechanicDashboard) {
 
   mechanicSecurity2faEmail?.addEventListener("change", syncMechanicSecurity2faButton);
   mechanicSecurity2faSms?.addEventListener("change", syncMechanicSecurity2faButton);
+
+  mechanicTaxSaveBtn?.addEventListener("click", async () => {
+    if (!mechanicToken) return;
+    const vat_id = mechanicTaxVat?.value?.trim() || "";
+    setMechanicTaxStatus(vat_id ? "Verifying VAT number..." : "Clearing VAT number...", "warning");
+
+    try {
+      const payload = await apiAuth("/api/users/me/mechanic-tax", mechanicToken, {
+        method: "PATCH",
+        body: JSON.stringify({ vat_id })
+      });
+      if (payload) {
+        latestMechanicProfile = payload;
+        setStoredAuthValue("userProfile", JSON.stringify(payload));
+      }
+      if (mechanicTaxVat) {
+        mechanicTaxVat.value = payload?.vat_id || "";
+      }
+      if (!payload?.vat_id) {
+        setMechanicTaxStatus("VAT number cleared.", "success");
+        return;
+      }
+      setMechanicTaxStatus(payload?.vat_registered ? "VAT number verified." : "VAT number saved.", payload?.vat_registered ? "success" : "warning");
+    } catch (err) {
+      setMechanicTaxStatus(err?.error?.message || err?.message || "Unable to verify VAT number.", "error");
+    }
+  });
 
   mechanicResolutionBackBtn?.addEventListener("click", () => {
     setMechanicResolutionSubview("overview");
@@ -2395,5 +2640,163 @@ if (documentsShell) {
       renderUploadList();
     }
   });
+}
+
+const dashboardDocumentsView = document.getElementById("mechanicDocumentsView");
+if (dashboardDocumentsView) {
+  const dashboardDocumentsForm = document.getElementById("mechanicDocumentsUploadForm");
+  const dashboardDocumentsInput = document.getElementById("mechanicDocumentsUpload");
+  const dashboardDocumentsList = document.getElementById("mechanicDocumentsUploadList");
+  const dashboardDocumentsStatus = document.getElementById("mechanicDocumentsUploadStatus");
+  const dashboardDocumentsEmail = document.getElementById("mechanicDocumentsUploadEmail");
+  const dashboardDocumentsToken = getStoredAuthValue("userToken");
+  const dashboardDocumentsProfile = (() => {
+    try {
+      return JSON.parse(getStoredAuthValue("userProfile") || "{}") || {};
+    } catch {
+      return {};
+    }
+  })();
+  let stagedDocuments = [];
+  let uploadedDocuments = [];
+
+  if (dashboardDocumentsEmail && dashboardDocumentsProfile?.email) {
+    dashboardDocumentsEmail.value = dashboardDocumentsProfile.email;
+  }
+
+  const getMechanicDashboardEmail = () =>
+    String(dashboardDocumentsEmail?.value || dashboardDocumentsProfile?.email || "").trim();
+
+  const isPdfDocument = (file) => Boolean(file) && (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf"));
+
+  const setDashboardDocumentsStatus = (message, state = "") => {
+    if (!dashboardDocumentsStatus) return;
+    dashboardDocumentsStatus.textContent = message || "";
+    dashboardDocumentsStatus.dataset.state = state;
+  };
+
+  const syncDashboardDocumentsInput = () => {
+    if (!dashboardDocumentsInput) return;
+    const dataTransfer = new DataTransfer();
+    stagedDocuments.forEach((file) => dataTransfer.items.add(file));
+    dashboardDocumentsInput.files = dataTransfer.files;
+  };
+
+  const renderDashboardDocumentsList = () => {
+    if (!dashboardDocumentsList) return;
+    dashboardDocumentsList.innerHTML = "";
+
+    const renderRow = (label, fileName, stateClass, fileUrl = "") => {
+      const row = document.createElement("div");
+      row.className = "mechanic-documents-upload-item";
+
+      const name = document.createElement(fileUrl ? "a" : "span");
+      name.className = "mechanic-documents-upload-name";
+      name.textContent = fileName;
+      if (fileUrl) {
+        name.href = fileUrl;
+        name.target = "_blank";
+        name.rel = "noopener noreferrer";
+      }
+
+      const state = document.createElement("span");
+      state.className = `mechanic-documents-upload-state ${stateClass}`;
+      state.textContent = label;
+
+      row.append(name, state);
+      dashboardDocumentsList.appendChild(row);
+    };
+
+    if (!uploadedDocuments.length && !stagedDocuments.length) {
+      const empty = document.createElement("p");
+      empty.className = "mechanic-documents-upload-status";
+      empty.textContent = "No documents uploaded yet.";
+      dashboardDocumentsList.appendChild(empty);
+      return;
+    }
+
+    uploadedDocuments.forEach((file) => {
+      renderRow("Uploaded", file.name, "is-valid", file.file_path || "");
+    });
+
+    stagedDocuments.forEach((file) => {
+      renderRow(isPdfDocument(file) ? "Ready" : "Invalid", file.name, isPdfDocument(file) ? "is-pending" : "is-invalid");
+    });
+  };
+
+  const loadDashboardDocuments = async () => {
+    if (!dashboardDocumentsToken) {
+      setDashboardDocumentsStatus("No active mechanic session found.", "error");
+      return;
+    }
+    try {
+      const response = await apiAuth("/api/users/me/mechanic-documents", dashboardDocumentsToken);
+      const items = Array.isArray(response) ? response : Array.isArray(response?.data) ? response.data : [];
+      uploadedDocuments = items.map((doc) => ({
+        id: doc.id,
+        name: doc.original_name || doc.file_path?.split("/").pop() || "document.pdf",
+        file_path: doc.file_path,
+        mime_type: doc.mime_type,
+        created_at: doc.created_at
+      }));
+      renderDashboardDocumentsList();
+      setDashboardDocumentsStatus(uploadedDocuments.length ? `${uploadedDocuments.length} uploaded document(s).` : "No documents uploaded yet.", "info");
+    } catch (error) {
+      setDashboardDocumentsStatus(error?.message || "Unable to load uploaded documents.", "error");
+    }
+  };
+
+  dashboardDocumentsInput?.addEventListener("change", () => {
+    stagedDocuments = Array.from(dashboardDocumentsInput.files || []);
+    syncDashboardDocumentsInput();
+    renderDashboardDocumentsList();
+    setDashboardDocumentsStatus(stagedDocuments.length ? `${stagedDocuments.length} document(s) ready to upload.` : "");
+  });
+
+  dashboardDocumentsForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const email = getMechanicDashboardEmail();
+    if (!email) {
+      setDashboardDocumentsStatus("Mechanic email is missing.", "error");
+      return;
+    }
+    if (!stagedDocuments.length) {
+      setDashboardDocumentsStatus("Choose at least one PDF before submitting.", "error");
+      return;
+    }
+    if (stagedDocuments.some((file) => !isPdfDocument(file))) {
+      setDashboardDocumentsStatus("Only PDF documents are allowed.", "error");
+      renderDashboardDocumentsList();
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("email", email);
+    stagedDocuments.forEach((file) => formData.append("documents", file));
+
+    setDashboardDocumentsStatus("Uploading documents...", "info");
+
+    try {
+      const response = await fetch(dashboardDocumentsForm.action, {
+        method: "POST",
+        body: formData,
+        credentials: "same-origin",
+        redirect: "follow"
+      });
+      if (!response.ok) {
+        throw new Error("Upload failed.");
+      }
+
+      stagedDocuments = [];
+      syncDashboardDocumentsInput();
+      if (dashboardDocumentsInput) dashboardDocumentsInput.value = "";
+      await loadDashboardDocuments();
+      setDashboardDocumentsStatus("Documents uploaded and saved.", "success");
+    } catch (error) {
+      setDashboardDocumentsStatus(error?.message || "Unable to upload documents.", "error");
+    }
+  });
+
+  void loadDashboardDocuments();
 }
 

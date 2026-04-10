@@ -19,6 +19,14 @@ const env = {
     apiKey: process.env.DVSA_API_KEY || "",
     scope: process.env.DVSA_SCOPE || "https://tapi.dvsa.gov.uk/.default"
   },
+  taxApi: {
+    baseUrl: process.env.TAX_API_BASE_URL || "",
+    tokenUrl: process.env.TAX_API_TOKEN_URL || "",
+    clientId: process.env.TAX_API_CLIENT_ID || "",
+    clientSecret: process.env.TAX_API_CLIENT_SECRET || "",
+    scope: process.env.TAX_API_SCOPE || "",
+    verifyUrl: process.env.TAX_API_VERIFY_URL || ""
+  },
   db: {
     host: process.env.DB_HOST || "localhost",
     port: Number(process.env.DB_PORT || 3306),
