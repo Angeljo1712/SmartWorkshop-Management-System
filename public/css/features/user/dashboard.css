@@ -2370,6 +2370,7 @@ body.user-body #userAccountView .user-account-layout {
     "contacts"
     "divider-bottom"
     "role"
+    "status"
     "integration";
   gap: 30px;
 }
@@ -2402,6 +2403,12 @@ body.user-body #userAccountView .user-account-layout {
   grid-area: role;
 }
 
+.account-section--status {
+  grid-area: status;
+  border-top: 3px solid #ffffff;
+  padding-top: 14px;
+}
+
 .user-account-layout > .settings-divider:nth-of-type(4) {
   grid-area: divider-bottom;
 }
@@ -2413,6 +2420,37 @@ body.user-body #userAccountView .user-account-layout {
 
 .account-section--integration {
   grid-area: integration;
+  border-top: 3px solid #ffffff;
+  padding-top: 14px;
+}
+
+body.user-body #userAccountView .user-account-status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 6px 18px;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+  background: #5a6f90;
+  width: fit-content;
+}
+
+body.user-body #userAccountView .user-account-status-pill[data-status="active"] {
+  background: #37c66c;
+}
+
+body.user-body #userAccountView .user-account-status-pill[data-status="pending"] {
+  background: #5a6f90;
+}
+
+body.user-body #userAccountView .user-account-status-pill[data-status="inactive"],
+body.user-body #userAccountView .user-account-status-pill[data-status="disabled"],
+body.user-body #userAccountView .user-account-status-pill[data-status="suspended"] {
+  background: #d84f5f;
 }
 
 body.user-body #userAccountView .settings-header p,
@@ -2692,9 +2730,9 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
     "divider-profile"
     "contacts"
     "divider-bottom"
-      "role"
-      "divider-final"
-      "integration";
+    "role"
+    "status"
+    "integration";
 }
 
 .user-vehicle-layout {

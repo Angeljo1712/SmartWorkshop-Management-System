@@ -17,6 +17,7 @@ if (userPage) {
   const userSettingsUsername = document.getElementById("userSettingsUsername");
   const userSettingsRole = document.getElementById("userSettingsRole");
   const userSettingsRoleBadge = document.getElementById("userSettingsRoleBadge");
+  const userSettingsStatus = document.getElementById("userSettingsStatus");
   const userSettingsPhone = document.getElementById("userSettingsPhone");
   const userSettingsAddress = document.getElementById("userSettingsAddress");
   const userSettingsAvatarSettings = document.getElementById("userSettingsAvatarSettings");
@@ -68,6 +69,19 @@ if (userPage) {
   const setUserLabeledText = (el, label, value) => {
     if (!el) return;
     el.innerHTML = `<span class="account-field-label">${escapeHtml(label)}</span><span class="account-field-value">${escapeHtml(value || "-")}</span>`;
+  };
+  const setUserAccountStatus = (el, rawStatus) => {
+    if (!el) return;
+    const normalized = String(rawStatus || "pending").trim().toLowerCase();
+    const labelMap = {
+      active: "Active",
+      pending: "Pending",
+      inactive: "Inactive",
+      suspended: "Suspended",
+      disabled: "Disabled"
+    };
+    el.dataset.status = labelMap[normalized] ? normalized : "pending";
+    el.textContent = labelMap[normalized] || "Pending";
   };
   const settingsSubnavLinks = document.querySelectorAll(".user-settings-tab-link");
   const userSettingsPanelTitle = document.getElementById("userSettingsPanelTitle");
@@ -218,6 +232,7 @@ if (userPage) {
     if (userSettingsUsername) setUserLabeledText(userSettingsUsername, "Username:", user?.username);
     userSettingsRole.textContent = activeRole;
     if (userSettingsRoleBadge) userSettingsRoleBadge.textContent = activeRole;
+    setUserAccountStatus(userSettingsStatus, user?.status);
     setUserLabeledText(userSettingsPhone, "Phone:", user?.phone);
     if (userSettingsAddress) setUserLabeledText(userSettingsAddress, "Address:", user?.address);
     if (userSettingsAvatarSettings) setAvatar(userSettingsAvatarSettings, initials, user?.avatar_url);
