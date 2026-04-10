@@ -536,7 +536,15 @@ block content
                     .mechanic-cert-entry
                       label(for="mechanicCertificationAccreditation") Add accreditation
                       .mechanic-cert-entry-actions
-                        input#mechanicCertificationAccreditation(type="text" placeholder="e.g. IMI Accredited")
+                        select#mechanicCertificationAccreditation(name="accreditation")
+                          option(value="" selected disabled) Select accreditation
+                          option IMI Accredited
+                          option IMI Professional Register
+                          option DVSA Approved MOT Tester
+                          option ATA Accredited
+                          option Hybrid/EV Accredited
+                          option Manufacturer Trained
+                          option Other accreditation
                         button.primary.mechanic-cert-action#mechanicCertificationAccreditationAdd(type="button") Add accreditation
                   .mechanic-cert-card
                     h3 Memberships
@@ -545,7 +553,15 @@ block content
                     .mechanic-cert-entry
                       label(for="mechanicCertificationMembership") Add membership
                       .mechanic-cert-entry-actions
-                        input#mechanicCertificationMembership(type="text" placeholder="e.g. Institute of the Motor Industry")
+                        select#mechanicCertificationMembership(name="membership")
+                          option(value="" selected disabled) Select membership
+                          option Institute of the Motor Industry (IMI)
+                          option Retail Motor Industry Federation (RMI)
+                          option Motor Ombudsman
+                          option Independent Garage Association (IGA)
+                          option Good Garage Scheme
+                          option Federation of Small Businesses (FSB)
+                          option Other membership
                         button.primary.mechanic-cert-action#mechanicCertificationMembershipAdd(type="button") Add membership
                   .mechanic-cert-actions
                     p.mechanic-cert-status#mechanicCertStatus.is-hidden(role="status" aria-live="polite")

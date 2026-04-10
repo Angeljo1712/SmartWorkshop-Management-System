@@ -2354,7 +2354,7 @@ body.user-body #userAccountView {
 
 body.user-body #userAccountView .user-account-layout {
   min-height: 100%;
-  align-content: start;
+  /* align-content: start; */
   padding: 20px;
 }
 
