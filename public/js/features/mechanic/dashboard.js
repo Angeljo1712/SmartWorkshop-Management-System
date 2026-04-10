@@ -147,6 +147,7 @@ if (mechanicDashboard) {
   const mechanicSettingsEditMessage = document.getElementById("mechanicSettingsEditMessage");
   const mechanicSecurityUsername = document.getElementById("mechanicSecurityUsername");
   const mechanicResolutionOverview = document.getElementById("mechanicResolutionOverview");
+  const mechanicResolutionFilterTabs = mechanicDashboard.querySelectorAll("[data-mechanic-resolution-filter]");
   const mechanicResolutionMessageView = document.getElementById("mechanicResolutionMessageView");
   const mechanicResolutionBackBtn = document.getElementById("mechanicResolutionBackBtn");
   const mechanicResolutionDetailTitle = document.getElementById("mechanicResolutionDetailTitle");
@@ -200,6 +201,7 @@ if (mechanicDashboard) {
   let activeMechanicSettingsField = "";
   let mechanicBookingsPage = 1;
   let mechanicPaymentsPage = 1;
+  let activeMechanicResolutionFilter = "all";
   let pendingResolutionBookingId = null;
   let pendingResolutionCaseId = null;
   const formatDate = window.SWApp?.formatShortDate || ((value) => String(value || "-"));
@@ -1518,6 +1520,31 @@ if (mechanicDashboard) {
     `;
   };
 
+  const getMechanicResolutionCaseType = (entry) => {
+    const subject = String(entry?.subject || entry?.type || "").toLowerCase();
+    if (subject.includes("complaint")) return "complaint";
+    return "general";
+  };
+
+  const getFilteredMechanicResolutionCases = (cases) => {
+    if (activeMechanicResolutionFilter === "all") return cases;
+    return (Array.isArray(cases) ? cases : []).filter(
+      (entry) => getMechanicResolutionCaseType(entry) === activeMechanicResolutionFilter
+    );
+  };
+
+  const syncMechanicResolutionFilterTabs = () => {
+    mechanicResolutionFilterTabs.forEach((tab) => {
+      const filter = String(tab.dataset.mechanicResolutionFilter || "all");
+      tab.classList.toggle("is-active", filter === activeMechanicResolutionFilter);
+    });
+  };
+
+  const renderMechanicResolutionOverviewCases = () => {
+    const filtered = getFilteredMechanicResolutionCases(latestMechanicResolutionCases);
+    renderMechanicResolutionCaseRows(mechanicResolutionCasesTable, filtered);
+  };
+
   const renderMechanicResolutionBookings = (bookings) => {
     if (!mechanicResolutionBookings) return;
     mechanicResolutionBookings.innerHTML = "";
@@ -1578,14 +1605,15 @@ if (mechanicDashboard) {
         console.error("Unable to load mechanic bookings", bookingsResult.reason);
       }
       renderMechanicOverview();
-      renderMechanicResolutionCaseRows(mechanicResolutionCasesTable, latestMechanicResolutionCases);
+      syncMechanicResolutionFilterTabs();
+      renderMechanicResolutionOverviewCases();
       renderMechanicResolutionBookings(latestMechanicAssignedBookings);
       renderMechanicPayments(latestMechanicAssignedBookings);
     } catch {
       latestMechanicResolutionCases = [];
       latestMechanicAssignedBookings = [];
       renderMechanicOverview();
-      renderMechanicResolutionCaseRows(mechanicResolutionCasesTable, []);
+      renderMechanicResolutionOverviewCases();
       renderMechanicResolutionBookings([]);
       renderMechanicPayments([]);
     }
@@ -2351,6 +2379,14 @@ if (mechanicDashboard) {
 
   mechanicResolutionBackBtn?.addEventListener("click", () => {
     setMechanicResolutionSubview("overview");
+  });
+
+  mechanicResolutionFilterTabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      activeMechanicResolutionFilter = String(tab.dataset.mechanicResolutionFilter || "all");
+      syncMechanicResolutionFilterTabs();
+      renderMechanicResolutionOverviewCases();
+    });
   });
   mechanicResolutionCaseBackBtn?.addEventListener("click", () => {
     if (pendingResolutionBookingId) {

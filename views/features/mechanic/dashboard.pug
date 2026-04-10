@@ -235,9 +235,9 @@ block content
                     h3 Current cases
                     .mechanic-resolution-card-body
                       .mechanic-resolution-tabs
-                        button.mechanic-resolution-tab.is-active(type="button") All
-                        button.mechanic-resolution-tab(type="button") Complaint
-                        button.mechanic-resolution-tab(type="button") General
+                        button.mechanic-resolution-tab.is-active(type="button" data-mechanic-resolution-filter="all") All
+                        button.mechanic-resolution-tab(type="button" data-mechanic-resolution-filter="complaint") Complaint
+                        button.mechanic-resolution-tab(type="button" data-mechanic-resolution-filter="general") General
                       .mechanic-resolution-table#mechanicResolutionCasesTable
                         .mechanic-resolution-table-head
                           span Status

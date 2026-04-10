@@ -667,7 +667,7 @@ body.mechanic-body .mechanic-overview-metric p,
 body.mechanic-body .mechanic-overview-bookings .settings-header p,
 body.mechanic-body .mechanic-overview-booking-copy {
   margin: 0;
-  color: rgba(245, 245, 255, 0.72);
+  color: #ffffff;
 }
 
 body.mechanic-body .mechanic-overview-bookings {
@@ -1857,7 +1857,7 @@ body.mechanic-body .mechanic-resolution-back {
   padding: 0 14px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 10px;
-  background: transparent;
+  background: #5a6f90;
   color: #d6dfef;
   font: inherit;
   cursor: pointer;
@@ -1945,7 +1945,7 @@ body.mechanic-body .mechanic-resolution-status {
 body.mechanic-body .mechanic-resolution-link {
   border: 0;
   background: transparent;
-  color: #1e93f2;
+  color: #ffff;
   font: inherit;
   cursor: pointer;
 }
