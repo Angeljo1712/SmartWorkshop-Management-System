@@ -3577,7 +3577,53 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
 }
 
 /* Responsive matrix for user dashboard */
-@media (max-width: 1440px) {
+@media (max-width: 1100px) and (min-width: 769px) {
+  #userPage.mainLayout {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  #userPage .rail-base {
+    width: 70px;
+    min-width: 70px;
+    min-height: auto;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  #userPage .mainRail {
+    width: 70px;
+    padding: 14px 10px;
+    justify-items: center;
+  }
+
+  #userPage .mainRail:hover {
+    width: 200px;
+  }
+
+  #userPage .mainRail .rail-nav {
+    position: sticky;
+    top: var(--general-header-height, 71px);
+    grid-auto-flow: row;
+    grid-auto-columns: unset;
+    grid-template-columns: 1fr;
+    align-content: start;
+    gap: 10px;
+    overflow: visible;
+    padding: 0;
+  }
+
+  #userPage .mainRail .rail-item {
+    width: 100%;
+    height: 48px;
+    min-height: 48px;
+    border-radius: 12px;
+  }
+
+  #userPage .mainRail .rail-footer {
+    display: grid;
+  }
+}
+
+@media (max-width: 768px) {
   #userPage.mainLayout {
     grid-template-columns: 1fr;
     gap: 0;
