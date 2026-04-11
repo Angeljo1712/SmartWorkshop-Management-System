@@ -656,6 +656,23 @@ const updateUser = async ({
     await connection.query("UPDATE users SET role = ? WHERE id = ?", [normalizedRole, userId]);
 
     if (nextAddress) {
+      const addressParts = String(nextAddress)
+        .split(",")
+        .map((part) => String(part || "").trim())
+        .filter(Boolean);
+
+      let line1 = addressParts[0] || nextAddress;
+      let line2 = addressParts[1] || "";
+      let city = addressParts[2] || "-";
+      let postalCode = addressParts[3] || "-";
+
+      if (addressParts.length > 4) {
+        line1 = addressParts.slice(0, Math.max(1, addressParts.length - 3)).join(", ");
+        line2 = addressParts[addressParts.length - 3] || "";
+        city = addressParts[addressParts.length - 2] || "-";
+        postalCode = addressParts[addressParts.length - 1] || "-";
+      }
+
       const [addressRows] = await connection.query(
         `SELECT id
          FROM addresses
@@ -666,15 +683,15 @@ const updateUser = async ({
       );
 
       if (addressRows.length) {
-        await connection.query("UPDATE addresses SET line1 = ?, line2 = '', city = '', postal_code = '', country = '' WHERE id = ?", [
-          nextAddress,
-          addressRows[0].id
-        ]);
+        await connection.query(
+          "UPDATE addresses SET line1 = ?, line2 = ?, city = ?, postal_code = ?, country = ? WHERE id = ?",
+          [line1, line2 || null, city || "-", postalCode || "-", "GB", addressRows[0].id]
+        );
       } else {
         await connection.query(
           `INSERT INTO addresses (uuid_public, user_id, label, line1, line2, city, postal_code, country, location)
-           VALUES (UUID(), ?, 'Primary', ?, '', '', '', '', '')`,
-          [userId, nextAddress]
+           VALUES (UUID_TO_BIN(UUID()), ?, 'Primary', ?, ?, ?, ?, ?, ST_GeomFromText('POINT(0 0)', 4326))`,
+          [userId, line1, line2 || null, city || "-", postalCode || "-", "GB"]
         );
       }
     }

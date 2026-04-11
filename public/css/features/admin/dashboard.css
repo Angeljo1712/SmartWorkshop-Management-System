@@ -2101,7 +2101,7 @@ body.admin-body #adminSettingsView .settings-profile,
 body.admin-body #adminSettingsView .settings-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 18px;
+  /* gap: 18px; */
   /* align-items: start; */
 }
 
