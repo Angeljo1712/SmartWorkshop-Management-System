@@ -1557,9 +1557,9 @@ body.mechanic-body #mechanicSettingsView .settings-avatar {
 }
 
 body.mechanic-body #mechanicSettingsView .settings-avatar-lg {
-  width: 140px;
-  height: 140px;
-  border-radius: 36px;
+  width: 150px;
+  height: 200px;
+  /* border-radius: 50px; */
 }
 
 body.mechanic-body #mechanicSettingsView .mechanic-settings-photo-row .ghost {

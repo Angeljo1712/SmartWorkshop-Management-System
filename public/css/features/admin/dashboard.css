@@ -2085,9 +2085,9 @@ body.admin-body #adminSettingsView .secondary {
 }
 
 body.admin-body #adminSettingsView .settings-avatar {
-  width: 104px;
-  height: 104px;
-  border-radius: 28px;
+  width: 150px;
+  height: 200px;
+  /* border-radius: 45px; */
   background: #f5e58d;
   color: #6d5720;
   font-size: 2rem;
@@ -2110,11 +2110,13 @@ body.admin-body #adminSettingsView .settings-profile p,
 body.admin-body #adminSettingsView .settings-row h4,
 body.admin-body #adminSettingsView .settings-row p {
   color: #ffffff;
+  font-size: 1.4rem;
 }
 
 body.admin-body #adminSettingsView .settings-meta h4,
 body.admin-body #adminSettingsView .settings-profile h4 {
   margin: 0 0 6px;
+  font-size: 1.4rem;
 }
 
 body.admin-body #adminSettingsView .settings-meta p,
