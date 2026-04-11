@@ -103,6 +103,7 @@ block content
                     h2 Welcome
                     p#adminDashboardHeroName Ramon Garcia
                     p#adminDashboardHeroRole ADMINISTRATOR
+          p.admin-feedback.is-hidden#adminActionFeedback(role="alert" aria-live="polite")
 
           section.admin-content
             section.admin-view#adminDashboardView
@@ -609,6 +610,7 @@ block content
 
                       .settings-row
                         .settings-contact-list
+                          h4.settings-contact-heading Contacts Details
                           .settings-contact-item
                             .settings-contact-copy
                               span.settings-contact-label Phone
@@ -712,7 +714,6 @@ block content
                 p.form-error#adminAddUserError(role="alert" aria-live="polite")
                 button.primary(type="submit") Create user
 
-            p.admin-feedback.is-hidden#adminActionFeedback(role="alert" aria-live="polite")
             .settings-edit-modal.is-hidden#adminSettingsEditModal
               .settings-edit-backdrop(data-admin-edit-close="true")
               .settings-edit-dialog(role="dialog" aria-modal="true" aria-labelledby="adminSettingsEditTitle")

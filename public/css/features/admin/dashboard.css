@@ -244,13 +244,17 @@ body.admin-body .primari-shell {
 
 
 #adminPage .admin-feedback {
-  margin: 0 0 12px;
-  padding: 12px 14px;
+  margin: 8px auto 12px;
+  padding: 10px 14px;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(43, 76, 53, 0.92);
+  background: #2f7d4f;
   color: #eaf7ee;
   font-size: 0.92rem;
+  display: block;
+  width: fit-content;
+  max-width: min(560px, calc(100% - 24px));
+  text-align: center;
 }
 
 #adminPage .admin-feedback.is-error {
@@ -2124,19 +2128,52 @@ body.admin-body #adminSettingsView .settings-contact-list {
   gap: 14px;
 }
 
+body.admin-body #adminSettingsView .settings-contact-heading {
+  margin: 0 0 4px;
+  color: #ffffff;
+}
+
 body.admin-body #adminSettingsView .settings-contact-item {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   min-height: 44px;
 }
 
 body.admin-body #adminSettingsView .settings-contact-copy {
-  display: grid;
-  gap: 6px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
 }
 
 body.admin-body #adminSettingsView .settings-contact-label {
   color: #ffffff;
   font-weight: 600;
+  width: 110px;
+  flex: 0 0 110px;
+  padding-right: 12px;
+  margin-right: 12px;
+  border-right: 2px solid rgba(255, 255, 255, 0.72);
+  font-size: 1rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+body.admin-body #adminSettingsView .settings-contact-label::after {
+  content: ":";
+}
+
+body.admin-body #adminSettingsView .settings-contact-copy p {
+  margin: 0;
+  color: #ffffff;
+  flex: 1 1 auto;
+  font-size: 1.05rem;
+  line-height: 1.35;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 body.admin-body #adminSettingsView .settings-contact-actions {
@@ -2144,10 +2181,15 @@ body.admin-body #adminSettingsView .settings-contact-actions {
   gap: 14px;
   align-content: start;
   justify-items: end;
+  width: 104px;
+  align-self: start;
+  justify-self: end;
+  padding-top: 50px;
 }
 
 body.admin-body #adminSettingsView .settings-contact-actions .secondary {
   min-height: 44px;
+  width: 100%;
 }
 
 body.admin-body #adminSettingsSecurity {
