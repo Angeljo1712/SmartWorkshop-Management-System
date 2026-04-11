@@ -360,7 +360,7 @@ body.user-body .user-verify-card {
   background: var(--dashboard-panel-bg);
   /* border: 1px solid var(--dashboard-panel-border); */
   border-radius: var(--dashboard-panel-radius);
-  box-shadow: var(--dashboard-panel-shadow);
+  /* box-shadow: var(--dashboard-panel-shadow); */
 }
 
 body.user-body #userBookingsView .settings-card {
@@ -487,8 +487,8 @@ body.user-body #userSettingsView .settings-avatar {
 
 body.user-body #userSettingsView .settings-avatar-lg {
   width: 150px;
-  height: 200px;
-  /* border-radius: 36px; */
+  height: 150px;
+  border-radius: 50%;
 }
 
 body.user-body #userSettingsView .user-settings-photo-row .ghost {
@@ -607,6 +607,55 @@ body.user-body #userSettingsView .user-settings-contact-actions {
 body.user-body #userSettingsView .user-settings-contact-actions .secondary {
   min-height: 44px;
   width: 100%;
+}
+
+body.user-body.user-light-mode #userPage .mainSection {
+  background: #eef2f7;
+}
+
+body.user-body.user-light-mode #userSettingsView .settings-card.user-settings-card {
+  background: #f7f9fc;
+  border-color: rgba(71, 85, 105, 0.28);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+}
+
+body.user-body.user-light-mode #userSettingsView .settings-subnav {
+  background: #ffffff;
+  border-color: rgba(148, 163, 184, 0.35);
+}
+
+body.user-body.user-light-mode #userSettingsView .settings-subnav-link {
+  color: #0f172a;
+}
+
+body.user-body.user-light-mode #userSettingsView .settings-subnav-link.active {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+body.user-body.user-light-mode #userSettingsView :is(
+  h3,
+  h4,
+  p,
+  span,
+  label,
+  .user-settings-contact-label,
+  .user-settings-contact-copy p,
+  .notifications-check
+) {
+  color: #0f172a;
+}
+
+body.user-body.user-light-mode #userSettingsView .settings-divider {
+  background: rgba(71, 85, 105, 0.3);
+}
+
+body.user-body.user-light-mode #userSettingsView input,
+body.user-body.user-light-mode #userSettingsView textarea,
+body.user-body.user-light-mode #userSettingsView select {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: rgba(148, 163, 184, 0.45);
 }
 
 body.user-body #userSettingsView .user-settings-profile .secondary,
@@ -2515,7 +2564,7 @@ body.user-body #userAccountView .settings-avatar {
 body.user-body #userAccountView .settings-avatar-lg {
   width: 140px;
   height: 140px;
-  border-radius: 36px;
+  border-radius: 50%;
 }
 
 @media (max-width: 980px) {
@@ -3672,6 +3721,150 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
   .user-dashboard-card .user-section-title {
     font-size: 0.95rem;
   }
+}
+
+/* Global light mode for all user dashboard sections */
+body.user-body.user-light-mode #userPage .mainSection {
+  background: #e8edf5;
+}
+
+body.user-body.user-light-mode #userPage :is(
+  .settings-card,
+  .user-table-layout,
+  .user-booking-detail,
+  .user-resolution-card,
+  .mechanic-resolution-sidebar-card,
+  .mechanic-detail-card,
+  .user-verify-card
+) {
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.14);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  color: #0f172a;
+}
+
+body.user-body.user-light-mode #userPage :is(
+  #userDashboardView,
+  #userAccountView,
+  #userVehicleView,
+  #userBookingsView,
+  #userResolutionView,
+  #userSettingsView
+) :is(h1, h2, h3, h4, p, span, strong, label, th, td, li, small) {
+  color: #0f172a;
+  background: rgba(34, 43, 58, 0.96);
+}
+
+body.user-body.user-light-mode #userSettingsSecurity :is(
+  h1, h2, h3, h4, p, span, strong, label, th, td, li, small
+),
+body.user-body.user-light-mode #userSettingsNotifications :is(
+  h1, h2, h3, h4, p, span, strong, label, th, td, li, small
+) {
+  color: #ffffff !important;
+}
+
+body.user-body.user-light-mode #userPage :is(input, textarea, select) {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: rgba(100, 116, 139, 0.35);
+}
+
+body.user-body.user-light-mode #userPage :is(input, textarea)::placeholder {
+  color: #64748b;
+}
+
+body.user-body.user-light-mode #userPage .user-table-wrap table thead th {
+  background: #edf2f7;
+  color: #0f172a;
+}
+
+body.user-body.user-light-mode #userPage .user-table-wrap table tbody tr {
+  background: #ffffff;
+}
+
+body.user-body.user-light-mode #userPage .user-table-wrap table tbody tr td {
+  color: #334155;
+  border-color: rgba(148, 163, 184, 0.25);
+}
+
+body.user-body.user-light-mode #userPage :is(
+  .settings-divider,
+  .user-table-footer::before,
+  .user-table-head::after
+) {
+  background: rgba(71, 85, 105, 0.28);
+}
+
+/* Keep vehicle summary card text white in light mode */
+body.user-body.user-light-mode #userVehicleView .user-vehicle-info-card,
+body.user-body.user-light-mode #userVehicleView .user-vehicle-info-copy strong,
+body.user-body.user-light-mode #userVehicleView .user-vehicle-info-copy p,
+body.user-body.user-light-mode #userVehicleView .user-vehicle-info-arrow {
+  color: #ffffff !important;
+}
+
+/* Keep dashboard car cards in original dark style; only car panel changes in light mode */
+body.user-body.user-light-mode #userDashboardView .car-panel {
+  background: #f8fafc;
+  border-color: rgba(71, 85, 105, 0.2);
+}
+
+body.user-body.user-light-mode #userDashboardView .user-car-summary {
+  background: rgba(34, 43, 58, 0.96);
+  border-color: #ffffff;
+}
+
+body.user-body.user-light-mode #userDashboardView .user-car-summary :is(
+  strong,
+  span,
+  p,
+  li,
+  small
+) {
+  color: #eaf0fb !important;
+}
+
+body.user-body.user-light-mode #userDashboardView .user-car-meta span,
+body.user-body.user-light-mode #userDashboardView .user-car-meta span i {
+  color: #0f172a !important;
+}
+
+body.user-body.user-light-mode #userDashboardView .user-section-title {
+  color: #ffffff !important;
+}
+
+body.user-body.user-light-mode #userDashboardView .car-panel .user-section-title {
+  color: #ffffff !important;
+}
+
+body.user-body.user-light-mode #userDashboardView .user-panel-head h2,
+body.user-body.user-light-mode #userDashboardView .user-panel-head p {
+  color: #ffffff !important;
+}
+
+body.user-body.user-light-mode #userDashboardView .settings-divider,
+body.user-body.user-light-mode #userDashboardView .user-dashboard-layout > .settings-divider {
+  background: #ffffff !important;
+}
+
+body.user-body.user-light-mode #userAccountView .settings-divider,
+body.user-body.user-light-mode #userAccountView .user-account-layout > .settings-divider {
+  background: #000000 !important;
+}
+
+body.user-body.user-light-mode #userSettingsView .settings-divider,
+body.user-body.user-light-mode #userSettingsView .user-settings-layout > .settings-divider {
+  background: #000000 !important;
+}
+
+body.user-body.user-light-mode #userAccountView .account-section--status,
+body.user-body.user-light-mode #userAccountView .account-section--integration {
+  border-top-color: #000000 !important;
+}
+
+body.user-body.user-light-mode #userAccountView .settings-row {
+  border-bottom-color: #000000 !important;
 }
   
 

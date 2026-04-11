@@ -66,6 +66,9 @@ if (userPage) {
   const userSettingsAddressInput = document.getElementById("userSettingsAddressInput");
   const userSettingsContactSave = document.getElementById("userSettingsContactSave");
   const userSettingsContactMessage = document.getElementById("userSettingsContactMessage");
+  const userSettingsThemeValue = document.getElementById("userSettingsThemeValue");
+  const userSettingsThemeBtn = document.getElementById("userSettingsThemeBtn");
+  const USER_THEME_STORAGE_KEY = "sw_user_theme";
   const setUserLabeledText = (el, label, value) => {
     if (!el) return;
     el.innerHTML = `<span class="account-field-label">${escapeHtml(label)}</span><span class="account-field-value">${escapeHtml(value || "-")}</span>`;
@@ -198,6 +201,19 @@ if (userPage) {
       return;
     }
     el.textContent = initials;
+  };
+
+  const applyUserTheme = (theme) => {
+    const normalized = String(theme || "dark").trim().toLowerCase() === "light" ? "light" : "dark";
+    document.body.classList.toggle("user-light-mode", normalized === "light");
+    if (userSettingsThemeValue) userSettingsThemeValue.textContent = normalized === "light" ? "Light mode" : "Dark mode";
+    if (userSettingsThemeBtn) userSettingsThemeBtn.textContent = normalized === "light" ? "Dark mode" : "Light mode";
+    localStorage.setItem(USER_THEME_STORAGE_KEY, normalized);
+  };
+
+  const initializeUserTheme = () => {
+    const savedTheme = localStorage.getItem(USER_THEME_STORAGE_KEY) || "dark";
+    applyUserTheme(savedTheme);
   };
 
   const resolveActiveRole = (roles) => {
@@ -2504,6 +2520,13 @@ if (userPage) {
   userSettingsPhotoButton?.addEventListener("click", () => {
     userSettingsPhotoInput?.click();
   });
+
+  userSettingsThemeBtn?.addEventListener("click", () => {
+    const isLight = document.body.classList.contains("user-light-mode");
+    applyUserTheme(isLight ? "dark" : "light");
+  });
+
+  initializeUserTheme();
 
   userLogoutBtn?.addEventListener("click", () => {
     clearUserSession();
