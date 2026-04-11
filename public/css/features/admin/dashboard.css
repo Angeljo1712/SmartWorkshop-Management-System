@@ -1991,6 +1991,7 @@ body.admin-body .admin-edit-menu button:disabled {
   height: 100%;
   padding: 20px;
   background: #3e434df7;
+  align-items: start;
 }
 
 #adminPage .admin-settings-layout {
@@ -2101,7 +2102,7 @@ body.admin-body #adminSettingsView .settings-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 18px;
-  align-items: start;
+  /* align-items: start; */
 }
 
 body.admin-body #adminSettingsView .settings-meta,
@@ -2110,13 +2111,13 @@ body.admin-body #adminSettingsView .settings-profile p,
 body.admin-body #adminSettingsView .settings-row h4,
 body.admin-body #adminSettingsView .settings-row p {
   color: #ffffff;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
+  font-weight: 500;
 }
 
 body.admin-body #adminSettingsView .settings-meta h4,
 body.admin-body #adminSettingsView .settings-profile h4 {
-  margin: 0 0 6px;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
 }
 
 body.admin-body #adminSettingsView .settings-meta p,
@@ -2131,7 +2132,7 @@ body.admin-body #adminSettingsView .settings-contact-list {
 }
 
 body.admin-body #adminSettingsView .settings-contact-heading {
-  margin: 0 0 4px;
+  /* margin: 0 0 4px; */
   color: #ffffff;
 }
 

@@ -409,7 +409,7 @@ body.user-body #userSettingsView .settings-card {
   grid-template-columns: minmax(0, 1fr);
   gap: 24px;
   align-items: start;
-  /* align-content: start; */
+  align-content: start;
   padding: 20px;
 }
 
@@ -486,9 +486,9 @@ body.user-body #userSettingsView .settings-avatar {
 }
 
 body.user-body #userSettingsView .settings-avatar-lg {
-  width: 140px;
-  height: 140px;
-  border-radius: 36px;
+  width: 150px;
+  height: 200px;
+  /* border-radius: 36px; */
 }
 
 body.user-body #userSettingsView .user-settings-photo-row .ghost {
@@ -533,7 +533,7 @@ body.user-body #userSettingsView .user-settings-contact-label {
 body.user-body #userSettingsView .user-settings-profile p,
 body.user-body #userSettingsView .user-settings-row p,
 body.user-body #userSettingsView .user-settings-contact-copy p {
-  font-size: 1.05rem;
+  font-size: 1.4rem;
   font-weight: 500;
   line-height: 1.4;
   opacity: 0.92;
@@ -620,7 +620,7 @@ body.user-body #userSettingsSecurity {
 
 body.user-body #userSettingsSecurity .security-card {
   display: grid;
-  gap: 26px;
+  /* gap: 26px; */
   padding: 24px;
   border: 2px solid #ffffff;
   border-radius: 14px;
