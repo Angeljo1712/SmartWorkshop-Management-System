@@ -391,7 +391,7 @@ body.admin-body .primari-shell {
 }
 
 #adminPage .admin-dashboard-metric-card span:last-child {
-  color: #9fabbe;
+  color: #ffffff;
   font-size: 0.9rem;
 }
 
@@ -430,7 +430,7 @@ body.admin-body .primari-shell {
 }
 
 #adminPage .admin-dashboard-list-item span {
-  color: #9fabbe;
+  color: #ffffff;
   font-size: 0.88rem;
 }
 
@@ -497,7 +497,7 @@ body.admin-body .primari-shell {
       column-gap: 0;
       min-height: 0;
       height: 100%;
-      padding: 15px;
+      /* padding: 15px; */
     }
 
 #adminPage .admin-table-layout > .admin-table-head {
@@ -517,6 +517,7 @@ body.admin-body .primari-shell {
 #adminPage .admin-table-layout > .admin-table-wrap,
 #adminPage .admin-table-layout > .admin-table-footer {
     position: relative;
+    background: #3e434df7;
   }
 
 #adminPage .admin-table-layout > .admin-table-head::after,
@@ -553,9 +554,10 @@ body.admin-body .primari-shell {
       display: flex;
       align-items: center;
       justify-content: space-between;
-    gap: 16px;
-    margin: 0;
+      gap: 16px;
+      margin: 0;
       padding: 0;
+      background: transparent;
     }
 
 #adminPage #adminApplicationsView .admin-table-head {
@@ -565,6 +567,7 @@ body.admin-body .primari-shell {
       gap: 16px;
       margin: 0;
       padding: 0;
+      background: transparent;
     }
 
 #adminPage #adminCatalogView .admin-table-head {
@@ -771,6 +774,7 @@ body.admin-body .primari-shell {
 
 #adminPage #adminBookingsView .admin-table-head {
     flex-wrap: nowrap;
+    background: transparent;
   }
 
 #adminPage #adminCatalogView .admin-table-head {
@@ -897,14 +901,17 @@ body.admin-body .primari-shell {
 
 #adminPage #adminUsersView .admin-table-wrap {
       padding: 0;
+      background: #3e434df7;
     }
 
 #adminPage #adminBookingsView .admin-table-wrap {
       padding: 0;
+      background: #3e434df7;
     }
 
 #adminPage #adminApplicationsView .admin-table-wrap {
       padding: 0;
+      background: #3e434df7;
     }
 
 #adminPage #adminCatalogView .admin-table-wrap {
@@ -923,7 +930,7 @@ body.admin-body .primari-shell {
     }
 
 #adminPage #adminCatalogView .admin-catalog-group {
-      background: rgba(14, 19, 28, 0.9);
+      /* background: rgba(14, 19, 28, 0.9); */
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 
@@ -1084,16 +1091,18 @@ body.admin-body .primari-shell {
       display: flex;
       align-items: center;
       justify-content: space-between;
-    gap: 16px;
+      gap: 16px;
       padding: 0;
+      background: transparent;
     }
 
 #adminPage #adminBookingsView .admin-table-footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
-    gap: 16px;
+      gap: 16px;
       padding: 0;
+      background: transparent;
     }
 
 #adminPage #adminCatalogView .admin-table-footer {
@@ -1102,6 +1111,7 @@ body.admin-body .primari-shell {
       justify-content: space-between;
       gap: 16px;
       padding: 0;
+      background: transparent;
     }
 
 #adminPage #adminResolutionView .admin-table-head {
@@ -1111,6 +1121,7 @@ body.admin-body .primari-shell {
       gap: 16px;
       margin: 0;
       padding: 0;
+      background: transparent;
     }
 
 #adminPage #adminPaymentsView .admin-table-head {
@@ -1120,6 +1131,7 @@ body.admin-body .primari-shell {
       gap: 16px;
       margin: 0;
       padding: 0;
+      background: transparent;
     }
 
 #adminPage #adminResolutionView .admin-table-footer {
@@ -1128,6 +1140,7 @@ body.admin-body .primari-shell {
       justify-content: space-between;
       gap: 16px;
       padding: 0;
+      background: transparent;
     }
 
 #adminPage #adminPaymentsView .admin-table-footer {
@@ -1136,6 +1149,7 @@ body.admin-body .primari-shell {
       justify-content: space-between;
       gap: 16px;
       padding: 0;
+      background: transparent;
     }
 
 #adminPage #adminUsersView .admin-table-footer-meta,
@@ -1885,7 +1899,7 @@ body.admin-body .admin-edit-menu button:disabled {
   border: 0;
   border-radius: var(--dashboard-panel-radius);
   box-shadow: none;
-  padding: 16px;
+  padding: 1px;
 }
 
 #adminPage .admin-account-layout {
@@ -1899,7 +1913,7 @@ body.admin-body .admin-edit-menu button:disabled {
   color: #ffffff;
   min-height: 100%;
   height: 100%;
-  align-content: start;
+  /* align-content: start; */
 }
 
 #adminPage #adminProfileView {
@@ -1971,6 +1985,8 @@ body.admin-body .admin-edit-menu button:disabled {
   display: grid;
   min-height: 100%;
   height: 100%;
+  padding: 20px;
+  background: #3e434df7;
 }
 
 #adminPage .admin-settings-layout {
@@ -2145,7 +2161,7 @@ body.admin-body #adminSettingsSecurity .security-card {
   border: 2px solid #ffffff;
   border-radius: 14px;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(34, 43, 58, 0.96);
 }
 
 body.admin-body #adminSettingsSecurity .security-card-head h3,
@@ -2222,7 +2238,7 @@ body.admin-body #adminSettingsNotifications .notifications-card {
   border: 2px solid #ffffff;
   border-radius: 14px;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
-  background: #0d1220;
+  background: rgba(34, 43, 58, 0.96);
 }
 
 body.admin-body #adminSettingsNotifications .notifications-check {

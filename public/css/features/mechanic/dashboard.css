@@ -2865,7 +2865,7 @@ body.mechanic-body .mechanic-content .mechanic-id span {
 body.mechanic-body .mechanic-content form {
   display: grid;
   gap: 12px;
-  background: #3e434df7;
+  /* background: #3e434df7; */
 }
 
 body.mechanic-body .mechanic-content input[type="password"] {

@@ -389,6 +389,24 @@ const listPayments = async () => {
      ORDER BY p.created_at DESC`
   );
 
+  const [invoiceBackfillRows] = await pool.query(
+    `SELECT inv.id,
+            inv.number AS invoice_number,
+            inv.booking_id,
+            inv.issued_at,
+            b.total_eur,
+            customer.email AS customer_email,
+            customer_profile.name AS customer_name,
+            customer_profile.lastname AS customer_lastname
+     FROM invoices inv
+     INNER JOIN bookings b ON b.id = inv.booking_id
+     INNER JOIN users customer ON customer.id = b.customer_id
+     LEFT JOIN user_profiles customer_profile ON customer_profile.user_id = customer.id
+     LEFT JOIN payments p ON p.booking_id = inv.booking_id
+     WHERE p.id IS NULL
+     ORDER BY inv.issued_at DESC`
+  );
+
   const [payoutRows] = await pool.query(
     `SELECT po.id,
             po.amount_eur,
@@ -418,6 +436,19 @@ const listPayments = async () => {
     created_at: row.created_at
   }));
 
+  const invoiceBackfillItems = invoiceBackfillRows.map((row) => ({
+    record_id: row.id,
+    kind: "invoiced_payment",
+    reference: row.invoice_number || `INV-${String(row.booking_id || "").padStart(8, "0")}`,
+    booking_reference: String(row.booking_id).padStart(8, "0"),
+    party: [row.customer_name, row.customer_lastname].filter(Boolean).join(" ") || row.customer_email || "-",
+    provider: "Invoice",
+    status: "completed",
+    amount: Number(row.total_eur || 0),
+    currency: "GBP",
+    created_at: row.issued_at || null
+  }));
+
   const payoutItems = payoutRows.map((row) => ({
     record_id: row.id,
     kind: "mechanic_payout",
@@ -431,9 +462,9 @@ const listPayments = async () => {
     created_at: row.created_at
   }));
 
-  return [...paymentItems, ...payoutItems].sort((a, b) => {
-    const left = new Date(a.created_at).getTime();
-    const right = new Date(b.created_at).getTime();
+  return [...paymentItems, ...invoiceBackfillItems, ...payoutItems].sort((a, b) => {
+    const left = Number.isFinite(new Date(a.created_at).getTime()) ? new Date(a.created_at).getTime() : 0;
+    const right = Number.isFinite(new Date(b.created_at).getTime()) ? new Date(b.created_at).getTime() : 0;
     return right - left;
   });
 };

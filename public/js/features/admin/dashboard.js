@@ -2544,14 +2544,37 @@ if (adminPage) {
     adminSettingsPhotoInput?.click();
   });
 
-  adminSettingsPhotoInput?.addEventListener("change", () => {
-    const file = adminSettingsPhotoInput.files?.[0];
-    if (!file || !file.type.startsWith("image/") || !adminSettingsViewAvatar) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      adminSettingsViewAvatar.innerHTML = `<img src="${reader.result}" alt="" />`;
-    };
-    reader.readAsDataURL(file);
+  adminSettingsPhotoInput?.addEventListener("change", async (event) => {
+    const file = event.target.files?.[0];
+    const token = getAdminToken();
+    if (!file || !token) return;
+    if (!file.type.startsWith("image/")) {
+      window.alert("Please select an image file.");
+      event.target.value = "";
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("avatar", file);
+
+    try {
+      const response = await fetch("http://localhost:3000/api/users/me/avatar", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData
+      });
+      const payload = await response.json();
+      if (!response.ok) throw payload;
+
+      setStoredAuthValue("userProfile", JSON.stringify(payload));
+      setAdminHeader({ ...payload, role_name: "ADMIN" });
+      showAdminFeedback("Profile photo updated.");
+    } catch (err) {
+      console.error("Unable to upload admin avatar", err);
+      window.alert(err?.error?.message || err?.message || "Unable to upload this image.");
+    } finally {
+      event.target.value = "";
+    }
   });
 
   adminSettingsThemeBtn?.addEventListener("click", () => {
