@@ -69,6 +69,18 @@ const listResolutionCasesHandler = async (_req, res) => {
   res.json(cases);
 };
 
+const listContactMessagesHandler = async (_req, res) => {
+  const messages = await adminService.listContactMessages();
+  res.json(messages);
+};
+
+const updateContactMessageStatusHandler = async (req, res) => {
+  const messageId = Number(req.params.messageId);
+  const { action } = req.body || {};
+  const result = await adminService.updateContactMessageStatus({ messageId, action });
+  res.json(result);
+};
+
 const updateResolutionCaseStatusHandler = async (req, res) => {
   const caseId = Number(req.params.caseId);
   const { action } = req.body || {};
@@ -202,6 +214,8 @@ module.exports = {
   listBookingsHandler,
   updateBookingStatusHandler,
   listResolutionCasesHandler,
+  listContactMessagesHandler,
+  updateContactMessageStatusHandler,
   updateResolutionCaseStatusHandler,
   getDashboardSummaryHandler,
   listPaymentsHandler,

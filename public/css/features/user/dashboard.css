@@ -3591,24 +3591,36 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
 
   #userPage .mainRail {
     width: 70px;
-    padding: 14px 10px;
-    justify-items: center;
+    padding: 8px 10px 12px;
+    justify-items: start;
+    align-content: start;
   }
 
   #userPage .mainRail:hover {
     width: 200px;
   }
 
+  #userPage .mainRail .rail-brand {
+    width: 100%;
+    justify-self: start;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    justify-items: start;
+    align-items: start;
+  }
+
   #userPage .mainRail .rail-nav {
-    position: sticky;
-    top: var(--general-header-height, 71px);
+    position: static;
+    top: auto;
     grid-auto-flow: row;
     grid-auto-columns: unset;
     grid-template-columns: 1fr;
     align-content: start;
     gap: 10px;
     overflow: visible;
-    padding: 0;
+    padding: 8px 0 0;
+    justify-items: center;
   }
 
   #userPage .mainRail .rail-item {

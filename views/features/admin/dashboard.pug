@@ -81,6 +81,12 @@ block content
                   path(d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20")
                   path(d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z")
               span.rail-text Catalog
+            button.rail-nav-link.rail-item(type="button" data-view="contact-messages")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  path(d="M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H8l-4 4V8a2 2 0 0 1 2-2z")
+                  path(d="m8 10 4 3 4-3")
+              span.rail-text Contact messages
             button.rail-nav-link.rail-item(type="button" data-view="settings")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
@@ -165,6 +171,12 @@ block content
                     h3 Recent resolution cases
                     p Most recent active customer and mechanic issues.
                   .admin-dashboard-list#adminDashboardRecentCases
+                .settings-divider
+                .admin-panel
+                  .admin-panel-head
+                    h3 Contact messages
+                    p Messages sent from the homepage contact form.
+                  .admin-dashboard-list#adminDashboardContactMessages
                 .settings-divider
                 .admin-panel
                   .admin-panel-head
@@ -556,6 +568,53 @@ block content
                         option(value="50") 50
                       span#adminCatalogRowsMeta 0 of 0 rows
                     .admin-pagination#adminCatalogPagination
+
+            section.admin-view.is-hidden#adminContactMessagesView
+              .admin-user-layout
+                .admin-table-layout
+                  .admin-table-head
+                    .admin-table-head-filters
+                      .admin-head-control.admin-head-control--search
+                        span.admin-head-label.is-hidden Search
+                        input#adminContactMessagesSearch.side-input(type="search" placeholder="Search")
+                      .admin-head-control.admin-head-control--status
+                        span.admin-head-label.is-hidden Status
+                        select#adminContactMessagesStatusFilter.side-select(data-all-label="Status")
+                          option(value="all") Status
+                      .admin-head-control.admin-head-control--date
+                        span.admin-head-label.is-hidden Date
+                        select#adminContactMessagesDateFilter.side-select(data-all-label="All time")
+                          option(value="all") All time
+                    .admin-table-head-actions
+                      span.is-hidden#adminContactMessagesCount 0
+                      button.ghost#adminContactMessagesExportBtn(type="button")
+                        svg.admin-button-icon(viewBox="0 0 24 24" aria-hidden="true")
+                          path(d="M12 16V5")
+                          path(d="m8 9 4-4 4 4")
+                          path(d="M5 19h14")
+                        span Export
+                  .admin-table-wrap
+                    table.admin-table
+                      thead
+                        tr
+                          th Name
+                          th Email
+                          th Subject
+                          th Message
+                          th Status
+                          th Created
+                          th Actions
+                      tbody#adminContactMessagesRows
+                    p.admin-empty#adminContactMessagesEmptyState.is-hidden No contact messages found.
+                  .admin-table-footer
+                    .admin-table-footer-meta
+                      span Rows per page
+                      select#adminContactMessagesRowsPerPage
+                        option(value="10") 10
+                        option(value="20") 20
+                        option(value="50") 50
+                      span#adminContactMessagesRowsMeta 0 of 0 rows
+                    .admin-pagination#adminContactMessagesPagination
 
             section.admin-view.is-hidden#adminProfileView
               .admin-account-layout

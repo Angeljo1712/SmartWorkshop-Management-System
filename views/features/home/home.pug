@@ -16,7 +16,7 @@ block content
         a.home-pill(href="/") Home
         a.home-pill(href="#how") How it works
         a.home-pill(href="#services") Services
-        a.home-pill(href="#partner") Partner
+        a.home-pill(href="#partner") Be a Mechanic
         a.home-pill(href="#review") Review
         a.home-pill(href="#contact") Contact
       a.home-signin#homeSessionLink(href="/auth/login") Sign in
@@ -174,24 +174,26 @@ block content
         .review-header
           h2 What our customers are saying
         .review-grid
-          article.review-card
-            img.review-photo(src="/images/review-1.jpg" alt="Simon Rebbitt")
-            h3 Simon Rebbitt
-            span BMW 5 SERIES
-            p The support staff are on hand to help, and the work gets done quickly and at a very competitive price.
-            a(href="#") Read more
-          article.review-card
-            img.review-photo(src="/images/review-2.jpg" alt="Barbara Mansour")
-            h3 Barbara Mansour
-            span VOLKSWAGEN GOLF IV
-            p ClickMechanic was fantastic. The mechanic could come to us and, on top of that, it was well-priced.
-            a(href="#") Read more
-          article.review-card
-            img.review-photo(src="/images/review-3.jpg" alt="Andrew Campbell")
-            h3 Andrew Campbell
-            span AUDI A4
-            p Simply put, I have now used ClickMechanic twice and I will certainly use ClickMechanic again.
-            a(href="#") Read more
+          if homeReviews && homeReviews.length
+            each review in homeReviews
+              article.review-card
+                .review-avatar-wrap
+                  if review.avatarUrl
+                    img.review-avatar(src=review.avatarUrl alt=review.customerName)
+                  else
+                    .review-avatar-placeholder= review.initials
+                h3= review.customerName
+                span= review.vehicleLabel
+                p= review.comment
+                a(href="/auth/login") Read more
+          else
+            article.review-card
+              .review-avatar-wrap
+                .review-avatar-placeholder SW
+              h3 Verified customer
+              span SMARTWORKSHOP
+              p Real customer reviews will appear here as soon as bookings are completed and rated.
+              a(href="/auth/login") Read more
 
     section.home-contact#contact
       .body-content

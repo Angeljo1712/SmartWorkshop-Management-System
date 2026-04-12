@@ -12,6 +12,8 @@ const {
   listBookingsHandler,
   updateBookingStatusHandler,
   listResolutionCasesHandler,
+  listContactMessagesHandler,
+  updateContactMessageStatusHandler,
   updateResolutionCaseStatusHandler,
   getDashboardSummaryHandler,
   listPaymentsHandler,
@@ -37,6 +39,8 @@ router.patch("/applications/:userId/status", authenticate, authorizeRoles("ADMIN
 router.get("/bookings", authenticate, authorizeRoles("ADMIN"), asyncHandler(listBookingsHandler));
 router.patch("/bookings/:bookingId/status", authenticate, authorizeRoles("ADMIN"), asyncHandler(updateBookingStatusHandler));
 router.get("/resolution-cases", authenticate, authorizeRoles("ADMIN"), asyncHandler(listResolutionCasesHandler));
+router.get("/contact-messages", authenticate, authorizeRoles("ADMIN"), asyncHandler(listContactMessagesHandler));
+router.patch("/contact-messages/:messageId/status", authenticate, authorizeRoles("ADMIN"), asyncHandler(updateContactMessageStatusHandler));
 router.patch("/resolution-cases/:caseId/status", authenticate, authorizeRoles("ADMIN"), asyncHandler(updateResolutionCaseStatusHandler));
 router.get("/payments", authenticate, authorizeRoles("ADMIN"), asyncHandler(listPaymentsHandler));
 router.patch("/payments/:recordId/status", authenticate, authorizeRoles("ADMIN"), asyncHandler(updatePaymentStatusHandler));

@@ -1,15 +1,70 @@
 const express = require("express");
 const { uploadMechanicDocuments } = require("../../shared/middleware/upload");
 const { env } = require("../../shared/config/env");
+const { pool } = require("../../shared/config/pool");
 const mechanicService = require("../../features/mechanic/services/mechanic.service");
 const { createContactMessage } = require("../../features/contact/services/contact.service");
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res, next) => {
   const contactStatus = req.query.contact === "sent" ? "sent" : null;
   const contactError = req.query.contact === "error" ? "error" : null;
-  res.render("features/home/home", { contactStatus, contactError });
+
+  try {
+    const [reviewRows] = await pool.query(
+      `SELECT
+          r.rating,
+          r.comment,
+          r.created_at,
+          up.name,
+          up.lastname,
+          up.avatar_url,
+          v.make,
+          v.model,
+          v.year
+       FROM reviews r
+       INNER JOIN bookings b ON b.id = r.booking_id
+       LEFT JOIN user_profiles up ON up.user_id = r.customer_id
+       LEFT JOIN vehicles v ON v.id = b.vehicle_id
+       WHERE TRIM(COALESCE(r.comment, '')) <> ''
+       ORDER BY RAND()
+       LIMIT 3`
+    );
+
+    const homeReviews = reviewRows.map((row) => {
+      const customerName = [row.name, row.lastname].filter(Boolean).join(" ").trim() || "Verified customer";
+      const vehicleLabel = [row.make, row.model]
+        .filter((value) => String(value || "").trim())
+        .join(" ")
+        .trim();
+
+      const initials = customerName
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0]?.toUpperCase() || "")
+        .join("") || "SW";
+
+      return {
+        customerName,
+        vehicleLabel: vehicleLabel || "Verified booking",
+        comment: row.comment,
+        avatarUrl: row.avatar_url || "",
+        initials,
+        rating: Number(row.rating || 0),
+        year: row.year || null
+      };
+    });
+
+    res.render("features/home/home", {
+      contactStatus,
+      contactError,
+      homeReviews
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.post("/contact", (req, res, next) => {

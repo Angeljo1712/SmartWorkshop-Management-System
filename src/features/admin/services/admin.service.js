@@ -369,6 +369,88 @@ const getDashboardSummary = async () => {
   };
 };
 
+const listContactMessages = async () => {
+  const [rows] = await pool.query(
+    `SELECT id,
+            name,
+            email,
+            subject,
+            message,
+            status,
+            source,
+            ip_address,
+            created_at
+     FROM contact_messages
+     ORDER BY created_at DESC`
+  );
+
+  return rows.map((row) => ({
+    contact_message_id: Number(row.id),
+    name: row.name || "",
+    email: row.email || "",
+    subject: row.subject || "",
+    message: row.message || "",
+    status: row.status || "new",
+    source: row.source || "home_web",
+    ip_address: row.ip_address || null,
+    created_at: row.created_at || null
+  }));
+};
+
+const updateContactMessageStatus = async ({ messageId, action }) => {
+  const normalizedAction = String(action || "").trim().toLowerCase();
+  const statusByAction = {
+    read: "in_progress",
+    resolve: "closed"
+  };
+  const nextStatus = statusByAction[normalizedAction];
+
+  if (!nextStatus) {
+    const error = new Error("Unsupported contact message action.");
+    error.status = 400;
+    throw error;
+  }
+
+  await pool.query(
+    "UPDATE contact_messages SET status = ? WHERE id = ?",
+    [nextStatus, messageId]
+  );
+
+  const [[row]] = await pool.query(
+    `SELECT id,
+            name,
+            email,
+            subject,
+            message,
+            status,
+            source,
+            ip_address,
+            created_at
+     FROM contact_messages
+     WHERE id = ?
+     LIMIT 1`,
+    [messageId]
+  );
+
+  if (!row) {
+    const error = new Error("Contact message not found.");
+    error.status = 404;
+    throw error;
+  }
+
+  return {
+    contact_message_id: Number(row.id),
+    name: row.name || "",
+    email: row.email || "",
+    subject: row.subject || "",
+    message: row.message || "",
+    status: row.status || "new",
+    source: row.source || "home_web",
+    ip_address: row.ip_address || null,
+    created_at: row.created_at || null
+  };
+};
+
 const listPayments = async () => {
   const [customerPayments] = await pool.query(
     `SELECT p.id,
@@ -761,6 +843,8 @@ module.exports = {
   listResolutionCases,
   updateResolutionCaseStatus,
   getDashboardSummary,
+  listContactMessages,
+  updateContactMessageStatus,
   listPayments,
   updatePaymentStatus,
   updateCatalogServiceOrder,

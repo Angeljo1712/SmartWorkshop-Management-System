@@ -63,6 +63,7 @@ if (adminPage) {
   const adminResolutionView = document.getElementById("adminResolutionView");
   const adminPaymentsView = document.getElementById("adminPaymentsView");
   const adminCatalogView = document.getElementById("adminCatalogView");
+  const adminContactMessagesView = document.getElementById("adminContactMessagesView");
   const adminProfileView = document.getElementById("adminProfileView");
   const adminUsersView = document.getElementById("adminUsersView");
   const adminSettingsView = document.getElementById("adminSettingsView");
@@ -97,6 +98,7 @@ if (adminPage) {
   const adminDashboardRecentBookings = document.getElementById("adminDashboardRecentBookings");
   const adminDashboardRecentApplications = document.getElementById("adminDashboardRecentApplications");
   const adminDashboardRecentCases = document.getElementById("adminDashboardRecentCases");
+  const adminDashboardContactMessages = document.getElementById("adminDashboardContactMessages");
   const adminBookingsSearch = document.getElementById("adminBookingsSearch");
   const adminBookingsTypeFilter = document.getElementById("adminBookingsTypeFilter");
   const adminBookingsStatusFilter = document.getElementById("adminBookingsStatusFilter");
@@ -144,6 +146,16 @@ if (adminPage) {
   const adminCatalogEmptyState = document.getElementById("adminCatalogEmptyState");
   const adminCatalogAddGroupBtn = document.getElementById("adminCatalogAddGroupBtn");
   const adminCatalogExportBtn = document.getElementById("adminCatalogExportBtn");
+  const adminContactMessagesSearch = document.getElementById("adminContactMessagesSearch");
+  const adminContactMessagesStatusFilter = document.getElementById("adminContactMessagesStatusFilter");
+  const adminContactMessagesDateFilter = document.getElementById("adminContactMessagesDateFilter");
+  const adminContactMessagesRows = document.getElementById("adminContactMessagesRows");
+  const adminContactMessagesCount = document.getElementById("adminContactMessagesCount");
+  const adminContactMessagesRowsMeta = document.getElementById("adminContactMessagesRowsMeta");
+  const adminContactMessagesRowsPerPage = document.getElementById("adminContactMessagesRowsPerPage");
+  const adminContactMessagesPagination = document.getElementById("adminContactMessagesPagination");
+  const adminContactMessagesEmptyState = document.getElementById("adminContactMessagesEmptyState");
+  const adminContactMessagesExportBtn = document.getElementById("adminContactMessagesExportBtn");
   const adminActionFeedback = document.getElementById("adminActionFeedback");
   const adminProfileAvatar = document.getElementById("adminProfileAvatar");
   const adminProfileName = document.getElementById("adminProfileName");
@@ -185,6 +197,7 @@ if (adminPage) {
   let adminApplications = [];
   let adminBookings = [];
   let adminResolutionCases = [];
+  let adminContactMessages = [];
   let adminPayments = [];
   let adminCatalog = [];
   let pageSize = Number(adminRowsPerPage?.value || 10);
@@ -213,6 +226,8 @@ if (adminPage) {
   let activeAdminCatalogGroup = null;
   let adminPaymentsPage = 1;
   let adminPaymentsPageSize = Number(adminPaymentsRowsPerPage?.value || 10);
+  let adminContactMessagesPage = 1;
+  let adminContactMessagesPageSize = Number(adminContactMessagesRowsPerPage?.value || 10);
 
   const getAdminToken = () => getStoredAuthValue("userToken");
   const getAdminProfile = () => {
@@ -265,13 +280,13 @@ if (adminPage) {
       }
       el.textContent = fallbackInitials;
     };
-    if (adminProfileAvatar) adminProfileAvatar.textContent = initials;
+    setAdminAvatar(adminProfileAvatar, initials, user?.avatar_url);
     if (adminProfileName) adminProfileName.textContent = displayName;
     if (adminDashboardHeroName) adminDashboardHeroName.textContent = heroDisplayName;
     if (adminDashboardHeroRole) adminDashboardHeroRole.textContent = role;
     setAdminAvatar(adminDashboardHeroAvatar, initials, user?.avatar_url);
     if (adminProfileRole) adminProfileRole.textContent = role;
-    if (adminSettingsAvatar) adminSettingsAvatar.textContent = initials;
+    setAdminAvatar(adminSettingsAvatar, initials, user?.avatar_url);
     if (adminSettingsName) adminSettingsName.textContent = displayName;
     if (adminSettingsEmail) setAdminLabeledText(adminSettingsEmail, "Email:", user?.email || "admin@smartworkshop.local");
     if (adminSettingsEmailDetail) {
@@ -331,6 +346,7 @@ if (adminPage) {
       resolution: { title: "Resolution", subtitle: "Resolution cases" },
       payments: { title: "Payments", subtitle: "Payments overview" },
       catalog: { title: "Catalog", subtitle: "Service catalog" },
+      "contact-messages": { title: "Contact messages", subtitle: "Messages sent from the homepage" },
       account: { title: "Account", subtitle: "Review your profile information" },
       profile: { title: "Profile", subtitle: "Profile information" },
       settings: { title: "Settings", subtitle: "Workspace settings" }
@@ -520,6 +536,17 @@ if (adminPage) {
           <strong>${escapeHtml(item.reference)} · ${escapeHtml(item.subject)}</strong>
           <span>${escapeHtml(item.customer_name)} / ${escapeHtml(item.mechanic_name)}</span>
           <span class="label">${escapeHtml(titleCase(item.status))} · ${escapeHtml(formatDate(item.updated_at))}</span>
+        </div>`
+    );
+
+    renderAdminDashboardList(
+      adminDashboardContactMessages,
+      adminContactMessages.slice(0, 5),
+      (item) => `
+        <div class="admin-dashboard-list-item">
+          <strong>${escapeHtml(item.name || item.email || "Contact message")}</strong>
+          <span>${escapeHtml(item.subject || "No subject")} · ${escapeHtml(item.email || "-")}</span>
+          <span class="label">${escapeHtml(formatDate(item.created_at))}</span>
         </div>`
     );
   };
@@ -826,7 +853,8 @@ if (adminPage) {
       bookings: adminBookingsSearch,
       resolution: adminResolutionSearch,
       payments: adminPaymentsSearch,
-      catalog: adminCatalogSearch
+      catalog: adminCatalogSearch,
+      "contact-messages": adminContactMessagesSearch
     };
     return inputs[view] || null;
   };
@@ -900,6 +928,20 @@ if (adminPage) {
       .filter(Boolean)
       .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
       .join(" ");
+
+  const getContactMessageStatusUi = (value) => {
+    const normalized = normaliseFilterToken(value || "new");
+    if (normalized === "in_progress") {
+      return { value: normalized, label: "Read", badgeClass: "read" };
+    }
+    if (normalized === "closed") {
+      return { value: normalized, label: "Resolved", badgeClass: "resolved" };
+    }
+    if (normalized === "spam") {
+      return { value: normalized, label: "Spam", badgeClass: "cancelled" };
+    }
+    return { value: "new", label: "New", badgeClass: "new" };
+  };
 
   const syncAdminSideSearchFromView = () => {
     if (!adminSearch) return;
@@ -1038,6 +1080,22 @@ if (adminPage) {
         statusOptions: getUniqueOptions(adminPayments, (item) => item.status).map((value) => ({
           value,
           label: titleCase(value)
+        })),
+        showDate: true,
+        dateLabel: "Created",
+        dateOptions: baseDateOptions
+      },
+      "contact-messages": {
+        showSide: true,
+        title: "Contact filters",
+        searchLabel: "Message",
+        searchPlaceholder: "Search contact messages",
+        showRole: false,
+        showStatus: true,
+        statusLabel: "Status",
+        statusOptions: getUniqueOptions(adminContactMessages, (item) => item.status).map((value) => ({
+          value,
+          label: getContactMessageStatusUi(value).label
         })),
         showDate: true,
         dateLabel: "Created",
@@ -1850,6 +1908,120 @@ if (adminPage) {
     }
   };
 
+  const syncAdminContactMessagesHeadFilters = () => {
+    setFilterOptions(
+      adminContactMessagesStatusFilter,
+      getUniqueOptions(adminContactMessages, (item) => item.status).map((value) => ({
+        value,
+        label: getContactMessageStatusUi(value).label
+      })),
+      adminContactMessagesStatusFilter?.value
+    );
+    setFilterOptions(
+      adminContactMessagesDateFilter,
+      [
+        { value: "all", label: "All time" },
+        { value: "30", label: "Last 30 days" },
+        { value: "90", label: "Last 90 days" },
+        { value: "365", label: "Last year" }
+      ],
+      adminContactMessagesDateFilter?.value
+    );
+  };
+
+  const renderContactMessages = () => {
+    if (!adminContactMessagesRows) return;
+    const terms = getCombinedSearchTerms("contact-messages");
+    const statusValue = adminContactMessagesStatusFilter?.value || adminStatusFilter?.value || "all";
+    const dateValue = adminContactMessagesDateFilter?.value || adminDateFilter?.value || "all";
+    const rows = adminContactMessages.filter((item) => {
+      const matchesTerm = matchesSearchTerms([
+        item.name,
+        item.email,
+        item.subject,
+        item.message,
+        item.status,
+        item.source
+      ], terms);
+      const matchesStatus =
+        statusValue === "all" ||
+        normaliseFilterToken(item.status) === normaliseFilterToken(statusValue);
+      const matchesDate = dateValue === "all" ? true : matchesDateFilter(item.created_at, dateValue);
+      return matchesTerm && matchesStatus && matchesDate;
+    });
+
+    if (adminContactMessagesCount) {
+      adminContactMessagesCount.textContent = `${rows.length} messages`;
+    }
+    adminContactMessagesRows.innerHTML = "";
+    adminContactMessagesEmptyState?.classList.toggle("is-hidden", rows.length > 0);
+    if (!rows.length) {
+      if (adminContactMessagesRowsMeta) adminContactMessagesRowsMeta.textContent = "0 of 0 rows";
+      if (adminContactMessagesPagination) adminContactMessagesPagination.innerHTML = "";
+      return;
+    }
+
+    const pages = Math.max(1, Math.ceil(rows.length / adminContactMessagesPageSize));
+    if (adminContactMessagesPage > pages) adminContactMessagesPage = pages;
+    const start = (adminContactMessagesPage - 1) * adminContactMessagesPageSize;
+    const end = Math.min(start + adminContactMessagesPageSize, rows.length);
+    if (adminContactMessagesRowsMeta) {
+      adminContactMessagesRowsMeta.textContent = `${start + 1}-${end} of ${rows.length} rows`;
+    }
+
+    adminContactMessagesRows.innerHTML = rows
+      .slice(start, end)
+      .map((item) => {
+        const messageId = String(item.contact_message_id || "");
+        const statusUi = getContactMessageStatusUi(item.status);
+        const status = statusUi.value;
+        const actions = [];
+        if (status === "new") {
+          actions.push(`<button class="icon-btn" type="button" data-contact-message-action="read" data-contact-message-id="${escapeHtml(messageId)}">Mark as read</button>`);
+        }
+        if (status !== "closed") {
+          actions.push(`<button class="icon-btn" type="button" data-contact-message-action="resolve" data-contact-message-id="${escapeHtml(messageId)}">Mark as resolved</button>`);
+        }
+        return `
+        <tr>
+          <td>${escapeHtml(item.name || "-")}</td>
+          <td>${escapeHtml(item.email || "-")}</td>
+          <td>${escapeHtml(item.subject || "-")}</td>
+          <td title="${escapeHtml(item.message || "-")}">${escapeHtml(item.message || "-")}</td>
+          <td><span class="admin-status-badge admin-status-badge--${escapeHtml(statusUi.badgeClass || "unknown")}">${escapeHtml(statusUi.label)}</span></td>
+          <td>${escapeHtml(formatDate(item.created_at))}</td>
+          <td><div class="admin-actions-cell">${actions.join("") || '<span class="admin-empty-inline">No actions</span>'}</div></td>
+        </tr>
+      `;
+      })
+      .join("");
+
+    if (adminContactMessagesPagination) {
+      adminContactMessagesPagination.innerHTML = "";
+      if (pages > 1) {
+        const addButton = (label, page, isActive = false, isDisabled = false) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.textContent = label;
+          btn.disabled = isDisabled;
+          btn.classList.toggle("active", isActive);
+          btn.addEventListener("click", () => {
+            adminContactMessagesPage = page;
+            renderContactMessages();
+          });
+          adminContactMessagesPagination.appendChild(btn);
+        };
+        addButton("<", Math.max(1, adminContactMessagesPage - 1), false, adminContactMessagesPage === 1);
+        const startPage = Math.max(1, adminContactMessagesPage - 2);
+        const endPage = Math.min(pages, startPage + 4);
+        for (let page = startPage; page <= endPage; page += 1) {
+          addButton(String(page), page, page === adminContactMessagesPage);
+        }
+        addButton(">", Math.min(pages, adminContactMessagesPage + 1), false, adminContactMessagesPage === pages);
+      }
+    }
+  };
+
   const renderCatalog = () => {
     if (!adminCatalogRows) return;
     const terms = getCombinedSearchTerms("catalog");
@@ -2415,6 +2587,37 @@ if (adminPage) {
     }
   };
 
+  const fetchContactMessages = async () => {
+    const token = getAdminToken();
+    if (!token) return;
+    try {
+      adminContactMessages = await apiAuth("/api/admin/contact-messages", token);
+      syncAdminContactMessagesHeadFilters();
+      configureAdminSide(activeAdminView);
+      renderAdminDashboard();
+      renderContactMessages();
+    } catch (err) {
+      console.error("Unable to load admin contact messages", err);
+    }
+  };
+
+  const updateContactMessageStatus = async (messageId, action) => {
+    const token = getAdminToken();
+    if (!token) return;
+    const updated = await apiAuth(`/api/admin/contact-messages/${encodeURIComponent(messageId)}/status`, token, {
+      method: "PATCH",
+      body: JSON.stringify({ action })
+    });
+    adminContactMessages = adminContactMessages.map((item) =>
+      Number(item.contact_message_id) === Number(messageId) ? { ...item, ...updated } : item
+    );
+    syncAdminContactMessagesHeadFilters();
+    configureAdminSide(activeAdminView);
+    renderAdminDashboard();
+    renderContactMessages();
+    showAdminFeedback(`Message updated: ${action === "resolve" ? "resolved" : "marked as read"}.`);
+  };
+
   const fetchPayments = async () => {
     const token = getAdminToken();
     if (!token) return;
@@ -2519,9 +2722,13 @@ if (adminPage) {
       adminResolutionView?.classList.toggle("is-hidden", view !== "resolution");
       adminPaymentsView?.classList.toggle("is-hidden", view !== "payments");
       adminCatalogView?.classList.toggle("is-hidden", view !== "catalog");
+      adminContactMessagesView?.classList.toggle("is-hidden", view !== "contact-messages");
       adminProfileView.classList.toggle("is-hidden", view !== "profile" && view !== "account");
       adminUsersView.classList.toggle("is-hidden", view !== "users");
       adminSettingsView?.classList.toggle("is-hidden", view !== "settings");
+      if (view === "contact-messages") {
+        renderContactMessages();
+      }
     });
   });
 
@@ -2639,6 +2846,7 @@ if (adminPage) {
     if (activeAdminView === "bookings") return renderBookings();
     if (activeAdminView === "resolution") return renderResolutionCases();
     if (activeAdminView === "payments") return renderPayments();
+    if (activeAdminView === "contact-messages") return renderContactMessages();
     if (activeAdminView === "catalog") return renderCatalog();
   });
   adminApplicationsSearch?.addEventListener("input", () => {
@@ -2934,6 +3142,81 @@ if (adminPage) {
       actionButton.disabled = false;
     }
   });
+  adminContactMessagesSearch?.addEventListener("input", () => {
+    syncAdminSideSearchFromView();
+    adminContactMessagesPage = 1;
+    renderContactMessages();
+  });
+  adminContactMessagesStatusFilter?.addEventListener("change", () => {
+    adminContactMessagesPage = 1;
+    renderContactMessages();
+  });
+  adminContactMessagesDateFilter?.addEventListener("change", () => {
+    adminContactMessagesPage = 1;
+    renderContactMessages();
+  });
+  adminContactMessagesRowsPerPage?.addEventListener("change", () => {
+    adminContactMessagesPageSize = Number(adminContactMessagesRowsPerPage.value || 10);
+    adminContactMessagesPage = 1;
+    renderContactMessages();
+  });
+  adminContactMessagesExportBtn?.addEventListener("click", () => {
+    const headers = ["Name", "Email", "Subject", "Message", "Status", "Created"];
+    const rows = adminContactMessages
+      .filter((item) => {
+        const matchesTerm = matchesSearchTerms([
+          item.name,
+          item.email,
+          item.subject,
+          item.message,
+          item.status,
+          item.source
+        ], getCombinedSearchTerms("contact-messages"));
+        const statusValue = adminContactMessagesStatusFilter?.value || "all";
+        const dateValue = adminContactMessagesDateFilter?.value || "all";
+        const matchesStatus =
+          statusValue === "all" ||
+          normaliseFilterToken(item.status) === normaliseFilterToken(statusValue);
+        const matchesDate = dateValue === "all" ? true : matchesDateFilter(item.created_at, dateValue);
+        return matchesTerm && matchesStatus && matchesDate;
+      })
+      .map((item) => [
+        item.name || "",
+        item.email || "",
+        item.subject || "",
+        item.message || "",
+        getContactMessageStatusUi(item.status).label,
+        formatDate(item.created_at)
+      ]);
+    const csv = [headers, ...rows]
+      .map((row) => row.map((value) => `"${String(value ?? "").replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "contact-messages.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  });
+  adminContactMessagesRows?.addEventListener("click", async (event) => {
+    const actionButton = event.target.closest("[data-contact-message-action]");
+    if (!actionButton) return;
+    const messageId = actionButton.dataset.contactMessageId;
+    const action = actionButton.dataset.contactMessageAction;
+    if (!messageId || !action) return;
+    actionButton.disabled = true;
+    try {
+      await updateContactMessageStatus(messageId, action);
+    } catch (err) {
+      console.error("Unable to update contact message", err);
+      showAdminFeedback(err?.error?.message || err?.message || "Unable to update contact message.", "error");
+    } finally {
+      actionButton.disabled = false;
+    }
+  });
   adminCatalogSearch?.addEventListener("input", () => {
     syncAdminSideSearchFromView();
     adminCatalogPage = 1;
@@ -3090,6 +3373,7 @@ if (adminPage) {
       if (activeAdminView === "applications") return renderApplications();
       if (activeAdminView === "resolution") return renderResolutionCases();
     if (activeAdminView === "payments") return renderPayments();
+    if (activeAdminView === "contact-messages") return renderContactMessages();
     if (activeAdminView === "catalog") return renderCatalog();
   });
   adminStatusFilter?.addEventListener("change", () => {
@@ -3098,6 +3382,7 @@ if (adminPage) {
     if (activeAdminView === "bookings") return renderBookings();
     if (activeAdminView === "resolution") return renderResolutionCases();
     if (activeAdminView === "payments") return renderPayments();
+    if (activeAdminView === "contact-messages") return renderContactMessages();
   });
   adminDateFilter?.addEventListener("change", () => {
     if (activeAdminView === "users") return applyFilters();
@@ -3105,6 +3390,7 @@ if (adminPage) {
     if (activeAdminView === "bookings") return renderBookings();
     if (activeAdminView === "resolution") return renderResolutionCases();
     if (activeAdminView === "payments") return renderPayments();
+    if (activeAdminView === "contact-messages") return renderContactMessages();
   });
   adminRowsPerPage?.addEventListener("change", () => {
     pageSize = Number(adminRowsPerPage.value);
@@ -3359,6 +3645,7 @@ if (adminPage) {
     fetchApplications();
     fetchBookings();
     fetchResolutionCases();
+    fetchContactMessages();
     fetchPayments();
     fetchCatalog();
     const pendingAdminView = sessionStorage.getItem("adminHeaderTargetView");
