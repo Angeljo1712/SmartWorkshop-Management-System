@@ -482,6 +482,13 @@ block content
                         option(value="50") 50
                       span#adminResolutionRowsMeta 0 of 0 rows
                     .admin-pagination#adminResolutionPagination
+                  article.admin-resolution-detail-card.is-hidden#adminResolutionDetailCard
+                    .admin-resolution-detail-card__head
+                      div
+                        span.admin-detail-eyebrow Resolution case
+                        h3#adminResolutionDetailTitle Select a case
+                      button.ghost#adminResolutionDetailClose(type="button") Close
+                    .admin-resolution-detail-card__body#adminResolutionDetailBody
 
             section.admin-view.is-hidden#adminPaymentsView
               .admin-user-layout

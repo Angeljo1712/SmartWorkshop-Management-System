@@ -127,6 +127,10 @@ if (adminPage) {
   const adminResolutionPagination = document.getElementById("adminResolutionPagination");
   const adminResolutionEmptyState = document.getElementById("adminResolutionEmptyState");
   const adminResolutionExportBtn = document.getElementById("adminResolutionExportBtn");
+  const adminResolutionDetailCard = document.getElementById("adminResolutionDetailCard");
+  const adminResolutionDetailTitle = document.getElementById("adminResolutionDetailTitle");
+  const adminResolutionDetailBody = document.getElementById("adminResolutionDetailBody");
+  const adminResolutionDetailClose = document.getElementById("adminResolutionDetailClose");
   const adminPaymentsSearch = document.getElementById("adminPaymentsSearch");
   const adminPaymentsKindFilter = document.getElementById("adminPaymentsKindFilter");
   const adminPaymentsStatusFilter = document.getElementById("adminPaymentsStatusFilter");
@@ -431,6 +435,11 @@ if (adminPage) {
     const avatarUrl = String(user?.avatar_url || "").trim();
     if (!avatarUrl) return "";
     return avatarUrl.startsWith("/uploads") ? `http://localhost:3000${avatarUrl}` : avatarUrl;
+  };
+  const resolveAdminUploadUrl = (url) => {
+    const value = String(url || "").trim();
+    if (!value) return "";
+    return value.startsWith("/uploads") ? `http://localhost:3000${value}` : value;
   };
   const getLocation = (user) => {
     const fullAddress = String(user?.address || "").trim();
@@ -1697,9 +1706,18 @@ if (adminPage) {
           const caseId = String(item.case_id || item.id || item.reference || "");
           const isChecked = selectedAdminResolutionCases.has(caseId);
           const status = normaliseFilterToken(item.status);
-          const actions = status === "open"
-            ? [`<button class="icon-btn" type="button" data-resolution-action="close" data-resolution-case-id="${escapeHtml(String(item.case_id))}" title="Close">Close</button>`]
-            : [`<button class="icon-btn" type="button" data-resolution-action="reopen" data-resolution-case-id="${escapeHtml(String(item.case_id))}" title="Reopen">Reopen</button>`];
+          const actions = [
+            `<button type="button" data-resolution-action="view" data-resolution-case-id="${escapeHtml(String(item.case_id))}">View details</button>`,
+            `<button type="button" data-resolution-action="conversation" data-resolution-case-id="${escapeHtml(String(item.case_id))}">Open conversation</button>`
+          ];
+          if (status === "closed" || status === "resolved") {
+            actions.push(`<button type="button" data-resolution-action="reopen" data-resolution-case-id="${escapeHtml(String(item.case_id))}">Reopen</button>`);
+          } else {
+            if (status !== "in_progress") {
+              actions.push(`<button type="button" data-resolution-action="in_progress" data-resolution-case-id="${escapeHtml(String(item.case_id))}">Mark in progress</button>`);
+            }
+            actions.push(`<button type="button" data-resolution-action="resolve" data-resolution-case-id="${escapeHtml(String(item.case_id))}">Resolve</button>`);
+          }
           return `
           <tr>
             <td class="table-check">
@@ -1714,7 +1732,10 @@ if (adminPage) {
             <td>${escapeHtml(formatDate(item.updated_at))}</td>
             <td>
               <div class="admin-actions-cell">
-                ${actions.join("")}
+                <button class="admin-resolution-actions-trigger" type="button" data-resolution-menu-toggle="${escapeHtml(String(item.case_id))}" aria-expanded="false">Actions</button>
+                <div class="admin-resolution-actions-menu is-hidden" data-resolution-menu="${escapeHtml(String(item.case_id))}">
+                  ${actions.join("")}
+                </div>
               </div>
             </td>
           </tr>`
@@ -3148,12 +3169,145 @@ if (adminPage) {
     adminResolutionPage = 1;
     renderResolutionCases();
   });
+  adminResolutionDetailClose?.addEventListener("click", () => {
+    adminResolutionDetailCard?.classList.add("is-hidden");
+  });
+
+  const closeAdminResolutionMenus = () => {
+    adminResolutionRows?.querySelectorAll("[data-resolution-menu]").forEach((item) => {
+      item.classList.add("is-hidden");
+      item.removeAttribute("style");
+    });
+    adminResolutionRows?.querySelectorAll("[data-resolution-menu-toggle]").forEach((item) => item.setAttribute("aria-expanded", "false"));
+  };
+
+  const positionAdminResolutionMenu = (menu, trigger) => {
+    const viewportPadding = 12;
+    const gap = 8;
+    const triggerRect = trigger.getBoundingClientRect();
+    menu.style.top = "0px";
+    menu.style.left = "0px";
+    menu.classList.remove("is-hidden");
+    const menuRect = menu.getBoundingClientRect();
+    const spaceAbove = triggerRect.top - viewportPadding;
+    const spaceBelow = window.innerHeight - triggerRect.bottom - viewportPadding;
+    const openUp = spaceAbove >= menuRect.height || spaceAbove > spaceBelow;
+    const top = openUp
+      ? Math.max(viewportPadding, triggerRect.top - menuRect.height - gap)
+      : Math.min(window.innerHeight - menuRect.height - viewportPadding, triggerRect.bottom + gap);
+    const left = Math.min(
+      window.innerWidth - menuRect.width - viewportPadding,
+      Math.max(viewportPadding, triggerRect.right - menuRect.width)
+    );
+    menu.style.top = `${top}px`;
+    menu.style.left = `${left}px`;
+  };
+
+  const showResolutionDetails = async (caseId, mode = "details") => {
+    if (!adminResolutionDetailCard || !adminResolutionDetailTitle || !adminResolutionDetailBody) {
+      const item = adminResolutionCases.find((entry) => Number(entry.case_id) === Number(caseId));
+      if (!item) return;
+      showAdminFeedback(
+        `${item.reference}: ${titleCase(item.type)} - ${item.subject || "-"} - ${titleCase(item.status)}`
+      );
+      return;
+    }
+    const token = getAdminToken();
+    const detail = token
+      ? await apiAuth(`/api/admin/resolution-cases/${encodeURIComponent(caseId)}`, token)
+      : adminResolutionCases.find((entry) => Number(entry.case_id) === Number(caseId));
+    if (!detail) return;
+    const caseType = String(detail.type || detail.case_type || "general").toLowerCase();
+    const title = caseType === "complaint" ? "Complaint" : "General Enquiry";
+    const items = Array.isArray(detail.items) ? detail.items : [];
+    const address = detail.address || {};
+    const vehicle = detail.vehicle || {};
+    const messages = Array.isArray(detail.messages) ? detail.messages : [];
+    const messageList = messages.length
+      ? messages.map((message) => {
+          const senderName = String(message.sender_name || "User");
+          const initials = getInitials(senderName);
+          const avatarUrl = resolveAdminUploadUrl(message.avatar_url);
+          const avatarMarkup = avatarUrl ? `<img src="${escapeHtml(avatarUrl)}" alt="" />` : escapeHtml(initials);
+          const attachments = Array.isArray(message.attachments) && message.attachments.length
+            ? `<div class="admin-resolution-message-attachments">
+                ${message.attachments.map((attachment) => {
+                  const fileUrl = resolveAdminUploadUrl(attachment.file_url);
+                  const originalName = attachment.original_name || "Attachment";
+                  const isImage = String(attachment.mime_type || "").startsWith("image/");
+                  return `<a class="admin-resolution-message-attachment" href="${escapeHtml(fileUrl)}" target="_blank" rel="noopener">
+                    ${isImage ? `<img src="${escapeHtml(fileUrl)}" alt="${escapeHtml(originalName)}" />` : escapeHtml(originalName)}
+                  </a>`;
+                }).join("")}
+              </div>`
+            : "";
+          return `
+            <article class="admin-resolution-message is-${escapeHtml(message.sender_role || "admin")}">
+              <div class="admin-resolution-message-avatar">${avatarMarkup}</div>
+              <div class="admin-resolution-message-main">
+                <div class="admin-resolution-message-bubble">${escapeHtml(message.body || "")}</div>
+                ${attachments}
+                <div class="admin-resolution-message-meta">${escapeHtml(senderName)}, ${escapeHtml(formatDate(message.created_at))}</div>
+              </div>
+            </article>`;
+        }).join("")
+      : `<p class="admin-resolution-chat-empty">No messages have been sent yet.</p>`;
+
+    adminResolutionDetailTitle.textContent = `${title} ${detail.reference ? `#${detail.reference}` : ""}`.trim();
+    adminResolutionDetailBody.innerHTML = `
+      <div class="admin-resolution-conversation">
+        <section class="admin-resolution-chat">
+          <p class="admin-resolution-thread-copy">Use this panel to review the case conversation and send an admin response.</p>
+          <div class="admin-resolution-message-list">${messageList}</div>
+          <div class="admin-resolution-compose">
+            <textarea id="adminResolutionMessageInput" rows="5" placeholder="Add a new message here"></textarea>
+            <button class="primary" type="button" data-resolution-send-message="${escapeHtml(String(detail.id || caseId))}">Send message</button>
+          </div>
+        </section>
+        <aside class="admin-resolution-status-card">
+          <h4>Current status of booking #${escapeHtml(detail.booking?.reference || String(detail.booking_id || "-").padStart(8, "0"))}</h4>
+          <p><strong>Customer</strong><span>${escapeHtml(detail.customer?.name || "-")}</span></p>
+          <p><strong>Mechanic</strong><span>${escapeHtml(detail.mechanic?.name || "-")}</span></p>
+          <p><strong>Car</strong><span>${escapeHtml([vehicle.make, vehicle.model, vehicle.registrationNumber].filter(Boolean).join(" · ") || "-")}</span></p>
+          <p><strong>Address</strong><span>${escapeHtml([address.line1, address.line2, address.city, address.postal_code].filter(Boolean).join(", ") || "-")}</span></p>
+          <p><strong>Work</strong><span>${escapeHtml(items.map((item) => item.name).filter(Boolean).join(", ") || "-")}</span></p>
+          <p><strong>Total Price</strong><span>£${escapeHtml(Number(detail.booking?.total_eur || 0).toFixed(2))}</span></p>
+          <p><strong>Case status</strong><span>${escapeHtml(titleCase(detail.status || "-"))}</span></p>
+        </aside>
+      </div>
+    `;
+    adminResolutionDetailCard.classList.remove("is-hidden");
+    adminResolutionDetailCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  };
+
   adminResolutionRows?.addEventListener("click", async (event) => {
+    const menuToggle = event.target.closest("[data-resolution-menu-toggle]");
+    if (menuToggle) {
+      const menuId = menuToggle.getAttribute("data-resolution-menu-toggle");
+      const menu = adminResolutionRows.querySelector(`[data-resolution-menu="${CSS.escape(menuId)}"]`);
+      const willOpen = menu?.classList.contains("is-hidden");
+      closeAdminResolutionMenus();
+      if (menu && willOpen) {
+        positionAdminResolutionMenu(menu, menuToggle);
+        menuToggle.setAttribute("aria-expanded", "true");
+      }
+      return;
+    }
+
     const actionButton = event.target.closest("[data-resolution-action]");
     if (!actionButton) return;
     const caseId = Number(actionButton.dataset.resolutionCaseId);
     const action = actionButton.dataset.resolutionAction;
     if (!caseId || !action) return;
+    closeAdminResolutionMenus();
+    if (action === "view") {
+      await showResolutionDetails(caseId, "details");
+      return;
+    }
+    if (action === "conversation") {
+      await showResolutionDetails(caseId, "conversation");
+      return;
+    }
     actionButton.disabled = true;
     try {
       await updateAdminResolutionCaseStatus(caseId, action);
@@ -3162,6 +3316,31 @@ if (adminPage) {
       showAdminFeedback(err?.error?.message || err?.message || "Unable to update case.", "error");
     } finally {
       actionButton.disabled = false;
+    }
+  });
+  adminResolutionDetailCard?.addEventListener("click", async (event) => {
+    const sendButton = event.target.closest("[data-resolution-send-message]");
+    if (!sendButton) return;
+    const caseId = Number(sendButton.dataset.resolutionSendMessage);
+    const input = adminResolutionDetailCard.querySelector("#adminResolutionMessageInput");
+    const body = String(input?.value || "").trim();
+    const token = getAdminToken();
+    if (!caseId || !body || !token) return;
+    sendButton.disabled = true;
+    try {
+      const detail = await apiAuth(`/api/admin/resolution-cases/${encodeURIComponent(caseId)}/messages`, token, {
+        method: "POST",
+        body: JSON.stringify({ body })
+      });
+      if (input) input.value = "";
+      await fetchResolutionCases();
+      await showResolutionDetails(detail.id || caseId, "conversation");
+      showAdminFeedback("Message sent.");
+    } catch (err) {
+      console.error("Unable to send admin resolution message", err);
+      showAdminFeedback(err?.error?.message || err?.message || "Unable to send message.", "error");
+    } finally {
+      sendButton.disabled = false;
     }
   });
   adminResolutionExportBtn?.addEventListener("click", () => {
@@ -3772,8 +3951,13 @@ if (adminPage) {
     }
   });
 
-  document.addEventListener("click", () => {
+  document.addEventListener("click", (event) => {
     closeAdminEditMenus();
+    if (!event.target.closest(".admin-actions-cell")) {
+      closeAdminApplicationMenus();
+      closeAdminBookingMenus();
+      closeAdminResolutionMenus();
+    }
   });
 
   adminAddUserBtn?.addEventListener("click", () => {

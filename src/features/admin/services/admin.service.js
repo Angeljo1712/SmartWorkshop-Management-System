@@ -1,6 +1,9 @@
 const { pool } = require("../../../shared/config/pool");
 const { AppError } = require("../../../shared/utils/appError");
 const { issueInvoiceForBooking } = require("../../invoices/services/invoice.service");
+const { getResolutionCaseAttachmentsByMessageIds } = require("../../resolution/services/resolutionAttachment.service");
+
+const formatBookingReference = (value) => String(Number(value) || 0).padStart(8, "0");
 
 const listWorkshops = async () => {
   const [rows] = await pool.query("SELECT * FROM workshops ORDER BY created_at DESC");
@@ -341,7 +344,9 @@ const listResolutionCases = async () => {
 const updateResolutionCaseStatus = async ({ caseId, action }) => {
   const normalizedAction = String(action || "").trim().toLowerCase();
   const statusByAction = {
+    in_progress: "in_progress",
     close: "closed",
+    resolve: "closed",
     reopen: "open"
   };
   const nextStatus = statusByAction[normalizedAction];
@@ -352,6 +357,141 @@ const updateResolutionCaseStatus = async ({ caseId, action }) => {
   await pool.query("UPDATE resolution_cases SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?", [nextStatus, caseId]);
   const cases = await listResolutionCases();
   return cases.find((item) => Number(item.case_id) === Number(caseId)) || null;
+};
+
+const getResolutionCaseDetail = async (caseId) => {
+  const id = Number(caseId);
+  if (!Number.isInteger(id) || id <= 0) {
+    throw new AppError("VALIDATION_ERROR", "caseId is invalid", 400);
+  }
+
+  const [rows] = await pool.query(
+    `SELECT rc.id, rc.booking_id, rc.case_type, rc.subject, rc.reference, rc.status, rc.updated_at,
+            rc.customer_id, rc.mechanic_id,
+            b.total_eur, b.created_at,
+            v.license_plate, v.make, v.model, v.year,
+            a.line1, a.line2, a.city, a.postal_code, a.country,
+            customer.email AS customer_email,
+            customer_profile.name AS customer_name,
+            customer_profile.lastname AS customer_lastname,
+            mechanic.email AS mechanic_email,
+            mechanic_profile.name AS mechanic_name,
+            mechanic_profile.lastname AS mechanic_lastname
+     FROM resolution_cases rc
+     INNER JOIN bookings b ON b.id = rc.booking_id
+     INNER JOIN users customer ON customer.id = rc.customer_id
+     LEFT JOIN user_profiles customer_profile ON customer_profile.user_id = customer.id
+     LEFT JOIN users mechanic ON mechanic.id = COALESCE(rc.mechanic_id, b.mechanic_id)
+     LEFT JOIN user_profiles mechanic_profile ON mechanic_profile.user_id = mechanic.id
+     LEFT JOIN addresses a ON a.id = b.address_id
+     LEFT JOIN vehicles v ON v.id = b.vehicle_id
+     WHERE rc.id = ?
+     LIMIT 1`,
+    [id]
+  );
+  const row = rows[0];
+  if (!row) {
+    throw new AppError("NOT_FOUND", "Resolution case not found", 404);
+  }
+
+  const [itemRows] = await pool.query(
+    `SELECT sc.name, bi.labour_minutes, bi.line_total_eur
+     FROM booking_items bi
+     INNER JOIN service_catalog sc ON sc.id = bi.service_id
+     WHERE bi.booking_id = ?`,
+    [row.booking_id]
+  );
+  const [messageRows] = await pool.query(
+    `SELECT rcm.id, rcm.body, rcm.created_at, rcm.sender_id,
+            up.name, up.lastname, up.avatar_url, u.email
+     FROM resolution_case_messages rcm
+     INNER JOIN users u ON u.id = rcm.sender_id
+     LEFT JOIN user_profiles up ON up.user_id = rcm.sender_id
+     WHERE rcm.case_id = ?
+     ORDER BY rcm.created_at ASC`,
+    [id]
+  );
+  const attachmentMap = await getResolutionCaseAttachmentsByMessageIds(messageRows.map((message) => message.id));
+  const mechanicId = Number(row.mechanic_id || 0);
+  const customerId = Number(row.customer_id || 0);
+
+  return {
+    id: row.id,
+    booking_id: row.booking_id,
+    type: row.case_type || "general",
+    subject: row.subject || "",
+    reference: row.reference || `${formatBookingReference(row.booking_id)}/1`,
+    status: row.status || "open",
+    updated_at: row.updated_at,
+    booking: {
+      id: row.booking_id,
+      reference: formatBookingReference(row.booking_id),
+      total_eur: Number(row.total_eur || 0),
+      created_at: row.created_at
+    },
+    customer: {
+      id: customerId,
+      name: [row.customer_name, row.customer_lastname].filter(Boolean).join(" ") || row.customer_email || "Customer",
+      email: row.customer_email || ""
+    },
+    mechanic: {
+      id: mechanicId,
+      name: [row.mechanic_name, row.mechanic_lastname].filter(Boolean).join(" ") || row.mechanic_email || "Mechanic",
+      email: row.mechanic_email || ""
+    },
+    vehicle: {
+      registrationNumber: row.license_plate || "",
+      make: row.make || "",
+      model: row.model || "",
+      yearOfManufacture: row.year || null
+    },
+    address: {
+      line1: row.line1 || "",
+      line2: row.line2 || "",
+      city: row.city || "",
+      postal_code: row.postal_code || "",
+      country: row.country || ""
+    },
+    items: itemRows.map((item) => ({
+      name: item.name,
+      labour_minutes: item.labour_minutes,
+      line_total_eur: Number(item.line_total_eur || 0)
+    })),
+    messages: messageRows.map((message) => ({
+      id: message.id,
+      body: message.body,
+      created_at: message.created_at,
+      sender_id: message.sender_id,
+      sender_name: [message.name, message.lastname].filter(Boolean).join(" ") || message.email || "User",
+      avatar_url: message.avatar_url || "",
+      sender_role:
+        Number(message.sender_id) === customerId
+          ? "customer"
+          : Number(message.sender_id) === mechanicId
+            ? "mechanic"
+            : "admin",
+      attachments: (attachmentMap.get(message.id) || []).map((attachment) => ({
+        file_url: attachment.file_url,
+        original_name: attachment.original_name || "",
+        mime_type: attachment.mime_type || ""
+      }))
+    }))
+  };
+};
+
+const addResolutionCaseMessage = async ({ adminId, caseId, body }) => {
+  const text = String(body || "").trim();
+  if (!text) {
+    throw new AppError("VALIDATION_ERROR", "message is required", 400);
+  }
+  await getResolutionCaseDetail(caseId);
+  await pool.query("INSERT INTO resolution_case_messages (case_id, sender_id, body) VALUES (?, ?, ?)", [
+    Number(caseId),
+    adminId,
+    text
+  ]);
+  await pool.query("UPDATE resolution_cases SET updated_at = CURRENT_TIMESTAMP WHERE id = ?", [Number(caseId)]);
+  return getResolutionCaseDetail(caseId);
 };
 
 const getDashboardSummary = async () => {
@@ -861,7 +1001,9 @@ module.exports = {
   listBookings,
   updateBookingStatus,
   listResolutionCases,
+  getResolutionCaseDetail,
   updateResolutionCaseStatus,
+  addResolutionCaseMessage,
   getDashboardSummary,
   listContactMessages,
   updateContactMessageStatus,

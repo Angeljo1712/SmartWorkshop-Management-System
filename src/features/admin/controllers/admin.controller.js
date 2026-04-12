@@ -74,6 +74,20 @@ const listResolutionCasesHandler = async (_req, res) => {
   res.json(cases);
 };
 
+const getResolutionCaseHandler = async (req, res) => {
+  const detail = await adminService.getResolutionCaseDetail(Number(req.params.caseId));
+  res.json(detail);
+};
+
+const addResolutionCaseMessageHandler = async (req, res) => {
+  const detail = await adminService.addResolutionCaseMessage({
+    adminId: req.user.userId,
+    caseId: Number(req.params.caseId),
+    body: req.body?.body
+  });
+  res.json(detail);
+};
+
 const listContactMessagesHandler = async (_req, res) => {
   const messages = await adminService.listContactMessages();
   res.json(messages);
@@ -220,6 +234,8 @@ module.exports = {
   listBookingsHandler,
   updateBookingStatusHandler,
   listResolutionCasesHandler,
+  getResolutionCaseHandler,
+  addResolutionCaseMessageHandler,
   listContactMessagesHandler,
   updateContactMessageStatusHandler,
   updateResolutionCaseStatusHandler,

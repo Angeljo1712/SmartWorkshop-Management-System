@@ -542,10 +542,15 @@ body.admin-body .primari-shell {
     grid-row: 4;
   }
 
+#adminPage .admin-table-layout > .admin-resolution-detail-card {
+    grid-row: 4;
+  }
+
 #adminPage .admin-table-layout > .admin-table-head,
 #adminPage .admin-table-layout > .admin-table-wrap,
 #adminPage .admin-table-layout > .admin-table-footer,
-#adminPage .admin-table-layout > .admin-application-detail-card {
+#adminPage .admin-table-layout > .admin-application-detail-card,
+#adminPage .admin-table-layout > .admin-resolution-detail-card {
     position: relative;
     background: #3e434df7;
   }
@@ -1885,6 +1890,283 @@ body.admin-body .admin-edit-menu button:disabled {
 
 #adminPage #adminApplicationsView .admin-application-actions-menu button.danger {
   color: #ff8f99;
+}
+
+#adminPage #adminResolutionView .admin-actions-cell {
+  position: relative;
+  justify-content: center;
+  overflow: visible;
+}
+
+#adminPage #adminResolutionView .admin-resolution-actions-trigger {
+  min-width: 96px;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: #5a6f90;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#adminPage #adminResolutionView .admin-resolution-actions-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  z-index: 30;
+  min-width: 190px;
+  display: grid;
+  gap: 0;
+  padding: 8px;
+  border-radius: 14px;
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+}
+
+#adminPage #adminResolutionView .admin-resolution-actions-menu.is-hidden {
+  display: none;
+}
+
+#adminPage #adminResolutionView .admin-resolution-actions-menu button {
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #ffffff;
+  text-align: left;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#adminPage #adminResolutionView .admin-resolution-actions-menu button:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+#adminPage #adminResolutionView .admin-resolution-detail-card {
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 16px;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+#adminPage #adminResolutionView .admin-resolution-detail-card.is-hidden {
+  display: none;
+}
+
+#adminPage #adminResolutionView .admin-resolution-detail-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+#adminPage #adminResolutionView .admin-detail-eyebrow {
+  display: block;
+  margin-bottom: 4px;
+  color: #cbd5e1;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+#adminPage #adminResolutionView .admin-resolution-detail-card h3,
+#adminPage #adminResolutionView .admin-resolution-detail-card h4 {
+  margin: 0;
+  color: #ffffff;
+}
+
+#adminPage #adminResolutionView .admin-resolution-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px 36px;
+}
+
+#adminPage #adminResolutionView .admin-resolution-detail-grid section {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
+}
+
+#adminPage #adminResolutionView .admin-resolution-detail-grid p {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 12px;
+  margin: 0;
+  color: #e5edf8;
+}
+
+#adminPage #adminResolutionView .admin-resolution-detail-grid strong {
+  color: #ffffff;
+}
+
+#adminPage #adminResolutionView .admin-resolution-conversation {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+  gap: 24px;
+  align-items: start;
+}
+
+#adminPage #adminResolutionView .admin-resolution-chat {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+#adminPage #adminResolutionView .admin-resolution-thread-copy {
+  margin: 0;
+  color: #ffffff;
+  line-height: 1.5;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message-list {
+  display: grid;
+  gap: 16px;
+}
+
+#adminPage #adminResolutionView .admin-resolution-chat-empty {
+  margin: 0;
+  color: #dbeafe;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message.is-admin {
+  grid-template-columns: minmax(0, 1fr) 42px;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message.is-admin .admin-resolution-message-avatar {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message.is-admin .admin-resolution-message-main {
+  grid-column: 1;
+  grid-row: 1;
+  justify-items: end;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message-avatar {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #5a6f90;
+  color: #ffffff;
+  font-weight: 800;
+  overflow: hidden;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message-main {
+  display: grid;
+  gap: 6px;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message-bubble {
+  width: min(100%, 620px);
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #111827;
+  line-height: 1.5;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message-meta {
+  color: #cbd5e1;
+  font-size: 0.86rem;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message-attachment {
+  display: inline-grid;
+  place-items: center;
+  min-height: 36px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(90, 111, 144, 0.24);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message-attachment img {
+  width: 84px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+#adminPage #adminResolutionView .admin-resolution-compose {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+#adminPage #adminResolutionView .admin-resolution-compose textarea {
+  min-height: 130px;
+  border: 0;
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: #ffffff;
+  color: #111827;
+  resize: vertical;
+}
+
+#adminPage #adminResolutionView .admin-resolution-status-card {
+  display: grid;
+  gap: 14px;
+  padding: 22px;
+  background: #0b1020;
+  color: #ffffff;
+}
+
+#adminPage #adminResolutionView .admin-resolution-status-card p {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+}
+
+#adminPage #adminResolutionView .admin-resolution-status-card span {
+  color: #ffffff;
+}
+
+@media (max-width: 900px) {
+  #adminPage #adminResolutionView .admin-resolution-detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #adminPage #adminResolutionView .admin-resolution-conversation,
+  #adminPage #adminResolutionView .admin-resolution-compose {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 #adminPage #adminApplicationsView .admin-application-detail-card {
