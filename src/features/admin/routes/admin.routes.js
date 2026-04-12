@@ -8,6 +8,7 @@ const {
   deleteWorkshopHandler,
   listUsersHandler,
   listApplicationsHandler,
+  listApplicationDocumentsHandler,
   updateApplicationStatusHandler,
   listBookingsHandler,
   updateBookingStatusHandler,
@@ -35,6 +36,7 @@ router.delete("/workshops/:workshopId", authenticate, authorizeRoles("ADMIN"), a
 router.get("/users", authenticate, authorizeRoles("ADMIN"), asyncHandler(listUsersHandler));
 router.get("/dashboard-summary", authenticate, authorizeRoles("ADMIN"), asyncHandler(getDashboardSummaryHandler));
 router.get("/applications", authenticate, authorizeRoles("ADMIN"), asyncHandler(listApplicationsHandler));
+router.get("/applications/:userId/documents", authenticate, authorizeRoles("ADMIN"), asyncHandler(listApplicationDocumentsHandler));
 router.patch("/applications/:userId/status", authenticate, authorizeRoles("ADMIN"), asyncHandler(updateApplicationStatusHandler));
 router.get("/bookings", authenticate, authorizeRoles("ADMIN"), asyncHandler(listBookingsHandler));
 router.patch("/bookings/:bookingId/status", authenticate, authorizeRoles("ADMIN"), asyncHandler(updateBookingStatusHandler));

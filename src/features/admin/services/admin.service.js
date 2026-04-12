@@ -178,6 +178,25 @@ const listApplications = async () => {
   }));
 };
 
+const listApplicationDocuments = async (userId) => {
+  const [rows] = await pool.query(
+    `SELECT id, original_name, file_path, mime_type, file_size, created_at
+     FROM mechanic_documents
+     WHERE user_id = ?
+     ORDER BY created_at DESC, id DESC`,
+    [userId]
+  );
+
+  return rows.map((row) => ({
+    id: Number(row.id),
+    original_name: row.original_name,
+    file_path: row.file_path,
+    mime_type: row.mime_type,
+    file_size: Number(row.file_size || 0),
+    created_at: row.created_at
+  }));
+};
+
 const updateApplicationStatus = async ({ userId, action }) => {
   await ensureMechanicProfileWorkflowColumns();
   const normalizedAction = String(action || "").trim().toLowerCase();
@@ -837,6 +856,7 @@ module.exports = {
   deleteWorkshop,
   listUsers,
   listApplications,
+  listApplicationDocuments,
   updateApplicationStatus,
   listBookings,
   updateBookingStatus,

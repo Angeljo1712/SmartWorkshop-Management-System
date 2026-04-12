@@ -78,6 +78,10 @@ if (adminPage) {
   const adminApplicationsPagination = document.getElementById("adminApplicationsPagination");
   const adminApplicationSortHeaders = document.querySelectorAll("#adminApplicationsView [data-app-sort-key]");
   const adminApplicationsEmptyState = document.getElementById("adminApplicationsEmptyState");
+  const adminApplicationDetailCard = document.getElementById("adminApplicationDetailCard");
+  const adminApplicationDetailTitle = document.getElementById("adminApplicationDetailTitle");
+  const adminApplicationDetailBody = document.getElementById("adminApplicationDetailBody");
+  const adminApplicationDetailClose = document.getElementById("adminApplicationDetailClose");
   const adminMetricBookingsToday = document.getElementById("adminMetricBookingsToday");
   const adminMetricOpenCases = document.getElementById("adminMetricOpenCases");
   const adminMetricPendingApplications = document.getElementById("adminMetricPendingApplications");
@@ -1394,6 +1398,20 @@ if (adminPage) {
             const avatarUrl = getAvatarUrl(item);
             const applicationId = String(item.user_id || item.id || item.email || item.full_name || "");
             const isChecked = selectedAdminApplications.has(applicationId);
+            const userId = String(item.user_id || "");
+            const normalizedStatus = String(item.application_status || "").toLowerCase();
+            const actionButtons = [
+              `<button type="button" data-application-action="view" data-application-user-id="${escapeHtml(userId)}">View details</button>`
+            ];
+            if (normalizedStatus !== "approved") {
+              actionButtons.push(`<button type="button" data-application-action="approve" data-application-user-id="${escapeHtml(userId)}">Approve</button>`);
+            }
+            if (!["approved", "rejected"].includes(normalizedStatus)) {
+              actionButtons.push(`<button type="button" data-application-action="request_info" data-application-user-id="${escapeHtml(userId)}">Request info</button>`);
+            }
+            if (normalizedStatus !== "rejected") {
+              actionButtons.push(`<button class="danger" type="button" data-application-action="reject" data-application-user-id="${escapeHtml(userId)}">Reject</button>`);
+            }
             return `
             <tr>
               <td class="table-check">
@@ -1416,15 +1434,10 @@ if (adminPage) {
               <td>${escapeHtml(formatDate(item.created_at))}</td>
               <td>
                 <div class="admin-actions-cell">
-                  <button class="icon-btn" type="button" data-application-action="approve" data-application-user-id="${escapeHtml(String(item.user_id))}" title="Approve">
-                    Approve
-                </button>
-                <button class="icon-btn" type="button" data-application-action="request_info" data-application-user-id="${escapeHtml(String(item.user_id))}" title="Request info">
-                  Info
-                </button>
-                <button class="icon-btn danger" type="button" data-application-action="reject" data-application-user-id="${escapeHtml(String(item.user_id))}" title="Reject">
-                  Reject
-                  </button>
+                  <button class="admin-application-actions-trigger" type="button" data-application-menu-toggle="${escapeHtml(userId)}" aria-expanded="false">Actions</button>
+                  <div class="admin-application-actions-menu is-hidden" data-application-menu="${escapeHtml(userId)}">
+                    ${actionButtons.join("")}
+                  </div>
                 </div>
               </td>
             </tr>`;
@@ -1543,14 +1556,15 @@ if (adminPage) {
           const bookingId = String(item.booking_id || item.id || item.reference || "");
           const isChecked = selectedAdminBookings.has(bookingId);
           const actions = [];
+          actions.push(`<button type="button" data-booking-action="view" data-booking-id="${escapeHtml(bookingId)}">View details</button>`);
           if (["requested", "accepted"].includes(status)) {
-            actions.push(`<button class="icon-btn" type="button" data-booking-action="start" data-booking-id="${escapeHtml(String(item.booking_id))}" title="Start">Start</button>`);
+            actions.push(`<button type="button" data-booking-action="start" data-booking-id="${escapeHtml(bookingId)}">Start</button>`);
           }
           if (["accepted", "in_progress"].includes(status)) {
-            actions.push(`<button class="icon-btn" type="button" data-booking-action="complete" data-booking-id="${escapeHtml(String(item.booking_id))}" title="Complete">Complete</button>`);
+            actions.push(`<button type="button" data-booking-action="complete" data-booking-id="${escapeHtml(bookingId)}">Complete</button>`);
           }
           if (!["completed", "cancelled", "refunded"].includes(status)) {
-            actions.push(`<button class="icon-btn danger" type="button" data-booking-action="cancel" data-booking-id="${escapeHtml(String(item.booking_id))}" title="Cancel">Cancel</button>`);
+            actions.push(`<button class="danger" type="button" data-booking-action="cancel" data-booking-id="${escapeHtml(bookingId)}">Cancel</button>`);
           }
           return `
           <tr>
@@ -1567,7 +1581,10 @@ if (adminPage) {
             <td>${escapeHtml(formatDate(item.created_at))}</td>
             <td>
               <div class="admin-actions-cell">
-                ${actions.join("") || '<span class="admin-empty-inline">No actions</span>'}
+                <button class="admin-booking-actions-trigger" type="button" data-booking-menu-toggle="${escapeHtml(bookingId)}" aria-expanded="false">Actions</button>
+                <div class="admin-booking-actions-menu is-hidden" data-booking-menu="${escapeHtml(bookingId)}">
+                  ${actions.join("")}
+                </div>
               </div>
             </td>
           </tr>`
@@ -2854,12 +2871,123 @@ if (adminPage) {
     adminApplicationsPage = 1;
     renderApplications();
     });
+  adminApplicationDetailClose?.addEventListener("click", () => {
+    adminApplicationDetailCard?.classList.add("is-hidden");
+  });
+  const closeAdminApplicationMenus = () => {
+    adminApplicationsRows?.querySelectorAll("[data-application-menu]").forEach((item) => {
+      item.classList.add("is-hidden");
+      item.removeAttribute("style");
+    });
+    adminApplicationsRows?.querySelectorAll("[data-application-menu-toggle]").forEach((item) => item.setAttribute("aria-expanded", "false"));
+  };
+
+  const positionAdminApplicationMenu = (menu, trigger) => {
+    const viewportPadding = 12;
+    const gap = 8;
+    const triggerRect = trigger.getBoundingClientRect();
+    menu.style.top = "0px";
+    menu.style.left = "0px";
+    menu.classList.remove("is-hidden");
+    const menuRect = menu.getBoundingClientRect();
+    const spaceAbove = triggerRect.top - viewportPadding;
+    const spaceBelow = window.innerHeight - triggerRect.bottom - viewportPadding;
+    const openUp = spaceAbove >= menuRect.height || spaceAbove > spaceBelow;
+    const top = openUp
+      ? Math.max(viewportPadding, triggerRect.top - menuRect.height - gap)
+      : Math.min(window.innerHeight - menuRect.height - viewportPadding, triggerRect.bottom + gap);
+    const left = Math.min(
+      window.innerWidth - menuRect.width - viewportPadding,
+      Math.max(viewportPadding, triggerRect.right - menuRect.width)
+    );
+    menu.style.top = `${top}px`;
+    menu.style.left = `${left}px`;
+  };
+
+  const showApplicationDetails = async (application) => {
+    if (!application) return;
+    if (!adminApplicationDetailCard || !adminApplicationDetailTitle || !adminApplicationDetailBody) return;
+    const token = getAdminToken();
+    let documents = [];
+    if (token && application.user_id) {
+      try {
+        documents = await apiAuth(`/api/admin/applications/${encodeURIComponent(application.user_id)}/documents`, token);
+      } catch (err) {
+        console.error("Unable to load application documents", err);
+      }
+    }
+    const documentList = Array.isArray(documents) && documents.length
+      ? `<div class="admin-application-documents">
+          ${documents.map((document) => `
+            <a class="admin-application-document-link" href="${escapeHtml(document.file_path || "#")}" target="_blank" rel="noopener">
+              <span>${escapeHtml(document.original_name || "Document")}</span>
+              <small>${escapeHtml(formatDate(document.created_at))}</small>
+            </a>
+          `).join("")}
+        </div>`
+      : `<span>No documents uploaded.</span>`;
+    adminApplicationDetailTitle.textContent = application.full_name || application.email || "Mechanic application";
+    adminApplicationDetailBody.innerHTML = `
+      <div class="admin-application-detail-grid">
+        <section>
+          <h4>Applicant</h4>
+          <p><strong>Name</strong><span>${escapeHtml(application.full_name || "-")}</span></p>
+          <p><strong>Email</strong><span>${escapeHtml(application.email || "-")}</span></p>
+          <p><strong>Phone</strong><span>${escapeHtml(application.phone || "-")}</span></p>
+        </section>
+        <section>
+          <h4>Application</h4>
+          <p><strong>Type</strong><span>${escapeHtml(titleCase(application.application_type || application.business_type || "-"))}</span></p>
+          <p><strong>Postcode</strong><span>${escapeHtml(application.lead_postcode || "-")}</span></p>
+        </section>
+        <section>
+          <h4>Status</h4>
+          <p><strong>Application</strong><span>${escapeHtml(titleCase(application.application_status || "-"))}</span></p>
+          <p><strong>Account</strong><span>${escapeHtml(titleCase(application.account_status || "-"))}</span></p>
+          <p><strong>Created</strong><span>${escapeHtml(formatDate(application.created_at))}</span></p>
+        </section>
+        <section class="admin-application-detail-documents">
+          <h4>Documents</h4>
+          ${documentList}
+        </section>
+      </div>
+    `;
+    adminApplicationDetailCard.classList.remove("is-hidden");
+    adminApplicationDetailCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  };
+
   adminApplicationsRows?.addEventListener("click", async (event) => {
+    const menuToggle = event.target.closest("[data-application-menu-toggle]");
+    if (menuToggle) {
+      const menuId = menuToggle.getAttribute("data-application-menu-toggle");
+      const menu = adminApplicationsRows.querySelector(`[data-application-menu="${CSS.escape(menuId)}"]`);
+      const willOpen = menu?.classList.contains("is-hidden");
+      closeAdminApplicationMenus();
+      if (menu && willOpen) {
+        positionAdminApplicationMenu(menu, menuToggle);
+        menuToggle.setAttribute("aria-expanded", "true");
+      }
+      return;
+    }
+
     const actionButton = event.target.closest("[data-application-action]");
     if (!actionButton) return;
     const userId = Number(actionButton.dataset.applicationUserId);
     const action = actionButton.dataset.applicationAction;
     if (!userId || !action) return;
+    closeAdminApplicationMenus();
+    if (action === "view") {
+      await showApplicationDetails(adminApplications.find((item) => Number(item.user_id) === userId));
+      return;
+    }
+    if (action === "request_info") {
+      const note = window.prompt("Request information note for this mechanic application:", "");
+      if (note === null) return;
+    }
+    if (action === "reject") {
+      const reason = window.prompt("Reason for rejecting this mechanic application:", "");
+      if (reason === null) return;
+    }
     actionButton.disabled = true;
     try {
       await updateAdminApplicationStatus(userId, action);
@@ -2905,12 +3033,64 @@ if (adminPage) {
       renderBookings();
     });
   });
+  const closeAdminBookingMenus = () => {
+    adminBookingsRows?.querySelectorAll("[data-booking-menu]").forEach((item) => {
+      item.classList.add("is-hidden");
+      item.removeAttribute("style");
+    });
+    adminBookingsRows?.querySelectorAll("[data-booking-menu-toggle]").forEach((item) => item.setAttribute("aria-expanded", "false"));
+  };
+
+  const positionAdminBookingMenu = (menu, trigger) => {
+    const viewportPadding = 12;
+    const gap = 8;
+    const triggerRect = trigger.getBoundingClientRect();
+    menu.style.top = "0px";
+    menu.style.left = "0px";
+    menu.classList.remove("is-hidden");
+    const menuRect = menu.getBoundingClientRect();
+    const spaceAbove = triggerRect.top - viewportPadding;
+    const spaceBelow = window.innerHeight - triggerRect.bottom - viewportPadding;
+    const openUp = spaceAbove >= menuRect.height || spaceAbove > spaceBelow;
+    const top = openUp
+      ? Math.max(viewportPadding, triggerRect.top - menuRect.height - gap)
+      : Math.min(window.innerHeight - menuRect.height - viewportPadding, triggerRect.bottom + gap);
+    const left = Math.min(
+      window.innerWidth - menuRect.width - viewportPadding,
+      Math.max(viewportPadding, triggerRect.right - menuRect.width)
+    );
+    menu.style.top = `${top}px`;
+    menu.style.left = `${left}px`;
+  };
+
   adminBookingsRows?.addEventListener("click", async (event) => {
+    const menuToggle = event.target.closest("[data-booking-menu-toggle]");
+    if (menuToggle) {
+      const menuId = menuToggle.getAttribute("data-booking-menu-toggle");
+      const menu = adminBookingsRows.querySelector(`[data-booking-menu="${CSS.escape(menuId)}"]`);
+      const willOpen = menu?.classList.contains("is-hidden");
+      closeAdminBookingMenus();
+      if (menu && willOpen) {
+        positionAdminBookingMenu(menu, menuToggle);
+        menuToggle.setAttribute("aria-expanded", "true");
+      }
+      return;
+    }
+
     const actionButton = event.target.closest("[data-booking-action]");
     if (!actionButton) return;
+    closeAdminBookingMenus();
     const bookingId = Number(actionButton.dataset.bookingId);
     const action = actionButton.dataset.bookingAction;
     if (!bookingId || !action) return;
+    if (action === "view") {
+      const booking = adminBookings.find((item) => Number(item.booking_id || item.id) === bookingId);
+      if (!booking) return;
+      showAdminFeedback(
+        `${booking.reference || `Booking ${bookingId}`}: ${booking.customer_name || "-"} · ${booking.vehicle || "-"} · ${titleCase(booking.status || "unknown")}.`
+      );
+      return;
+    }
     actionButton.disabled = true;
     try {
       await updateAdminBookingStatus(bookingId, action);

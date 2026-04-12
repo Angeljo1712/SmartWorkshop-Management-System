@@ -32,6 +32,11 @@ const listApplicationsHandler = async (_req, res) => {
   res.json(applications);
 };
 
+const listApplicationDocumentsHandler = async (req, res) => {
+  const documents = await adminService.listApplicationDocuments(Number(req.params.userId));
+  res.json(documents);
+};
+
 const updateApplicationStatusHandler = async (req, res) => {
   const userId = Number(req.params.userId);
   const { action } = req.body || {};
@@ -210,6 +215,7 @@ module.exports = {
   deleteWorkshopHandler,
   listUsersHandler,
   listApplicationsHandler,
+  listApplicationDocumentsHandler,
   updateApplicationStatusHandler,
   listBookingsHandler,
   updateBookingStatusHandler,

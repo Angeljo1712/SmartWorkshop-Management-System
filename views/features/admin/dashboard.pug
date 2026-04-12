@@ -342,6 +342,13 @@ block content
                         option(value="50") 50
                       span#adminApplicationsRowsMeta 0 of 0 rows
                     .admin-pagination#adminApplicationsPagination
+                  article.admin-application-detail-card.is-hidden#adminApplicationDetailCard
+                    .admin-application-detail-card__head
+                      div
+                        span.admin-detail-eyebrow Application details
+                        h3#adminApplicationDetailTitle Select an application
+                      button.ghost#adminApplicationDetailClose(type="button") Close
+                    .admin-application-detail-card__body#adminApplicationDetailBody
 
             section.admin-view.is-hidden#adminBookingsView
               .admin-user-layout
@@ -617,28 +624,29 @@ block content
                     .admin-pagination#adminContactMessagesPagination
 
             section.admin-view.is-hidden#adminProfileView
-              .admin-account-layout
-                .admin-account-avatar-row
-                  .admin-profile-avatar#adminProfileAvatar AU
-                .settings-divider
-                .admin-account-section
-                  h4 Full Name
-                  p#adminSettingsName Admin User
-                .settings-divider
-                .admin-account-section
-                  h4 Contacts
-                  p#adminSettingsPhone -
-                  p#adminSettingsUsername Username: -
-                  p#adminSettingsEmail admin@smartworkshop.local
-                  p#adminSettingsAddress Address: -
-                .settings-divider
-                .admin-account-section
-                  h4 Role
-                  p#adminSettingsRole Administrator
-                .settings-divider
-                .admin-account-section
-                  h4 Integration
-                  p No integrations connected
+              .settings-card.admin-account-card
+                .admin-account-layout
+                  .admin-account-avatar-row
+                    .admin-profile-avatar#adminProfileAvatar AU
+                  .settings-divider
+                  .admin-account-section
+                    h4 Full Name
+                    p#adminSettingsName Admin User
+                  .settings-divider
+                  .admin-account-section
+                    h4 Contacts
+                    p#adminSettingsPhone -
+                    p#adminSettingsUsername Username: -
+                    p#adminSettingsEmail admin@smartworkshop.local
+                    p#adminSettingsAddress Address: -
+                  .settings-divider
+                  .admin-account-section
+                    h4 Role
+                    p#adminSettingsRole Administrator
+                  .settings-divider
+                  .admin-account-section
+                    h4 Integration
+                    p No integrations connected
 
             section.admin-view.is-hidden#adminSettingsView
               .settings-card.admin-settings-card

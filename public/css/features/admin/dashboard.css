@@ -50,9 +50,9 @@ body.admin-body .primari-shell {
   border: 0;
   border-radius: 0;
   padding: 15px;
-  overflow: hidden;
+  overflow: visible;
   min-height: 0;
-  height: auto;
+  height: 100%;
   align-self: stretch;
   color: #ffffff;
 }
@@ -63,6 +63,20 @@ body.admin-body .primari-shell {
 
 #adminPage .admin-content > .admin-view {
   min-height: 0;
+  height: 100%;
+}
+
+#adminPage .admin-content > .admin-view:not(.is-hidden) {
+  display: grid;
+}
+
+#adminPage .admin-content > .admin-view > .admin-account-layout,
+#adminPage .admin-content > .admin-view > .admin-account-card,
+#adminPage .admin-content > .admin-view > .admin-settings-card,
+#adminPage .admin-content > .admin-view > .admin-user-layout,
+#adminPage .admin-content > .admin-view > .admin-dashboard-layout {
+  width: 100%;
+  min-height: 100%;
   height: 100%;
 }
 
@@ -503,7 +517,7 @@ body.admin-body .primari-shell {
 #adminPage .admin-table-layout {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
-      grid-template-rows: auto minmax(0, 1fr) auto;
+      grid-template-rows: auto minmax(0, 1fr) auto auto;
       row-gap: 30px;
       column-gap: 0;
       min-height: 0;
@@ -524,9 +538,14 @@ body.admin-body .primari-shell {
     margin-top: 0;
   }
 
+#adminPage .admin-table-layout > .admin-application-detail-card {
+    grid-row: 4;
+  }
+
 #adminPage .admin-table-layout > .admin-table-head,
 #adminPage .admin-table-layout > .admin-table-wrap,
-#adminPage .admin-table-layout > .admin-table-footer {
+#adminPage .admin-table-layout > .admin-table-footer,
+#adminPage .admin-table-layout > .admin-application-detail-card {
     position: relative;
     background: #3e434df7;
   }
@@ -1809,29 +1828,224 @@ body.admin-body .admin-edit-menu button:disabled {
     color: #ffffff;
   }
 
+#adminPage #adminApplicationsView .admin-actions-cell {
+  position: relative;
+  justify-content: center;
+  overflow: visible;
+}
+
+#adminPage #adminApplicationsView .admin-application-actions-trigger {
+  min-width: 96px;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: #5a6f90;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#adminPage #adminApplicationsView .admin-application-actions-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  z-index: 30;
+  min-width: 170px;
+  display: grid;
+  gap: 0;
+  padding: 8px;
+  border-radius: 14px;
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+}
+
+#adminPage #adminApplicationsView .admin-application-actions-menu.is-hidden {
+  display: none;
+}
+
+#adminPage #adminApplicationsView .admin-application-actions-menu button {
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #ffffff;
+  text-align: left;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#adminPage #adminApplicationsView .admin-application-actions-menu button:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+#adminPage #adminApplicationsView .admin-application-actions-menu button.danger {
+  color: #ff8f99;
+}
+
+#adminPage #adminApplicationsView .admin-application-detail-card {
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 16px;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+#adminPage #adminApplicationsView .admin-application-detail-card.is-hidden {
+  display: none;
+}
+
+#adminPage #adminApplicationsView .admin-application-detail-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+#adminPage #adminApplicationsView .admin-detail-eyebrow {
+  display: block;
+  margin-bottom: 4px;
+  color: #cbd5e1;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+#adminPage #adminApplicationsView .admin-application-detail-card h3,
+#adminPage #adminApplicationsView .admin-application-detail-card h4 {
+  margin: 0;
+  color: #ffffff;
+}
+
+#adminPage #adminApplicationsView .admin-application-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px 36px;
+}
+
+#adminPage #adminApplicationsView .admin-application-detail-grid section {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
+}
+
+#adminPage #adminApplicationsView .admin-application-detail-grid p {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 12px;
+  margin: 0;
+  color: #e5edf8;
+}
+
+#adminPage #adminApplicationsView .admin-application-detail-grid strong {
+  color: #ffffff;
+}
+
+#adminPage #adminApplicationsView .admin-application-detail-documents {
+  grid-column: 1 / -1;
+}
+
+#adminPage #adminApplicationsView .admin-application-documents {
+  display: grid;
+  gap: 8px;
+}
+
+#adminPage #adminApplicationsView .admin-application-document-link {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(90, 111, 144, 0.3);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+#adminPage #adminApplicationsView .admin-application-document-link:hover {
+  background: rgba(90, 111, 144, 0.5);
+}
+
+#adminPage #adminApplicationsView .admin-application-document-link small {
+  color: #cbd5e1;
+}
+
+@media (max-width: 900px) {
+  #adminPage #adminApplicationsView .admin-application-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 #adminPage #adminBookingsView .admin-actions-cell .icon-btn {
-    width: auto;
-    min-width: 68px;
-    padding: 0 14px;
-    color: #0f172a;
-    font-weight: 700;
-    font-size: 0.78rem;
-    background: #ffffff;
-    border-color: rgba(255, 255, 255, 0.8);
-  }
+  display: none;
+}
 
-#adminPage #adminBookingsView .admin-actions-cell .icon-btn[data-booking-action="start"],
-#adminPage #adminBookingsView .admin-actions-cell .icon-btn[data-booking-action="complete"] {
-    background: #35b55c;
-    border-color: #35b55c;
-    color: #ffffff;
-  }
+#adminPage #adminBookingsView .admin-actions-cell {
+  position: relative;
+  justify-content: center;
+  overflow: visible;
+}
 
-#adminPage #adminBookingsView .admin-actions-cell .icon-btn[data-booking-action="cancel"] {
-    background: #ef4444;
-    border-color: #ef4444;
-    color: #ffffff;
-  }
+#adminPage #adminBookingsView .admin-booking-actions-trigger {
+  min-width: 96px;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: #5a6f90;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#adminPage #adminBookingsView .admin-booking-actions-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  z-index: 30;
+  min-width: 170px;
+  display: grid;
+  gap: 0;
+  padding: 8px;
+  border-radius: 14px;
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+}
+
+#adminPage #adminBookingsView .admin-booking-actions-menu.is-hidden {
+  display: none;
+}
+
+#adminPage #adminBookingsView .admin-booking-actions-menu button {
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #ffffff;
+  text-align: left;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#adminPage #adminBookingsView .admin-booking-actions-menu button:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+#adminPage #adminBookingsView .admin-booking-actions-menu button.danger {
+  color: #ff8f99;
+}
 
 #adminPage #adminContactMessagesView .admin-actions-cell {
     justify-content: flex-start;
@@ -1951,9 +2165,8 @@ body.admin-body .admin-edit-menu button:disabled {
   padding: 1px;
 }
 
-#adminPage .admin-account-layout {
+#adminPage .admin-account-card {
   display: grid;
-  gap: 18px;
   background: #3e434df7;
   border: 1px solid var(--dashboard-panel-border);
   border-radius: var(--dashboard-panel-radius);
@@ -1962,7 +2175,17 @@ body.admin-body .admin-edit-menu button:disabled {
   color: #ffffff;
   min-height: 100%;
   height: 100%;
-  /* align-content: start; */
+  align-content: start;
+  align-self: stretch;
+}
+
+#adminPage .admin-account-layout {
+  display: grid;
+  gap: 18px;
+  color: #ffffff;
+  min-height: 0;
+  height: auto;
+  align-content: start;
 }
 
 #adminPage #adminProfileView {
@@ -2042,6 +2265,7 @@ body.admin-body .admin-edit-menu button:disabled {
 
 #adminPage .admin-settings-card {
   display: grid;
+  width: 100%;
   min-height: 100%;
   height: 100%;
   padding: 24px;
@@ -2050,14 +2274,18 @@ body.admin-body .admin-edit-menu button:disabled {
   border-radius: var(--dashboard-panel-radius);
   box-shadow: var(--dashboard-panel-shadow);
   align-items: start;
+  align-content: start;
   color: #ffffff;
+  overflow: hidden;
 }
 
 #adminPage .admin-settings-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 18px;
+  gap: 14px;
   align-items: start;
+  align-content: start;
+  min-height: 0;
 }
 
 #adminPage .admin-settings-topbar {
@@ -2080,7 +2308,8 @@ body.admin-body #adminSettingsView .settings-panel {
 
 body.admin-body #adminSettingsView .settings-subview {
   display: grid;
-  gap: 18px;
+  gap: 14px;
+  align-content: start;
 }
 
 body.admin-body #adminSettingsView .settings-subnav {
@@ -2137,7 +2366,9 @@ body.admin-body #adminSettingsView .settings-photo-row {
   grid-template-columns: auto 1fr;
   align-items: center;
   gap: 16px;
-  min-height: 140px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
 }
 
 body.admin-body #adminSettingsView .settings-photo-row .ghost,
@@ -2174,7 +2405,9 @@ body.admin-body #adminSettingsView .settings-row {
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 18px;
   align-items: center;
-  min-height: 84px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
 }
 
 body.admin-body #adminSettingsView .settings-meta,
@@ -2432,6 +2665,3 @@ body.admin-body #adminSettingsNotifications .notifications-check {
     grid-template-columns: 1fr;
   }
 }
-
-
-
