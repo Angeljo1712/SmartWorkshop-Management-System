@@ -819,9 +819,9 @@ if (adminPage) {
     ];
     setFilterOptions(
       adminPaymentsKindFilter,
-      getUniqueOptions(adminPayments, (item) => item.kind).map((value) => ({
+      getUniqueOptions(adminPayments, (item) => item.payment_type).map((value) => ({
         value,
-        label: titleCase(value)
+        label: value === "all" ? "All" : titleCase(String(value || "").replace(/_/g, " "))
       })),
       adminPaymentsKindFilter?.value
     );
@@ -1108,10 +1108,10 @@ if (adminPage) {
         searchLabel: "Payment",
         searchPlaceholder: "Search payments",
         showRole: true,
-        roleLabel: "Kind",
-        roleOptions: getUniqueOptions(adminPayments, (item) => item.kind).map((value) => ({
+        roleLabel: "Type of payment",
+        roleOptions: getUniqueOptions(adminPayments, (item) => item.payment_type).map((value) => ({
           value,
-          label: titleCase(value)
+          label: titleCase(String(value || "").replace(/_/g, " "))
         })),
         showStatus: true,
         statusLabel: "Status",
@@ -1871,15 +1871,16 @@ if (adminPage) {
     const rows = adminPayments.filter((item) => {
       const matchesTerm = matchesSearchTerms([
         item.reference,
-        item.kind,
+        item.payment_type,
         item.booking_reference,
-        item.party,
+        item.kind,
         item.provider,
+        item.provider_brand,
         item.status
       ], terms);
       const matchesKind =
         kindValue === "all" ||
-        normaliseFilterToken(item.kind) === normaliseFilterToken(kindValue);
+        normaliseFilterToken(item.payment_type) === normaliseFilterToken(kindValue);
       const matchesStatus =
         statusValue === "all" ||
         normaliseFilterToken(item.status) === normaliseFilterToken(statusValue);
@@ -1914,34 +1915,41 @@ if (adminPage) {
           const status = normaliseFilterToken(item.status);
           const paymentId = String(item.record_id || item.id || item.reference || "");
           const isChecked = selectedAdminPayments.has(paymentId);
+          const bookingId = Number(item.booking_reference || 0);
           const actions = [
-            `<button class="icon-btn" type="button" data-payment-action="view" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}" title="View details">View details</button>`,
-            `<button class="icon-btn" type="button" data-payment-action="note" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}" title="Add note">Add note</button>`
+            `<button type="button" data-payment-action="view" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}">View details</button>`
           ];
+          if (kind !== "mechanic_payout" && Number.isInteger(bookingId) && bookingId > 0) {
+            actions.push(
+              `<button type="button" data-payment-action="invoice" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}" data-payment-booking-id="${escapeHtml(String(bookingId))}">Invoice</button>`
+            );
+          }
 
           if (kind === "customer_payment") {
             if (status === "authorized") {
-              actions.push(`<button class="icon-btn" type="button" data-payment-action="capture" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}" title="Capture">Capture</button>`);
+              actions.push(`<button type="button" data-payment-action="capture" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}">Capture</button>`);
             }
             if (!["refunded", "failed"].includes(status)) {
-              actions.push(`<button class="icon-btn" type="button" data-payment-action="refund" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}" title="Refund">Refund</button>`);
+              actions.push(`<button type="button" data-payment-action="refund" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}">Refund</button>`);
             }
             if (status !== "failed") {
-              actions.push(`<button class="icon-btn danger" type="button" data-payment-action="fail" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}" title="Fail">Fail</button>`);
+              actions.push(`<button type="button" data-payment-action="fail" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}">Fail</button>`);
             }
           }
 
           if (kind === "mechanic_payout") {
             if (status === "requested") {
-              actions.push(`<button class="icon-btn" type="button" data-payment-action="process" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}" title="Process">Process</button>`);
+              actions.push(`<button type="button" data-payment-action="process" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}">Process</button>`);
             }
             if (["requested", "processing"].includes(status)) {
-              actions.push(`<button class="icon-btn" type="button" data-payment-action="pay" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}" title="Pay">Pay</button>`);
+              actions.push(`<button type="button" data-payment-action="pay" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}">Pay</button>`);
             }
             if (status !== "failed") {
-              actions.push(`<button class="icon-btn danger" type="button" data-payment-action="fail" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}" title="Fail">Fail</button>`);
+              actions.push(`<button type="button" data-payment-action="fail" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}">Fail</button>`);
             }
           }
+          const paymentTypeLabel = titleCase(String(item.payment_type || "-").replace(/_/g, " "));
+          const providerLabel = item.provider_brand || item.provider || "-";
 
           return `
           <tr>
@@ -1949,16 +1957,18 @@ if (adminPage) {
               <input type="checkbox" aria-label="Select payment ${escapeHtml(item.reference)}" data-payment-select="${escapeHtml(paymentId)}" ${isChecked ? "checked" : ""} />
             </td>
             <td>${escapeHtml(item.reference)}</td>
-            <td>${escapeHtml(titleCase(item.kind))}</td>
+            <td>${escapeHtml(paymentTypeLabel)}</td>
             <td>${escapeHtml(item.booking_reference || "-")}</td>
-            <td>${escapeHtml(item.party)}</td>
-            <td>${escapeHtml(item.provider)}</td>
+            <td>${escapeHtml(providerLabel)}</td>
             <td>${escapeHtml(titleCase(item.status))}</td>
             <td>£${escapeHtml(Number(item.amount || 0).toFixed(2))}</td>
             <td>${escapeHtml(formatDate(item.created_at))}</td>
             <td>
               <div class="admin-actions-cell">
-                ${actions.join("") || '<span class="admin-empty-inline">No actions</span>'}
+                <button class="admin-payment-actions-trigger" type="button" data-payment-menu-toggle="${escapeHtml(paymentId)}" aria-expanded="false">Actions</button>
+                <div class="admin-payment-actions-menu is-hidden" data-payment-menu="${escapeHtml(paymentId)}">
+                  ${actions.join("") || '<button type="button" disabled>No actions</button>'}
+                </div>
               </div>
             </td>
           </tr>`
@@ -2803,11 +2813,10 @@ if (adminPage) {
     }
     if (adminPaymentDetailBody) {
       adminPaymentDetailBody.innerHTML = `
-        <p><strong>Kind</strong><span>${escapeHtml(titleCase(detail.kind))}</span></p>
+        <p><strong>Type of payment</strong><span>${escapeHtml(titleCase(String(detail.payment_type || "-").replace(/_/g, " ")))}</span></p>
         <p><strong>Status</strong><span>${escapeHtml(titleCase(detail.status))}</span></p>
         <p><strong>Booking</strong><span>${escapeHtml(detail.booking_reference || "-")}</span></p>
-        <p><strong>Party</strong><span>${escapeHtml(detail.party || "-")}</span></p>
-        <p><strong>Provider</strong><span>${escapeHtml(detail.provider || "-")}</span></p>
+        <p><strong>Provider</strong><span>${escapeHtml(detail.provider_brand || detail.provider || "-")}</span></p>
         <p><strong>Amount</strong><span>£${escapeHtml(Number(detail.amount || 0).toFixed(2))}</span></p>
         <p><strong>Created</strong><span>${escapeHtml(formatDate(detail.created_at))}</span></p>
       `;
@@ -2825,6 +2834,175 @@ if (adminPage) {
     }
     if (adminPaymentDetailMessage) adminPaymentDetailMessage.textContent = "";
     return detail;
+  };
+
+  const buildAdminInvoiceDocument = (invoice) => {
+    const customerAddress = Array.isArray(invoice?.customer?.address) ? invoice.customer.address : [];
+    const currency = invoice?.payment?.currency || invoice?.totals?.totals?.currency || "GBP";
+    const labourLines = Array.isArray(invoice?.totals?.labour_lines) ? invoice.totals.labour_lines : [];
+    const partLines = Array.isArray(invoice?.totals?.parts_lines) ? invoice.totals.parts_lines : [];
+    const totals = invoice?.totals?.totals || {};
+    const escape = (value) => escapeHtml(String(value ?? ""));
+    const formatCurrencyDisplay = (amount, code) => {
+      const value = Number(amount || 0);
+      const normalized = String(code || "GBP").toUpperCase();
+      if (normalized === "GBP") return `£${value.toFixed(2)}`;
+      return `${normalized} ${value.toFixed(2)}`;
+    };
+    const renderRows = (rows, emptyLabel) =>
+      rows.length
+        ? rows
+            .map(
+              (row) => `
+                <tr>
+                  <td>${escape(row.description)}</td>
+                  <td style="text-align:right">${escape(formatCurrencyDisplay(row.amount_eur, currency))}</td>
+                </tr>`
+            )
+            .join("")
+        : `<tr><td colspan="2">${escape(emptyLabel)}</td></tr>`;
+
+    return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Invoice ${escape(invoice?.invoice_number || "")}</title>
+    <style>
+      :root { color-scheme: light; }
+      * { box-sizing: border-box; }
+      body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; background: #eceef2; color: #181c22; }
+      .page { max-width: 980px; margin: 32px auto; background: #fff; padding: 36px 42px 48px; box-shadow: 0 18px 45px rgba(15, 18, 28, 0.18); }
+      .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 28px; }
+      .brand { font-size: 34px; font-weight: 800; letter-spacing: 0.04em; }
+      .meta { text-align: right; }
+      .meta strong { display: block; font-size: 15px; color: #566073; }
+      .meta span { display: block; margin-top: 6px; font-size: 28px; font-weight: 800; color: #0f1726; }
+      .subhead { color: #5a6476; font-size: 14px; margin-top: 8px; }
+      .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 24px; }
+      .section-title { margin: 0 0 10px; font-size: 24px; font-weight: 800; }
+      .card-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #5a6476; margin-bottom: 10px; }
+      .block { border-top: 2px solid #1c2230; padding-top: 18px; margin-top: 18px; }
+      .line { margin: 4px 0; }
+      table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+      th, td { padding: 10px 0; border-bottom: 1px solid #dbe0e8; vertical-align: top; }
+      th { text-align: left; font-size: 14px; color: #3b4454; }
+      .totals { margin-left: auto; width: 320px; margin-top: 24px; }
+      .totals-row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px solid #dbe0e8; }
+      .totals-row strong { font-size: 16px; }
+      .footer { margin-top: 36px; color: #5a6476; font-size: 13px; }
+      @media print {
+        body { background: #fff; }
+        .page { box-shadow: none; margin: 0; max-width: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <div class="top">
+        <div>
+          <div class="brand">INVOICE</div>
+          <div class="subhead">Issued by SmartWorkshop on behalf of the assigned mechanic.</div>
+        </div>
+        <div class="meta">
+          <strong>Invoice number</strong>
+          <span>${escape(invoice?.invoice_number || "-")}</span>
+          <strong style="margin-top:12px">Issued</strong>
+          <div>${escape(new Date(invoice?.issued_at || Date.now()).toLocaleDateString("en-GB"))}</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <section>
+          <div class="card-title">Customer details</div>
+          <div class="line"><strong>${escape(invoice?.customer?.full_name || "-")}</strong></div>
+          ${customerAddress.map((line) => `<div class="line">${escape(line)}</div>`).join("")}
+          <div class="line">${escape(invoice?.customer?.email || "-")}</div>
+          <div class="line">${escape(invoice?.customer?.phone || "-")}</div>
+        </section>
+        <section>
+          <div class="card-title">Mechanic details</div>
+          <div class="line"><strong>${escape(invoice?.mechanic?.full_name || "-")}</strong></div>
+          <div class="line">${escape(invoice?.mechanic?.email || "-")}</div>
+          <div class="line">${escape(invoice?.mechanic?.phone || "-")}</div>
+        </section>
+      </div>
+
+      <section class="block">
+        <div class="grid-2">
+          <div>
+            <div class="card-title">Vehicle details</div>
+            <div class="line"><strong>Vehicle VRM:</strong> ${escape(invoice?.vehicle?.registration || "-")}</div>
+            <div class="line"><strong>Vehicle description:</strong> ${escape(invoice?.vehicle?.description || "-")}</div>
+          </div>
+          <div>
+            <div class="card-title">Booking details</div>
+            <div class="line"><strong>Booking reference:</strong> ${escape(invoice?.booking?.reference || "-")}</div>
+            <div class="line"><strong>Payment reference:</strong> ${escape(invoice?.payment?.provider_ref || "-")}</div>
+            <div class="line"><strong>Payment status:</strong> ${escape(String(invoice?.payment?.status || "-").replace(/_/g, " "))}</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="section-title">Labour</div>
+        <table>
+          <thead>
+            <tr><th>Description</th><th style="text-align:right">Amount</th></tr>
+          </thead>
+          <tbody>${renderRows(labourLines, "No labour lines recorded.")}</tbody>
+        </table>
+      </section>
+
+      <section class="block">
+        <div class="section-title">Parts included</div>
+        <table>
+          <thead>
+            <tr><th>Description</th><th style="text-align:right">Net price</th></tr>
+          </thead>
+          <tbody>${renderRows(partLines, "No parts recorded.")}</tbody>
+        </table>
+      </section>
+
+      <section class="totals">
+        <div class="totals-row"><span>Labour total</span><span>${escape(formatCurrencyDisplay(totals.labour_eur, currency))}</span></div>
+        <div class="totals-row"><span>Parts total</span><span>${escape(formatCurrencyDisplay(totals.parts_eur, currency))}</span></div>
+        <div class="totals-row"><span>VAT</span><span>${escape(formatCurrencyDisplay(totals.vat_eur, currency))}</span></div>
+        <div class="totals-row"><strong>Total</strong><strong>${escape(formatCurrencyDisplay(totals.total_eur, currency))}</strong></div>
+      </section>
+
+      <div class="footer">This document was generated automatically by SmartWorkshop.</div>
+    </main>
+  </body>
+</html>`;
+  };
+
+  const openAdminPaymentInvoice = async (bookingId) => {
+    const token = getAdminToken();
+    if (!token) {
+      showAdminFeedback("Sign in as admin first.", "error");
+      return;
+    }
+    if (!Number.isInteger(Number(bookingId)) || Number(bookingId) <= 0) {
+      showAdminFeedback("Invoice not available for this record.", "error");
+      return;
+    }
+    const popup = window.open("", "_blank", "noopener,noreferrer");
+    try {
+      const invoice = await apiAuth(`/api/invoices/bookings/${encodeURIComponent(Number(bookingId))}`, token);
+      const html = buildAdminInvoiceDocument(invoice);
+      if (popup) {
+        popup.document.write(html);
+        popup.document.close();
+        showAdminFeedback("Invoice opened.");
+        return;
+      }
+      const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      window.location.assign(url);
+    } catch (err) {
+      if (popup) popup.close();
+      showAdminFeedback(err?.error?.message || err?.message || "Unable to open invoice.", "error");
+    }
   };
 
   const fetchCatalog = async () => {
@@ -3387,6 +3565,14 @@ if (adminPage) {
     adminResolutionRows?.querySelectorAll("[data-resolution-menu-toggle]").forEach((item) => item.setAttribute("aria-expanded", "false"));
   };
 
+  const closeAdminPaymentMenus = () => {
+    adminPaymentsRows?.querySelectorAll("[data-payment-menu]").forEach((item) => {
+      item.classList.add("is-hidden");
+      item.removeAttribute("style");
+    });
+    adminPaymentsRows?.querySelectorAll("[data-payment-menu-toggle]").forEach((item) => item.setAttribute("aria-expanded", "false"));
+  };
+
   const positionAdminResolutionMenu = (menu, trigger) => {
     const viewportPadding = 12;
     const gap = 8;
@@ -3653,13 +3839,12 @@ if (adminPage) {
     renderPayments();
   });
   adminPaymentsExportBtn?.addEventListener("click", () => {
-    const headers = ["Reference", "Kind", "Booking", "Party", "Provider", "Status", "Amount", "Created"];
+    const headers = ["Reference", "Type of payment", "Booking", "Provider", "Status", "Amount", "Created"];
     const rows = adminPayments.map((item) => [
       item.reference,
-      titleCase(item.kind),
+      titleCase(String(item.payment_type || "-").replace(/_/g, " ")),
       item.booking_reference || "-",
-      item.party,
-      item.provider,
+      item.provider_brand || item.provider || "-",
       titleCase(item.status),
       Number(item.amount || 0).toFixed(2),
       formatDate(item.created_at)
@@ -3685,15 +3870,16 @@ if (adminPage) {
     const rows = adminPayments.filter((item) => {
       const matchesTerm = matchesSearchTerms([
         item.reference,
-        item.kind,
+        item.payment_type,
         item.booking_reference,
-        item.party,
+        item.kind,
         item.provider,
+        item.provider_brand,
         item.status
       ], terms);
       const matchesKind =
         kindValue === "all" ||
-        normaliseFilterToken(item.kind) === normaliseFilterToken(kindValue);
+        normaliseFilterToken(item.payment_type) === normaliseFilterToken(kindValue);
       const matchesStatus =
         statusValue === "all" ||
         normaliseFilterToken(item.status) === normaliseFilterToken(statusValue);
@@ -3713,26 +3899,42 @@ if (adminPage) {
     renderPayments();
   });
   adminPaymentsRows?.addEventListener("click", async (event) => {
+    const menuToggle = event.target.closest("[data-payment-menu-toggle]");
+    if (menuToggle) {
+      const menuId = menuToggle.getAttribute("data-payment-menu-toggle");
+      const menu = adminPaymentsRows.querySelector(`[data-payment-menu="${CSS.escape(menuId)}"]`);
+      const willOpen = menu?.classList.contains("is-hidden");
+      closeAdminPaymentMenus();
+      if (menu && willOpen) {
+        positionAdminPaymentMenu(menu, menuToggle);
+        menuToggle.setAttribute("aria-expanded", "true");
+      }
+      return;
+    }
+
     const actionButton = event.target.closest("[data-payment-action]");
     if (!actionButton) return;
+    closeAdminPaymentMenus();
     const recordId = Number(actionButton.dataset.paymentRecordId);
+    const bookingId = Number(actionButton.dataset.paymentBookingId);
     const kind = actionButton.dataset.paymentKind;
     const action = actionButton.dataset.paymentAction;
     if (!recordId || !kind || !action) return;
-    if (action === "view" || action === "note") {
+    if (action === "view") {
       try {
         await loadAdminPaymentDetail(recordId, kind);
         if (adminPaymentDetailModal) {
           adminPaymentDetailModal.classList.remove("is-hidden");
           adminPaymentDetailModal.hidden = false;
         }
-        if (action === "note") {
-          adminPaymentNoteInput?.focus();
-        }
       } catch (err) {
         console.error("Unable to load payment detail", err);
         showAdminFeedback(err?.error?.message || err?.message || "Unable to load payment detail.", "error");
       }
+      return;
+    }
+    if (action === "invoice") {
+      await openAdminPaymentInvoice(bookingId);
       return;
     }
     actionButton.disabled = true;
@@ -3857,6 +4059,28 @@ if (adminPage) {
   };
 
   const positionAdminContactMessageMenu = (menu, trigger) => {
+    const viewportPadding = 12;
+    const gap = 8;
+    const triggerRect = trigger.getBoundingClientRect();
+    menu.style.top = "0px";
+    menu.style.left = "0px";
+    menu.classList.remove("is-hidden");
+    const menuRect = menu.getBoundingClientRect();
+    const spaceAbove = triggerRect.top - viewportPadding;
+    const spaceBelow = window.innerHeight - triggerRect.bottom - viewportPadding;
+    const openUp = spaceAbove >= menuRect.height || spaceAbove > spaceBelow;
+    const top = openUp
+      ? Math.max(viewportPadding, triggerRect.top - menuRect.height - gap)
+      : Math.min(window.innerHeight - menuRect.height - viewportPadding, triggerRect.bottom + gap);
+    const left = Math.min(
+      window.innerWidth - menuRect.width - viewportPadding,
+      Math.max(viewportPadding, triggerRect.right - menuRect.width)
+    );
+    menu.style.top = `${top}px`;
+    menu.style.left = `${left}px`;
+  };
+
+  const positionAdminPaymentMenu = (menu, trigger) => {
     const viewportPadding = 12;
     const gap = 8;
     const triggerRect = trigger.getBoundingClientRect();
@@ -4316,6 +4540,7 @@ if (adminPage) {
       closeAdminApplicationMenus();
       closeAdminBookingMenus();
       closeAdminResolutionMenus();
+      closeAdminPaymentMenus();
       closeAdminContactMessageMenus();
     }
   });

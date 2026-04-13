@@ -499,9 +499,9 @@ block content
                         span.admin-head-label.is-hidden Search
                         input#adminPaymentsSearch.side-input(type="search" placeholder="Search")
                       .admin-head-control.admin-head-control--role
-                        span.admin-head-label.is-hidden Kind
-                        select#adminPaymentsKindFilter.side-select(data-all-label="Kind")
-                          option(value="all") Kind
+                        span.admin-head-label.is-hidden Type of payment
+                        select#adminPaymentsKindFilter.side-select(data-all-label="Type of payment")
+                          option(value="all") Type of payment
                       .admin-head-control.admin-head-control--status
                         span.admin-head-label.is-hidden Status
                         select#adminPaymentsStatusFilter.side-select(data-all-label="Status")
@@ -525,9 +525,8 @@ block content
                           th.table-check
                             input#adminPaymentsSelectAll(type="checkbox" aria-label="Select all payments")
                           th Reference
-                          th Kind
+                          th Type of payment
                           th Booking
-                          th Party
                           th Provider
                           th Status
                           th Amount

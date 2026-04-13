@@ -655,11 +655,32 @@ const updateContactMessageStatus = async ({ messageId, action }) => {
   };
 };
 
+const normaliseCardBrand = (value) => {
+  const text = String(value || "").trim().toLowerCase();
+  if (!text) return "-";
+  if (text.includes("american express") || text.includes("amex")) return "American Express";
+  if (text.includes("mastercard") || text.includes("master card")) return "Mastercard";
+  if (text.includes("visa")) return "Visa";
+  return String(value || "").trim();
+};
+
+const normalisePaymentType = (value) => {
+  const text = String(value || "").trim().toLowerCase();
+  if (!text) return "credit_card";
+  if (text.includes("debit")) return "debit_card";
+  if (text.includes("credit")) return "credit_card";
+  if (text.includes("visa") || text.includes("master") || text.includes("amex") || text.includes("american express")) {
+    return "credit_card";
+  }
+  return "credit_card";
+};
+
 const listPayments = async () => {
   const [customerPayments] = await pool.query(
     `SELECT p.id,
             p.booking_id,
             p.provider,
+            p.payment_method,
             p.status,
             p.amount_eur,
             p.currency,
@@ -716,6 +737,8 @@ const listPayments = async () => {
     booking_reference: String(row.booking_id).padStart(8, "0"),
     party: [row.customer_name, row.customer_lastname].filter(Boolean).join(" ") || row.customer_email || "-",
     provider: row.provider || "-",
+    provider_brand: normaliseCardBrand(row.payment_method || row.provider),
+    payment_type: normalisePaymentType(row.payment_method),
     status: row.status || "authorized",
     amount: Number(row.amount_eur || 0),
     currency: row.currency || "GBP",
@@ -729,6 +752,8 @@ const listPayments = async () => {
     booking_reference: String(row.booking_id).padStart(8, "0"),
     party: [row.customer_name, row.customer_lastname].filter(Boolean).join(" ") || row.customer_email || "-",
     provider: "Invoice",
+    provider_brand: null,
+    payment_type: "credit_card",
     status: "completed",
     amount: Number(row.total_eur || 0),
     currency: "GBP",
@@ -742,6 +767,8 @@ const listPayments = async () => {
     booking_reference: "-",
     party: [row.mechanic_name, row.mechanic_lastname].filter(Boolean).join(" ") || row.mechanic_email || "-",
     provider: row.provider_ref || "-",
+    provider_brand: null,
+    payment_type: "-",
     status: row.status || "requested",
     amount: Number(row.amount_eur || 0),
     currency: "GBP",

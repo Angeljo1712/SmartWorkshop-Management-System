@@ -7,14 +7,15 @@ const {
 
 const formatBookingReference = (value) => String(Number(value) || 0).padStart(8, "0");
 
-const formatInvoiceNumber = (bookingId, issuedAt = new Date()) => {
-  const stamp = [
+const formatInvoiceDateStamp = (issuedAt = new Date()) =>
+  [
     issuedAt.getUTCFullYear(),
     String(issuedAt.getUTCMonth() + 1).padStart(2, "0"),
     String(issuedAt.getUTCDate()).padStart(2, "0")
   ].join("");
-  return `INV-${stamp}-${formatBookingReference(bookingId)}`;
-};
+
+const formatInvoiceNumber = ({ issuedAt = new Date(), sequence = 1 } = {}) =>
+  `INV-${formatInvoiceDateStamp(issuedAt)}-${String(Number(sequence) || 1).padStart(8, "0")}`;
 
 const parseJsonValue = (value, fallback = null) => {
   if (value == null) return fallback;
@@ -302,22 +303,45 @@ const issueInvoiceForBooking = async (bookingId, options = {}) => {
   }
 
   const issuedAt = new Date();
-  const invoiceNumber = formatInvoiceNumber(bookingId, issuedAt);
   const totals = buildInvoiceTotals(context, options);
+  const dateStamp = formatInvoiceDateStamp(issuedAt);
+  let inserted = false;
 
-  await pool.query(
-    `INSERT INTO invoices (booking_id, issuer_mechanic_id, buyer_user_id, number, issued_at, totals_json, pdf_url)
-     VALUES (?, ?, ?, ?, ?, ?, NULL)
-     ON DUPLICATE KEY UPDATE totals_json = VALUES(totals_json), pdf_url = VALUES(pdf_url)`,
-    [
-      bookingId,
-      context.booking.mechanic_id,
-      context.booking.customer_id,
-      invoiceNumber,
-      issuedAt.toISOString().slice(0, 19).replace("T", " "),
-      JSON.stringify(totals)
-    ]
-  );
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const [sequenceRows] = await pool.query(
+      `SELECT COALESCE(MAX(CAST(SUBSTRING_INDEX(number, '-', -1) AS UNSIGNED)), 0) AS max_sequence
+       FROM invoices
+       WHERE number LIKE ?`,
+      [`INV-${dateStamp}-%`]
+    );
+    const nextSequence = Number(sequenceRows?.[0]?.max_sequence || 0) + 1;
+    const invoiceNumber = formatInvoiceNumber({ issuedAt, sequence: nextSequence });
+    try {
+      await pool.query(
+        `INSERT INTO invoices (booking_id, issuer_mechanic_id, buyer_user_id, number, issued_at, totals_json, pdf_url)
+         VALUES (?, ?, ?, ?, ?, ?, NULL)
+         ON DUPLICATE KEY UPDATE totals_json = VALUES(totals_json), pdf_url = VALUES(pdf_url)`,
+        [
+          bookingId,
+          context.booking.mechanic_id,
+          context.booking.customer_id,
+          invoiceNumber,
+          issuedAt.toISOString().slice(0, 19).replace("T", " "),
+          JSON.stringify(totals)
+        ]
+      );
+      inserted = true;
+      break;
+    } catch (error) {
+      const message = String(error?.message || "");
+      const isDuplicateNumber = /Duplicate entry/i.test(message) && /uq_invoice_number/i.test(message);
+      if (!isDuplicateNumber) throw error;
+    }
+  }
+
+  if (!inserted) {
+    throw new AppError("INVOICE_NUMBER_CONFLICT", "Could not allocate a unique invoice number", 409);
+  }
 
   const refreshed = await getInvoiceContext(bookingId);
   return hydrateInvoice(refreshed);

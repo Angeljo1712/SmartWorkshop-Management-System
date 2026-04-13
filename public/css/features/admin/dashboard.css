@@ -2442,19 +2442,58 @@ body.admin-body .admin-edit-menu button:disabled {
 }
 
 #adminPage #adminPaymentsView .admin-actions-cell {
-  justify-content: flex-start;
-  flex-wrap: wrap;
+  position: relative;
+  justify-content: center;
+  overflow: visible;
 }
 
-#adminPage #adminPaymentsView .admin-actions-cell .icon-btn {
-  width: auto;
-  min-width: 100px;
-  padding: 0 12px;
-  color: #0f172a;
+#adminPage #adminPaymentsView .admin-payment-actions-trigger {
+  min-width: 96px;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: #5a6f90;
+  color: #ffffff;
   font-weight: 700;
-  font-size: 0.78rem;
-  background: #ffffff;
-  border-color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+}
+
+#adminPage #adminPaymentsView .admin-payment-actions-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  z-index: 30;
+  min-width: 170px;
+  display: grid;
+  gap: 0;
+  padding: 8px;
+  border-radius: 14px;
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+}
+
+#adminPage #adminPaymentsView .admin-payment-actions-menu.is-hidden {
+  display: none;
+}
+
+#adminPage #adminPaymentsView .admin-payment-actions-menu button {
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #ffffff;
+  text-align: left;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#adminPage #adminPaymentsView .admin-payment-actions-menu button:hover {
+  background: rgba(255, 255, 255, 0.09);
 }
 
 #adminPage #adminBookingsView .admin-actions-cell {
