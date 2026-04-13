@@ -72,6 +72,45 @@ const ensureMechanicProfileWorkflowColumns = async () => {
   }
 };
 
+let paymentAdminNotesTableReady = false;
+const ensurePaymentAdminNotesTable = async () => {
+  if (paymentAdminNotesTableReady) return;
+  await pool.query(
+    `CREATE TABLE IF NOT EXISTS payment_admin_notes (
+      id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+      payment_kind VARCHAR(32) NOT NULL,
+      record_id BIGINT UNSIGNED NOT NULL,
+      admin_id BIGINT UNSIGNED NOT NULL,
+      note TEXT NOT NULL,
+      created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      KEY idx_payment_admin_notes_lookup (payment_kind, record_id, created_at),
+      KEY idx_payment_admin_notes_admin (admin_id, created_at),
+      CONSTRAINT fk_payment_admin_notes_admin FOREIGN KEY (admin_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB`
+  );
+  paymentAdminNotesTableReady = true;
+};
+
+let resolutionCaseStatusEnumReady = false;
+const ensureResolutionCaseInProgressStatus = async () => {
+  if (resolutionCaseStatusEnumReady) return;
+  const [rows] = await pool.query(
+    `SELECT COLUMN_TYPE
+     FROM information_schema.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE()
+       AND TABLE_NAME = 'resolution_cases'
+       AND COLUMN_NAME = 'status'
+     LIMIT 1`
+  );
+  const columnType = String(rows?.[0]?.COLUMN_TYPE || "").toLowerCase();
+  if (!columnType.includes("'in_progress'")) {
+    await pool.query(
+      "ALTER TABLE resolution_cases MODIFY COLUMN status ENUM('open','in_progress','closed') NOT NULL DEFAULT 'open'"
+    );
+  }
+  resolutionCaseStatusEnumReady = true;
+};
+
 const roleLabel = (role) => {
   const normalized = String(role || "").toLowerCase();
   if (normalized === "user") return "CUSTOMER";
@@ -306,6 +345,7 @@ const updateBookingStatus = async ({ bookingId, action }) => {
 };
 
 const listResolutionCases = async () => {
+  await ensureResolutionCaseInProgressStatus();
   const [rows] = await pool.query(
     `SELECT rc.id,
             rc.booking_id,
@@ -342,6 +382,7 @@ const listResolutionCases = async () => {
 };
 
 const updateResolutionCaseStatus = async ({ caseId, action }) => {
+  await ensureResolutionCaseInProgressStatus();
   const normalizedAction = String(action || "").trim().toLowerCase();
   const statusByAction = {
     in_progress: "in_progress",
@@ -559,7 +600,11 @@ const listContactMessages = async () => {
 const updateContactMessageStatus = async ({ messageId, action }) => {
   const normalizedAction = String(action || "").trim().toLowerCase();
   const statusByAction = {
+    open: "new",
+    reopen: "new",
+    pending: "in_progress",
     read: "in_progress",
+    close: "closed",
     resolve: "closed"
   };
   const nextStatus = statusByAction[normalizedAction];
@@ -746,6 +791,66 @@ const updatePaymentStatus = async ({ kind, recordId, action }) => {
   ) || null;
 };
 
+const getPaymentDetail = async ({ kind, recordId }) => {
+  await ensurePaymentAdminNotesTable();
+  const normalizedKind = String(kind || "").trim().toLowerCase();
+  const id = Number(recordId);
+  if (!Number.isInteger(id) || id <= 0) {
+    throw new AppError("VALIDATION_ERROR", "recordId is invalid", 400);
+  }
+  const payments = await listPayments();
+  const payment = payments.find(
+    (item) => String(item.kind || "").trim().toLowerCase() === normalizedKind && Number(item.record_id) === id
+  );
+  if (!payment) {
+    throw new AppError("NOT_FOUND", "Payment not found", 404);
+  }
+
+  const [notesRows] = await pool.query(
+    `SELECT pan.id, pan.note, pan.created_at, pan.admin_id,
+            up.name, up.lastname, u.email
+     FROM payment_admin_notes pan
+     INNER JOIN users u ON u.id = pan.admin_id
+     LEFT JOIN user_profiles up ON up.user_id = pan.admin_id
+     WHERE pan.payment_kind = ? AND pan.record_id = ?
+     ORDER BY pan.created_at DESC`,
+    [normalizedKind, id]
+  );
+
+  return {
+    ...payment,
+    notes: notesRows.map((row) => ({
+      id: Number(row.id),
+      note: row.note || "",
+      created_at: row.created_at,
+      admin_id: Number(row.admin_id),
+      admin_name: [row.name, row.lastname].filter(Boolean).join(" ") || row.email || "Admin"
+    }))
+  };
+};
+
+const addPaymentAdminNote = async ({ adminId, kind, recordId, note }) => {
+  await ensurePaymentAdminNotesTable();
+  const normalizedKind = String(kind || "").trim().toLowerCase();
+  const id = Number(recordId);
+  const text = String(note || "").trim();
+  if (!Number.isInteger(id) || id <= 0) {
+    throw new AppError("VALIDATION_ERROR", "recordId is invalid", 400);
+  }
+  if (!text) {
+    throw new AppError("VALIDATION_ERROR", "note is required", 400);
+  }
+  if (text.length > 2000) {
+    throw new AppError("VALIDATION_ERROR", "note is too long", 400);
+  }
+  await getPaymentDetail({ kind: normalizedKind, recordId: id });
+  await pool.query(
+    "INSERT INTO payment_admin_notes (payment_kind, record_id, admin_id, note) VALUES (?, ?, ?, ?)",
+    [normalizedKind, id, Number(adminId), text]
+  );
+  return getPaymentDetail({ kind: normalizedKind, recordId: id });
+};
+
 const updateCatalogServiceOrder = async ({ serviceId, direction }) => {
   const normalizedDirection = String(direction || "").trim().toLowerCase();
   const deltaByDirection = {
@@ -770,6 +875,7 @@ const updateCatalogServiceOrder = async ({ serviceId, direction }) => {
             sc.name,
             COALESCE(sc.group_name, sc.category) AS group_name,
             COALESCE(sc.subcategory, 'general') AS subcategory,
+            sc.description,
             sc.display_order,
             sc.base_labour_minutes,
             sp.labour_rate_eur AS price
@@ -789,10 +895,175 @@ const updateCatalogServiceOrder = async ({ serviceId, direction }) => {
     subcategory: row.subcategory || "-",
     name: row.name || "-",
     code: row.code || "-",
+    description: row.description || "",
     base_labour_minutes: row.base_labour_minutes,
     price: row.price,
     display_order: row.display_order
   };
+};
+
+const updateCatalogService = async ({
+  serviceId,
+  name,
+  description,
+  base_labour_minutes,
+  price,
+  region = "UK-default"
+}) => {
+  const id = Number(serviceId);
+  if (!Number.isInteger(id) || id <= 0) {
+    throw new AppError("VALIDATION_ERROR", "serviceId is invalid", 400);
+  }
+
+  const hasName = name !== undefined;
+  const hasDescription = description !== undefined;
+  const hasLabour = base_labour_minutes !== undefined;
+  const hasPrice = price !== undefined;
+  if (!hasName && !hasDescription && !hasLabour && !hasPrice) {
+    throw new AppError("VALIDATION_ERROR", "No catalog fields to update", 400);
+  }
+
+  const [existingRows] = await pool.query("SELECT id FROM service_catalog WHERE id = ? LIMIT 1", [id]);
+  if (!existingRows.length) {
+    throw new AppError("NOT_FOUND", "Catalog service not found", 404);
+  }
+
+  const updates = [];
+  const values = [];
+  if (hasName) {
+    const trimmedName = String(name || "").trim();
+    if (!trimmedName) {
+      throw new AppError("VALIDATION_ERROR", "name is required", 400);
+    }
+    updates.push("name = ?");
+    values.push(trimmedName);
+  }
+  if (hasDescription) {
+    const trimmedDescription = String(description || "").trim();
+    updates.push("description = ?");
+    values.push(trimmedDescription || null);
+  }
+  if (hasLabour) {
+    const labourMinutes = Number(base_labour_minutes);
+    if (!Number.isFinite(labourMinutes) || labourMinutes <= 0) {
+      throw new AppError("VALIDATION_ERROR", "base_labour_minutes must be greater than 0", 400);
+    }
+    updates.push("base_labour_minutes = ?");
+    values.push(Math.round(labourMinutes));
+  }
+  if (updates.length) {
+    values.push(id);
+    await pool.query(`UPDATE service_catalog SET ${updates.join(", ")} WHERE id = ?`, values);
+  }
+
+  if (hasPrice) {
+    const labourRate = Number(price);
+    if (!Number.isFinite(labourRate) || labourRate < 0) {
+      throw new AppError("VALIDATION_ERROR", "price must be zero or greater", 400);
+    }
+    await pool.query(
+      `INSERT INTO service_pricing (service_id, region, labour_rate_eur)
+       VALUES (?, ?, ?)
+       ON DUPLICATE KEY UPDATE labour_rate_eur = VALUES(labour_rate_eur)`,
+      [id, String(region || "UK-default").trim() || "UK-default", Number(labourRate.toFixed(2))]
+    );
+  }
+
+  const [rows] = await pool.query(
+    `SELECT sc.id,
+            sc.code,
+            sc.name,
+            COALESCE(sc.group_name, sc.category) AS group_name,
+            COALESCE(sc.subcategory, 'general') AS subcategory,
+            sc.description,
+            sc.display_order,
+            sc.base_labour_minutes,
+            sp.labour_rate_eur AS price
+     FROM service_catalog sc
+     LEFT JOIN service_pricing sp
+       ON sp.service_id = sc.id AND sp.region = ?
+     WHERE sc.id = ?
+     LIMIT 1`,
+    [String(region || "UK-default").trim() || "UK-default", id]
+  );
+
+  if (!rows.length) {
+    throw new AppError("NOT_FOUND", "Catalog service not found", 404);
+  }
+  const row = rows[0];
+  return {
+    service_id: row.id,
+    group: row.group_name || "-",
+    subcategory: row.subcategory || "-",
+    name: row.name || "-",
+    code: row.code || "-",
+    description: row.description || "",
+    base_labour_minutes: row.base_labour_minutes,
+    price: row.price,
+    display_order: row.display_order
+  };
+};
+
+const createCatalogService = async ({ groupKey, name, region = "UK-default" }) => {
+  const normalizedGroup = String(groupKey || "").trim().toLowerCase();
+  const trimmedName = String(name || "").trim();
+  if (!normalizedGroup) {
+    throw new AppError("VALIDATION_ERROR", "groupKey is required", 400);
+  }
+  if (!trimmedName) {
+    throw new AppError("VALIDATION_ERROR", "name is required", 400);
+  }
+
+  const slugBase = trimmedName
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 52) || "service";
+  let code = slugBase;
+  let suffix = 1;
+  while (true) {
+    const [existsRows] = await pool.query("SELECT id FROM service_catalog WHERE code = ? LIMIT 1", [code]);
+    if (!existsRows.length) break;
+    suffix += 1;
+    code = `${slugBase}_${suffix}`;
+  }
+
+  const [[orderRow]] = await pool.query(
+    `SELECT COALESCE(MAX(display_order), 0) AS max_display_order
+     FROM service_catalog
+     WHERE COALESCE(group_name, category) = ?`,
+    [normalizedGroup]
+  );
+  const nextDisplayOrder = Number(orderRow?.max_display_order || 0) + 10;
+
+  const [insertResult] = await pool.query(
+    `INSERT INTO service_catalog
+      (code, name, category, group_name, subcategory, display_order, description, base_labour_minutes)
+     VALUES (?, ?, ?, NULL, 'general', ?, NULL, 60)`,
+    [code, trimmedName, normalizedGroup, nextDisplayOrder]
+  );
+
+  await pool.query(
+    `INSERT INTO service_pricing (service_id, region, labour_rate_eur)
+     VALUES (?, ?, 0.00)
+     ON DUPLICATE KEY UPDATE labour_rate_eur = VALUES(labour_rate_eur)`,
+    [insertResult.insertId, String(region || "UK-default").trim() || "UK-default"]
+  );
+
+  return updateCatalogService({ serviceId: insertResult.insertId, name: trimmedName, region });
+};
+
+const deleteCatalogService = async ({ serviceId }) => {
+  const id = Number(serviceId);
+  if (!Number.isInteger(id) || id <= 0) {
+    throw new AppError("VALIDATION_ERROR", "serviceId is invalid", 400);
+  }
+  const [existingRows] = await pool.query("SELECT id FROM service_catalog WHERE id = ? LIMIT 1", [id]);
+  if (!existingRows.length) {
+    throw new AppError("NOT_FOUND", "Catalog service not found", 404);
+  }
+  await pool.query("DELETE FROM service_catalog WHERE id = ?", [id]);
+  return { deleted: true, service_id: id };
 };
 
 const setUserRole = async ({ userId, role, action }) => {
@@ -1008,8 +1279,13 @@ module.exports = {
   listContactMessages,
   updateContactMessageStatus,
   listPayments,
+  getPaymentDetail,
+  addPaymentAdminNote,
   updatePaymentStatus,
+  createCatalogService,
+  updateCatalogService,
   updateCatalogServiceOrder,
+  deleteCatalogService,
   setUserRole,
   setUserStatus,
   updateUser,

@@ -20,8 +20,13 @@ const {
   updateResolutionCaseStatusHandler,
   getDashboardSummaryHandler,
   listPaymentsHandler,
+  getPaymentDetailHandler,
+  addPaymentAdminNoteHandler,
   updatePaymentStatusHandler,
+  createCatalogServiceHandler,
+  updateCatalogServiceHandler,
   updateCatalogServiceOrderHandler,
+  deleteCatalogServiceHandler,
   createUserHandler,
   setUserRoleHandler,
   setUserStatusHandler,
@@ -49,8 +54,13 @@ router.get("/contact-messages", authenticate, authorizeRoles("ADMIN"), asyncHand
 router.patch("/contact-messages/:messageId/status", authenticate, authorizeRoles("ADMIN"), asyncHandler(updateContactMessageStatusHandler));
 router.patch("/resolution-cases/:caseId/status", authenticate, authorizeRoles("ADMIN"), asyncHandler(updateResolutionCaseStatusHandler));
 router.get("/payments", authenticate, authorizeRoles("ADMIN"), asyncHandler(listPaymentsHandler));
+router.get("/payments/:recordId/detail", authenticate, authorizeRoles("ADMIN"), asyncHandler(getPaymentDetailHandler));
+router.post("/payments/:recordId/notes", authenticate, authorizeRoles("ADMIN"), asyncHandler(addPaymentAdminNoteHandler));
 router.patch("/payments/:recordId/status", authenticate, authorizeRoles("ADMIN"), asyncHandler(updatePaymentStatusHandler));
+router.post("/catalog", authenticate, authorizeRoles("ADMIN"), asyncHandler(createCatalogServiceHandler));
+router.patch("/catalog/:serviceId", authenticate, authorizeRoles("ADMIN"), asyncHandler(updateCatalogServiceHandler));
 router.patch("/catalog/:serviceId/order", authenticate, authorizeRoles("ADMIN"), asyncHandler(updateCatalogServiceOrderHandler));
+router.delete("/catalog/:serviceId", authenticate, authorizeRoles("ADMIN"), asyncHandler(deleteCatalogServiceHandler));
 router.post("/users", authenticate, authorizeRoles("ADMIN"), asyncHandler(createUserHandler));
 router.patch("/users/:userId/roles", authenticate, authorizeRoles("ADMIN"), asyncHandler(setUserRoleHandler));
 router.patch("/users/:userId/status", authenticate, authorizeRoles("ADMIN"), asyncHandler(setUserStatusHandler));

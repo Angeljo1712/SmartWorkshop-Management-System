@@ -124,10 +124,55 @@ const updatePaymentStatusHandler = async (req, res) => {
   res.json(result);
 };
 
+const getPaymentDetailHandler = async (req, res) => {
+  const recordId = Number(req.params.recordId);
+  const kind = String(req.query.kind || "").trim();
+  const result = await adminService.getPaymentDetail({ kind, recordId });
+  res.json(result);
+};
+
+const addPaymentAdminNoteHandler = async (req, res) => {
+  const recordId = Number(req.params.recordId);
+  const { kind, note } = req.body || {};
+  const result = await adminService.addPaymentAdminNote({
+    adminId: req.user.userId,
+    kind,
+    recordId,
+    note
+  });
+  res.json(result);
+};
+
 const updateCatalogServiceOrderHandler = async (req, res) => {
   const serviceId = Number(req.params.serviceId);
   const { direction } = req.body || {};
   const result = await adminService.updateCatalogServiceOrder({ serviceId, direction });
+  res.json(result);
+};
+
+const updateCatalogServiceHandler = async (req, res) => {
+  const serviceId = Number(req.params.serviceId);
+  const { name, description, base_labour_minutes, price, region } = req.body || {};
+  const result = await adminService.updateCatalogService({
+    serviceId,
+    name,
+    description,
+    base_labour_minutes,
+    price,
+    region
+  });
+  res.json(result);
+};
+
+const createCatalogServiceHandler = async (req, res) => {
+  const { groupKey, name, region } = req.body || {};
+  const result = await adminService.createCatalogService({ groupKey, name, region });
+  res.status(201).json(result);
+};
+
+const deleteCatalogServiceHandler = async (req, res) => {
+  const serviceId = Number(req.params.serviceId);
+  const result = await adminService.deleteCatalogService({ serviceId });
   res.json(result);
 };
 
@@ -241,8 +286,13 @@ module.exports = {
   updateResolutionCaseStatusHandler,
   getDashboardSummaryHandler,
   listPaymentsHandler,
+  getPaymentDetailHandler,
+  addPaymentAdminNoteHandler,
   updatePaymentStatusHandler,
+  createCatalogServiceHandler,
+  updateCatalogServiceHandler,
   updateCatalogServiceOrderHandler,
+  deleteCatalogServiceHandler,
   createUserHandler,
   setUserRoleHandler,
   setUserStatusHandler,

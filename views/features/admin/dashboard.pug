@@ -836,6 +836,42 @@ block content
                 .admin-delete-actions
                   button.ghost#adminDeleteCancel(type="button") Cancel
                   button.primary#adminDeleteConfirm(type="button") Delete
+            .admin-catalog-edit-modal.is-hidden#adminCatalogEditModal(hidden)
+              .admin-catalog-edit-backdrop(data-admin-catalog-edit-close="true")
+              .admin-catalog-edit-dialog(role="dialog" aria-modal="true" aria-labelledby="adminCatalogEditTitle")
+                .admin-catalog-edit-head
+                  h3#adminCatalogEditTitle Edit catalog service
+                .admin-catalog-edit-grid
+                  label.admin-catalog-edit-field#adminCatalogEditNameField(for="adminCatalogEditName")
+                    span New Service
+                    input#adminCatalogEditName(type="text" maxlength="120" placeholder="New Service")
+                  label.admin-catalog-edit-field#adminCatalogEditPriceField.is-hidden(for="adminCatalogEditPrice")
+                    span Price
+                    input#adminCatalogEditPrice(type="number" min="0" step="0.01" placeholder="0.00")
+                  label.admin-catalog-edit-field#adminCatalogEditLabourField.is-hidden(for="adminCatalogEditLabour")
+                    span Labour time (min)
+                    input#adminCatalogEditLabour(type="number" min="1" step="1" placeholder="60")
+                  label.admin-catalog-edit-field.admin-catalog-edit-field--full#adminCatalogEditDescriptionField.is-hidden(for="adminCatalogEditDescription")
+                    span Service description
+                    textarea#adminCatalogEditDescription(rows="5" placeholder="Write service description")
+                p.form-error#adminCatalogEditMessage(role="alert" aria-live="polite")
+                .admin-catalog-edit-actions
+                  button.secondary#adminCatalogEditBack(type="button") Back
+                  button.primary#adminCatalogEditSave(type="button") Save
+            .admin-payment-detail-modal.is-hidden#adminPaymentDetailModal(hidden)
+              .admin-payment-detail-backdrop(data-admin-payment-detail-close="true")
+              .admin-payment-detail-dialog(role="dialog" aria-modal="true" aria-labelledby="adminPaymentDetailTitle")
+                .admin-payment-detail-head
+                  h3#adminPaymentDetailTitle Payment details
+                .admin-payment-detail-grid#adminPaymentDetailBody
+                .admin-payment-notes
+                  h4 Notes
+                  .admin-payment-notes-list#adminPaymentNotesList
+                  textarea#adminPaymentNoteInput(rows="4" placeholder="Write an internal admin note")
+                  p.form-error#adminPaymentDetailMessage(role="alert" aria-live="polite")
+                .admin-payment-detail-actions
+                  button.secondary#adminPaymentDetailBack(type="button") Back
+                  button.primary#adminPaymentDetailAddNote(type="button") Add note
 
   include ../../partials/general-footer
 

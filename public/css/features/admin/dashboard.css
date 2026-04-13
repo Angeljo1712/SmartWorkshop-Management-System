@@ -1050,7 +1050,7 @@ body.admin-body .primari-shell {
 #adminPage #adminCatalogView .admin-catalog-subgroup {
       border-radius: 14px;
       border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(34, 43, 58, 0.96);
       overflow: hidden;
     }
 
@@ -1588,9 +1588,180 @@ body.admin-body .settings-edit-actions {
     gap: 12px;
   }
 
+body.admin-body .admin-catalog-edit-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+}
+
+body.admin-body .admin-catalog-edit-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 8, 16, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+body.admin-body .admin-catalog-edit-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(760px, calc(100vw - 32px));
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+  border: 2px solid #ffffff;
+  border-radius: 18px;
+  background: #101722;
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
+}
+
+body.admin-body .admin-catalog-edit-head h3,
+body.admin-body .admin-catalog-edit-field span {
+  color: #ffffff;
+  margin: 0;
+}
+
+body.admin-body .admin-catalog-edit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 16px;
+}
+
+body.admin-body .admin-catalog-edit-field {
+  display: grid;
+  gap: 8px;
+}
+
+body.admin-body .admin-catalog-edit-field.is-hidden {
+  display: none !important;
+}
+
+body.admin-body .admin-catalog-edit-field--full {
+  grid-column: 1 / -1;
+}
+
+body.admin-body .admin-catalog-edit-field input,
+body.admin-body .admin-catalog-edit-field textarea {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: #ffffff;
+  color: #000000;
+  -webkit-text-fill-color: #000000;
+  padding: 10px 14px;
+}
+
+body.admin-body .admin-catalog-edit-field textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+body.admin-body .admin-catalog-edit-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+body.admin-body .admin-payment-detail-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+}
+
+body.admin-body .admin-payment-detail-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 8, 16, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+body.admin-body .admin-payment-detail-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(760px, calc(100vw - 32px));
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+  border: 2px solid #ffffff;
+  border-radius: 18px;
+  background: #101722;
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
+}
+
+body.admin-body .admin-payment-detail-head h3,
+body.admin-body .admin-payment-notes h4 {
+  margin: 0;
+  color: #ffffff;
+}
+
+body.admin-body .admin-payment-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
+}
+
+body.admin-body .admin-payment-detail-grid p {
+  margin: 0;
+  display: grid;
+  gap: 4px;
+  color: #dbe5f6;
+}
+
+body.admin-body .admin-payment-detail-grid strong {
+  color: #ffffff;
+}
+
+body.admin-body .admin-payment-notes {
+  display: grid;
+  gap: 10px;
+}
+
+body.admin-body .admin-payment-notes-list {
+  display: grid;
+  gap: 8px;
+  max-height: 180px;
+  overflow: auto;
+}
+
+body.admin-body .admin-payment-note-item {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+body.admin-body .admin-payment-note-item small {
+  display: block;
+  margin-top: 4px;
+  color: #cbd5e1;
+}
+
+body.admin-body #adminPaymentNoteInput {
+  width: 100%;
+  min-height: 88px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: #ffffff;
+  color: #000000;
+  -webkit-text-fill-color: #000000;
+  padding: 10px 14px;
+  resize: vertical;
+}
+
+body.admin-body .admin-payment-detail-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
 @media (max-width: 768px) {
   body.admin-body .settings-edit-name-grid,
-  body.admin-body .settings-edit-address-grid {
+  body.admin-body .settings-edit-address-grid,
+  body.admin-body .admin-catalog-edit-grid,
+  body.admin-body .admin-payment-detail-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -2270,6 +2441,22 @@ body.admin-body .admin-edit-menu button:disabled {
   display: none;
 }
 
+#adminPage #adminPaymentsView .admin-actions-cell {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+#adminPage #adminPaymentsView .admin-actions-cell .icon-btn {
+  width: auto;
+  min-width: 100px;
+  padding: 0 12px;
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 0.78rem;
+  background: #ffffff;
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
 #adminPage #adminBookingsView .admin-actions-cell {
   position: relative;
   justify-content: center;
@@ -2330,32 +2517,61 @@ body.admin-body .admin-edit-menu button:disabled {
 }
 
 #adminPage #adminContactMessagesView .admin-actions-cell {
-    justify-content: flex-start;
-    flex-wrap: wrap;
-  }
+  position: relative;
+  justify-content: center;
+  overflow: visible;
+}
 
-#adminPage #adminContactMessagesView .admin-actions-cell .icon-btn {
-    width: auto;
-    min-width: 118px;
-    padding: 0 12px;
-    color: #0f172a;
-    font-weight: 700;
-    font-size: 0.78rem;
-    background: #ffffff;
-    border-color: rgba(255, 255, 255, 0.8);
-  }
+#adminPage #adminContactMessagesView .admin-contact-message-actions-trigger {
+  min-width: 96px;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: #5a6f90;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
 
-#adminPage #adminContactMessagesView .admin-actions-cell .icon-btn[data-contact-message-action="read"] {
-    background: #7b879d;
-    border-color: #7b879d;
-    color: #ffffff;
-  }
+#adminPage #adminContactMessagesView .admin-contact-message-actions-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  z-index: 30;
+  min-width: 190px;
+  display: grid;
+  gap: 0;
+  padding: 8px;
+  border-radius: 14px;
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+}
 
-#adminPage #adminContactMessagesView .admin-actions-cell .icon-btn[data-contact-message-action="resolve"] {
-    background: #35b55c;
-    border-color: #35b55c;
-    color: #ffffff;
-  }
+#adminPage #adminContactMessagesView .admin-contact-message-actions-menu.is-hidden {
+  display: none;
+}
+
+#adminPage #adminContactMessagesView .admin-contact-message-actions-menu button {
+  display: block;
+  width: 100%;
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #ffffff;
+  text-align: left;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#adminPage #adminContactMessagesView .admin-contact-message-actions-menu button:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
 
 #adminPage #adminBookingsView .admin-booking-status-badge {
     display: inline-flex;

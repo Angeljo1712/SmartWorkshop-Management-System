@@ -143,6 +143,14 @@ if (adminPage) {
   const adminPaymentsPagination = document.getElementById("adminPaymentsPagination");
   const adminPaymentsEmptyState = document.getElementById("adminPaymentsEmptyState");
   const adminPaymentsExportBtn = document.getElementById("adminPaymentsExportBtn");
+  const adminPaymentDetailModal = document.getElementById("adminPaymentDetailModal");
+  const adminPaymentDetailTitle = document.getElementById("adminPaymentDetailTitle");
+  const adminPaymentDetailBody = document.getElementById("adminPaymentDetailBody");
+  const adminPaymentNotesList = document.getElementById("adminPaymentNotesList");
+  const adminPaymentNoteInput = document.getElementById("adminPaymentNoteInput");
+  const adminPaymentDetailMessage = document.getElementById("adminPaymentDetailMessage");
+  const adminPaymentDetailBack = document.getElementById("adminPaymentDetailBack");
+  const adminPaymentDetailAddNote = document.getElementById("adminPaymentDetailAddNote");
   const adminCatalogSearch = document.getElementById("adminCatalogSearch");
   const adminCatalogGroupFilter = document.getElementById("adminCatalogGroupFilter");
   const adminCatalogSubcategoryFilter = document.getElementById("adminCatalogSubcategoryFilter");
@@ -154,6 +162,18 @@ if (adminPage) {
   const adminCatalogEmptyState = document.getElementById("adminCatalogEmptyState");
   const adminCatalogAddGroupBtn = document.getElementById("adminCatalogAddGroupBtn");
   const adminCatalogExportBtn = document.getElementById("adminCatalogExportBtn");
+  const adminCatalogEditModal = document.getElementById("adminCatalogEditModal");
+  const adminCatalogEditNameField = document.getElementById("adminCatalogEditNameField");
+  const adminCatalogEditName = document.getElementById("adminCatalogEditName");
+  const adminCatalogEditPriceField = document.getElementById("adminCatalogEditPriceField");
+  const adminCatalogEditPrice = document.getElementById("adminCatalogEditPrice");
+  const adminCatalogEditLabourField = document.getElementById("adminCatalogEditLabourField");
+  const adminCatalogEditLabour = document.getElementById("adminCatalogEditLabour");
+  const adminCatalogEditDescriptionField = document.getElementById("adminCatalogEditDescriptionField");
+  const adminCatalogEditDescription = document.getElementById("adminCatalogEditDescription");
+  const adminCatalogEditMessage = document.getElementById("adminCatalogEditMessage");
+  const adminCatalogEditBack = document.getElementById("adminCatalogEditBack");
+  const adminCatalogEditSave = document.getElementById("adminCatalogEditSave");
   const adminContactMessagesSearch = document.getElementById("adminContactMessagesSearch");
   const adminContactMessagesStatusFilter = document.getElementById("adminContactMessagesStatusFilter");
   const adminContactMessagesDateFilter = document.getElementById("adminContactMessagesDateFilter");
@@ -232,8 +252,13 @@ if (adminPage) {
   let adminCatalogPage = 1;
   let adminCatalogPageSize = Number(adminCatalogRowsPerPage?.value || 10);
   let activeAdminCatalogGroup = null;
+  let activeAdminCatalogEditServiceId = null;
+  let activeAdminCatalogEditGroupKey = "";
+  let activeAdminCatalogEditMode = "service-details";
+  const adminCatalogGroupKeyByLabel = new Map();
   let adminPaymentsPage = 1;
   let adminPaymentsPageSize = Number(adminPaymentsRowsPerPage?.value || 10);
+  let activeAdminPaymentDetail = null;
   let adminContactMessagesPage = 1;
   let adminContactMessagesPageSize = Number(adminContactMessagesRowsPerPage?.value || 10);
 
@@ -945,7 +970,7 @@ if (adminPage) {
   const getContactMessageStatusUi = (value) => {
     const normalized = normaliseFilterToken(value || "new");
     if (normalized === "in_progress") {
-      return { value: normalized, label: "Read", badgeClass: "read" };
+      return { value: normalized, label: "Pending", badgeClass: "read" };
     }
     if (normalized === "closed") {
       return { value: normalized, label: "Resolved", badgeClass: "resolved" };
@@ -953,7 +978,7 @@ if (adminPage) {
     if (normalized === "spam") {
       return { value: normalized, label: "Spam", badgeClass: "cancelled" };
     }
-    return { value: "new", label: "New", badgeClass: "new" };
+    return { value: "new", label: "Open", badgeClass: "new" };
   };
 
   const syncAdminSideSearchFromView = () => {
@@ -1321,6 +1346,49 @@ if (adminPage) {
     adminDeleteModal?.classList.add("is-hidden");
     if (adminDeleteModal) adminDeleteModal.hidden = true;
     if (adminDeleteConfirm) adminDeleteConfirm.disabled = false;
+  };
+
+  const closeAdminCatalogEditModal = () => {
+    activeAdminCatalogEditServiceId = null;
+    activeAdminCatalogEditGroupKey = "";
+    activeAdminCatalogEditMode = "service-details";
+    adminCatalogEditModal?.classList.add("is-hidden");
+    if (adminCatalogEditModal) adminCatalogEditModal.hidden = true;
+    if (adminCatalogEditName) adminCatalogEditName.value = "";
+    if (adminCatalogEditPrice) adminCatalogEditPrice.value = "";
+    if (adminCatalogEditLabour) adminCatalogEditLabour.value = "";
+    if (adminCatalogEditDescription) adminCatalogEditDescription.value = "";
+    if (adminCatalogEditMessage) adminCatalogEditMessage.textContent = "";
+    if (adminCatalogEditSave) adminCatalogEditSave.disabled = false;
+  };
+
+  const openAdminCatalogEditModal = ({ service = null, groupKey = "" } = {}) => {
+    if (!adminCatalogEditModal) return;
+    activeAdminCatalogEditServiceId = Number(service?.service_id || 0) || null;
+    activeAdminCatalogEditGroupKey = String(groupKey || "").trim().toLowerCase();
+    activeAdminCatalogEditMode = activeAdminCatalogEditServiceId ? "service-details" : "create";
+    const modalTitle = activeAdminCatalogEditMode === "create" ? "Add catalog service" : "Edit catalog service";
+    const titleEl = document.getElementById("adminCatalogEditTitle");
+    if (titleEl) titleEl.textContent = modalTitle;
+    if (activeAdminCatalogEditMode === "create") {
+      adminCatalogEditNameField?.classList.remove("is-hidden");
+      adminCatalogEditPriceField?.classList.add("is-hidden");
+      adminCatalogEditLabourField?.classList.add("is-hidden");
+      adminCatalogEditDescriptionField?.classList.add("is-hidden");
+      if (adminCatalogEditName) adminCatalogEditName.value = "New Service";
+    } else {
+      adminCatalogEditNameField?.classList.add("is-hidden");
+      adminCatalogEditPriceField?.classList.remove("is-hidden");
+      adminCatalogEditLabourField?.classList.remove("is-hidden");
+      adminCatalogEditDescriptionField?.classList.remove("is-hidden");
+      if (adminCatalogEditPrice) adminCatalogEditPrice.value = Number(service?.price || 0).toFixed(2);
+      if (adminCatalogEditLabour) adminCatalogEditLabour.value = String(service?.base_labour_minutes || 60);
+      if (adminCatalogEditDescription) adminCatalogEditDescription.value = String(service?.description || "");
+    }
+    if (adminCatalogEditMessage) adminCatalogEditMessage.textContent = "";
+    adminCatalogEditModal.classList.remove("is-hidden");
+    adminCatalogEditModal.hidden = false;
+    (activeAdminCatalogEditMode === "create" ? adminCatalogEditName : adminCatalogEditPrice)?.focus();
   };
 
   const setAdminLabeledText = (el, label, value) => {
@@ -1846,7 +1914,10 @@ if (adminPage) {
           const status = normaliseFilterToken(item.status);
           const paymentId = String(item.record_id || item.id || item.reference || "");
           const isChecked = selectedAdminPayments.has(paymentId);
-          const actions = [];
+          const actions = [
+            `<button class="icon-btn" type="button" data-payment-action="view" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}" title="View details">View details</button>`,
+            `<button class="icon-btn" type="button" data-payment-action="note" data-payment-kind="${escapeHtml(item.kind)}" data-payment-record-id="${escapeHtml(String(item.record_id))}" title="Add note">Add note</button>`
+          ];
 
           if (kind === "customer_payment") {
             if (status === "authorized") {
@@ -2014,11 +2085,14 @@ if (adminPage) {
         const statusUi = getContactMessageStatusUi(item.status);
         const status = statusUi.value;
         const actions = [];
-        if (status === "new") {
-          actions.push(`<button class="icon-btn" type="button" data-contact-message-action="read" data-contact-message-id="${escapeHtml(messageId)}">Mark as read</button>`);
+        if (status !== "new") {
+          actions.push(`<button class="icon-btn" type="button" data-contact-message-action="open" data-contact-message-id="${escapeHtml(messageId)}">Open</button>`);
+        }
+        if (status !== "in_progress") {
+          actions.push(`<button class="icon-btn" type="button" data-contact-message-action="pending" data-contact-message-id="${escapeHtml(messageId)}">Pending</button>`);
         }
         if (status !== "closed") {
-          actions.push(`<button class="icon-btn" type="button" data-contact-message-action="resolve" data-contact-message-id="${escapeHtml(messageId)}">Mark as resolved</button>`);
+          actions.push(`<button class="icon-btn" type="button" data-contact-message-action="resolve" data-contact-message-id="${escapeHtml(messageId)}">Resolved</button>`);
         }
         return `
         <tr>
@@ -2028,7 +2102,14 @@ if (adminPage) {
           <td title="${escapeHtml(item.message || "-")}">${escapeHtml(item.message || "-")}</td>
           <td><span class="admin-status-badge admin-status-badge--${escapeHtml(statusUi.badgeClass || "unknown")}">${escapeHtml(statusUi.label)}</span></td>
           <td>${escapeHtml(formatDate(item.created_at))}</td>
-          <td><div class="admin-actions-cell">${actions.join("") || '<span class="admin-empty-inline">No actions</span>'}</div></td>
+          <td>
+            <div class="admin-actions-cell">
+              <button class="admin-contact-message-actions-trigger" type="button" data-contact-message-menu-toggle="${escapeHtml(messageId)}" aria-expanded="false">Actions</button>
+              <div class="admin-contact-message-actions-menu is-hidden" data-contact-message-menu="${escapeHtml(messageId)}">
+                ${actions.join("") || '<span class="admin-empty-inline">No actions</span>'}
+              </div>
+            </div>
+          </td>
         </tr>
       `;
       })
@@ -2131,7 +2212,9 @@ if (adminPage) {
     const visibleEntries = groupedEntries.slice(start, end);
     if (isOverviewMode) {
       adminCatalogRows.innerHTML = visibleEntries
-        .map(([groupName]) => `
+        .map(([groupName]) => {
+          const groupKey = adminCatalogGroupKeyByLabel.get(groupName) || String(groupName || "").trim().toLowerCase();
+          return `
           <section class="admin-catalog-group admin-catalog-group--overview">
             <header class="admin-catalog-group-header">
               <div class="admin-catalog-group-title">
@@ -2139,12 +2222,13 @@ if (adminPage) {
               </div>
               <div class="admin-actions-cell">
                 <button class="icon-btn" type="button" data-catalog-group-action="open" data-catalog-open-group="${escapeHtml(groupName)}">Open</button>
-                <button class="icon-btn" type="button" data-catalog-group-action="edit" data-catalog-group="${escapeHtml(groupName)}">Edit</button>
+                <button class="icon-btn" type="button" data-catalog-group-action="edit" data-catalog-group="${escapeHtml(groupName)}" data-catalog-group-key="${escapeHtml(groupKey)}">Edit</button>
                 <button class="icon-btn danger" type="button" data-catalog-group-action="delete" data-catalog-group="${escapeHtml(groupName)}">Delete</button>
               </div>
             </header>
           </section>
-        `)
+        `;
+        })
         .join("");
     } else {
       adminCatalogRows.innerHTML = visibleEntries
@@ -2653,7 +2737,15 @@ if (adminPage) {
     configureAdminSide(activeAdminView);
     renderAdminDashboard();
     renderContactMessages();
-    showAdminFeedback(`Message updated: ${action === "resolve" ? "resolved" : "marked as read"}.`);
+    const actionLabelByAction = {
+      open: "open",
+      reopen: "open",
+      pending: "pending",
+      read: "pending",
+      resolve: "resolved",
+      close: "resolved"
+    };
+    showAdminFeedback(`Message updated: ${actionLabelByAction[action] || titleCase(action)}.`);
   };
 
   const fetchPayments = async () => {
@@ -2687,19 +2779,75 @@ if (adminPage) {
     showAdminFeedback(`Payment updated: ${titleCase(action)}.`);
   };
 
+  const closeAdminPaymentDetailModal = () => {
+    activeAdminPaymentDetail = null;
+    adminPaymentDetailModal?.classList.add("is-hidden");
+    if (adminPaymentDetailModal) adminPaymentDetailModal.hidden = true;
+    if (adminPaymentDetailBody) adminPaymentDetailBody.innerHTML = "";
+    if (adminPaymentNotesList) adminPaymentNotesList.innerHTML = "";
+    if (adminPaymentNoteInput) adminPaymentNoteInput.value = "";
+    if (adminPaymentDetailMessage) adminPaymentDetailMessage.textContent = "";
+    if (adminPaymentDetailAddNote) adminPaymentDetailAddNote.disabled = false;
+  };
+
+  const loadAdminPaymentDetail = async (recordId, kind) => {
+    const token = getAdminToken();
+    if (!token) return null;
+    const detail = await apiAuth(
+      `/api/admin/payments/${encodeURIComponent(recordId)}/detail?kind=${encodeURIComponent(kind)}`,
+      token
+    );
+    activeAdminPaymentDetail = { recordId: Number(recordId), kind: String(kind) };
+    if (adminPaymentDetailTitle) {
+      adminPaymentDetailTitle.textContent = `Payment ${detail.reference || ""}`.trim();
+    }
+    if (adminPaymentDetailBody) {
+      adminPaymentDetailBody.innerHTML = `
+        <p><strong>Kind</strong><span>${escapeHtml(titleCase(detail.kind))}</span></p>
+        <p><strong>Status</strong><span>${escapeHtml(titleCase(detail.status))}</span></p>
+        <p><strong>Booking</strong><span>${escapeHtml(detail.booking_reference || "-")}</span></p>
+        <p><strong>Party</strong><span>${escapeHtml(detail.party || "-")}</span></p>
+        <p><strong>Provider</strong><span>${escapeHtml(detail.provider || "-")}</span></p>
+        <p><strong>Amount</strong><span>£${escapeHtml(Number(detail.amount || 0).toFixed(2))}</span></p>
+        <p><strong>Created</strong><span>${escapeHtml(formatDate(detail.created_at))}</span></p>
+      `;
+    }
+    if (adminPaymentNotesList) {
+      const notes = Array.isArray(detail.notes) ? detail.notes : [];
+      adminPaymentNotesList.innerHTML = notes.length
+        ? notes.map((note) => `
+            <article class="admin-payment-note-item">
+              <div>${escapeHtml(note.note || "")}</div>
+              <small>${escapeHtml(note.admin_name || "Admin")} · ${escapeHtml(formatDate(note.created_at))}</small>
+            </article>
+          `).join("")
+        : '<span class="admin-empty-inline">No notes yet.</span>';
+    }
+    if (adminPaymentDetailMessage) adminPaymentDetailMessage.textContent = "";
+    return detail;
+  };
+
   const fetchCatalog = async () => {
     try {
       const tree = await api("/api/catalog/services-tree?region=UK-default");
       adminCatalog = [];
+      adminCatalogGroupKeyByLabel.clear();
       (tree || []).forEach((group) => {
+        const groupLabel = group.label || group.key || "-";
+        const groupKey = String(group.key || group.label || "").trim().toLowerCase();
+        if (groupLabel) {
+          adminCatalogGroupKeyByLabel.set(groupLabel, groupKey || String(groupLabel).trim().toLowerCase());
+        }
         (group.subcategories || []).forEach((subcategory) => {
           (subcategory.services || []).forEach((service) => {
             adminCatalog.push({
               service_id: service.id,
-              group: group.label || group.key || "-",
+              group: groupLabel,
+              group_key: groupKey,
               subcategory: subcategory.label || subcategory.key || "-",
               name: service.name || "-",
               code: service.code || "-",
+              description: service.description || "",
               base_labour_minutes: service.base_labour_minutes,
               display_order: service.display_order,
               price: service.price
@@ -2740,6 +2888,64 @@ if (adminPage) {
     configureAdminSide(activeAdminView);
     renderCatalog();
     showAdminFeedback(`Catalog order updated: moved ${titleCase(direction)}.`);
+  };
+
+  const updateAdminCatalogService = async (serviceId, payload) => {
+    const token = getAdminToken();
+    if (!token) return null;
+    const updated = await apiAuth(`/api/admin/catalog/${encodeURIComponent(serviceId)}`, token, {
+      method: "PATCH",
+      body: JSON.stringify(payload)
+    });
+    adminCatalog = adminCatalog
+      .map((item) =>
+        Number(item.service_id) === Number(serviceId)
+          ? { ...item, ...updated }
+          : item
+      )
+      .sort((a, b) => {
+        const groupSort = String(a.group).localeCompare(String(b.group));
+        if (groupSort !== 0) return groupSort;
+        const subSort = String(a.subcategory).localeCompare(String(b.subcategory));
+        if (subSort !== 0) return subSort;
+        const orderSort = Number(a.display_order || 0) - Number(b.display_order || 0);
+        if (orderSort !== 0) return orderSort;
+        return String(a.name).localeCompare(String(b.name));
+      });
+    syncAdminCatalogHeadFilters();
+    configureAdminSide(activeAdminView);
+    renderCatalog();
+    showAdminFeedback("Catalog service updated.");
+    return updated;
+  };
+
+  const createAdminCatalogService = async ({ groupKey, name }) => {
+    const token = getAdminToken();
+    if (!token) return null;
+    const created = await apiAuth("/api/admin/catalog", token, {
+      method: "POST",
+      body: JSON.stringify({
+        groupKey,
+        name,
+        region: "UK-default"
+      })
+    });
+    await fetchCatalog();
+    showAdminFeedback("Service created.");
+    return created;
+  };
+
+  const deleteAdminCatalogService = async (serviceId) => {
+    const token = getAdminToken();
+    if (!token) return null;
+    await apiAuth(`/api/admin/catalog/${encodeURIComponent(serviceId)}`, token, {
+      method: "DELETE"
+    });
+    adminCatalog = adminCatalog.filter((item) => Number(item.service_id) !== Number(serviceId));
+    syncAdminCatalogHeadFilters();
+    configureAdminSide(activeAdminView);
+    renderCatalog();
+    return { deleted: true };
   };
 
   adminLogoutBtn?.addEventListener("click", () => {
@@ -3222,6 +3428,7 @@ if (adminPage) {
     const items = Array.isArray(detail.items) ? detail.items : [];
     const address = detail.address || {};
     const vehicle = detail.vehicle || {};
+    const isConversationMode = mode === "conversation";
     const messages = Array.isArray(detail.messages) ? detail.messages : [];
     const messageList = messages.length
       ? messages.map((message) => {
@@ -3253,29 +3460,50 @@ if (adminPage) {
         }).join("")
       : `<p class="admin-resolution-chat-empty">No messages have been sent yet.</p>`;
 
+    const statusCardMarkup = `
+      <aside class="admin-resolution-status-card">
+        <h4>Current status of booking #${escapeHtml(detail.booking?.reference || String(detail.booking_id || "-").padStart(8, "0"))}</h4>
+        <p><strong>Customer</strong><span>${escapeHtml(detail.customer?.name || "-")}</span></p>
+        <p><strong>Mechanic</strong><span>${escapeHtml(detail.mechanic?.name || "-")}</span></p>
+        <p><strong>Car</strong><span>${escapeHtml([vehicle.make, vehicle.model, vehicle.registrationNumber].filter(Boolean).join(" · ") || "-")}</span></p>
+        <p><strong>Address</strong><span>${escapeHtml([address.line1, address.line2, address.city, address.postal_code].filter(Boolean).join(", ") || "-")}</span></p>
+        <p><strong>Work</strong><span>${escapeHtml(items.map((item) => item.name).filter(Boolean).join(", ") || "-")}</span></p>
+        <p><strong>Total Price</strong><span>£${escapeHtml(Number(detail.booking?.total_eur || 0).toFixed(2))}</span></p>
+        <p><strong>Case status</strong><span>${escapeHtml(titleCase(detail.status || "-"))}</span></p>
+      </aside>
+    `;
+
     adminResolutionDetailTitle.textContent = `${title} ${detail.reference ? `#${detail.reference}` : ""}`.trim();
-    adminResolutionDetailBody.innerHTML = `
-      <div class="admin-resolution-conversation">
-        <section class="admin-resolution-chat">
-          <p class="admin-resolution-thread-copy">Use this panel to review the case conversation and send an admin response.</p>
-          <div class="admin-resolution-message-list">${messageList}</div>
-          <div class="admin-resolution-compose">
-            <textarea id="adminResolutionMessageInput" rows="5" placeholder="Add a new message here"></textarea>
-            <button class="primary" type="button" data-resolution-send-message="${escapeHtml(String(detail.id || caseId))}">Send message</button>
-          </div>
-        </section>
-        <aside class="admin-resolution-status-card">
-          <h4>Current status of booking #${escapeHtml(detail.booking?.reference || String(detail.booking_id || "-").padStart(8, "0"))}</h4>
+    adminResolutionDetailBody.innerHTML = isConversationMode
+      ? `
+        <div class="admin-resolution-conversation">
+          <section class="admin-resolution-chat">
+            <p class="admin-resolution-thread-copy">Use this panel to review the case conversation and send an admin response.</p>
+            <div class="admin-resolution-message-list">${messageList}</div>
+            <div class="admin-resolution-compose">
+              <textarea id="adminResolutionMessageInput" rows="5" placeholder="Add a new message here"></textarea>
+              <button class="primary" type="button" data-resolution-send-message="${escapeHtml(String(detail.id || caseId))}">Send message</button>
+            </div>
+          </section>
+          ${statusCardMarkup}
+        </div>
+      `
+      : `
+        <div class="admin-resolution-detail-grid">
+          <p><strong>Reference</strong><span>${escapeHtml(detail.reference || "-")}</span></p>
+          <p><strong>Type</strong><span>${escapeHtml(title)}</span></p>
+          <p><strong>Subject</strong><span>${escapeHtml(detail.subject || "-")}</span></p>
+          <p><strong>Status</strong><span>${escapeHtml(titleCase(detail.status || "-"))}</span></p>
+          <p><strong>Updated</strong><span>${escapeHtml(formatDate(detail.updated_at))}</span></p>
+          <p><strong>Booking</strong><span>#${escapeHtml(detail.booking?.reference || String(detail.booking_id || "-").padStart(8, "0"))}</span></p>
           <p><strong>Customer</strong><span>${escapeHtml(detail.customer?.name || "-")}</span></p>
           <p><strong>Mechanic</strong><span>${escapeHtml(detail.mechanic?.name || "-")}</span></p>
           <p><strong>Car</strong><span>${escapeHtml([vehicle.make, vehicle.model, vehicle.registrationNumber].filter(Boolean).join(" · ") || "-")}</span></p>
           <p><strong>Address</strong><span>${escapeHtml([address.line1, address.line2, address.city, address.postal_code].filter(Boolean).join(", ") || "-")}</span></p>
           <p><strong>Work</strong><span>${escapeHtml(items.map((item) => item.name).filter(Boolean).join(", ") || "-")}</span></p>
           <p><strong>Total Price</strong><span>£${escapeHtml(Number(detail.booking?.total_eur || 0).toFixed(2))}</span></p>
-          <p><strong>Case status</strong><span>${escapeHtml(titleCase(detail.status || "-"))}</span></p>
-        </aside>
-      </div>
-    `;
+        </div>
+      `;
     adminResolutionDetailCard.classList.remove("is-hidden");
     adminResolutionDetailCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
   };
@@ -3491,6 +3719,22 @@ if (adminPage) {
     const kind = actionButton.dataset.paymentKind;
     const action = actionButton.dataset.paymentAction;
     if (!recordId || !kind || !action) return;
+    if (action === "view" || action === "note") {
+      try {
+        await loadAdminPaymentDetail(recordId, kind);
+        if (adminPaymentDetailModal) {
+          adminPaymentDetailModal.classList.remove("is-hidden");
+          adminPaymentDetailModal.hidden = false;
+        }
+        if (action === "note") {
+          adminPaymentNoteInput?.focus();
+        }
+      } catch (err) {
+        console.error("Unable to load payment detail", err);
+        showAdminFeedback(err?.error?.message || err?.message || "Unable to load payment detail.", "error");
+      }
+      return;
+    }
     actionButton.disabled = true;
     try {
       await updateAdminPaymentStatus(recordId, kind, action);
@@ -3499,6 +3743,49 @@ if (adminPage) {
       showAdminFeedback(err?.error?.message || err?.message || "Unable to update payment.", "error");
     } finally {
       actionButton.disabled = false;
+    }
+  });
+
+  adminPaymentDetailBack?.addEventListener("click", closeAdminPaymentDetailModal);
+  adminPaymentDetailModal?.querySelectorAll("[data-admin-payment-detail-close]").forEach((element) => {
+    element.addEventListener("click", closeAdminPaymentDetailModal);
+  });
+  adminPaymentDetailAddNote?.addEventListener("click", async () => {
+    if (!activeAdminPaymentDetail?.recordId || !activeAdminPaymentDetail?.kind) return;
+    const token = getAdminToken();
+    if (!token) {
+      if (adminPaymentDetailMessage) adminPaymentDetailMessage.textContent = "Sign in as admin first.";
+      return;
+    }
+    const note = String(adminPaymentNoteInput?.value || "").trim();
+    if (!note) {
+      if (adminPaymentDetailMessage) adminPaymentDetailMessage.textContent = "Note is required.";
+      return;
+    }
+    adminPaymentDetailAddNote.disabled = true;
+    if (adminPaymentDetailMessage) adminPaymentDetailMessage.textContent = "";
+    try {
+      await apiAuth(
+        `/api/admin/payments/${encodeURIComponent(activeAdminPaymentDetail.recordId)}/notes`,
+        token,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            kind: activeAdminPaymentDetail.kind,
+            note
+          })
+        }
+      );
+      if (adminPaymentNoteInput) adminPaymentNoteInput.value = "";
+      await loadAdminPaymentDetail(activeAdminPaymentDetail.recordId, activeAdminPaymentDetail.kind);
+      showAdminFeedback("Payment note added.");
+    } catch (err) {
+      console.error("Unable to add payment note", err);
+      if (adminPaymentDetailMessage) {
+        adminPaymentDetailMessage.textContent = err?.error?.message || err?.message || "Unable to add note.";
+      }
+    } finally {
+      adminPaymentDetailAddNote.disabled = false;
     }
   });
   adminContactMessagesSearch?.addEventListener("input", () => {
@@ -3560,12 +3847,57 @@ if (adminPage) {
     link.remove();
     URL.revokeObjectURL(url);
   });
+
+  const closeAdminContactMessageMenus = () => {
+    adminContactMessagesRows?.querySelectorAll("[data-contact-message-menu]").forEach((item) => {
+      item.classList.add("is-hidden");
+      item.removeAttribute("style");
+    });
+    adminContactMessagesRows?.querySelectorAll("[data-contact-message-menu-toggle]").forEach((item) => item.setAttribute("aria-expanded", "false"));
+  };
+
+  const positionAdminContactMessageMenu = (menu, trigger) => {
+    const viewportPadding = 12;
+    const gap = 8;
+    const triggerRect = trigger.getBoundingClientRect();
+    menu.style.top = "0px";
+    menu.style.left = "0px";
+    menu.classList.remove("is-hidden");
+    const menuRect = menu.getBoundingClientRect();
+    const spaceAbove = triggerRect.top - viewportPadding;
+    const spaceBelow = window.innerHeight - triggerRect.bottom - viewportPadding;
+    const openUp = spaceAbove >= menuRect.height || spaceAbove > spaceBelow;
+    const top = openUp
+      ? Math.max(viewportPadding, triggerRect.top - menuRect.height - gap)
+      : Math.min(window.innerHeight - menuRect.height - viewportPadding, triggerRect.bottom + gap);
+    const left = Math.min(
+      window.innerWidth - menuRect.width - viewportPadding,
+      Math.max(viewportPadding, triggerRect.right - menuRect.width)
+    );
+    menu.style.top = `${top}px`;
+    menu.style.left = `${left}px`;
+  };
+
   adminContactMessagesRows?.addEventListener("click", async (event) => {
+    const menuToggle = event.target.closest("[data-contact-message-menu-toggle]");
+    if (menuToggle) {
+      const menuId = menuToggle.getAttribute("data-contact-message-menu-toggle");
+      const menu = adminContactMessagesRows.querySelector(`[data-contact-message-menu="${CSS.escape(menuId)}"]`);
+      const willOpen = menu?.classList.contains("is-hidden");
+      closeAdminContactMessageMenus();
+      if (menu && willOpen) {
+        positionAdminContactMessageMenu(menu, menuToggle);
+        menuToggle.setAttribute("aria-expanded", "true");
+      }
+      return;
+    }
+
     const actionButton = event.target.closest("[data-contact-message-action]");
     if (!actionButton) return;
     const messageId = actionButton.dataset.contactMessageId;
     const action = actionButton.dataset.contactMessageAction;
     if (!messageId || !action) return;
+    closeAdminContactMessageMenus();
     actionButton.disabled = true;
     try {
       await updateContactMessageStatus(messageId, action);
@@ -3649,6 +3981,9 @@ if (adminPage) {
     if (groupActionButton) {
       const action = groupActionButton.getAttribute("data-catalog-group-action");
       const groupName = groupActionButton.getAttribute("data-catalog-group") || groupActionButton.getAttribute("data-catalog-open-group");
+      const groupKey = groupActionButton.getAttribute("data-catalog-group-key")
+        || adminCatalogGroupKeyByLabel.get(groupName)
+        || String(groupName || "").trim().toLowerCase();
       if (action === "open") {
         activeAdminCatalogGroup = groupActionButton.getAttribute("data-catalog-open-group");
         if (adminCatalogGroupFilter) {
@@ -3659,11 +3994,23 @@ if (adminPage) {
         return;
       }
       if (action === "edit") {
-        showAdminFeedback(`Edit for ${groupName || "group"} is not available yet.`);
+        openAdminCatalogEditModal({ groupKey });
         return;
       }
       if (action === "delete") {
-        showAdminFeedback(`Delete for ${groupName || "group"} is not available yet.`, "error");
+        const expected = String(groupName || "").trim();
+        if (!expected) return;
+        const typed = window.prompt(`Type the group name to confirm delete:\n${expected}`, "");
+        if (typed === null) return;
+        if (String(typed).trim() !== expected) {
+          showAdminFeedback("Name confirmation did not match. Delete cancelled.", "error");
+          return;
+        }
+        const groupServices = adminCatalog.filter((item) => String(item.group || "").trim() === expected);
+        for (const service of groupServices) {
+          await deleteAdminCatalogService(service.service_id);
+        }
+        showAdminFeedback(`Group deleted: ${expected}.`);
         return;
       }
     }
@@ -3685,7 +4032,7 @@ if (adminPage) {
     const service = adminCatalog.find((item) => Number(item.service_id) === serviceId);
     const serviceName = service?.name || "Service";
     if (action === "edit") {
-      showAdminFeedback(`Edit for ${serviceName} is not available yet.`);
+      openAdminCatalogEditModal({ service });
       return;
     }
     if (action === "suspend") {
@@ -3693,7 +4040,15 @@ if (adminPage) {
       return;
     }
     if (action === "delete") {
-      showAdminFeedback(`Delete for ${serviceName} is not available yet.`, "error");
+      const expected = String(serviceName || "").trim();
+      const typed = window.prompt(`Type the service name to confirm delete:\n${expected}`, "");
+      if (typed === null) return;
+      if (String(typed).trim() !== expected) {
+        showAdminFeedback("Name confirmation did not match. Delete cancelled.", "error");
+        return;
+      }
+      await deleteAdminCatalogService(serviceId);
+      showAdminFeedback(`Service deleted: ${expected}.`);
     }
   });
   adminApplicationsTypeFilter?.addEventListener("change", () => {
@@ -3862,11 +4217,15 @@ if (adminPage) {
 
   adminDeleteCancel?.addEventListener("click", closeAdminDeleteModal);
   adminSettingsEditCancel?.addEventListener("click", closeAdminSettingsEditModal);
+  adminCatalogEditBack?.addEventListener("click", closeAdminCatalogEditModal);
   adminSettingsEditModal?.querySelectorAll("[data-admin-edit-close]").forEach((element) => {
     element.addEventListener("click", closeAdminSettingsEditModal);
   });
   adminDeleteModal?.querySelectorAll("[data-admin-delete-close]").forEach((element) => {
     element.addEventListener("click", closeAdminDeleteModal);
+  });
+  adminCatalogEditModal?.querySelectorAll("[data-admin-catalog-edit-close]").forEach((element) => {
+    element.addEventListener("click", closeAdminCatalogEditModal);
   });
   adminSettingsEditSave?.addEventListener("click", async () => {
     if (!activeAdminEditUserId || !activeAdminEditField) return;
@@ -3957,6 +4316,63 @@ if (adminPage) {
       closeAdminApplicationMenus();
       closeAdminBookingMenus();
       closeAdminResolutionMenus();
+      closeAdminContactMessageMenus();
+    }
+  });
+
+  adminCatalogEditSave?.addEventListener("click", async () => {
+    const token = getAdminToken();
+    if (!token) {
+      if (adminCatalogEditMessage) adminCatalogEditMessage.textContent = "Sign in as admin first.";
+      return;
+    }
+    if (adminCatalogEditMessage) adminCatalogEditMessage.textContent = "";
+    adminCatalogEditSave.disabled = true;
+    try {
+      if (activeAdminCatalogEditMode === "create") {
+        const name = String(adminCatalogEditName?.value || "").trim();
+        if (!name) {
+          if (adminCatalogEditMessage) adminCatalogEditMessage.textContent = "Service name is required.";
+          adminCatalogEditSave.disabled = false;
+          return;
+        }
+        if (!activeAdminCatalogEditGroupKey) {
+          throw new Error("Group key is required to create a service.");
+        }
+        await createAdminCatalogService({
+          groupKey: activeAdminCatalogEditGroupKey,
+          name
+        });
+      } else {
+        if (!activeAdminCatalogEditServiceId) {
+          throw new Error("Service is required.");
+        }
+        const labourMinutes = Number(adminCatalogEditLabour?.value);
+        const price = Number(adminCatalogEditPrice?.value);
+        const description = String(adminCatalogEditDescription?.value || "").trim();
+        if (!Number.isFinite(labourMinutes) || labourMinutes <= 0) {
+          if (adminCatalogEditMessage) adminCatalogEditMessage.textContent = "Labour time must be greater than 0.";
+          adminCatalogEditSave.disabled = false;
+          return;
+        }
+        if (!Number.isFinite(price) || price < 0) {
+          if (adminCatalogEditMessage) adminCatalogEditMessage.textContent = "Price must be zero or greater.";
+          adminCatalogEditSave.disabled = false;
+          return;
+        }
+        await updateAdminCatalogService(activeAdminCatalogEditServiceId, {
+          base_labour_minutes: Math.round(labourMinutes),
+          price: Number(price.toFixed(2)),
+          description,
+          region: "UK-default"
+        });
+      }
+      closeAdminCatalogEditModal();
+    } catch (err) {
+      if (adminCatalogEditMessage) {
+        adminCatalogEditMessage.textContent = err?.error?.message || err?.message || "Unable to update catalog service.";
+      }
+      adminCatalogEditSave.disabled = false;
     }
   });
 

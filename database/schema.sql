@@ -418,7 +418,7 @@ CREATE TABLE IF NOT EXISTS resolution_cases (
   subject VARCHAR(120) NOT NULL,
   sequence_no INT NOT NULL,
   reference VARCHAR(64) NOT NULL,
-  status ENUM('open','closed') NOT NULL DEFAULT 'open',
+  status ENUM('open','in_progress','closed') NOT NULL DEFAULT 'open',
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY uq_resolution_reference (reference),
