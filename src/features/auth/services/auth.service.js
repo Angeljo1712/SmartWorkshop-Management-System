@@ -178,12 +178,12 @@ const login = async ({ email, username, identifier, password }) => {
 
   const user = rows[0];
   if (!user) {
-    throw new AppError("AUTH_FAILED", "Invalid credentials", 401);
+    throw new AppError("AUTH_ACCOUNT_NOT_FOUND", "Account does not exist", 401);
   }
 
   const matches = await bcrypt.compare(password, user.password_hash);
   if (!matches) {
-    throw new AppError("AUTH_FAILED", "Invalid credentials", 401);
+    throw new AppError("AUTH_PASSWORD_INVALID", "Incorrect password", 401);
   }
 
   if (Boolean(user.two_factor_email_enabled)) {

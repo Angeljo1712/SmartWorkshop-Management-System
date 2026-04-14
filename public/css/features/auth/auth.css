@@ -331,6 +331,13 @@
   border: none;
 }
 
+.auth-content--sign-in .form-error {
+  color: #111827;
+  text-align: center;
+  font-weight: 600;
+  min-height: 20px;
+}
+
 .auth-two-factor {
   width: 100%;
   max-width: 360px;

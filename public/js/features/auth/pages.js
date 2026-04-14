@@ -13,6 +13,8 @@
 
     let pendingChallengeToken = "";
     let pendingLoginIdentifier = "";
+    const resolveApiErrorMessage = (payload, fallback) =>
+      payload?.error?.message || payload?.message || payload?.error || fallback;
 
     const showTwoFactorPanel = (message, challengeToken) => {
       pendingChallengeToken = challengeToken || "";
@@ -35,6 +37,10 @@
       if (signInError) signInError.textContent = "";
       if (twoFactorCode) twoFactorCode.value = "";
     };
+
+    twoFactorCode?.addEventListener("input", () => {
+      twoFactorCode.value = String(twoFactorCode.value || "").replace(/\D+/g, "").slice(0, 6);
+    });
 
     signInForm.reset();
     if (signInEmail) signInEmail.value = "";
@@ -62,7 +68,7 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ identifier, password })
         });
-        const result = await response.json();
+        const result = await response.json().catch(() => ({}));
         if (!response.ok) {
           throw result;
         }
@@ -100,7 +106,7 @@
         setStoredAuthValue("activeRole", "CUSTOMER");
         window.location.href = "/user/dashboard";
       } catch (err) {
-        if (signInError) signInError.textContent = err?.error?.message || "Login failed. Check your credentials.";
+        if (signInError) signInError.textContent = resolveApiErrorMessage(err, "Login failed. Check your credentials.");
       }
     });
 
@@ -111,7 +117,7 @@
     twoFactorForm?.addEventListener("submit", async (event) => {
       event.preventDefault();
       if (twoFactorError) twoFactorError.textContent = "";
-      const code = twoFactorCode?.value.trim() || "";
+      const code = String(twoFactorCode?.value || "").replace(/\D+/g, "").slice(0, 6);
       if (!pendingChallengeToken || !code) {
         if (twoFactorError) twoFactorError.textContent = "Please enter the verification code sent to your email.";
         return;
@@ -126,7 +132,7 @@
             code
           })
         });
-        const result = await response.json();
+        const result = await response.json().catch(() => ({}));
         if (!response.ok) {
           throw result;
         }
@@ -158,7 +164,7 @@
         setStoredAuthValue("activeRole", "CUSTOMER");
         window.location.href = "/user/dashboard";
       } catch (err) {
-        if (twoFactorError) twoFactorError.textContent = err?.error?.message || "Invalid verification code.";
+        if (twoFactorError) twoFactorError.textContent = resolveApiErrorMessage(err, "Invalid verification code.");
       }
     });
   }

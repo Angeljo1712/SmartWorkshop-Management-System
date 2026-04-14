@@ -86,9 +86,9 @@ const createLoginTwoFactorChallenge = async (userId, ttlMinutes = 10) => {
 const verifyLoginTwoFactorChallenge = async ({ challengeToken, code }) => {
   await ensureTwoFactorTables();
   const normalizedToken = String(challengeToken || "").trim();
-  const normalizedCode = String(code || "").trim();
+  const normalizedCode = String(code || "").replace(/\D+/g, "").slice(0, 6);
 
-  if (!normalizedToken || !normalizedCode) {
+  if (!normalizedToken || normalizedCode.length !== 6) {
     throw new AppError("VALIDATION_ERROR", "challenge_token and code are required", 400);
   }
 
