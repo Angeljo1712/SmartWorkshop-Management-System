@@ -2,6 +2,11 @@ const userPage = document.getElementById("userPage");
 if (userPage) {
   const escapeHtml = window.SWApp?.escapeHtml || ((value) => String(value ?? ""));
   const userLogoutBtn = document.getElementById("userLogoutBtn");
+  const userMobileMenuToggle = document.getElementById("userMobileMenuToggle");
+  const userMobileMenuClose = document.getElementById("userMobileMenuClose");
+  const userMobileMenu = document.getElementById("userMobileMenu");
+  const userMobileMenuBackdrop = document.getElementById("userMobileMenuBackdrop");
+  const userMobileLogoutBtn = document.getElementById("userMobileLogoutBtn");
   const userProfileAvatar = document.getElementById("userProfileAvatar");
   const userProfileName = document.getElementById("userProfileName");
   const userProfileRole = document.getElementById("userProfileRole");
@@ -448,6 +453,27 @@ if (userPage) {
 
   const setActiveUserNav = (view) => {
     userNavLinks.forEach((btn) => btn.classList.toggle("active", btn.dataset.view === view));
+  };
+
+  const closeUserMobileMenu = () => {
+    userMobileMenu?.classList.remove("is-open");
+    userMobileMenuBackdrop?.classList.remove("is-open");
+    document.body.classList.remove("user-mobile-menu-open");
+    userMobileMenu?.setAttribute("aria-hidden", "true");
+    userMobileMenuToggle?.setAttribute("aria-expanded", "false");
+  };
+
+  const openUserMobileMenu = () => {
+    userMobileMenu?.classList.add("is-open");
+    userMobileMenuBackdrop?.classList.add("is-open");
+    document.body.classList.add("user-mobile-menu-open");
+    userMobileMenu?.setAttribute("aria-hidden", "false");
+    userMobileMenuToggle?.setAttribute("aria-expanded", "true");
+  };
+
+  const logoutUser = () => {
+    clearUserSession();
+    window.location.replace("/");
   };
 
   const defaultDashboardVehicle = {
@@ -1959,7 +1985,15 @@ if (userPage) {
       const view = link.dataset.view;
       setActiveUserNav(view);
       setUserView(view);
+      closeUserMobileMenu();
     });
+  });
+
+  userMobileMenuToggle?.addEventListener("click", openUserMobileMenu);
+  userMobileMenuClose?.addEventListener("click", closeUserMobileMenu);
+  userMobileMenuBackdrop?.addEventListener("click", closeUserMobileMenu);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeUserMobileMenu();
   });
 
   const initialUserView = sessionStorage.getItem("userHeaderTargetView") || sessionStorage.getItem("homeUserTargetView");
@@ -2528,10 +2562,8 @@ if (userPage) {
 
   initializeUserTheme();
 
-  userLogoutBtn?.addEventListener("click", () => {
-    clearUserSession();
-    window.location.replace("/");
-  });
+  userLogoutBtn?.addEventListener("click", logoutUser);
+  userMobileLogoutBtn?.addEventListener("click", logoutUser);
 }
 
 
