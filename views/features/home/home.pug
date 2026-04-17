@@ -40,216 +40,223 @@ block content
       .hero-backdrop
         .hero-backdrop-layer.is-active
         .hero-backdrop-layer
-      .body-content
-        .hero-content
-          .hero-left
-            p.eyebrow Trusted mechanics. Transparent pricing.
-            h1 Book verified workshops and track every repair in real time.
-            p.lead
-              | SmartWorkshop connects customers with qualified mechanics, lets you compare quotations, and
-              | keeps everyone aligned on status and completion.
-            .hero-sub
-          .hero-right
-            .hero-card
-              h2 Let’s go!
-              p Start a new service request in under a minute.
-              form.hero-form#vehicleLookupForm
-                label
-                  | Vehicle registration
-                  input#vehicleReg(name="vehicleReg" type="text" placeholder="AB12CDE" autocomplete="off")
-                label
-                  | Postcode
-                  input#postcode(name="postcode" type="text" placeholder="SW1A 1AA" autocomplete="postal-code")
-                p.form-error#vehicleLookupError(role="alert" aria-live="polite")
-                button.primary(type="submit") Get my instant price
+      .page-shell-content
+        .body-content
+          .hero-content
+            .hero-left
+              p.eyebrow Trusted mechanics. Transparent pricing.
+              h1 Book verified workshops and track every repair in real time.
+              p.lead
+                | SmartWorkshop connects customers with qualified mechanics, lets you compare quotations, and
+                | keeps everyone aligned on status and completion.
+              .hero-sub
+            .hero-right
+              .hero-card
+                h2 Let’s go!
+                p Start a new service request in under a minute.
+                form.hero-form#vehicleLookupForm
+                  label
+                    | Vehicle registration
+                    input#vehicleReg(name="vehicleReg" type="text" placeholder="AB12CDE" autocomplete="off")
+                  label
+                    | Postcode
+                    input#postcode(name="postcode" type="text" placeholder="SW1A 1AA" autocomplete="postal-code")
+                  p.form-error#vehicleLookupError(role="alert" aria-live="polite")
+                  button.primary(type="submit") Get my instant price
 
     section.home-how#how
-      .body-content
-        .how-header
-          span.how-kicker How it works
-          h2 Book a trusted mechanic in just a few clicks
-        .how-grid
-          .how-card
-            .how-icon
-              svg(viewBox="0 0 64 64" aria-hidden="true")
-                rect(x="18" y="8" width="28" height="48" rx="6" fill="none" stroke="currentColor" stroke-width="3")
-                path(d="M26 18h12M26 26h12M26 34h12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
-                rect(x="46" y="24" width="12" height="18" rx="4" fill="none" stroke="currentColor" stroke-width="3")
-            h3 Get an instant price quote
-            p Select your car and location, tell us what's wrong, and we'll give you an instant fixed price.
-          .how-card
-            .how-icon
-              svg(viewBox="0 0 64 64" aria-hidden="true")
-                rect(x="14" y="12" width="36" height="30" rx="6" fill="none" stroke="currentColor" stroke-width="3")
-                path(d="M14 22h36" fill="none" stroke="currentColor" stroke-width="3")
-                circle(cx="44" cy="42" r="8" fill="none" stroke="currentColor" stroke-width="3")
-                path(d="M44 38v4l3 3" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
-            h3 Pick a date, time & location
-            p Your mechanic will come to whichever address suits you best, at the date and time of your choice.
-          .how-card
-            .how-icon
-              svg(viewBox="0 0 64 64" aria-hidden="true")
-                rect(x="10" y="14" width="30" height="24" rx="4" fill="none" stroke="currentColor" stroke-width="3")
-                rect(x="40" y="20" width="14" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="3")
-                path(d="M18 46h28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
-            h3 Mechanic comes to you
-            p No need to go to the garage. Once booked, just sit back and relax while the mechanic comes to you.
-        .how-promise
-          .how-promise-image
-            img(src="/images/home2.jpg" alt="Mechanic discussing service with customer")
-          .how-promise-copy
-            span.how-promise-kicker About us
-            h3 Our promise to you
-            p Car repairs shouldn't be a stressful experience. That's why we're here to make maintaining and fixing your vehicle simple and hassle-free.
-            p
-              | Whether you need a clutch replacement, cambelt change, alternator repair, air filter replacement, 
-              | or just an MOT and regular service, our smart quoting system provides an instant, transparent price 
-              | based on trusted industry data.
-            p
-              | Once you're happy with the quote, simply confirm your booking and one of our vetted mechanics will 
-              | come to you and carry out the repair at the agreed price.
-            a.how-promise-cta(href="#services") Find out more
+      .page-shell-content
+        .body-content
+          .how-header
+            span.how-kicker How it works
+            h2 Book a trusted mechanic in just a few clicks
+          .how-grid
+            .how-card
+              .how-icon
+                svg(viewBox="0 0 64 64" aria-hidden="true")
+                  rect(x="18" y="8" width="28" height="48" rx="6" fill="none" stroke="currentColor" stroke-width="3")
+                  path(d="M26 18h12M26 26h12M26 34h12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
+                  rect(x="46" y="24" width="12" height="18" rx="4" fill="none" stroke="currentColor" stroke-width="3")
+              h3 Get an instant price quote
+              p Select your car and location, tell us what's wrong, and we'll give you an instant fixed price.
+            .how-card
+              .how-icon
+                svg(viewBox="0 0 64 64" aria-hidden="true")
+                  rect(x="14" y="12" width="36" height="30" rx="6" fill="none" stroke="currentColor" stroke-width="3")
+                  path(d="M14 22h36" fill="none" stroke="currentColor" stroke-width="3")
+                  circle(cx="44" cy="42" r="8" fill="none" stroke="currentColor" stroke-width="3")
+                  path(d="M44 38v4l3 3" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
+              h3 Pick a date, time & location
+              p Your mechanic will come to whichever address suits you best, at the date and time of your choice.
+            .how-card
+              .how-icon
+                svg(viewBox="0 0 64 64" aria-hidden="true")
+                  rect(x="10" y="14" width="30" height="24" rx="4" fill="none" stroke="currentColor" stroke-width="3")
+                  rect(x="40" y="20" width="14" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="3")
+                  path(d="M18 46h28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
+              h3 Mechanic comes to you
+              p No need to go to the garage. Once booked, just sit back and relax while the mechanic comes to you.
+          .how-promise
+            .how-promise-image
+              img(src="/images/home2.jpg" alt="Mechanic discussing service with customer")
+            .how-promise-copy
+              span.how-promise-kicker About us
+              h3 Our promise to you
+              p Car repairs shouldn't be a stressful experience. That's why we're here to make maintaining and fixing your vehicle simple and hassle-free.
+              p
+                | Whether you need a clutch replacement, cambelt change, alternator repair, air filter replacement, 
+                | or just an MOT and regular service, our smart quoting system provides an instant, transparent price 
+                | based on trusted industry data.
+              p
+                | Once you're happy with the quote, simply confirm your booking and one of our vetted mechanics will 
+                | come to you and carry out the repair at the agreed price.
+              a.how-promise-cta(href="#services") Find out more
 
     section.home-services#services
-      .body-content
-        .services-header
-          span.services-kicker Our Services
-          h2 All the ways we can help
-          p.services-subtitle
-        .services-grid
-          .service-card
-            .service-icon
-              svg(viewBox="0 0 64 64" aria-hidden="true")
-                path(d="M26 10h12l3 8H23l3-8Z" fill="none" stroke="currentColor" stroke-width="3")
-                rect(x="20" y="18" width="24" height="36" rx="6" fill="none" stroke="currentColor" stroke-width="3")
-                circle(cx="32" cy="44" r="5" fill="none" stroke="currentColor" stroke-width="3")
-            h3 Repairs
-          .service-card
-            .service-icon
-              svg(viewBox="0 0 64 64" aria-hidden="true")
-                circle(cx="32" cy="32" r="18" fill="none" stroke="currentColor" stroke-width="3")
-                path(d="M32 16v8M32 40v8M16 32h8M40 32h8" fill="none" stroke="currentColor" stroke-width="3")
-                circle(cx="32" cy="32" r="4" fill="none" stroke="currentColor" stroke-width="3")
-            h3 Diagnostics
-          .service-card
-            .service-icon
-              svg(viewBox="0 0 64 64" aria-hidden="true")
-                path(d="M18 14v36M46 14v36M18 24h28M18 40h28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
-                circle(cx="18" cy="24" r="3" fill="currentColor")
-            h3 Servicing
-          .service-card
-            .service-icon
-              svg(viewBox="0 0 64 64" aria-hidden="true")
-                path(d="M20 12h10l-2 12h8l2-12h6l-3 22H23l-3-22Z" fill="none" stroke="currentColor" stroke-width="3")
-                path(d="M24 34v14M40 34v14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
-            h3 MOT
-          .service-card
-            .service-icon
-              svg(viewBox="0 0 64 64" aria-hidden="true")
-                rect(x="14" y="12" width="36" height="32" rx="6" fill="none" stroke="currentColor" stroke-width="3")
-                path(d="M20 28h24M20 36h18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
-                path(d="M20 48h24" fill="none" stroke="currentColor" stroke-width="3")
-            h3 Tyres
-          .service-card
-            .service-icon
-              svg(viewBox="0 0 64 64" aria-hidden="true")
-                path(d="M20 20h24l4 8v12H16V28l4-8Z" fill="none" stroke="currentColor" stroke-width="3")
-                path(d="M24 40h16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
-                circle(cx="24" cy="46" r="4" fill="none" stroke="currentColor" stroke-width="3")
-                circle(cx="40" cy="46" r="4" fill="none" stroke="currentColor" stroke-width="3")
-            h3 Pre-purchase inspections
+      .page-shell-content
+        .body-content
+          .services-header
+            span.services-kicker Our Services
+            h2 All the ways we can help
+            p.services-subtitle
+          .services-grid
+            .service-card
+              .service-icon
+                svg(viewBox="0 0 64 64" aria-hidden="true")
+                  path(d="M26 10h12l3 8H23l3-8Z" fill="none" stroke="currentColor" stroke-width="3")
+                  rect(x="20" y="18" width="24" height="36" rx="6" fill="none" stroke="currentColor" stroke-width="3")
+                  circle(cx="32" cy="44" r="5" fill="none" stroke="currentColor" stroke-width="3")
+              h3 Repairs
+            .service-card
+              .service-icon
+                svg(viewBox="0 0 64 64" aria-hidden="true")
+                  circle(cx="32" cy="32" r="18" fill="none" stroke="currentColor" stroke-width="3")
+                  path(d="M32 16v8M32 40v8M16 32h8M40 32h8" fill="none" stroke="currentColor" stroke-width="3")
+                  circle(cx="32" cy="32" r="4" fill="none" stroke="currentColor" stroke-width="3")
+              h3 Diagnostics
+            .service-card
+              .service-icon
+                svg(viewBox="0 0 64 64" aria-hidden="true")
+                  path(d="M18 14v36M46 14v36M18 24h28M18 40h28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
+                  circle(cx="18" cy="24" r="3" fill="currentColor")
+              h3 Servicing
+            .service-card
+              .service-icon
+                svg(viewBox="0 0 64 64" aria-hidden="true")
+                  path(d="M20 12h10l-2 12h8l2-12h6l-3 22H23l-3-22Z" fill="none" stroke="currentColor" stroke-width="3")
+                  path(d="M24 34v14M40 34v14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
+              h3 MOT
+            .service-card
+              .service-icon
+                svg(viewBox="0 0 64 64" aria-hidden="true")
+                  rect(x="14" y="12" width="36" height="32" rx="6" fill="none" stroke="currentColor" stroke-width="3")
+                  path(d="M20 28h24M20 36h18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
+                  path(d="M20 48h24" fill="none" stroke="currentColor" stroke-width="3")
+              h3 Tyres
+            .service-card
+              .service-icon
+                svg(viewBox="0 0 64 64" aria-hidden="true")
+                  path(d="M20 20h24l4 8v12H16V28l4-8Z" fill="none" stroke="currentColor" stroke-width="3")
+                  path(d="M24 40h16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round")
+                  circle(cx="24" cy="46" r="4" fill="none" stroke="currentColor" stroke-width="3")
+                  circle(cx="40" cy="46" r="4" fill="none" stroke="currentColor" stroke-width="3")
+              h3 Pre-purchase inspections
 
     section.home-apply#partner
-      .body-content
-        .apply-content
-          .apply-copy
-            h2 Apply to be a mechanic
-            p Join ClickMechanic as a mechanic or garage and accept the work you want. Free to join, with great perks and discounts.
-            a.primary.apply-cta(href="/application") Work with ClickMechanic
-          .apply-image
-            img(src="/images/home1.jpg" alt="Mechanic working on car")
+      .page-shell-content
+        .body-content
+          .apply-content
+            .apply-copy
+              h2 Apply to be a mechanic
+              p Join ClickMechanic as a mechanic or garage and accept the work you want. Free to join, with great perks and discounts.
+              a.primary.apply-cta(href="/application") Work with ClickMechanic
+            .apply-image
+              img(src="/images/home1.jpg" alt="Mechanic working on car")
 
     section.home-review#review
-      .body-content
-        .review-header
-          h2 What our customers are saying
-        .review-grid
-          if homeReviews && homeReviews.length
-            each review in homeReviews
+      .page-shell-content
+        .body-content
+          .review-header
+            h2 What our customers are saying
+          .review-grid
+            if homeReviews && homeReviews.length
+              each review in homeReviews
+                article.review-card
+                  .review-avatar-wrap
+                    if review.avatarUrl
+                      img.review-avatar(src=review.avatarUrl alt=review.customerName)
+                    else
+                      .review-avatar-placeholder= review.initials
+                  h3= review.customerName
+                  span= review.vehicleLabel
+                  p= review.comment
+                  a(href="/auth/login") Read more
+            else
               article.review-card
                 .review-avatar-wrap
-                  if review.avatarUrl
-                    img.review-avatar(src=review.avatarUrl alt=review.customerName)
-                  else
-                    .review-avatar-placeholder= review.initials
-                h3= review.customerName
-                span= review.vehicleLabel
-                p= review.comment
+                  .review-avatar-placeholder SW
+                h3 Verified customer
+                span SMARTWORKSHOP
+                p Real customer reviews will appear here as soon as bookings are completed and rated.
                 a(href="/auth/login") Read more
-          else
-            article.review-card
-              .review-avatar-wrap
-                .review-avatar-placeholder SW
-              h3 Verified customer
-              span SMARTWORKSHOP
-              p Real customer reviews will appear here as soon as bookings are completed and rated.
-              a(href="/auth/login") Read more
 
     section.home-contact#contact
-      .body-content
-        .contact-form-wrap
-          .contact-form-header
-            h2 Contact Us
-            p Get In Touch With Us 24/7
-          if contactStatus === "sent"
-            p.contact-form-alert.is-success Message sent successfully. We'll contact you soon.
-          if contactError === "error"
-            p.contact-form-alert.is-error Please complete required fields correctly.
-          form.contact-form(action="/contact" method="post")
-            .contact-row
-              input(type="text" name="name" placeholder="Name*" required)
-              input(type="email" name="email" placeholder="Email*" required)
-            input(type="text" name="subject" placeholder="Subject")
-            textarea(name="message" rows="6" placeholder="Write Your Message*" required)
-            button(type="submit") Send Message
+      .page-shell-content
+        .body-content
+          .contact-form-wrap
+            .contact-form-header
+              h2 Contact Us
+              p Get In Touch With Us 24/7
+            if contactStatus === "sent"
+              p.contact-form-alert.is-success Message sent successfully. We'll contact you soon.
+            if contactError === "error"
+              p.contact-form-alert.is-error Please complete required fields correctly.
+            form.contact-form(action="/contact" method="post")
+              .contact-row
+                input(type="text" name="name" placeholder="Name*" required)
+                input(type="email" name="email" placeholder="Email*" required)
+              input(type="text" name="subject" placeholder="Subject")
+              textarea(name="message" rows="6" placeholder="Write Your Message*" required)
+              button(type="submit") Send Message
 
     section.home-contact-links
-      .body-content
-        .contact-links-grid
-          .contact-links-brand
-            h3 SmartWorkshop
-            p
-              | At SmartWorkshop, we connect drivers with trusted mechanics and workshops.
-              | Get fast quotes, clear pricing and reliable repairs.
-          .contact-links-useful
-            h4 Useful Links
-            .contact-links-two-cols
-              .contact-col
-                a(href="/") Home
-                a(href="#services") Services
-                a(href="#contact") Contact
-                a(href="#review") Reviews
-                a(href="#") FAQs
-                a(href="#partner") For Mechanics
-              .contact-col
-                a(href="#how") About
-                a(href="#") Our News
-                a(href="#contact") Contact Us
-          .contact-links-contact
-            h4 Contact
-            p
-              strong Address:
-              br
-              | Flat19 Claycorn Court, Esher, United Kingdom
-            a(href="#") Get Directions
-            p
-              strong Phone:
-              br
-              | +447541017233
-            p
-              strong Email:
-              br
-              | zang17@hotmail.com
-              br
-              | zang17univ@outlook.com
+      .page-shell-content
+        .body-content
+          .contact-links-grid
+            .contact-links-brand
+              h3 SmartWorkshop
+              p
+                | At SmartWorkshop, we connect drivers with trusted mechanics and workshops.
+                | Get fast quotes, clear pricing and reliable repairs.
+            .contact-links-useful
+              h4 Useful Links
+              .contact-links-two-cols
+                .contact-col
+                  a(href="/") Home
+                  a(href="#services") Services
+                  a(href="#contact") Contact
+                  a(href="#review") Reviews
+                  a(href="#") FAQs
+                  a(href="#partner") For Mechanics
+                .contact-col
+                  a(href="#how") About
+                  a(href="#") Our News
+                  a(href="#contact") Contact Us
+            .contact-links-contact
+              h4 Contact
+              p
+                strong Address:
+                br
+                | Flat19 Claycorn Court, Esher, United Kingdom
+              a(href="#") Get Directions
+              p
+                strong Phone:
+                br
+                | +447541017233
+              p
+                strong Email:
+                br
+                | zang17@hotmail.com
+                br
+                | zang17univ@outlook.com
   include ../../partials/footer

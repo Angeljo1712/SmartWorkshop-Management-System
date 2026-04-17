@@ -17,6 +17,7 @@ html {
 
 .home-header#top {
   scroll-margin-top: 80px;
+  margin: -20px;
 }
 
 body {

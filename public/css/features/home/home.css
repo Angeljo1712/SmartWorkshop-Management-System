@@ -5,9 +5,18 @@
 }
 
 .home-body .body-content {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.home-main .page-shell-content {
   width: min(1280px, 100%);
   margin: 0 auto;
   padding: 0 48px;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 1fr;
 }
 
 .home-body .main-header {
@@ -15,13 +24,16 @@
   top: 0;
   z-index: 20;
   display: block;
-  padding: 14px 48px;
+  padding: 0;
   background: #ffffff;
   border-bottom: none;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
 
 .home-header .body-content {
+  width: min(1280px, 100%);
+  padding: 14px 48px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -259,8 +271,8 @@
 .home-review,
 .home-contact,
 .home-contact-links {
-  margin-left: -48px;
-  margin-right: -48px;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .home-hero {
@@ -274,7 +286,7 @@
   border: none;
   background: #0b0f15;
   box-shadow: none;
-  margin: 0 -48px;
+  margin: 0;
 }
 
 .home-hero .hero-backdrop {
@@ -1076,8 +1088,8 @@
   .home-review,
   .home-contact,
   .home-contact-links {
-    margin-left: -20px;
-    margin-right: -20px;
+    margin-left: 0;
+    margin-right: 0;
   }
 
   .home-review,
@@ -1366,11 +1378,19 @@
 }
 
 @media (max-width: 980px) {
-  .home-body .main-header {
-    padding: 12px 20px;
+  .home-header .body-content,
+  .home-main .page-shell-content {
+    padding-left: 20px;
+    padding-right: 20px;
   }
+
+  .home-header .body-content {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
   .home-main {
-    padding: 0 20px 60px;
+    padding: 0;
   }
   .home-hero .hero-content {
     grid-template-columns: 1fr;
@@ -1411,12 +1431,6 @@
 }
 
 /* Responsive matrix: 2560 -> 1440 -> 1024 -> 768 -> 425 -> 375 -> 320 */
-@media (max-width: 1440px) {
-  .home-body .body-content {
-    width: min(1200px, 100%);
-  }
-}
-
 @media (max-width: 1200px) {
   .home-header .body-content {
     gap: 10px;
@@ -1440,12 +1454,8 @@
 }
 
 @media (max-width: 1024px) {
-  .home-body .main-header {
-    padding-left: 24px;
-    padding-right: 24px;
-  }
-
-  .home-body .body-content {
+  .home-header .body-content,
+  .home-main .page-shell-content {
     padding-left: 24px;
     padding-right: 24px;
   }
@@ -1649,7 +1659,8 @@
 }
 
 @media (max-width: 425px) {
-  .home-body .body-content {
+  .home-header .body-content,
+  .home-main .page-shell-content {
     padding-left: 12px;
     padding-right: 12px;
   }
