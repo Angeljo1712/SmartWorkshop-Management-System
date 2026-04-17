@@ -2,9 +2,11 @@ const userPage = document.getElementById("userPage");
 if (userPage) {
   const escapeHtml = window.SWApp?.escapeHtml || ((value) => String(value ?? ""));
   const userLogoutBtn = document.getElementById("userLogoutBtn");
+  const userHeaderMobileMenuToggle = document.getElementById("userHeaderMobileMenuToggle");
   const userMobileMenuToggle = document.getElementById("userMobileMenuToggle");
   const userMobileMenuClose = document.getElementById("userMobileMenuClose");
   const userMobileMenu = document.getElementById("userMobileMenu");
+  const userMobileMenuName = document.getElementById("userMobileMenuName");
   const userMobileMenuBackdrop = document.getElementById("userMobileMenuBackdrop");
   const userMobileLogoutBtn = document.getElementById("userMobileLogoutBtn");
   const userProfileAvatar = document.getElementById("userProfileAvatar");
@@ -237,9 +239,11 @@ if (userPage) {
   const setUserHeader = (user) => {
     const joinedName = [user?.name, user?.lastname].filter(Boolean).join(" ").trim();
     const displayName = user?.full_name || joinedName || user?.email || "User";
+    const firstName = String(user?.name || displayName || "User").trim().split(/\s+/)[0];
     const roles = Array.isArray(user?.roles) && user.roles.length ? user.roles : [user?.role_name || "CUSTOMER"];
     const activeRole = resolveActiveRole(roles);
     const initials = getInitials(displayName);
+    if (userMobileMenuName) userMobileMenuName.textContent = firstName || "User";
     setAvatar(userProfileAvatar, initials, user?.avatar_url);
     if (userProfileName) userProfileName.textContent = displayName;
     if (userProfileRole) userProfileRole.textContent = activeRole;
@@ -460,6 +464,7 @@ if (userPage) {
     userMobileMenuBackdrop?.classList.remove("is-open");
     document.body.classList.remove("user-mobile-menu-open");
     userMobileMenu?.setAttribute("aria-hidden", "true");
+    userHeaderMobileMenuToggle?.setAttribute("aria-expanded", "false");
     userMobileMenuToggle?.setAttribute("aria-expanded", "false");
   };
 
@@ -468,6 +473,7 @@ if (userPage) {
     userMobileMenuBackdrop?.classList.add("is-open");
     document.body.classList.add("user-mobile-menu-open");
     userMobileMenu?.setAttribute("aria-hidden", "false");
+    userHeaderMobileMenuToggle?.setAttribute("aria-expanded", "true");
     userMobileMenuToggle?.setAttribute("aria-expanded", "true");
   };
 
@@ -1989,6 +1995,7 @@ if (userPage) {
     });
   });
 
+  userHeaderMobileMenuToggle?.addEventListener("click", openUserMobileMenu);
   userMobileMenuToggle?.addEventListener("click", openUserMobileMenu);
   userMobileMenuClose?.addEventListener("click", closeUserMobileMenu);
   userMobileMenuBackdrop?.addEventListener("click", closeUserMobileMenu);

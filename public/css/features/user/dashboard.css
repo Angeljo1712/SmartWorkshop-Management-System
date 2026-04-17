@@ -7,6 +7,7 @@
 }
 
 .user-mobile-topbar,
+.user-header-menu-toggle,
 .user-mobile-menu,
 .user-mobile-menu-backdrop {
   display: none;
@@ -3643,6 +3644,32 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
 }
 
 @media (max-width: 768px) {
+  body.user-body .main-header.general-header .customer-header-menu {
+    display: none !important;
+  }
+
+  .user-header-menu-toggle {
+    display: inline-grid;
+    gap: 5px;
+    width: 42px;
+    height: 42px;
+    place-content: center;
+    margin-left: auto;
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+    cursor: pointer;
+  }
+
+  .user-header-menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+  }
+
   #userPage.mainLayout {
     grid-template-columns: 1fr;
     gap: 0;
@@ -3662,16 +3689,7 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
   }
 
   .user-mobile-topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    width: 100%;
-    padding: 14px 16px;
-    background: #3e434df7;
-    color: #ffffff;
-    border-radius: 14px 14px 0 0;
-    min-height: 62px;
+    display: none;
   }
 
   .user-mobile-brand {
@@ -3801,7 +3819,7 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
 
   .user-mobile-signout {
     border-top: 1px solid rgba(15, 23, 42, 0.12);
-    color: #2563eb;
+    color: #0f172a;
   }
 
   #userPage .mainSection {

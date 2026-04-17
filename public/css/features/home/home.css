@@ -1440,9 +1440,24 @@
 }
 
 @media (max-width: 1024px) {
+  .home-body .main-header {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
   .home-body .body-content {
     padding-left: 24px;
     padding-right: 24px;
+  }
+
+  .home-how,
+  .home-services,
+  .home-apply,
+  .home-review,
+  .home-contact,
+  .home-contact-links {
+    margin-left: 0;
+    margin-right: 0;
   }
 
   .services-grid {
@@ -1473,7 +1488,7 @@
   .home-review .body-content,
   .home-contact .body-content,
   .home-contact-links .body-content {
-    width: min(980px, 100%);
+    width: 100%;
   }
 
   .home-services {
@@ -1526,7 +1541,7 @@
   }
 
   .home-how .body-content {
-    width: min(980px, 100%);
+    width: 100%;
   }
 
   .home-how .how-header {
