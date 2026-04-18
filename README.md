@@ -52,6 +52,10 @@ Ports used by default:
 
 The staging stack runs against its own MySQL volume, so it stays isolated from local development.
 
+Smoke test plan for this stage: [docs/staging-smoke-test-plan.md](docs/staging-smoke-test-plan.md)
+Smoke test report template: [docs/staging-smoke-test-report-template.md](docs/staging-smoke-test-report-template.md)
+Plain text report template: [docs/staging-smoke-test-report-template.txt](docs/staging-smoke-test-report-template.txt)
+
 The database schema is created automatically from `database/schema.sql`. Seed data is inserted automatically when the app starts.
 
 ## Default Seed Accounts

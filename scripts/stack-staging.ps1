@@ -9,6 +9,7 @@ $ErrorActionPreference = "Stop"
 $Root        = Split-Path -Parent $PSScriptRoot
 $StagingFile = Join-Path $Root "docker-compose.staging.yml"
 $EnvFile     = Join-Path $Root ".env.staging"
+$ProjectName = "smartworkshop-staging"
 
 function Info($msg) { Write-Host "[INFO] $msg" }
 function Ok($msg)   { Write-Host "[ OK ] $msg" }
@@ -32,6 +33,7 @@ function Start-Staging([switch]$Build) {
   Info "Starting staging stack..."
   $cmd = @(
     "docker", "compose",
+    "--project-name", $ProjectName,
     "--env-file", $EnvFile,
     "-f", $StagingFile
   )
@@ -50,7 +52,7 @@ function Stop-Staging {
   Assert-CommandExists "docker" "Docker"
 
   Info "Stopping staging stack..."
-  docker compose --env-file $EnvFile -f $StagingFile stop | Out-Host
+  docker compose --project-name $ProjectName --env-file $EnvFile -f $StagingFile down --remove-orphans | Out-Host
   Ok "Staging stack stopped."
 }
 
