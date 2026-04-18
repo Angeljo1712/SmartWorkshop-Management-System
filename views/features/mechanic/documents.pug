@@ -53,13 +53,16 @@ block content
             .documents-upload-head
               h3 Upload document(s)
             form.documents-upload-form#documentsUploadForm(method="post" action="/mechanic/documents/upload" enctype="multipart/form-data")
-              input(type="hidden" name="email" id="docsUploadEmail")
+              input(type="hidden" name="email" id="docsUploadEmail" value=mechanicEmail || "")
               input#documentsUploadInput(type="file" name="documents" multiple accept=".pdf")
               .documents-upload-list#documentsUploadList
               button.primary(type="submit") Submit
 
           form.documents-next-step(method="post" action="/mechanic/documents/complete")
-            input(type="hidden" name="email" id="docsEmail")
+            input(type="hidden" name="email" id="docsEmail" value=mechanicEmail || "")
             button.primary(type="submit") Next step
 
   include ../../partials/general-footer
+
+block append scripts
+  script(src="/js/features/mechanic/documents.js")

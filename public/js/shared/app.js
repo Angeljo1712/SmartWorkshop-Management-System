@@ -339,7 +339,11 @@ const syncGeneralHeaderSessionMenus = () => document.querySelectorAll(".main-hea
   const session = getStoredUserSession();
   if (!session) return;
   if (session.activeRole === "MECHANIC") {
-    if (!container.querySelector(".mechanic-header-menu")) {
+    const existingMenu = container.querySelector(".mechanic-header-menu");
+    if (existingMenu) {
+      const existingName = existingMenu.querySelector(".mechanic-header-first-name");
+      if (existingName) existingName.textContent = session.firstName.toUpperCase();
+    } else {
       const wrapper = document.createElement("div");
       wrapper.innerHTML = buildMechanicHeaderMenuMarkup();
       const menu = wrapper.firstElementChild;
@@ -396,7 +400,7 @@ const bindMechanicHeaderMenus = () => document.querySelectorAll(".mechanic-heade
   const panel = menu.querySelector(".mechanic-header-menu-panel");
   const nameEl = menu.querySelector(".mechanic-header-first-name");
   const items = menu.querySelectorAll(".mechanic-header-menu-item");
-  if (nameEl && !nameEl.textContent.trim()) {
+  if (nameEl) {
     nameEl.textContent = session.firstName.toUpperCase();
   }
   button?.addEventListener("click", () => {
@@ -447,7 +451,7 @@ const bindCustomerHeaderMenus = () => document.querySelectorAll(".customer-heade
   const panel = menu.querySelector(".customer-header-menu-panel");
   const nameEl = menu.querySelector(".customer-header-first-name");
   const items = menu.querySelectorAll(".customer-header-menu-item");
-  if (nameEl && !nameEl.textContent.trim()) {
+  if (nameEl) {
     nameEl.textContent = session.firstName.toUpperCase();
   }
   button?.addEventListener("click", () => {
@@ -486,7 +490,7 @@ const bindAdminHeaderMenus = () => document.querySelectorAll(".admin-header-menu
   const panel = menu.querySelector(".admin-header-menu-panel");
   const nameEl = menu.querySelector(".admin-header-first-name");
   const items = menu.querySelectorAll(".admin-header-menu-item");
-  if (nameEl && !nameEl.textContent.trim()) {
+  if (nameEl) {
     nameEl.textContent = session.firstName.toUpperCase();
   }
   button?.addEventListener("click", () => {
@@ -600,6 +604,7 @@ if (homeHeader && homeHero) {
   const homeMobileMenu = document.getElementById("homeMobileMenu");
   const homeMobileSessionItems = document.getElementById("homeMobileSessionItems");
   const homeMobileMenuName = document.getElementById("homeMobileMenuName");
+  const homeFlashMessage = document.getElementById("homeFlashMessage");
   const applyHeaderState = (isHero) => {
     homeHeader.classList.toggle("is-hero", isHero);
     homeHeader.classList.toggle("is-light", !isHero);
@@ -711,6 +716,19 @@ if (homeHeader && homeHero) {
       homeSessionLink.textContent = session.firstName;
       homeSessionLink.href = resolveDashboardHref(session.activeRole);
     }
+  };
+
+  const syncHomeFlashMessage = () => {
+    if (!homeFlashMessage) return;
+    const message = sessionStorage.getItem("homeFlashMessage");
+    if (!message) {
+      homeFlashMessage.textContent = "";
+      homeFlashMessage.classList.add("is-hidden");
+      return;
+    }
+    homeFlashMessage.textContent = message;
+    homeFlashMessage.classList.remove("is-hidden");
+    sessionStorage.removeItem("homeFlashMessage");
   };
 
   if (homeSessionMenuBtn && !homeSessionMenuBtn.dataset.bound) {
@@ -829,6 +847,7 @@ if (homeHeader && homeHero) {
   });
 
   syncHomeSessionControls();
+  syncHomeFlashMessage();
   sessionRefreshPromise.then(syncHomeSessionControls);
 
   if (homeSessionMenu) {
@@ -1133,7 +1152,7 @@ if (mechanicLeadForm) {
   });
 }
 
-const applicationForm = document.querySelector(".applicationForm-layout2");
+const applicationForm = document.querySelector(".application-form-layout-2");
 if (applicationForm) {
   const websiteRadios = applicationForm.querySelectorAll('input[name="has_website"]');
   const websiteField = applicationForm.querySelector(".business-website-field");

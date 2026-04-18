@@ -1,5 +1,9 @@
 const { pool } = require("../../../shared/config/pool");
 const { AppError } = require("../../../shared/utils/appError");
+const {
+  sendMechanicAccountReadyEmail,
+  sendMechanicSetupCodeEmail
+} = require("../../../shared/infrastructure/email/email.service");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
@@ -170,7 +174,7 @@ const ensureMechanicProfileOnboardingColumns = async () => {
      FROM information_schema.COLUMNS
      WHERE TABLE_SCHEMA = DATABASE()
        AND TABLE_NAME = 'mechanic_profiles'
-       AND COLUMN_NAME IN ('application_type', 'lead_postcode', 'application_status', 'account_status', 'password_set_at')`
+       AND COLUMN_NAME IN ('application_type', 'lead_postcode', 'application_status', 'account_status', 'password_set_at', 'travel_radius_miles', 'availability_pref', 'referral_source')`
   );
 
   const existing = new Set(rows.map((row) => row.COLUMN_NAME));
@@ -204,6 +208,41 @@ const ensureMechanicProfileOnboardingColumns = async () => {
       "ALTER TABLE mechanic_profiles ADD COLUMN password_set_at DATETIME NULL AFTER account_status"
     );
   }
+
+  if (!existing.has("travel_radius_miles")) {
+    await pool.query(
+      "ALTER TABLE mechanic_profiles ADD COLUMN travel_radius_miles INT NULL AFTER account_status"
+    );
+  }
+
+  if (!existing.has("availability_pref")) {
+    await pool.query(
+      "ALTER TABLE mechanic_profiles ADD COLUMN availability_pref VARCHAR(64) NULL AFTER travel_radius_miles"
+    );
+  }
+
+  if (!existing.has("referral_source")) {
+    await pool.query(
+      "ALTER TABLE mechanic_profiles ADD COLUMN referral_source VARCHAR(255) NULL AFTER availability_pref"
+    );
+  }
+};
+
+const ensureMechanicPasswordSetupTables = async () => {
+  await pool.query(
+    `CREATE TABLE IF NOT EXISTS mechanic_password_setup_challenges (
+      id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+      user_id BIGINT UNSIGNED NOT NULL UNIQUE,
+      challenge_token CHAR(64) NOT NULL UNIQUE,
+      code_hash TEXT NOT NULL,
+      password_hash TEXT NOT NULL,
+      expires_at DATETIME NOT NULL,
+      consumed_at DATETIME NULL,
+      created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      KEY idx_mpsc_expires (expires_at),
+      CONSTRAINT fk_mpsc_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB`
+  );
 };
 
 const saveApplication = async (payload) => {
@@ -266,7 +305,7 @@ const saveApplication = async (payload) => {
       has_trade_insurance, has_public_liability, vat_registered, business_type, application_type, lead_postcode,
       application_status, account_status,
       travel_radius_miles, availability_pref, referral_source)
-     VALUES (?, '-', '-', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     VALUES (?, '-', '-', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON DUPLICATE KEY UPDATE
        years_experience = VALUES(years_experience),
        work_history = VALUES(work_history),
@@ -449,6 +488,146 @@ const setPasswordByEmail = async ({ email, password }) => {
      WHERE user_id = ?`,
     ["password_created", "active", user.id]
   );
+  try {
+    await sendMechanicAccountReadyEmail({
+      to: normalizedEmail,
+      homeUrl: `${process.env.APP_BASE_URL || "http://localhost:3000"}/`
+    });
+  } catch (error) {
+    console.warn("Unable to send mechanic account ready email", error);
+  }
+  return { userId: user.id };
+};
+
+const startPasswordSetupByEmail = async ({ email, password, confirm }) => {
+  const normalizedEmail = String(email || "").trim().toLowerCase();
+  if (!normalizedEmail || !password || !confirm) {
+    throw new AppError("VALIDATION_ERROR", "email, password and confirm are required", 400);
+  }
+  if (password !== confirm) {
+    throw new AppError("VALIDATION_ERROR", "Passwords do not match.", 400);
+  }
+  if (password.length < 10) {
+    throw new AppError("VALIDATION_ERROR", "Password must be at least 10 characters", 400);
+  }
+  if (!/[A-Z]/.test(password)) {
+    throw new AppError("VALIDATION_ERROR", "Password must include an uppercase letter", 400);
+  }
+  if (!/[0-9]/.test(password)) {
+    throw new AppError("VALIDATION_ERROR", "Password must include a number", 400);
+  }
+  if (!/[^A-Za-z0-9]/.test(password)) {
+    throw new AppError("VALIDATION_ERROR", "Password must include a symbol", 400);
+  }
+
+  const [rows] = await pool.query("SELECT id FROM users WHERE email = ?", [normalizedEmail]);
+  const user = rows[0];
+  if (!user) {
+    throw new AppError("NOT_FOUND", "User not found", 404);
+  }
+
+  await ensureMechanicPasswordSetupTables();
+  const challengeToken = crypto.randomBytes(32).toString("hex");
+  const code = String(crypto.randomInt(0, 1_000_000)).padStart(6, "0");
+  const codeHash = await bcrypt.hash(code, 10);
+  const passwordHash = await bcrypt.hash(password, 10);
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+
+  await pool.query(
+    `INSERT INTO mechanic_password_setup_challenges
+     (user_id, challenge_token, code_hash, password_hash, expires_at)
+     VALUES (?, ?, ?, ?, ?)
+     ON DUPLICATE KEY UPDATE
+       challenge_token = VALUES(challenge_token),
+       code_hash = VALUES(code_hash),
+       password_hash = VALUES(password_hash),
+       expires_at = VALUES(expires_at),
+       consumed_at = NULL`,
+    [user.id, challengeToken, codeHash, passwordHash, expiresAt]
+  );
+
+  try {
+    await sendMechanicSetupCodeEmail({
+      to: normalizedEmail,
+      code,
+      expiresMinutes: 10
+    });
+  } catch (error) {
+    await pool.query("DELETE FROM mechanic_password_setup_challenges WHERE user_id = ?", [user.id]);
+    throw error;
+  }
+
+  return {
+    challengeToken,
+    expiresAt
+  };
+};
+
+const confirmPasswordSetupByEmail = async ({ email, challengeToken, code }) => {
+  const normalizedEmail = String(email || "").trim().toLowerCase();
+  const normalizedToken = String(challengeToken || "").trim();
+  const normalizedCode = String(code || "").replace(/\D+/g, "").slice(0, 6);
+
+  if (!normalizedEmail || !normalizedToken || normalizedCode.length !== 6) {
+    throw new AppError("VALIDATION_ERROR", "email, challenge_token and code are required", 400);
+  }
+
+  const [rows] = await pool.query("SELECT id FROM users WHERE email = ?", [normalizedEmail]);
+  const user = rows[0];
+  if (!user) {
+    throw new AppError("NOT_FOUND", "User not found", 404);
+  }
+
+  await ensureMechanicPasswordSetupTables();
+  await ensureMechanicProfileOnboardingColumns();
+
+  const [challengeRows] = await pool.query(
+    `SELECT id, code_hash, password_hash, expires_at, consumed_at
+     FROM mechanic_password_setup_challenges
+     WHERE user_id = ? AND challenge_token = ?
+     LIMIT 1`,
+    [user.id, normalizedToken]
+  );
+  const challenge = challengeRows[0];
+  if (!challenge) {
+    throw new AppError("INVALID_SETUP_CHALLENGE", "Invalid or expired verification code", 400);
+  }
+  if (challenge.consumed_at) {
+    throw new AppError("INVALID_SETUP_CHALLENGE", "This verification code has already been used", 400);
+  }
+  if (new Date(challenge.expires_at).getTime() < Date.now()) {
+    await pool.query("DELETE FROM mechanic_password_setup_challenges WHERE id = ?", [challenge.id]);
+    throw new AppError("INVALID_SETUP_CHALLENGE", "Verification code expired", 400);
+  }
+
+  const matches = await bcrypt.compare(normalizedCode, challenge.code_hash);
+  if (!matches) {
+    throw new AppError("INVALID_SETUP_CODE", "Invalid verification code", 400);
+  }
+
+  await pool.query("UPDATE users SET password_hash = ?, status = 'active' WHERE id = ?", [
+    challenge.password_hash,
+    user.id
+  ]);
+  await pool.query(
+    `UPDATE mechanic_profiles
+     SET application_status = ?, account_status = ?, password_set_at = NOW()
+     WHERE user_id = ?`,
+    ["password_created", "active", user.id]
+  );
+  await pool.query("UPDATE mechanic_password_setup_challenges SET consumed_at = NOW() WHERE id = ?", [
+    challenge.id
+  ]);
+
+  try {
+    await sendMechanicAccountReadyEmail({
+      to: normalizedEmail,
+      homeUrl: `${process.env.APP_BASE_URL || "http://localhost:3000"}/`
+    });
+  } catch (error) {
+    console.warn("Unable to send mechanic account ready email", error);
+  }
+
   return { userId: user.id };
 };
 
@@ -501,5 +680,7 @@ module.exports = {
   saveUploadedDocumentsByEmail,
   listMechanicDocumentsByUserId,
   completeApplication,
-  setPasswordByEmail
+  setPasswordByEmail,
+  startPasswordSetupByEmail,
+  confirmPasswordSetupByEmail
 };

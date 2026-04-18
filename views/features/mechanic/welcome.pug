@@ -35,6 +35,7 @@ block content
           p.subtle Finish creating your mechanic account by setting a password.
           form#setMechanicPasswordForm
             input(type="text" name="username" id="mechanicPasswordEmail" autocomplete="username" hidden)
+            input(type="text" name="challenge_token" id="mechanicPasswordChallengeToken" hidden)
             .field-grid
               label
                 span New password
@@ -42,8 +43,13 @@ block content
               label
                 span Confirm password
                 input(type="password" name="confirm" id="mechanicPasswordConfirm" placeholder="••••••••" autocomplete="new-password")
+            .mechanic-verification-step.is-hidden#mechanicVerificationStep
+              label
+                span Verification code
+                input(type="text" name="code" id="mechanicPasswordCode" placeholder="123456" inputmode="numeric" autocomplete="one-time-code")
+              button.primary.ghost-link#mechanicResendCodeBtn(type="button") Resend code
             p.form-error#mechanicPasswordError(role="alert" aria-live="polite")
-            button.primary(type="submit") Save password
+            button.primary#mechanicPasswordSubmit(type="submit") Save password
 
   include ../../partials/general-footer
 

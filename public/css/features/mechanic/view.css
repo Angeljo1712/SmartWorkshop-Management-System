@@ -95,15 +95,16 @@
 }
 
 .welcome-layout1 .ghost-link {
-  background: #0b5fff;
-  border-color: #0b5fff;
+  background: #3e434df7;
+  border-color: #3e434df7;
   color: #ffffff;
+  justify-self: center;
 }
 
 .welcome-layout1 .ghost-link:hover,
 .welcome-layout1 .ghost-link:focus-visible {
-  background: #0847c7;
-  border-color: #0847c7;
+  background: #4a5160;
+  border-color: #4a5160;
   color: #ffffff;
 }
 
@@ -129,6 +130,20 @@
   gap: 16px;
 }
 
+.mechanic-verification-step {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+}
+
+.mechanic-verification-step .primary {
+  justify-self: center;
+}
+
+.mechanic-verification-step.is-hidden {
+  display: none;
+}
+
 .welcome-password-card label {
   display: grid;
   gap: 8px;
@@ -145,7 +160,8 @@
 }
 
 .welcome-password-card .primary {
-  justify-self: start;
+  justify-self: center;
+  width: fit-content;
 }
 
 .mechanic-view-tabs {

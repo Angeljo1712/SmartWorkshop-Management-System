@@ -10,6 +10,24 @@
   padding: 0;
 }
 
+.home-flash-message {
+  width: min(1280px, calc(100% - 96px));
+  margin: 18px auto 0;
+  padding: 14px 18px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  background: #dbeafe;
+  color: #0f172a;
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  font-size: 0.98rem;
+  line-height: 1.5;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
+}
+
+.home-flash-message.is-hidden {
+  display: none;
+}
+
 .home-main .page-shell-content {
   width: min(1280px, 100%);
   margin: 0 auto;
@@ -1605,6 +1623,10 @@
     padding-right: 24px;
   }
 
+  .home-flash-message {
+    width: calc(100% - 48px);
+  }
+
   .home-how,
   .home-services,
   .home-apply,
@@ -1829,6 +1851,11 @@
   .home-main .page-shell-content {
     padding-left: 12px;
     padding-right: 12px;
+  }
+
+  .home-flash-message {
+    width: calc(100% - 24px);
+    font-size: 0.94rem;
   }
 
   .home-hero .hero-content {

@@ -233,6 +233,13 @@ block content
             .work-help
               h3 Need help?
               p Tell us what you need and compare fixed-price quotes before you book.
+      .service-info-modal.is-hidden#serviceInfoModal(hidden)
+        .service-info-modal__backdrop(data-action="close-service-info-modal")
+        .service-info-modal__dialog(role="dialog" aria-modal="true" aria-labelledby="serviceInfoModalTitle")
+          button.service-info-modal__close(type="button" aria-label="Close service info" data-action="close-service-info-modal") ×
+          h2#serviceInfoModalTitle Service details
+          p.service-info-modal__lead#serviceInfoModalLead
+          .service-info-modal__body#serviceInfoModalBody
   include ../../partials/general-footer
 
 append scripts

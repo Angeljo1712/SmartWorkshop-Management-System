@@ -664,6 +664,79 @@
   text-decoration: underline;
 }
 
+.work-more-info {
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  text-decoration: underline;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+.payment-card-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  margin: -2px 0 0;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.payment-card-brand__label {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.payment-card-brand strong {
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.payment-field-hint {
+  display: block;
+  margin-top: 6px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.payment-field-hint.is-error {
+  color: #fca5a5;
+}
+
+.payment-card-brand[data-brand="visa"] {
+  background: rgba(37, 99, 235, 0.18);
+  border-color: rgba(37, 99, 235, 0.42);
+}
+
+.payment-card-brand[data-brand="mastercard"] {
+  background: rgba(220, 38, 38, 0.18);
+  border-color: rgba(220, 38, 38, 0.42);
+}
+
+.payment-card-brand[data-brand="american-express"] {
+  background: rgba(14, 165, 233, 0.18);
+  border-color: rgba(14, 165, 233, 0.42);
+}
+
+.payment-card-brand[data-brand="discover"] {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(245, 158, 11, 0.42);
+}
+
+.payment-card-brand[data-brand="unknown"] {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
 .work-actions button.primary,
 .work-actions button.ghost {
   padding: 6px 12px;
@@ -1511,6 +1584,75 @@
 #detailsEmailExistsMessage {
   margin-top: -4px;
   color: #fca5a5;
+}
+
+.service-info-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.service-info-modal[hidden],
+.service-info-modal.is-hidden {
+  display: none;
+}
+
+.service-info-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(7, 11, 18, 0.72);
+  backdrop-filter: blur(4px);
+}
+
+.service-info-modal__dialog {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 560px);
+  max-height: min(80vh, 760px);
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+  border-radius: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.92);
+  background: #151b24;
+  color: #ffffff;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.38);
+}
+
+.service-info-modal__close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.service-info-modal__dialog h2 {
+  margin: 0 32px 0 0;
+  font-size: 1.75rem;
+  color: #ffffff;
+}
+
+.service-info-modal__lead {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.service-info-modal__body {
+  display: grid;
+  gap: 12px;
+  overflow: auto;
+  padding-right: 6px;
+  color: #ffffff;
+  line-height: 1.6;
+  white-space: pre-line;
 }
 
 .help-text {

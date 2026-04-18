@@ -561,9 +561,9 @@ body.user-body #userSettingsView .user-settings-contact-list {
 
 body.user-body #userSettingsView .user-settings-contact-item {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 8px;
-  align-items: start;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
   min-height: 44px;
 }
 
@@ -576,7 +576,8 @@ body.user-body #userSettingsView .user-settings-contact-copy {
 
 body.user-body #userSettingsView .user-settings-contact-action {
   display: grid;
-  justify-items: center;
+  justify-items: end;
+  align-self: center;
 }
 
 body.user-body #userSettingsView .user-settings-contact-label {
@@ -660,6 +661,11 @@ body.user-body.user-light-mode #userSettingsView select {
 body.user-body #userSettingsView .user-settings-profile .secondary,
 body.user-body #userSettingsView .user-settings-row > .secondary {
   width: 104px;
+}
+
+body.user-body #userSettingsView .user-settings-contact-action .secondary {
+  width: 104px;
+  justify-self: end;
 }
 
 body.user-body #userSettingsSecurity {
@@ -973,22 +979,6 @@ body.user-body #userSettingsEditSave.ghost:hover {
   background: #4f627b;
   border-color: #4f627b;
   color: #ffffff;
-}
-
-body.user-body #userBookingsView .settings-header h2,
-body.user-body #userBookingsView .settings-header p,
-body.user-body #userBookingsView .user-booking-column h4,
-body.user-body #userBookingsView .user-booking-photos h4,
-body.user-body #userBookingsView .user-booking-reference {
-  color: #eaf0fb;
-  font-weight: 700;
-}
-
-body.user-body #userBookingsView .user-booking-column p,
-body.user-body #userBookingsView .user-booking-column li,
-body.user-body #userBookingsView .user-booking-column a,
-body.user-body #userBookingsView .user-booking-empty {
-  color: #eaf0fb;
 }
 
 .user-bookings-list {
@@ -2582,10 +2572,12 @@ body.user-body #userDashboardView .user-verify-title {
 
 body.user-body #userDashboardView .user-panel-head h2 {
   text-align: left;
+  color: #ffffff;
 }
 
 body.user-body #userDashboardView .user-panel-head p {
   text-align: right;
+  color: #ffffff;
 }
 
 #userDashboardView .user-welcome-corner {
@@ -4134,6 +4126,7 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
   }
 
   body.user-body #userSettingsView .user-settings-contact-item {
+    grid-template-columns: 1fr;
     justify-items: stretch;
     gap: 8px;
   }
@@ -4150,6 +4143,7 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
 
   body.user-body #userSettingsView .user-settings-contact-action .secondary {
     width: min(220px, 100%);
+    justify-self: center;
   }
 
   body.user-body #userSettingsView .user-settings-contact-label {
@@ -4165,11 +4159,6 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
     white-space: normal;
     overflow: visible;
     text-overflow: clip;
-  }
-
-  body.user-body #userSettingsView .user-settings-contact-item .secondary {
-    width: min(220px, 100%);
-    justify-self: center;
   }
 
   body.user-body #userSettingsView .user-settings-contact-action {
@@ -4252,7 +4241,7 @@ body.user-body.user-light-mode #userPage :is(
   #userSettingsView
 ) :is(h1, h2, h3, h4, p, span, strong, label, th, td, li, small) {
   color: #0f172a;
-  background: rgba(34, 43, 58, 0.96);
+  background: transparent;
 }
 
 body.user-body.user-light-mode #userSettingsSecurity :is(
@@ -4327,19 +4316,8 @@ body.user-body.user-light-mode #userDashboardView .user-car-summary :is(
 
 body.user-body.user-light-mode #userDashboardView .user-car-meta span,
 body.user-body.user-light-mode #userDashboardView .user-car-meta span i {
-  color: #0f172a !important;
-}
-
-body.user-body.user-light-mode #userDashboardView .user-section-title {
-  color: #ffffff !important;
-}
-
-body.user-body.user-light-mode #userDashboardView .car-panel .user-section-title {
-  color: #ffffff !important;
-}
-
-body.user-body.user-light-mode #userDashboardView .user-panel-head h2,
-body.user-body.user-light-mode #userDashboardView .user-panel-head p {
+  background: #5a6f90;
+  border-color: #5a6f90;
   color: #ffffff !important;
 }
 
@@ -4355,7 +4333,7 @@ body.user-body.user-light-mode #userAccountView .user-account-layout > .settings
 
 body.user-body.user-light-mode #userSettingsView .settings-divider,
 body.user-body.user-light-mode #userSettingsView .user-settings-layout > .settings-divider {
-  background: #000000 !important;
+  background: rgba(71, 85, 105, 0.28) !important;
 }
 
 body.user-body.user-light-mode #userAccountView .account-section--status,
@@ -4366,23 +4344,6 @@ body.user-body.user-light-mode #userAccountView .account-section--integration {
 body.user-body.user-light-mode #userAccountView .settings-row {
   border-bottom-color: #000000 !important;
 }
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

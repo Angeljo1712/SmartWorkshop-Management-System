@@ -111,6 +111,12 @@
   gap: 10px;
 }
 
+.documents-body .documents-upload-empty {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.95rem;
+}
+
 .documents-body .documents-upload-item {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto;

@@ -66,13 +66,18 @@ block content
               label
                 | Card number
                 input#paymentCardNumber(name="paymentCardNumber" type="text" placeholder="e.g. 1234 1234 1234 1234" autocomplete="cc-number" inputmode="numeric")
+              div.payment-card-brand#paymentCardBrand(data-brand="unknown")
+                span.payment-card-brand__label Detected card type
+                strong#paymentCardBrandValue Unknown
               .field-grid
                 label
                   | Expiry date
                   input#paymentExpiry(name="paymentExpiry" type="text" placeholder="MM / YY" autocomplete="cc-exp")
+                  small.payment-field-hint#paymentExpiryHint Enter a future expiry date
                 label
                   | Security code
                   input#paymentCvc(name="paymentCvc" type="text" placeholder="CVC" autocomplete="cc-csc" inputmode="numeric")
+                  small.payment-field-hint#paymentCvcHint Enter the 3 digits on the card
               p.form-error#paymentFormError(role="alert" aria-live="polite")
               button.primary.details-submit(type="button") Complete booking
   include ../../partials/general-footer

@@ -254,7 +254,8 @@ router.get("/mechanic/:id/preferences", (req, res) => {
 router.get("/mechanic/documents", (req, res) => {
   const uploadStatus = req.query.upload === "success" ? "success" : req.query.upload === "error" ? "error" : null;
   const uploadMessage = typeof req.query.message === "string" ? req.query.message : null;
-  res.render("features/mechanic/documents", { mechanicId: null, uploadStatus, uploadMessage });
+  const mechanicEmail = typeof req.query.email === "string" ? req.query.email.trim().toLowerCase() : "";
+  res.render("features/mechanic/documents", { mechanicId: null, uploadStatus, uploadMessage, mechanicEmail });
 });
 
 router.post("/mechanic/documents/upload", uploadMechanicDocuments.array("documents", 10), (req, res) => {
@@ -285,13 +286,25 @@ router.get("/mechanic/welcome/:id", (req, res, next) => {
 });
 
 router.post("/mechanic/set-password", (req, res, next) => {
-  const { email, password, confirm } = req.body || {};
-  if (password !== confirm) {
-    return res.status(400).json({ error: { code: "VALIDATION_ERROR", message: "Passwords do not match." } });
+  const { email, password, confirm, challenge_token, code } = req.body || {};
+
+  if (code && challenge_token) {
+    mechanicService
+      .confirmPasswordSetupByEmail({ email, challengeToken: challenge_token, code })
+      .then(() => res.json({ message: "Password updated." }))
+      .catch(next);
+    return;
   }
+
   mechanicService
-    .setPasswordByEmail({ email, password })
-    .then(() => res.json({ message: "Password updated." }))
+    .startPasswordSetupByEmail({ email, password, confirm })
+    .then(({ challengeToken }) =>
+      res.json({
+        message: "Verification code sent.",
+        challenge_token: challengeToken,
+        requires_code: true
+      })
+    )
     .catch(next);
 });
 
@@ -314,9 +327,15 @@ router.get("/application/join", (_req, res) => {
 });
 
 router.post("/application/join", (req, res, next) => {
+  const email = String(req.body?.email || "").trim().toLowerCase();
   mechanicService
     .saveApplication(req.body)
-    .then(() => res.redirect(302, "/mechanic/documents"))
+    .then(() => {
+      const target = email
+        ? `/mechanic/documents?email=${encodeURIComponent(email)}`
+        : "/mechanic/documents";
+      res.redirect(302, target);
+    })
     .catch(next);
 });
 

@@ -15,6 +15,14 @@ const getSessionId = () => {
 let bookingDraftWork = { items: [], total: 0 };
 let bookingCatalogServices = [];
 let bookingCatalogSearchTerm = "";
+const serviceInfoModal = document.getElementById("serviceInfoModal");
+const serviceInfoModalTitle = document.getElementById("serviceInfoModalTitle");
+const serviceInfoModalLead = document.getElementById("serviceInfoModalLead");
+const serviceInfoModalBody = document.getElementById("serviceInfoModalBody");
+const paymentCardBrand = document.getElementById("paymentCardBrand");
+const paymentCardBrandValue = document.getElementById("paymentCardBrandValue");
+const paymentExpiryHint = document.getElementById("paymentExpiryHint");
+const paymentCvcHint = document.getElementById("paymentCvcHint");
 
 const currentBookingType = new URLSearchParams(window.location.search).get("type");
 if (currentBookingType) {
@@ -84,6 +92,86 @@ const formatDecimalHours = (minutes) => {
   return `${(value / 60).toFixed(1)} hours`;
 };
 
+const detectCardBrand = (cardNumber) => {
+  const digits = String(cardNumber || "").replace(/\D+/g, "");
+  if (!digits) return "Unknown";
+  if (digits.startsWith("4")) return "Visa";
+  if (digits.startsWith("5")) return "Mastercard";
+  if (digits.startsWith("1")) return "American Express";
+  return "Unknown";
+};
+
+const getExpectedCvcLength = (cardNumberInputElement) => {
+  return detectCardBrand(cardNumberInputElement?.value) === "American Express" ? 4 : 3;
+};
+
+const updatePaymentCardBrand = (cardNumberInputElement) => {
+  if (!paymentCardBrand || !paymentCardBrandValue || !cardNumberInputElement) return;
+  const brand = detectCardBrand(cardNumberInputElement.value);
+  paymentCardBrand.dataset.brand = brand.toLowerCase().replace(/\s+/g, "-");
+  paymentCardBrandValue.textContent = brand;
+};
+
+const syncPaymentCvcConstraints = (cardNumberInputElement) => {
+  const expectedLength = getExpectedCvcLength(cardNumberInputElement);
+  if (!cvcInput) return expectedLength;
+
+  cvcInput.maxLength = String(expectedLength);
+  const digitsOnly = String(cvcInput.value || "").replace(/\D+/g, "").slice(0, expectedLength);
+  cvcInput.value = digitsOnly;
+
+  if (paymentCvcHint && !paymentCvcHint.classList.contains("is-error")) {
+    paymentCvcHint.textContent = expectedLength === 4
+      ? "Enter 4 digits on the card"
+      : "Enter the 3 digits on the card";
+  }
+
+  return expectedLength;
+};
+
+const isExpiryInPast = (expiry) => {
+  const match = String(expiry || "").trim().match(/^(\d{2})\s*\/\s*(\d{2})$/);
+  if (!match) return false;
+  const month = Number(match[1]);
+  const year = Number(match[2]);
+  if (!Number.isInteger(month) || month < 1 || month > 12) return false;
+
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1;
+  const currentYear = now.getFullYear() % 100;
+  if (year < currentYear) return true;
+  if (year > currentYear) return false;
+  return month < currentMonth;
+};
+
+const setFieldHint = (element, text, isError = false) => {
+  if (!element) return;
+  element.textContent = text;
+  element.classList.toggle("is-error", Boolean(isError));
+};
+
+const closeServiceInfoModal = () => {
+  if (!serviceInfoModal) return;
+  serviceInfoModal.classList.add("is-hidden");
+  serviceInfoModal.hidden = true;
+};
+
+const openServiceInfoModal = (service) => {
+  if (!serviceInfoModal || !serviceInfoModalTitle || !serviceInfoModalLead || !serviceInfoModalBody) return;
+  const name = String(service?.name || "Service details").trim();
+  const description = String(service?.description || "").trim();
+  const labourTime = formatLabourTime(service?.base_labour_minutes);
+
+  serviceInfoModalTitle.textContent = name;
+  serviceInfoModalLead.textContent = labourTime
+    ? `Estimated labour time: ${labourTime.replace(" labour time", "")}`
+    : "";
+  serviceInfoModalBody.textContent = description || "No description is available for this service.";
+
+  serviceInfoModal.hidden = false;
+  serviceInfoModal.classList.remove("is-hidden");
+};
+
 const syncCompareButtons = () => {
   const buttons = document.querySelectorAll(".compare-service-toggle");
   if (!buttons.length) return;
@@ -134,6 +222,19 @@ const removeServiceFromDraft = async (serviceId) => {
 };
 
 document.addEventListener("click", (event) => {
+  const serviceInfoTrigger = event.target.closest("[data-service-more-info]");
+  if (serviceInfoTrigger) {
+    const service = bookingCatalogServices.find((entry) => String(entry.id) === String(serviceInfoTrigger.dataset.serviceMoreInfo));
+    openServiceInfoModal(service);
+    return;
+  }
+
+  const serviceInfoClose = event.target.closest('[data-action="close-service-info-modal"]');
+  if (serviceInfoClose) {
+    closeServiceInfoModal();
+    return;
+  }
+
   const summaryRemoveBtn = event.target.closest("button.summary-remove");
   if (summaryRemoveBtn && summaryRemoveBtn.dataset.serviceId) {
     removeServiceFromDraft(summaryRemoveBtn.dataset.serviceId).catch(() => {});
@@ -159,6 +260,12 @@ document.addEventListener("click", (event) => {
   const removeBtn = event.target.closest("button.service-remove");
   if (removeBtn && removeBtn.dataset.serviceId) {
     removeServiceFromDraft(removeBtn.dataset.serviceId).catch(() => {});
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeServiceInfoModal();
   }
 });
 
@@ -215,9 +322,11 @@ const renderServices = (category, services) => {
     const actions = document.createElement("div");
     actions.className = "work-actions";
 
-    const more = document.createElement("a");
-    more.href = "#";
+    const more = document.createElement("button");
+    more.type = "button";
+    more.className = "work-more-info";
     more.textContent = "More info";
+    more.dataset.serviceMoreInfo = String(service.id);
     actions.appendChild(more);
 
     const toggle = document.createElement("button");
@@ -410,19 +519,26 @@ if (workSummary) {
   const cvcInput = document.getElementById("paymentCvc");
   const paymentFormError = document.getElementById("paymentFormError");
 
-  const detectCardBrand = (cardNumber) => {
-    const digits = String(cardNumber || "").replace(/\D+/g, "");
-    if (/^4\d{12}(\d{3})?$/.test(digits)) return "Visa";
-    if (/^3[47]\d{13}$/.test(digits)) return "American Express";
-    if (/^(5[1-5]\d{14}|2(2[2-9]\d{13}|[3-6]\d{14}|7([01]\d{13}|20\d{12})))$/.test(digits)) return "Mastercard";
-    return "Card";
-  };
-
   cardNumberInput?.addEventListener("input", () => {
     const digitsOnly = String(cardNumberInput.value || "").replace(/\D+/g, "").slice(0, 16);
     const grouped = digitsOnly.replace(/(.{4})/g, "$1 ").trim();
     cardNumberInput.value = grouped;
+    updatePaymentCardBrand(cardNumberInput);
+    syncPaymentCvcConstraints(cardNumberInput);
   });
+
+  cardNumberInput?.addEventListener("keyup", () => {
+    updatePaymentCardBrand(cardNumberInput);
+    syncPaymentCvcConstraints(cardNumberInput);
+  });
+  cardNumberInput?.addEventListener("change", () => {
+    updatePaymentCardBrand(cardNumberInput);
+    syncPaymentCvcConstraints(cardNumberInput);
+  });
+  cardNumberInput?.addEventListener("paste", () => window.setTimeout(() => {
+    updatePaymentCardBrand(cardNumberInput);
+    syncPaymentCvcConstraints(cardNumberInput);
+  }, 0));
 
   cardNameInput?.addEventListener("input", () => {
     const lettersOnly = String(cardNameInput.value || "").replace(/[^A-Za-z\s]/g, "");
@@ -438,9 +554,46 @@ if (workSummary) {
     expiryInput.value = `${digitsOnly.slice(0, 2)} / ${digitsOnly.slice(2)}`;
   });
 
-  cvcInput?.addEventListener("input", () => {
-    cvcInput.value = String(cvcInput.value || "").replace(/\D+/g, "").slice(0, 4);
+  expiryInput?.addEventListener("blur", () => {
+    const value = String(expiryInput.value || "").trim();
+    if (!value) {
+      setFieldHint(paymentExpiryHint, "Enter a future expiry date", false);
+      return;
+    }
+    if (!/^\d{2}\s*\/\s*\d{2}$/.test(value)) {
+      setFieldHint(paymentExpiryHint, "Use MM / YY format", true);
+      return;
+    }
+    if (isExpiryInPast(value)) {
+      setFieldHint(paymentExpiryHint, "Expiry date cannot be in the past", true);
+      return;
+    }
+    setFieldHint(paymentExpiryHint, "Looks good", false);
   });
+
+  cvcInput?.addEventListener("input", () => {
+    const expectedLength = getExpectedCvcLength(cardNumberInput);
+    cvcInput.value = String(cvcInput.value || "").replace(/\D+/g, "").slice(0, expectedLength);
+  });
+
+  cvcInput?.addEventListener("blur", () => {
+    const value = String(cvcInput.value || "").trim();
+    const expectedLength = getExpectedCvcLength(cardNumberInput);
+    if (!value) {
+      setFieldHint(paymentCvcHint, expectedLength === 4 ? "Enter 4 digits on the card" : "Enter the 3 digits on the card", false);
+      return;
+    }
+    if (!new RegExp(`^\\d{${expectedLength}}$`).test(value)) {
+      setFieldHint(paymentCvcHint, expectedLength === 4 ? "American Express uses 4 digits" : "CVC must be 3 digits", true);
+      return;
+    }
+    setFieldHint(paymentCvcHint, "Looks good", false);
+  });
+
+  updatePaymentCardBrand(cardNumberInput);
+  syncPaymentCvcConstraints(cardNumberInput);
+  setFieldHint(paymentExpiryHint, "Enter a future expiry date", false);
+  setFieldHint(paymentCvcHint, "Enter the 3 digits on the card", false);
 
   completeBtn?.addEventListener("click", async () => {
     const cardName = String(cardNameInput?.value || "").trim();
@@ -468,6 +621,7 @@ if (workSummary) {
 
     if (!/^\d{2}\s*\/\s*\d{2}$/.test(expiry)) {
       if (paymentFormError) paymentFormError.textContent = "Please enter expiry date as MM / YY.";
+      setFieldHint(paymentExpiryHint, "Use MM / YY format", true);
       return;
     }
 
@@ -478,8 +632,18 @@ if (workSummary) {
       return;
     }
 
-    if (!/^\d{3,4}$/.test(cvc)) {
-      if (paymentFormError) paymentFormError.textContent = "Please enter a 3 or 4 digit security code.";
+    if (isExpiryInPast(expiry)) {
+      if (paymentFormError) paymentFormError.textContent = "Please enter a card expiry date that is not in the past.";
+      setFieldHint(paymentExpiryHint, "Expiry date cannot be in the past", true);
+      return;
+    }
+
+    const expectedCvcLength = detectCardBrand(cardNumber) === "American Express" ? 4 : 3;
+    if (!new RegExp(`^\\d{${expectedCvcLength}}$`).test(cvc)) {
+      if (paymentFormError) paymentFormError.textContent = expectedCvcLength === 4
+        ? "Please enter a 4 digit security code."
+        : "Please enter a 3 digit security code.";
+      setFieldHint(paymentCvcHint, expectedCvcLength === 4 ? "American Express uses 4 digits" : "CVC must be 3 digits", true);
       return;
     }
 

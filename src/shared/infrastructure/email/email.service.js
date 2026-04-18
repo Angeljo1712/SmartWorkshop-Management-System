@@ -139,6 +139,76 @@ const sendLoginTwoFactorEmail = async ({ to, code, expiresMinutes = 10 }) => {
   await transporter.sendMail({ from, to, subject, text, html });
 };
 
+const sendMechanicAccountReadyEmail = async ({ to, homeUrl }) => {
+  const from = env.smtp.from || "no-reply@smartworkshop.local";
+  const subject = "Your SmartWorkshop mechanic account is ready";
+  const safeHomeUrl = homeUrl || `${env.appBaseUrl || "http://localhost:3000"}/`;
+  const text = [
+    "Your SmartWorkshop mechanic account has been activated.",
+    "You can return to the home page to continue with your setup and start using the platform.",
+    `Home: ${safeHomeUrl}`
+  ].join("\n");
+  console.info("[email] sending mechanic account ready email", { to, subject, smtpHost: env.smtp.host });
+  const html = renderEmailLayout({
+    title: "Account Ready",
+    intro: `
+      <p style="margin:0 0 14px;">Hello,</p>
+      <p style="margin:0 0 14px;">
+        Your SmartWorkshop mechanic account is now ready. Your password has been set and you can continue from the home page.
+      </p>
+      <p style="margin:0;">
+        We sent this message as confirmation so you can verify the account setup was completed successfully.
+      </p>
+    `,
+    ctaLabel: "Go to Home",
+    ctaUrl: safeHomeUrl,
+    footerNote: `
+      <p style="margin:0;">
+        If you did not expect this email, please contact support before using the account.
+      </p>
+    `
+  });
+
+  const info = await transporter.sendMail({ from, to, subject, text, html });
+  console.info("[email] mechanic account ready email sent", {
+    to,
+    subject,
+    messageId: info?.messageId,
+    response: info?.response
+  });
+};
+
+const sendMechanicSetupCodeEmail = async ({ to, code, expiresMinutes = 10 }) => {
+  const from = env.smtp.from || "no-reply@smartworkshop.local";
+  const subject = "Your SmartWorkshop setup verification code";
+  const text = `Your SmartWorkshop verification code is ${code}. It expires in ${expiresMinutes} minutes.`;
+  console.info("[email] sending mechanic setup code", { to, subject, smtpHost: env.smtp.host });
+  const html = `
+    <div style="margin:0; padding:32px; background:#232326; color:#e9eef6; font-family:Arial, Helvetica, sans-serif;">
+      <div style="max-width:680px; margin:0 auto; background:#1b1d22; border:1px solid #3b4049; border-radius:12px; padding:32px;">
+        <h1 style="margin:0 0 16px; font-size:28px; line-height:1.2;">Verify your SmartWorkshop account</h1>
+        <p style="margin:0 0 24px; font-size:16px; line-height:1.6; color:#cfd6e2;">
+          Use the code below to confirm your password setup. It expires in ${expiresMinutes} minutes.
+        </p>
+        <div style="display:inline-block; min-width:180px; padding:18px 24px; border-radius:10px; background:#0f172a; border:1px solid #334155; font-size:34px; font-weight:700; letter-spacing:0.2em; text-align:center;">
+          ${code}
+        </div>
+        <p style="margin:24px 0 0; font-size:14px; line-height:1.6; color:#9ca3af;">
+          If you did not request this setup step, you can ignore this email.
+        </p>
+      </div>
+    </div>
+  `;
+
+  const info = await transporter.sendMail({ from, to, subject, text, html });
+  console.info("[email] mechanic setup code sent", {
+    to,
+    subject,
+    messageId: info?.messageId,
+    response: info?.response
+  });
+};
+
 const sendAccountChangeNotification = async ({ to, title, changes = [] }) => {
   const from = env.smtp.from || "no-reply@smartworkshop.local";
   const safeChanges = Array.isArray(changes) ? changes.filter(Boolean) : [];
@@ -231,5 +301,12 @@ const sendAccountChangeNotification = async ({ to, title, changes = [] }) => {
   await transporter.sendMail({ from, to, subject: subjectByType, text, html });
 };
 
-module.exports = { sendEmailChangeConfirmation, sendPasswordResetEmail, sendLoginTwoFactorEmail, sendAccountChangeNotification };
+module.exports = {
+  sendEmailChangeConfirmation,
+  sendPasswordResetEmail,
+  sendLoginTwoFactorEmail,
+  sendMechanicAccountReadyEmail,
+  sendMechanicSetupCodeEmail,
+  sendAccountChangeNotification
+};
 

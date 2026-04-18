@@ -29,6 +29,29 @@ This starts:
 - App (API + UI) on `localhost:3000`
 - phpMyAdmin on `localhost:8081`
 
+## Staging Stack
+
+Use a separate staging environment to validate the app before the final domain cutover.
+
+1. Copy `.env.staging.example` to `.env.staging`.
+2. Set staging-specific values:
+   - staging database name and credentials
+   - staging SMTP credentials
+   - staging base URL
+3. Start the staging stack:
+
+```powershell
+./scripts/stack-staging.ps1 start
+```
+
+Ports used by default:
+
+- App: `http://localhost:3001`
+- MySQL: `localhost:3307`
+- phpMyAdmin: `http://localhost:8082`
+
+The staging stack runs against its own MySQL volume, so it stays isolated from local development.
+
 The database schema is created automatically from `database/schema.sql`. Seed data is inserted automatically when the app starts.
 
 ## Default Seed Accounts
