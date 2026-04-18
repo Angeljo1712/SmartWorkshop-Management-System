@@ -780,3 +780,72 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 425px) {
+  .auth-shell--forgot,
+  .auth-shell--reset {
+    justify-content: center;
+    align-items: center;
+    padding: 18px 12px 24px;
+    gap: 10px;
+  }
+
+  .auth-mini-brand--forgot {
+    width: 100%;
+    max-width: 100%;
+    gap: 10px;
+    font-size: clamp(1.6rem, 8vw, 2.4rem);
+    margin-bottom: 0;
+    justify-content: center;
+  }
+
+  .auth-mini-brand--forgot .logo {
+    width: 56px;
+    height: 56px;
+    font-size: 1.25rem;
+  }
+
+  .auth-panel--forgot,
+  .auth-panel--reset {
+    width: 100%;
+    max-width: 100%;
+    min-height: auto;
+    margin: 0 auto;
+  }
+
+  .auth-content--forgot,
+  .auth-content--reset {
+    max-width: 100%;
+    padding: 24px 16px 20px;
+    text-align: center;
+    align-items: center;
+  }
+
+  .auth-content--forgot h1,
+  .auth-content--reset h1 {
+    white-space: normal;
+    font-size: clamp(1.35rem, 6vw, 1.8rem);
+  }
+
+  .auth-content--forgot .auth-sub,
+  .auth-content--reset .auth-sub {
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+  }
+
+  .auth-content--forgot .auth-form,
+  .auth-content--reset .auth-form {
+    max-width: 100%;
+  }
+
+  .auth-content--forgot .auth-submit,
+  .auth-content--reset .auth-submit {
+    width: 100%;
+  }
+
+  .auth-content--forgot .auth-footnote,
+  .auth-content--reset .auth-footnote {
+    margin-top: 10px;
+    font-size: 0.9rem;
+  }
+}
