@@ -560,9 +560,10 @@ body.user-body #userSettingsView .user-settings-contact-list {
 }
 
 body.user-body #userSettingsView .user-settings-contact-item {
-  display: flex;
-  gap: 12px;
-  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
   min-height: 44px;
 }
 
@@ -571,6 +572,11 @@ body.user-body #userSettingsView .user-settings-contact-copy {
   align-items: center;
   gap: 12px;
   min-width: 0;
+}
+
+body.user-body #userSettingsView .user-settings-contact-action {
+  display: grid;
+  justify-items: center;
 }
 
 body.user-body #userSettingsView .user-settings-contact-label {
@@ -600,22 +606,6 @@ body.user-body #userSettingsView .user-settings-contact-copy p {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-body.user-body #userSettingsView .user-settings-contact-actions {
-  display: grid;
-  gap: 14px;
-  align-content: start;
-  justify-items: end;
-  width: 104px;
-  align-self: start;
-  justify-self: end;
-  padding-top: 50px;
-}
-
-body.user-body #userSettingsView .user-settings-contact-actions .secondary {
-  min-height: 44px;
-  width: 100%;
 }
 
 body.user-body.user-light-mode #userPage .mainSection {
@@ -3901,8 +3891,13 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
     line-height: 1.1;
   }
 
+  #userPage .mainSection > .user-dashboard-hero {
+    border-radius: 0;
+  }
+
   body.user-body .page-shell-content {
     padding-left: 16px;
+    padding-right: 16px;
   }
 
   #userPage .rail-base {
@@ -3972,9 +3967,229 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
     font-size: 1rem;
   }
 
+  #userPage .mainSection > .user-dashboard-hero {
+    border-radius: 0;
+  }
+
+  #userPage .user-dashboard-hero {
+    padding: 10px;
+  }
+
+  #userPage .user-dashboard-hero .settings-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  #userPage .user-dashboard-hero .settings-header .settings-header-aside {
+    justify-content: flex-end;
+    text-align: right;
+    width: auto;
+    min-width: 0;
+    max-width: calc(100% - 116px);
+  }
+
+  #userPage .user-dashboard-hero-copy {
+    width: auto;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  #userPage .user-dashboard-hero .settings-header-copy h3 {
+    font-size: 1rem;
+  }
+
+  #userPage .user-dashboard-hero .settings-header-copy p {
+    font-size: 0.92rem;
+  }
+
+  #userPage .user-dashboard-hero .settings-header .settings-header-aside h2,
+  #userPage .user-dashboard-hero #userDashboardHeroName,
+  #userPage .user-dashboard-hero #userDashboardHeroRole {
+    white-space: nowrap;
+  }
+
+  #userPage .user-dashboard-hero .admin-profile-avatar {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+  }
+
+  #userPage .user-dashboard-hero .settings-header-copy {
+    min-width: 0;
+  }
+
+  #userPage .user-dashboard-layout {
+    gap: 10px;
+  }
+
+  .user-panel {
+    gap: 10px;
+  }
+
+  .car-panel {
+    padding: 12px;
+  }
+
+  .dashboard-section--add-form,
+  #userDashboardView .car-panel > .dashboard-section--quote .user-quick-quote label {
+    width: 100%;
+  }
+
+  #userDashboardView .car-panel > .dashboard-section--add-form .user-add-vehicle input,
+  #userDashboardView .car-panel > .dashboard-section--quote .user-quick-quote input,
+  #userDashboardView .car-panel > .dashboard-section--quote .user-quick-quote select {
+    width: 100%;
+  }
+
   .user-quick-quote .primary,
   .user-add-vehicle .primary {
     width: 100%;
+  }
+
+  body.user-body #userAccountView .user-account-layout {
+    padding: 12px;
+    gap: 16px;
+  }
+
+  body.user-body #userAccountView .settings-avatar-lg {
+    width: 96px;
+    height: 96px;
+  }
+
+  body.user-body #userAccountView .account-section h4 {
+    font-size: 1rem;
+  }
+
+  body.user-body #userAccountView .account-section p {
+    font-size: 0.92rem;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  body.user-body #userAccountView .account-section--contacts > div {
+    display: grid;
+    gap: 8px;
+  }
+
+  body.user-body #userAccountView .account-field-label {
+    width: auto;
+    padding-right: 8px;
+    margin-right: 8px;
+  }
+
+  body.user-body #userSettingsView .user-settings-layout {
+    padding: 12px;
+    gap: 16px;
+  }
+
+  body.user-body #userSettingsView .user-settings-panel-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  body.user-body #userSettingsPanelTitle {
+    font-size: 1.6rem;
+  }
+
+  body.user-body #userSettingsView .user-settings-tabs {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  body.user-body #userSettingsView .user-settings-tab-link {
+    width: 100%;
+    text-align: center;
+  }
+
+  body.user-body #userSettingsView .user-settings-photo-row {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 12px;
+  }
+
+  body.user-body #userSettingsView .settings-avatar-lg {
+    width: 120px;
+    height: 120px;
+  }
+
+  body.user-body #userSettingsView .user-settings-photo-row .ghost,
+  body.user-body #userSettingsView .user-settings-profile .secondary,
+  body.user-body #userSettingsView .user-settings-row > .secondary {
+    width: min(220px, 100%);
+    justify-self: center;
+  }
+
+  body.user-body #userSettingsView .user-settings-profile,
+  body.user-body #userSettingsView .user-settings-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-list {
+    gap: 12px;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-item {
+    justify-items: stretch;
+    gap: 8px;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-copy {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-action {
+    justify-items: start;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-action .secondary {
+    width: min(220px, 100%);
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-label {
+    width: auto;
+    flex: none;
+    margin-right: 0;
+    padding-right: 0;
+    border-right: 0;
+    white-space: normal;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-copy p {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-item .secondary {
+    width: min(220px, 100%);
+    justify-self: center;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-action {
+    justify-items: start;
+  }
+
+  body.user-body #userSettingsView .account-section h4,
+  body.user-body #userSettingsView .settings-meta h4,
+  body.user-body #userSettingsView .user-settings-profile h4,
+  body.user-body #userSettingsView .user-settings-row h4 {
+    font-size: 1rem;
+  }
+
+  body.user-body #userSettingsView .account-section p,
+  body.user-body #userSettingsView .settings-meta p,
+  body.user-body #userSettingsView .user-settings-profile p,
+  body.user-body #userSettingsView .user-settings-row p,
+  body.user-body #userSettingsView .user-settings-contact-copy p {
+    font-size: 0.92rem;
+    line-height: 1.35;
   }
 }
 
