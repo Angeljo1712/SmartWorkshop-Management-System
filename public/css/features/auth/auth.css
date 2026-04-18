@@ -239,9 +239,10 @@
 }
 
 .auth-vehicle-form input {
-  background: #0b0f15;
+  background: #ffffff;
   border: 1px solid var(--surface-light-12);
-  color: #f8fafc;
+  color: #111827;
+  caret-color: #111827;
   border-radius: 12px;
   padding: 10px 12px;
   font-size: 14px;
@@ -327,7 +328,7 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 12px;
-  background: linear-gradient(90deg, #7b28ff, #1f7aec);
+  background: linear-gradient(90deg, #3e434df7);
   border: none;
 }
 
@@ -455,7 +456,7 @@
 }
 
 .auth-aside {
-  background: linear-gradient(140deg, #4b63ff, #2d3ac9);
+  background: linear-gradient(140deg, #3e434df7, #3e434df7);
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -530,6 +531,14 @@
   font-weight: 600;
   background: transparent;
   cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.auth-ghost:hover,
+.auth-ghost:focus-visible {
+  background: #ffffff;
+  color: #111827;
+  border-color: #ffffff;
 }
 
 .auth-secondary {
@@ -933,6 +942,50 @@
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
+  }
+
+  .role-layout {
+    width: min(720px, 100%);
+    gap: 16px;
+  }
+
+  .auth-mini-brand {
+    gap: 10px;
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+
+  .auth-mini-brand .logo {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    font-size: 1.2rem;
+  }
+
+  .role-picker-panel {
+    padding: 22px 18px;
+    border-radius: 16px;
+  }
+
+  .role-picker-panel h1 {
+    font-size: clamp(1.7rem, 4.8vw, 2.2rem);
+  }
+
+  .role-picker-sub {
+    margin-bottom: 18px;
+    font-size: 0.96rem;
+  }
+
+  .role-picker-card {
+    padding: 18px 16px;
+    border-radius: 12px;
+  }
+
+  .role-picker-card h2 {
+    font-size: 1.2rem;
+  }
+
+  .role-picker-card p {
+    font-size: 0.92rem;
   }
 }
 
