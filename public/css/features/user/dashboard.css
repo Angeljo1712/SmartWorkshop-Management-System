@@ -3671,6 +3671,20 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
     background: currentColor;
   }
 
+  body.user-body .main-header.general-header {
+    padding: 12px 16px;
+    background: #11151d;
+    border-radius: 0;
+  }
+
+  body.user-body .main-header.general-header .body-content {
+    width: 100%;
+  }
+
+  body.user-body .main-header.general-header .main-brand span {
+    display: block;
+  }
+
   #userPage.mainLayout {
     grid-template-columns: 1fr;
     gap: 0;
@@ -3857,8 +3871,34 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
     width: 100%;
   }
 
-  body.user-body .main-header.general-header .main-brand span {
-    display: none;
+  body.user-body .main-header.general-header .main-brand {
+    gap: 10px;
+    align-items: center;
+  }
+
+  body.user-body .main-header.general-header .main-brand > span.main-logo {
+    display: inline-grid;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    flex: 0 0 40px;
+  }
+
+  body.user-body .main-header.general-header .main-brand > div {
+    display: grid;
+    gap: 0;
+  }
+
+  body.user-body .main-header.general-header .main-brand > div strong {
+    font-size: 1rem;
+    line-height: 1.1;
+  }
+
+  body.user-body .main-header.general-header .main-brand > div span {
+    display: block;
+    font-size: 0.86rem;
+    line-height: 1.1;
   }
 
   body.user-body .page-shell-content {

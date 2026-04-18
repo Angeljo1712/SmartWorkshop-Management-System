@@ -3150,10 +3150,108 @@ body.admin-body #adminSettingsNotifications .notifications-check {
   transition: max-height 0.22s ease, opacity 0.18s ease, transform 0.18s ease;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 1024px) {
   #adminPage.mainLayout {
-      grid-template-columns: 1fr;
-    }
+    grid-template-columns: 70px minmax(0, 1fr);
+  }
+
+  #adminPage .rail-base {
+    width: 70px;
+    min-width: 70px;
+    min-height: auto;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  #adminPage .mainRail {
+    width: 70px;
+    padding: 8px 10px 12px;
+    justify-items: start;
+    align-content: start;
+  }
+
+  #adminPage .mainRail:hover {
+    width: 70px;
+  }
+
+  #adminPage .mainRail .rail-brand {
+    width: 100%;
+    justify-self: start;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    justify-items: start;
+    align-items: start;
+  }
+
+  #adminPage .mainRail .rail-nav {
+    position: static;
+    top: auto;
+    grid-auto-flow: row;
+    grid-auto-columns: unset;
+    grid-template-columns: 1fr;
+    align-content: start;
+    gap: 10px;
+    overflow: visible;
+    padding: 8px 0 0;
+    justify-items: center;
+  }
+
+  #adminPage .mainRail .rail-item {
+    width: 100%;
+    height: 48px;
+    min-height: 48px;
+    border-radius: 12px;
+  }
+
+  #adminPage .mainRail .rail-footer {
+    display: grid;
+  }
+
+  #adminPage .mainRail:hover .rail-item {
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    min-height: 48px;
+    height: 48px;
+    padding: 0;
+  }
+
+  #adminPage .mainRail:hover .rail-item.active {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    border-radius: 12px;
+  }
+
+  #adminPage .mainRail:hover .rail-text {
+    width: 0;
+    opacity: 0;
+  }
+
+  #adminPage .mainRail:hover .rail-footer {
+    justify-items: center;
+  }
+
+  #adminPage .mainRail:hover .admin-signout {
+    width: 100%;
+    min-width: 100%;
+    color: transparent;
+    font-size: 0;
+    padding: 0;
+    justify-content: center;
+  }
+
+  #adminPage .mainRail:hover .admin-signout::before {
+    inset: 0;
+    width: auto;
+  }
+
+  #adminPage .mainSection {
+    border-left: 2px solid #ffffff;
+    border-radius: 0 0 14px 14px;
+  }
 
   #adminPage .admin-dashboard-metrics,
   #adminPage .admin-dashboard-queues {
@@ -3165,17 +3263,6 @@ body.admin-body #adminSettingsNotifications .notifications-check {
     grid-template-columns: 1fr;
   }
 
-
-
-  #adminPage .rail-base {
-    min-height: auto;
-    grid-template-rows: auto auto auto;
-  }
-
-  #adminPage .rail-nav {
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(120px, 1fr);
-  }
 
   #adminPage .admin-table-actions {
     flex-wrap: wrap;
