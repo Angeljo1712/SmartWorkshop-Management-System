@@ -33,10 +33,32 @@ block content
           button.mechanic-header-menu-item(type="button" data-target-page="preferences") Service schedules
           button.mechanic-header-menu-item(type="button" data-target-view="settings") Account settings
           button.mechanic-header-menu-item(type="button" data-action="logout") Logout
+      button.mechanic-header-menu-toggle#mechanicHeaderMobileMenuToggle(type="button" aria-label="Open menu" aria-expanded="false")
+        span
+        span
+        span
 
   main.primari-shell
     .page-shell-content
       section.mainLayout.mechanic-layout#mechanicPage
+        .mechanic-mobile-menu-backdrop#mechanicMobileMenuBackdrop
+        aside.mechanic-mobile-menu#mechanicMobileMenu(aria-hidden="true")
+          .mechanic-mobile-menu-head
+            span.mechanic-mobile-name#mechanicMobileMenuName ANGEL
+          nav.mechanic-mobile-menu-nav
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="dashboard") Dashboard
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="account") Account
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="booking-information") Booking information
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="resolution") Resolution center
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="payments") Payments
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-target-view="profile") Profile
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-target-view="edit-profile") Edit Profile
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="certifications") Certification
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="tax") Tax information
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="documents") Document
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="types") Type of work covered
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="settings") Settings
+          button.mechanic-mobile-signout#mechanicMobileLogoutBtn(type="button") Logout
         aside.mainRail.rail-base
           .rail-brand
             span.logo SW

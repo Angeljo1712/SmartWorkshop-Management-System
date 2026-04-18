@@ -302,6 +302,109 @@
   width: 18px;
 }
 
+@media (max-width: 1024px) {
+  #mechanicPage.mechanic-layout {
+    grid-template-columns: 70px minmax(0, 1fr);
+  }
+
+  #mechanicPage .rail-base {
+    width: 70px;
+    min-width: 70px;
+    min-height: auto;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  #mechanicPage .mainRail {
+    width: 70px;
+    min-width: 70px;
+    padding: 8px 10px 12px;
+    justify-items: start;
+    align-content: start;
+    overflow: hidden;
+  }
+
+  #mechanicPage .mainRail:hover {
+    width: 70px;
+  }
+
+  #mechanicPage .mainRail .rail-brand {
+    width: 100%;
+    justify-self: start;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    justify-items: start;
+    align-items: start;
+  }
+
+  #mechanicPage .mainRail .rail-nav {
+    position: static;
+    top: auto;
+    grid-auto-flow: row;
+    grid-auto-columns: unset;
+    grid-template-columns: 1fr;
+    align-content: start;
+    gap: 10px;
+    overflow: visible;
+    padding: 8px 0 0;
+    justify-items: center;
+  }
+
+  #mechanicPage .mainRail .rail-item {
+    width: 100%;
+    height: 48px;
+    min-height: 48px;
+    border-radius: 12px;
+  }
+
+  #mechanicPage .mainRail .rail-footer {
+    display: grid;
+  }
+
+  #mechanicPage .mainRail:hover {
+    width: 70px;
+  }
+
+  #mechanicPage .mainRail:hover .rail-item,
+  #mechanicPage .mainRail:hover .admin-signout {
+    width: 100%;
+    max-width: 100%;
+    min-height: 48px;
+    height: 48px;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    border-radius: 12px;
+  }
+
+  #mechanicPage .mainRail:hover .rail-item.active {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    border-radius: 12px;
+  }
+
+  #mechanicPage .mainRail:hover .rail-text {
+    width: 0;
+    opacity: 0;
+  }
+
+  #mechanicPage .mainRail:hover .rail-footer {
+    justify-items: center;
+  }
+
+  #mechanicPage .mainRail:hover .admin-signout {
+    color: transparent;
+    font-size: 0;
+  }
+
+  #mechanicPage .mainRail:hover .admin-signout::before {
+    inset: 0;
+    width: auto;
+  }
+}
+
 body.mechanic-body .mechanic-content {
   position: static;
   z-index: auto;
@@ -2212,6 +2315,139 @@ body.mechanic-body .mechanic-resolution-booking .primary {
 }
 
 @media (max-width: 768px) {
+  body.mechanic-body .main-header.general-header .mechanic-header-menu {
+    display: none !important;
+  }
+
+  body.mechanic-body .mechanic-header-menu-toggle {
+    display: inline-grid !important;
+    gap: 5px;
+    width: 42px;
+    height: 42px;
+    place-content: center;
+    margin-left: auto;
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+    cursor: pointer;
+  }
+
+  body.mechanic-body .mechanic-header-menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+  }
+
+  body.mechanic-body.mechanic-mobile-menu-open {
+    overflow: hidden;
+  }
+
+  body.mechanic-body .page-shell-content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  #mechanicPage .rail-base {
+    display: none !important;
+  }
+
+  body.mechanic-body .mechanic-mobile-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    display: block !important;
+    opacity: 0;
+    pointer-events: none;
+    background: rgba(7, 12, 21, 0.55);
+    z-index: 80;
+    transition: opacity 0.2s ease;
+  }
+
+  body.mechanic-body .mechanic-mobile-menu-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  body.mechanic-body .mechanic-mobile-menu {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 90;
+    display: grid !important;
+    grid-template-rows: auto 1fr auto;
+    width: min(82vw, 360px);
+    padding: 18px;
+    background: #ffffff;
+    color: #0f172a;
+    transform: translateX(-104%);
+    transition: transform 0.22s ease;
+    box-shadow: 24px 0 60px rgba(0, 0, 0, 0.24);
+  }
+
+  body.mechanic-body .mechanic-mobile-menu.is-open {
+    transform: translateX(0);
+  }
+
+  body.mechanic-body .mechanic-mobile-menu-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 22px;
+  }
+
+  body.mechanic-body .mechanic-mobile-name {
+    display: inline-flex;
+    align-items: center;
+    color: #0f172a;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 1rem;
+  }
+
+  body.mechanic-body .mechanic-mobile-menu-nav {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+  }
+
+  body.mechanic-body .mechanic-mobile-menu-link,
+  body.mechanic-body .mechanic-mobile-signout {
+    appearance: none;
+    border: 0;
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 14px;
+    background: transparent;
+    color: #0f172a;
+    text-align: left;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  body.mechanic-body .mechanic-mobile-menu-link.active {
+    background: #111827;
+    color: #ffffff;
+    border-radius: 8px;
+  }
+
+  body.mechanic-body .mechanic-mobile-signout {
+    border-top: 1px solid rgba(15, 23, 42, 0.12);
+    color: #0f172a;
+  }
+
+  #mechanicPage.mechanic-layout {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  #mechanicPage .mainSection {
+    border-left: 2px solid #ffffff;
+    border-radius: 0 0 14px 14px;
+  }
+
   body.mechanic-body .mechanic-overview-metrics,
   body.mechanic-body .mechanic-overview-booking-list {
     grid-template-columns: 1fr;
@@ -2223,14 +2459,15 @@ body.mechanic-body .mechanic-resolution-booking .primary {
   }
 
   #mechanicPage .mechanic-dashboard-hero .settings-header {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
 
   #mechanicPage .mechanic-dashboard-hero .settings-header .settings-header-aside {
-    width: 100%;
-    justify-content: flex-start;
-    text-align: left;
+    width: auto;
+    justify-content: flex-end;
+    text-align: right;
   }
 
   .mechanic-settings-layout {
@@ -2307,6 +2544,12 @@ body.mechanic-body .mechanic-header-menu-item {
 
 body.mechanic-body .mechanic-header-menu-item:hover {
   background: rgba(15, 23, 42, 0.06);
+}
+
+body.mechanic-body .mechanic-header-menu-toggle,
+body.mechanic-body .mechanic-mobile-menu,
+body.mechanic-body .mechanic-mobile-menu-backdrop {
+  display: none;
 }
 
 body.mechanic-body .mechanic-bookings-empty {

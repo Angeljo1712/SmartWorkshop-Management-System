@@ -2,6 +2,12 @@ const mechanicDashboard = document.getElementById("mechanicPage") || document.qu
 if (mechanicDashboard) {
   const mechanicBackBtn = document.getElementById("mechanicBackBtn");
   const mechanicLogoutBtn = document.getElementById("mechanicLogoutBtn");
+  const mechanicHeaderMobileMenuToggle = document.getElementById("mechanicHeaderMobileMenuToggle");
+  const mechanicMobileMenu = document.getElementById("mechanicMobileMenu");
+  const mechanicMobileMenuName = document.getElementById("mechanicMobileMenuName");
+  const mechanicMobileMenuBackdrop = document.getElementById("mechanicMobileMenuBackdrop");
+  const mechanicMobileLogoutBtn = document.getElementById("mechanicMobileLogoutBtn");
+  const mechanicMobileMenuLinks = mechanicDashboard.querySelectorAll(".mechanic-mobile-menu [data-view]");
   const mechanicNavLinks = mechanicDashboard.querySelectorAll(".rail-nav .rail-item[data-view]");
   const mechanicDashboardView = document.getElementById("mechanicDashboardView");
   const mechanicBookingInformationView = document.getElementById("mechanicBookingInformationView");
@@ -561,6 +567,31 @@ if (mechanicDashboard) {
     clearStoredSessionData();
     window.location.replace("/");
   });
+
+  const closeMechanicMobileMenu = () => {
+    document.body.classList.remove("mechanic-mobile-menu-open");
+    mechanicMobileMenu?.classList.remove("is-open");
+    mechanicMobileMenuBackdrop?.classList.remove("is-open");
+    mechanicMobileMenu?.setAttribute("aria-hidden", "true");
+    mechanicHeaderMobileMenuToggle?.setAttribute("aria-expanded", "false");
+  };
+
+  const openMechanicMobileMenu = () => {
+    document.body.classList.add("mechanic-mobile-menu-open");
+    mechanicMobileMenu?.classList.add("is-open");
+    mechanicMobileMenuBackdrop?.classList.add("is-open");
+    mechanicMobileMenu?.setAttribute("aria-hidden", "false");
+    mechanicHeaderMobileMenuToggle?.setAttribute("aria-expanded", "true");
+  };
+
+  const syncMechanicMobileNavState = (view) => {
+    mechanicMobileMenuLinks.forEach((btn) => btn.classList.toggle("active", btn.dataset.view === view));
+  };
+
+  const mechanicMobileSession = getStoredUserSession();
+  if (mechanicMobileMenuName && mechanicMobileSession?.firstName) {
+    mechanicMobileMenuName.textContent = mechanicMobileSession.firstName.toUpperCase();
+  }
 
   const mechanicToken = getStoredAuthValue("userToken");
   let mechanicProfileMap = null;
@@ -2551,7 +2582,51 @@ if (mechanicDashboard) {
     mechanicNavLinks.forEach((btn) => {
       btn.classList.toggle("active", btn.dataset.view === view);
     });
+    syncMechanicMobileNavState(view);
   };
+
+  mechanicHeaderMobileMenuToggle?.addEventListener("click", () => {
+    const isOpen = mechanicMobileMenu?.classList.contains("is-open");
+    if (isOpen) {
+      closeMechanicMobileMenu();
+      return;
+    }
+    openMechanicMobileMenu();
+  });
+
+  mechanicMobileMenuBackdrop?.addEventListener("click", closeMechanicMobileMenu);
+
+  mechanicMobileMenuLinks.forEach((link) => {
+    link.addEventListener("click", async () => {
+      const action = link.dataset.action || "";
+      const href = link.dataset.href || "";
+      const targetView = link.dataset.view || "";
+      const targetPage = link.dataset.targetPage || "";
+      closeMechanicMobileMenu();
+      if (action === "logout") {
+        clearStoredSessionData();
+        window.location.replace("/");
+        return;
+      }
+      if (targetPage === "profile" || targetPage === "preferences") {
+        const session = getStoredUserSession();
+        const mechanicUser = session?.user || session;
+        const mechanicId = mechanicUser?.id || "0";
+        window.location.href = targetPage === "profile"
+          ? `/mechanic/${mechanicId}/profile`
+          : `/mechanic/${mechanicId}/preferences`;
+        return;
+      }
+      if (targetView) {
+        sessionStorage.setItem("mechanicHeaderTargetView", targetView);
+        window.location.href = "/mechanic/dashboard";
+        return;
+      }
+      if (href) {
+        window.location.href = href;
+      }
+    });
+  });
 
   mechanicNavLinks.forEach((link) => {
     link.addEventListener("click", async () => {
