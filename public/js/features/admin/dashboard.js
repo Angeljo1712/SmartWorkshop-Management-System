@@ -2,6 +2,11 @@ const adminPage = document.getElementById("adminPage");
 if (adminPage) {
   const adminApp = adminPage;
   const adminLogoutBtn = document.getElementById("adminLogoutBtn");
+  const adminHeaderMobileMenuToggle = document.getElementById("adminHeaderMobileMenuToggle");
+  const adminMobileMenu = document.getElementById("adminMobileMenu");
+  const adminMobileMenuName = document.getElementById("adminMobileMenuName");
+  const adminMobileMenuBackdrop = document.getElementById("adminMobileMenuBackdrop");
+  const adminMobileLogoutBtn = document.getElementById("adminMobileLogoutBtn");
   const adminSideTitle = document.getElementById("adminSideTitle");
   const adminSearchSection = document.getElementById("adminSearchSection");
   const adminSearchLabel = document.getElementById("adminSearchLabel");
@@ -56,7 +61,8 @@ if (adminPage) {
   const adminDeleteCancel = document.getElementById("adminDeleteCancel");
   const adminDeleteConfirm = document.getElementById("adminDeleteConfirm");
   const filterSections = document.querySelectorAll("[data-filter-section]");
-  const railNavLinks = document.querySelectorAll(".rail-nav-link");
+  const railNavLinks = adminPage.querySelectorAll(".mainRail .rail-item[data-view]");
+  const adminMobileMenuLinks = adminPage.querySelectorAll(".admin-mobile-menu .rail-nav-link");
   const adminDashboardView = document.getElementById("adminDashboardView");
   const adminApplicationsView = document.getElementById("adminApplicationsView");
   const adminBookingsView = document.getElementById("adminBookingsView");
@@ -271,6 +277,22 @@ if (adminPage) {
     clearStoredSessionData();
   };
 
+  const openAdminMobileMenu = () => {
+    document.body.classList.add("admin-mobile-menu-open");
+    adminMobileMenu?.classList.add("is-open");
+    adminMobileMenuBackdrop?.classList.add("is-open");
+    adminMobileMenu?.setAttribute("aria-hidden", "false");
+    adminHeaderMobileMenuToggle?.setAttribute("aria-expanded", "true");
+  };
+
+  const closeAdminMobileMenu = () => {
+    document.body.classList.remove("admin-mobile-menu-open");
+    adminMobileMenu?.classList.remove("is-open");
+    adminMobileMenuBackdrop?.classList.remove("is-open");
+    adminMobileMenu?.setAttribute("aria-hidden", "true");
+    adminHeaderMobileMenuToggle?.setAttribute("aria-expanded", "false");
+  };
+
   const setAdminHeader = (user) => {
     const joinedName = [user?.name, user?.lastname].filter(Boolean).join(" ").trim();
     const displayName = user?.full_name || joinedName || user?.email || "Admin";
@@ -321,6 +343,7 @@ if (adminPage) {
     if (adminProfileRole) adminProfileRole.textContent = role;
     setAdminAvatar(adminSettingsAvatar, initials, user?.avatar_url);
     if (adminSettingsName) adminSettingsName.textContent = displayName;
+    if (adminMobileMenuName) adminMobileMenuName.textContent = displayName.toUpperCase();
     if (adminSettingsEmail) setAdminLabeledText(adminSettingsEmail, "Email:", user?.email || "admin@smartworkshop.local");
     if (adminSettingsEmailDetail) {
       setAdminLabeledText(adminSettingsEmailDetail, "Email:", user?.email || "admin@smartworkshop.local");
@@ -3131,26 +3154,57 @@ if (adminPage) {
     window.location.replace("/");
   });
 
+  adminMobileLogoutBtn?.addEventListener("click", () => {
+    clearAdminSession();
+    window.location.replace("/");
+  });
+
+  adminHeaderMobileMenuToggle?.addEventListener("click", () => {
+    const isOpen = adminMobileMenu?.classList.contains("is-open");
+    if (isOpen) {
+      closeAdminMobileMenu();
+      return;
+    }
+    openAdminMobileMenu();
+  });
+
+  adminMobileMenuBackdrop?.addEventListener("click", closeAdminMobileMenu);
+
+  const syncAdminViewState = (view) => {
+    activeAdminView = view;
+    railNavLinks.forEach((btn) => btn.classList.toggle("active", btn.dataset.view === view));
+    adminMobileMenuLinks.forEach((btn) => btn.classList.toggle("active", btn.dataset.view === view));
+    configureAdminSide(view);
+    setAdminHeroByView(view);
+    adminDashboardView?.classList.toggle("is-hidden", view !== "dashboard");
+    adminApplicationsView?.classList.toggle("is-hidden", view !== "applications");
+    adminBookingsView?.classList.toggle("is-hidden", view !== "bookings");
+    adminResolutionView?.classList.toggle("is-hidden", view !== "resolution");
+    adminPaymentsView?.classList.toggle("is-hidden", view !== "payments");
+    adminCatalogView?.classList.toggle("is-hidden", view !== "catalog");
+    adminContactMessagesView?.classList.toggle("is-hidden", view !== "contact-messages");
+    adminProfileView.classList.toggle("is-hidden", view !== "profile" && view !== "account");
+    adminUsersView.classList.toggle("is-hidden", view !== "users");
+    adminSettingsView?.classList.toggle("is-hidden", view !== "settings");
+    if (view === "contact-messages") {
+      renderContactMessages();
+    }
+  };
+
+  adminMobileMenuLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      const view = link.dataset.view;
+      if (!view) return;
+      closeAdminMobileMenu();
+      syncAdminViewState(view);
+    });
+  });
+
   railNavLinks.forEach((link) => {
     link.addEventListener("click", () => {
       const view = link.dataset.view;
-      activeAdminView = view;
-      railNavLinks.forEach((btn) => btn.classList.toggle("active", btn === link));
-      configureAdminSide(view);
-      setAdminHeroByView(view);
-      adminDashboardView?.classList.toggle("is-hidden", view !== "dashboard");
-      adminApplicationsView?.classList.toggle("is-hidden", view !== "applications");
-      adminBookingsView?.classList.toggle("is-hidden", view !== "bookings");
-      adminResolutionView?.classList.toggle("is-hidden", view !== "resolution");
-      adminPaymentsView?.classList.toggle("is-hidden", view !== "payments");
-      adminCatalogView?.classList.toggle("is-hidden", view !== "catalog");
-      adminContactMessagesView?.classList.toggle("is-hidden", view !== "contact-messages");
-      adminProfileView.classList.toggle("is-hidden", view !== "profile" && view !== "account");
-      adminUsersView.classList.toggle("is-hidden", view !== "users");
-      adminSettingsView?.classList.toggle("is-hidden", view !== "settings");
-      if (view === "contact-messages") {
-        renderContactMessages();
-      }
+      closeAdminMobileMenu();
+      syncAdminViewState(view);
     });
   });
 

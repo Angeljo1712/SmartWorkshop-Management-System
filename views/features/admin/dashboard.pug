@@ -16,10 +16,30 @@ block content
         div
           strong SmartWorkshop
           span Vehicle Service Marketplace
+      button.admin-header-menu-toggle#adminHeaderMobileMenuToggle(type="button" aria-label="Open menu" aria-expanded="false")
+        span
+        span
+        span
 
   main.primari-shell
     .page-shell-content
       section.mainLayout#adminPage
+        .admin-mobile-menu-backdrop#adminMobileMenuBackdrop
+        aside.admin-mobile-menu#adminMobileMenu(aria-hidden="true")
+          .admin-mobile-menu-head
+            span.admin-mobile-name#adminMobileMenuName Admin
+          nav.admin-mobile-menu-nav
+            button.admin-mobile-menu-link.rail-nav-link(type="button" data-view="dashboard") Dashboard
+            button.admin-mobile-menu-link.rail-nav-link(type="button" data-view="account") Account
+            button.admin-mobile-menu-link.rail-nav-link(type="button" data-view="bookings") Booking information
+            button.admin-mobile-menu-link.rail-nav-link(type="button" data-view="users") Users
+            button.admin-mobile-menu-link.rail-nav-link(type="button" data-view="applications") Applications
+            button.admin-mobile-menu-link.rail-nav-link(type="button" data-view="resolution") Resolution
+            button.admin-mobile-menu-link.rail-nav-link(type="button" data-view="payments") Payments
+            button.admin-mobile-menu-link.rail-nav-link(type="button" data-view="catalog") Catalog
+            button.admin-mobile-menu-link.rail-nav-link(type="button" data-view="contact-messages") Contact messages
+            button.admin-mobile-menu-link.rail-nav-link(type="button" data-view="settings") Settings
+          button.admin-mobile-signout#adminMobileLogoutBtn(type="button") Logout
         aside.mainRail.rail-base
           .rail-brand
             span.logo SW

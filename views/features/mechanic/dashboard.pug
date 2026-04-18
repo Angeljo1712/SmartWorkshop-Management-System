@@ -51,8 +51,8 @@ block content
             button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="booking-information") Booking information
             button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="resolution") Resolution center
             button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="payments") Payments
-            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-target-view="profile") Profile
-            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-target-view="edit-profile") Edit Profile
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="profile") Profile
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="edit-profile") Edit Profile
             button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="certifications") Certification
             button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="tax") Tax information
             button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="documents") Document
@@ -689,23 +689,22 @@ block content
                               .mechanic-settings-contact-copy
                                 span.mechanic-settings-contact-label Phone
                                 p#mechanicSettingsPhone -
+                              button.secondary(type="button" data-mechanic-settings-field="phone") Update
                             .mechanic-settings-contact-item
                               .mechanic-settings-contact-copy
                                 span.mechanic-settings-contact-label Username
                                 p#mechanicSettingsUsername -
+                              button.secondary(type="button" data-mechanic-settings-field="username") Update
                             .mechanic-settings-contact-item
                               .mechanic-settings-contact-copy
                                 span.mechanic-settings-contact-label Email
                                 p#mechanicSettingsEmail -
+                              button.secondary(type="button" data-mechanic-settings-field="email") Update
                             .mechanic-settings-contact-item
                               .mechanic-settings-contact-copy
                                 span.mechanic-settings-contact-label Address
                                 p#mechanicSettingsAddress -
-                        .mechanic-settings-contact-actions
-                          button.secondary(type="button" data-mechanic-settings-field="phone") Update
-                          button.secondary(type="button" data-mechanic-settings-field="username") Update
-                          button.secondary(type="button" data-mechanic-settings-field="email") Update
-                          button.secondary(type="button" data-mechanic-settings-field="address") Update
+                              button.secondary(type="button" data-mechanic-settings-field="address") Update
                       .settings-divider
                       .mechanic-settings-row
                         div

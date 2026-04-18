@@ -7,7 +7,7 @@ if (mechanicDashboard) {
   const mechanicMobileMenuName = document.getElementById("mechanicMobileMenuName");
   const mechanicMobileMenuBackdrop = document.getElementById("mechanicMobileMenuBackdrop");
   const mechanicMobileLogoutBtn = document.getElementById("mechanicMobileLogoutBtn");
-  const mechanicMobileMenuLinks = mechanicDashboard.querySelectorAll(".mechanic-mobile-menu [data-view]");
+  const mechanicMobileMenuLinks = mechanicDashboard.querySelectorAll(".mechanic-mobile-menu [data-view], .mechanic-mobile-menu [data-target-view], .mechanic-mobile-menu [data-target-page], .mechanic-mobile-menu [data-action], .mechanic-mobile-menu [data-href]");
   const mechanicNavLinks = mechanicDashboard.querySelectorAll(".rail-nav .rail-item[data-view]");
   const mechanicDashboardView = document.getElementById("mechanicDashboardView");
   const mechanicBookingInformationView = document.getElementById("mechanicBookingInformationView");
@@ -2600,7 +2600,7 @@ if (mechanicDashboard) {
     link.addEventListener("click", async () => {
       const action = link.dataset.action || "";
       const href = link.dataset.href || "";
-      const targetView = link.dataset.view || "";
+      const targetView = link.dataset.view || link.dataset.targetView || "";
       const targetPage = link.dataset.targetPage || "";
       closeMechanicMobileMenu();
       if (action === "logout") {
@@ -2722,7 +2722,21 @@ if (mechanicDashboard) {
 
   const pendingMechanicView = sessionStorage.getItem("mechanicHeaderTargetView");
   const initialMechanicView =
-    pendingMechanicView && ["dashboard", "booking-information", "resolution", "procedure", "payments", "profile", "account", "settings"].includes(pendingMechanicView)
+    pendingMechanicView && [
+      "dashboard",
+      "booking-information",
+      "resolution",
+      "procedure",
+      "payments",
+      "profile",
+      "edit-profile",
+      "certifications",
+      "tax",
+      "documents",
+      "types",
+      "account",
+      "settings"
+    ].includes(pendingMechanicView)
       ? pendingMechanicView
       : "dashboard";
   sessionStorage.removeItem("mechanicHeaderTargetView");

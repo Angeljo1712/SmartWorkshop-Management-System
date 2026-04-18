@@ -256,6 +256,12 @@ body.admin-body .primari-shell {
   width: 18px;
 }
 
+body.admin-body .admin-header-menu-toggle,
+body.admin-body .admin-mobile-menu,
+body.admin-body .admin-mobile-menu-backdrop {
+  display: none;
+}
+
 
 #adminPage .admin-feedback {
   margin: 8px auto 12px;
@@ -3287,5 +3293,261 @@ body.admin-body #adminSettingsNotifications .notifications-check {
   #adminPage .admin-dashboard-metrics,
   #adminPage .admin-dashboard-queues {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  body.admin-body .main-header.general-header .main-brand {
+    gap: 10px;
+    align-items: center;
+  }
+
+  body.admin-body .main-header.general-header .main-brand > span.main-logo {
+    display: inline-grid;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    flex: 0 0 40px;
+  }
+
+  body.admin-body .main-header.general-header .main-brand > div {
+    display: grid;
+    gap: 0;
+  }
+
+  body.admin-body .main-header.general-header .main-brand > div strong {
+    font-size: 1rem;
+    line-height: 1.1;
+  }
+
+  body.admin-body .main-header.general-header .main-brand > div span {
+    display: block;
+    font-size: 0.86rem;
+    line-height: 1.1;
+  }
+
+  body.admin-body .main-header.general-header .admin-header-menu-toggle {
+    display: inline-grid !important;
+    gap: 5px;
+    width: 42px;
+    height: 42px;
+    place-content: center;
+    margin-left: auto;
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+    cursor: pointer;
+  }
+
+  body.admin-body .main-header.general-header .admin-header-menu {
+    display: none !important;
+  }
+
+  body.admin-body .admin-header-menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+  }
+
+  body.admin-body.admin-mobile-menu-open {
+    overflow: hidden;
+  }
+
+  body.admin-body .page-shell-content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  #adminPage.mainLayout {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  #adminPage .rail-base {
+    display: none !important;
+  }
+
+  #adminPage .mainSection {
+    border-left: 2px solid #ffffff;
+    border-radius: 0 0 14px 14px;
+  }
+
+  body.admin-body .admin-mobile-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    display: block !important;
+    opacity: 0;
+    pointer-events: none;
+    background: rgba(7, 12, 21, 0.55);
+    z-index: 80;
+    transition: opacity 0.2s ease;
+  }
+
+  body.admin-body .admin-mobile-menu-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  body.admin-body .admin-mobile-menu {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 90;
+    display: grid !important;
+    grid-template-rows: auto 1fr auto;
+    width: min(82vw, 360px);
+    padding: 18px;
+    background: #ffffff;
+    color: #0f172a;
+    transform: translateX(-104%);
+    transition: transform 0.22s ease;
+    box-shadow: 24px 0 60px rgba(0, 0, 0, 0.24);
+  }
+
+  body.admin-body .admin-mobile-menu.is-open {
+    transform: translateX(0);
+  }
+
+  body.admin-body .admin-mobile-menu-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 22px;
+  }
+
+  body.admin-body .admin-mobile-name {
+    display: inline-flex;
+    align-items: center;
+    color: #0f172a;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 1rem;
+  }
+
+  body.admin-body .admin-mobile-menu-nav {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+  }
+
+  body.admin-body .admin-mobile-menu-link,
+  body.admin-body .admin-mobile-signout {
+    appearance: none;
+    border: 0;
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 14px;
+    background: transparent;
+    color: #0f172a;
+    text-align: left;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  body.admin-body .admin-mobile-menu-link.active {
+    background: #111827;
+    color: #ffffff;
+    border-radius: 8px;
+  }
+
+  body.admin-body .admin-mobile-signout {
+    border-top: 1px solid rgba(15, 23, 42, 0.12);
+    color: #0f172a;
+  }
+
+  #adminPage .admin-dashboard-metrics,
+  #adminPage .admin-dashboard-queues {
+    grid-template-columns: 1fr;
+  }
+
+  #adminPage .admin-dashboard-list,
+  #adminPage .admin-dashboard-actions {
+    grid-template-columns: 1fr;
+  }
+
+  #adminPage #adminBookingsView .admin-head-control--role {
+    display: none;
+  }
+}
+
+@media (max-width: 425px) {
+  #adminPage #adminUsersView .admin-table-head,
+  #adminPage #adminApplicationsView .admin-table-head,
+  #adminPage #adminBookingsView .admin-table-head,
+  #adminPage #adminCatalogView .admin-table-head,
+  #adminPage #adminResolutionView .admin-table-head,
+  #adminPage #adminPaymentsView .admin-table-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  #adminPage #adminUsersView .admin-table-head-filters,
+  #adminPage #adminApplicationsView .admin-table-head-filters,
+  #adminPage #adminBookingsView .admin-table-head-filters,
+  #adminPage #adminCatalogView .admin-table-head-filters,
+  #adminPage #adminResolutionView .admin-table-head-filters,
+  #adminPage #adminPaymentsView .admin-table-head-filters {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  #adminPage #adminUsersView .admin-head-control,
+  #adminPage #adminApplicationsView .admin-head-control,
+  #adminPage #adminBookingsView .admin-head-control,
+  #adminPage #adminCatalogView .admin-head-control,
+  #adminPage #adminResolutionView .admin-head-control,
+  #adminPage #adminPaymentsView .admin-head-control {
+    width: 100%;
+  }
+
+  #adminPage #adminUsersView .admin-head-control input,
+  #adminPage #adminUsersView .admin-head-control select,
+  #adminPage #adminApplicationsView .admin-head-control input,
+  #adminPage #adminApplicationsView .admin-head-control select,
+  #adminPage #adminBookingsView .admin-head-control input,
+  #adminPage #adminBookingsView .admin-head-control select,
+  #adminPage #adminCatalogView .admin-head-control input,
+  #adminPage #adminCatalogView .admin-head-control select,
+  #adminPage #adminResolutionView .admin-head-control input,
+  #adminPage #adminResolutionView .admin-head-control select,
+  #adminPage #adminPaymentsView .admin-head-control input,
+  #adminPage #adminPaymentsView .admin-head-control select,
+  #adminPage .admin-table-actions #adminSearch {
+    width: 100%;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  #adminPage #adminUsersView .admin-table-head-actions,
+  #adminPage #adminApplicationsView .admin-table-head-actions,
+  #adminPage #adminBookingsView .admin-table-head-actions,
+  #adminPage #adminCatalogView .admin-table-head-actions,
+  #adminPage #adminResolutionView .admin-table-head-actions,
+  #adminPage #adminPaymentsView .admin-table-head-actions {
+    width: 100%;
+    margin-left: 0;
+    justify-content: stretch;
+    flex-wrap: wrap;
+  }
+
+  #adminPage #adminUsersView .admin-table-head-actions > *,
+  #adminPage #adminApplicationsView .admin-table-head-actions > *,
+  #adminPage #adminBookingsView .admin-table-head-actions > *,
+  #adminPage #adminCatalogView .admin-table-head-actions > *,
+  #adminPage #adminResolutionView .admin-table-head-actions > *,
+  #adminPage #adminPaymentsView .admin-table-head-actions > * {
+    width: 100%;
+  }
+
+  #adminPage .admin-table-actions {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
