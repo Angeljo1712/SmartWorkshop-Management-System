@@ -35,6 +35,29 @@ block content
           button.home-session-menu-item.is-hidden(type="button" data-view="catalog") Catalog
           button.home-session-menu-item(type="button" data-action="logout") Logout
 
+      button.home-header-menu-toggle#homeHeaderMobileMenuToggle(type="button" aria-label="Open menu" aria-expanded="false")
+        span
+        span
+        span
+
+  .home-mobile-menu-backdrop#homeMobileMenuBackdrop
+  aside.home-mobile-menu#homeMobileMenu(aria-hidden="true")
+    .home-mobile-menu-head
+      span.home-mobile-logo#homeMobileMenuName Account
+    .home-mobile-menu-section
+      p.home-mobile-menu-title Explore
+      nav.home-mobile-menu-nav
+        button.home-mobile-menu-link(type="button" data-href="/") Home
+        button.home-mobile-menu-link(type="button" data-href="#how") How it works
+        button.home-mobile-menu-link(type="button" data-href="#services") Services
+        button.home-mobile-menu-link(type="button" data-href="#partner") Be a Mechanic
+        button.home-mobile-menu-link(type="button" data-href="#review") Review
+        button.home-mobile-menu-link(type="button" data-href="#contact") Contact
+    .home-mobile-menu-section
+      p.home-mobile-menu-title Account
+      .home-mobile-session-items#homeMobileSessionItems
+        button.home-mobile-menu-link(type="button" data-href="/auth/login") Sign in
+
   main.home-main.primari-shell
     section.home-hero#home
       .hero-backdrop

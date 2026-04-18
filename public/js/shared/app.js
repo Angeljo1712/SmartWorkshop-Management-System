@@ -595,34 +595,41 @@ if (homeHeader && homeHero) {
   const homeSessionMenuPanel = document.getElementById("homeSessionMenuPanel");
   const homeSessionMenuName = document.getElementById("homeSessionMenuName");
   const homeSessionMenuItems = homeSessionMenu ? Array.from(homeSessionMenu.querySelectorAll(".home-session-menu-item")) : [];
+  const homeHeaderMenuToggle = document.getElementById("homeHeaderMobileMenuToggle");
+  const homeMobileMenuBackdrop = document.getElementById("homeMobileMenuBackdrop");
+  const homeMobileMenu = document.getElementById("homeMobileMenu");
+  const homeMobileSessionItems = document.getElementById("homeMobileSessionItems");
+  const homeMobileMenuName = document.getElementById("homeMobileMenuName");
   const applyHeaderState = (isHero) => {
     homeHeader.classList.toggle("is-hero", isHero);
     homeHeader.classList.toggle("is-light", !isHero);
   };
 
+  const getHomeSessionOptions = (role) =>
+    role === "ADMIN"
+      ? [
+          { label: "Dashboard", view: "dashboard" },
+          { label: "Users", view: "users" },
+          { label: "Applications", view: "applications" },
+          { label: "Bookings", view: "bookings" },
+          { label: "Resolution", view: "resolution" },
+          { label: "Payments", view: "payments" },
+          { label: "Catalog", view: "catalog" },
+          { label: "Settings", view: "settings" },
+          { label: "Logout", action: "logout" }
+        ]
+      : [
+          { label: "Dashboard", view: "dashboard" },
+          { label: "Account", view: "account" },
+          { label: "Vehicle", view: "vehicle" },
+          { label: "Bookings", view: "bookings" },
+          { label: "Settings", view: "settings" },
+          { label: "Logout", action: "logout" }
+        ];
+
   const configureHomeSessionMenu = (role) => {
     if (!homeSessionMenuItems.length) return;
-    const options =
-      role === "ADMIN"
-        ? [
-            { label: "Dashboard", view: "dashboard" },
-            { label: "Users", view: "users" },
-            { label: "Applications", view: "applications" },
-            { label: "Bookings", view: "bookings" },
-            { label: "Resolution", view: "resolution" },
-            { label: "Payments", view: "payments" },
-            { label: "Catalog", view: "catalog" },
-            { label: "Settings", view: "settings" },
-            { label: "Logout", action: "logout" }
-          ]
-        : [
-            { label: "Dashboard", view: "dashboard" },
-            { label: "Account", view: "account" },
-            { label: "Vehicle", view: "vehicle" },
-            { label: "Bookings", view: "bookings" },
-            { label: "Settings", view: "settings" },
-            { label: "Logout", action: "logout" }
-          ];
+    const options = getHomeSessionOptions(role);
 
     homeSessionMenuItems.forEach((item, index) => {
       const option = options[index];
@@ -645,16 +652,54 @@ if (homeHeader && homeHero) {
     });
   };
 
+  const configureHomeMobileMenu = (session) => {
+    if (!homeMobileSessionItems) return;
+    const options = session
+      ? getHomeSessionOptions(session.activeRole)
+      : [{ label: "Sign in", href: "/auth/login" }];
+    homeMobileSessionItems.innerHTML = options
+      .map((option) => {
+        const attrs = [
+          'type="button"',
+          'class="home-mobile-menu-link"'
+        ];
+        if (option.view) attrs.push(`data-view="${option.view}"`);
+        if (option.action) attrs.push(`data-action="${option.action}"`);
+        if (option.href) attrs.push(`data-href="${option.href}"`);
+        return `<button ${attrs.join(" ")}>${option.label}</button>`;
+      })
+      .join("");
+  };
+
+  const closeHomeMobileMenu = () => {
+    homeMobileMenu?.classList.remove("is-open");
+    homeMobileMenuBackdrop?.classList.remove("is-open");
+    homeHeaderMenuToggle?.setAttribute("aria-expanded", "false");
+    homeMobileMenu?.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("home-mobile-menu-open");
+  };
+
+  const openHomeMobileMenu = () => {
+    homeMobileMenu?.classList.add("is-open");
+    homeMobileMenuBackdrop?.classList.add("is-open");
+    homeHeaderMenuToggle?.setAttribute("aria-expanded", "true");
+    homeMobileMenu?.setAttribute("aria-hidden", "false");
+    document.body.classList.add("home-mobile-menu-open");
+  };
+
   const syncHomeSessionControls = () => {
     const session = getStoredUserSession();
     if (!homeSessionLink) return;
+    configureHomeMobileMenu(session);
     if (!session) {
       homeSessionLink.classList.remove("is-hidden");
       if (homeSessionMenu) homeSessionMenu.classList.add("is-hidden");
       homeSessionLink.textContent = "Sign in";
       homeSessionLink.href = "/auth/login";
+      if (homeMobileMenuName) homeMobileMenuName.textContent = "Account";
       return;
     }
+    if (homeMobileMenuName) homeMobileMenuName.textContent = session.firstName.toUpperCase();
     if ((session.activeRole === "CUSTOMER" || session.activeRole === "ADMIN") && homeSessionMenu) {
       homeSessionLink.classList.add("is-hidden");
       homeSessionMenu.classList.remove("is-hidden");
@@ -712,6 +757,76 @@ if (homeHeader && homeHero) {
       }
     });
   }
+
+  if (homeHeaderMenuToggle && !homeHeaderMenuToggle.dataset.bound) {
+    homeHeaderMenuToggle.dataset.bound = "true";
+    homeHeaderMenuToggle.addEventListener("click", () => {
+      const isOpen = homeMobileMenu?.classList.contains("is-open");
+      if (isOpen) {
+        closeHomeMobileMenu();
+      } else {
+        openHomeMobileMenu();
+      }
+    });
+  }
+
+  if (homeMobileMenuBackdrop && !homeMobileMenuBackdrop.dataset.bound) {
+    homeMobileMenuBackdrop.dataset.bound = "true";
+    homeMobileMenuBackdrop.addEventListener("click", closeHomeMobileMenu);
+  }
+
+  if (homeMobileMenu && !homeMobileMenu.dataset.bound) {
+    homeMobileMenu.dataset.bound = "true";
+    homeMobileMenu.addEventListener("click", (event) => {
+      const item = event.target.closest(".home-mobile-menu-link");
+      if (!item || !homeMobileMenu.contains(item)) return;
+
+      const href = item.dataset.href || "";
+      const action = item.dataset.action || "";
+      const view = item.dataset.view || "";
+
+      if (action === "logout") {
+        closeHomeMobileMenu();
+        clearStoredSessionData();
+        window.location.replace("/");
+        return;
+      }
+
+      if (view) {
+        const session = getStoredUserSession();
+        closeHomeMobileMenu();
+        if (session?.activeRole === "ADMIN") {
+          sessionStorage.setItem("adminHeaderTargetView", view);
+          window.location.href = "/admin/dashboard";
+          return;
+        }
+        if (session) {
+          sessionStorage.setItem("homeUserTargetView", view);
+          window.location.href = "/user";
+          return;
+        }
+      }
+
+      if (href.startsWith("#")) {
+        const target = document.querySelector(href);
+        closeHomeMobileMenu();
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth", block: "start" });
+          history.replaceState(null, "", href);
+        }
+        return;
+      }
+
+      if (href) {
+        closeHomeMobileMenu();
+        window.location.href = href;
+      }
+    });
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeHomeMobileMenu();
+  });
 
   syncHomeSessionControls();
   sessionRefreshPromise.then(syncHomeSessionControls);
