@@ -1820,10 +1820,23 @@ if (mechanicDashboard) {
     if (mechanicResolutionMessages) {
       mechanicResolutionMessages.innerHTML = "";
       const messages = Array.isArray(detail?.messages) ? detail.messages : [];
+      const customerAvatarUrl = String(detail?.customer?.avatar_url || "").trim();
       if (!messages.length) {
         mechanicResolutionMessages.innerHTML = '<p class="mechanic-bookings-empty">No messages yet.</p>';
       } else {
         messages.forEach((message) => {
+          const senderName = String(message.sender_name || "User");
+          const initials = senderName
+            .split(/\s+/)
+            .filter(Boolean)
+            .slice(0, 2)
+            .map((part) => part[0]?.toUpperCase() || "")
+            .join("") || "U";
+          const avatarUrl = String(message.avatar_url || "").trim();
+          const resolvedAvatarUrl = avatarUrl || (message.sender_role === "customer" ? customerAvatarUrl : "");
+          const avatarMarkup = resolvedAvatarUrl
+            ? `<img src="${resolvedAvatarUrl}" alt="" />`
+            : initials;
           const bodyText = String(message.body || "").trim();
           const attachments = Array.isArray(message.attachments) ? message.attachments : [];
           const attachmentsMarkup = attachments.length
@@ -1856,9 +1869,14 @@ if (mechanicDashboard) {
           const item = document.createElement("div");
           item.className = `mechanic-resolution-message ${message.sender_role === "mechanic" ? "is-mechanic" : "is-customer"}`;
           item.innerHTML = `
-            ${bodyText ? `<div class="mechanic-resolution-bubble"><p>${bodyText.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p></div>` : ""}
-            ${attachmentsMarkup}
-            <span class="mechanic-resolution-message-meta">${message.sender_name || "User"}, ${formatMechanicDateTime(message.created_at)}</span>
+            <div class="mechanic-resolution-message-row">
+              <div class="mechanic-resolution-message-avatar" aria-hidden="true">${avatarMarkup}</div>
+              <div class="mechanic-resolution-message-content">
+                ${bodyText ? `<div class="mechanic-resolution-bubble"><p>${bodyText.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p></div>` : ""}
+                ${attachmentsMarkup}
+                <span class="mechanic-resolution-message-meta">${senderName}, ${formatMechanicDateTime(message.created_at)}</span>
+              </div>
+            </div>
           `;
           mechanicResolutionMessages.appendChild(item);
         });

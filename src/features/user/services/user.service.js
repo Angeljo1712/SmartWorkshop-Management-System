@@ -800,7 +800,8 @@ const listMechanicBookingOffers = async (mechanicId) => {
     },
     customer: {
       name: [row.customer_name, row.customer_lastname].filter(Boolean).join(" ") || "Customer",
-      email: row.customer_email || ""
+      email: row.customer_email || "",
+      avatar_url: row.customer_avatar_url || ""
     },
     vehicle: {
       registrationNumber: row.license_plate || "",
@@ -980,7 +981,7 @@ const listMechanicResolutionCases = async (mechanicId, { bookingId } = {}) => {
             b.total_eur,
             v.license_plate, v.make, v.model, v.year,
             a.line1, a.line2, a.city, a.postal_code, a.country,
-            up.name AS customer_name, up.lastname AS customer_lastname, u.email AS customer_email
+            up.name AS customer_name, up.lastname AS customer_lastname, up.avatar_url AS customer_avatar_url, u.email AS customer_email
      FROM resolution_cases rc
      INNER JOIN bookings b ON b.id = rc.booking_id
      INNER JOIN users u ON u.id = rc.customer_id

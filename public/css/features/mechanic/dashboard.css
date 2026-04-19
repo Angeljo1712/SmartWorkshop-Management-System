@@ -1934,20 +1934,58 @@ body.mechanic-body .mechanic-resolution-detail {
   gap: 22px;
 }
 
-body.mechanic-body .mechanic-resolution-case-view {
+body.mechanic-body .settings-card.mechanic-caseView {
   display: grid;
   gap: 22px;
+  background: #3e434df7;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+  padding: 20px;
 }
 
-body.mechanic-body .mechanic-resolution-detail-head {
+body.mechanic-body #mechanicResolutionCaseView .mechanic-detail-card {
   display: grid;
-  gap: 10px;
+  grid-template-columns: 2fr 1fr;
+  grid-template-areas: "card sidebar";
+  gap: 24px;
+  align-items: start;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  border-radius: 0;
 }
 
-body.mechanic-body .mechanic-resolution-detail-head h3 {
-  margin: 0;
+body.mechanic-body #mechanicResolutionCaseView .mechanic-resolution-thread {
+  grid-area: card;
+  display: grid;
+  gap: 18px;
+}
+
+body.mechanic-body #mechanicResolutionCaseView .mechanic-resolution-sidebar {
+  grid-area: sidebar;
+  background: #0d1220;
+}
+
+body.mechanic-body .mechanic-resolution-thread-title {
+  display: grid;
+  justify-items: center;
+}
+
+body.mechanic-body .mechanic-resolution-thread-title span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: #2f7d4f;
   color: #ffffff;
-  font-size: 2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
 }
 
 body.mechanic-body .mechanic-resolution-back {
@@ -2083,10 +2121,7 @@ body.mechanic-body .mechanic-resolution-notice {
 }
 
 body.mechanic-body .mechanic-resolution-case {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 320px;
-  gap: 24px;
-  align-items: start;
+  display: contents;
 }
 
 body.mechanic-body .mechanic-resolution-thread {
@@ -2108,6 +2143,7 @@ body.mechanic-body #mechanicResolutionMessages {
 body.mechanic-body .mechanic-resolution-message {
   display: grid;
   gap: 8px;
+  width: 100%;
 }
 
 body.mechanic-body .mechanic-resolution-message.is-customer {
@@ -2118,12 +2154,55 @@ body.mechanic-body .mechanic-resolution-message.is-mechanic {
   justify-items: end;
 }
 
+body.mechanic-body .mechanic-resolution-message-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+body.mechanic-body .mechanic-resolution-message.is-customer .mechanic-resolution-message-row {
+  flex-direction: row-reverse;
+}
+
+body.mechanic-body .mechanic-resolution-message-avatar {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: #cfd8e8;
+  color: #1b1f28;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+body.mechanic-body .mechanic-resolution-message-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+body.mechanic-body .mechanic-resolution-message-content {
+  min-width: 0;
+  flex: 1 1 auto;
+  display: grid;
+  gap: 8px;
+}
+
+body.mechanic-body .mechanic-resolution-message.is-customer .mechanic-resolution-message-content {
+  align-items: flex-end;
+}
+
 body.mechanic-body .mechanic-resolution-bubble {
   width: min(720px, 100%);
   padding: 18px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1b1f28;
   line-height: 1.55;
 }
 
@@ -2133,7 +2212,7 @@ body.mechanic-body .mechanic-resolution-bubble p {
 }
 
 body.mechanic-body .mechanic-resolution-message.is-mechanic .mechanic-resolution-bubble {
-  background: #0d1220;
+  background: #eceff4;
 }
 
 body.mechanic-body .mechanic-resolution-message-meta {
@@ -2294,8 +2373,11 @@ body.mechanic-body .mechanic-resolution-booking .primary {
     gap: 8px;
   }
 
-  body.mechanic-body .mechanic-resolution-case {
+  body.mechanic-body #mechanicResolutionCaseView .mechanic-detail-card {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "card"
+      "sidebar";
   }
 }
 
@@ -3062,7 +3144,7 @@ body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-divider 
 body.mechanic-body .mechanic-content .settings-card.mechanic-dashboard-card {
   border: 0;
   box-shadow: none;
-  background: #3e434df7;
+  background: transparent;
 }
 
 body.mechanic-body .mechanic-content .mechanic-dashboard-card .mechanic-settings-row {

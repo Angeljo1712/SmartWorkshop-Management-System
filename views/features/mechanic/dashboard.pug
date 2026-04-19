@@ -295,18 +295,18 @@ block content
                           span Updated at
                           span Subject
                           span
-                .mechanic-resolution-case-view.is-hidden#mechanicResolutionCaseView
-                  .mechanic-resolution-detail-head
-                    button.mechanic-resolution-back(type="button" id="mechanicResolutionCaseBackBtn") Back
-                    h3#mechanicResolutionCaseTitle General Enquiry
-                  .mechanic-resolution-case
+                .settings-card.mechanic-caseView.is-hidden#mechanicResolutionCaseView
+                  .mechanic-detail-card.mechanic-resolution-case
                     .mechanic-resolution-thread
+                      .mechanic-resolution-thread-title
+                        span#mechanicResolutionCaseTitle General Enquiry
                       p.mechanic-resolution-thread-copy You can use this page to discuss your booking with your customer. Your messages will be sent directly to the customer, and you will receive an email whenever there's an update.
                       #mechanicResolutionMessages
                       .mechanic-resolution-compose
                         textarea#mechanicResolutionMessageInput(placeholder="Add a new message here")
                         .mechanic-resolution-compose-actions
                           button.primary#mechanicResolutionSendBtn(type="button") Send message
+                          button.mechanic-resolution-back#mechanicResolutionCaseBackBtn(type="button") Back
                     aside.mechanic-resolution-sidebar
                       .mechanic-resolution-sidebar-card
                         h4#mechanicResolutionSidebarTitle Current status of booking #16334274
