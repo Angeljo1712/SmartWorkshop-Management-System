@@ -326,7 +326,7 @@ if (adminPage) {
       if (!el) return;
       el.innerHTML = "";
       if (url) {
-        const resolvedUrl = String(url).startsWith("/uploads") ? `http://localhost:3000${url}` : url;
+        const resolvedUrl = String(url).startsWith("/uploads") ? String(url) : url;
         const img = document.createElement("img");
         img.src = resolvedUrl;
         img.alt = "";
@@ -482,12 +482,12 @@ if (adminPage) {
   const getAvatarUrl = (user) => {
     const avatarUrl = String(user?.avatar_url || "").trim();
     if (!avatarUrl) return "";
-    return avatarUrl.startsWith("/uploads") ? `http://localhost:3000${avatarUrl}` : avatarUrl;
+    return avatarUrl.startsWith("/uploads") ? avatarUrl : avatarUrl;
   };
   const resolveAdminUploadUrl = (url) => {
     const value = String(url || "").trim();
     if (!value) return "";
-    return value.startsWith("/uploads") ? `http://localhost:3000${value}` : value;
+    return value.startsWith("/uploads") ? value : value;
   };
   const getLocation = (user) => {
     const fullAddress = String(user?.address || "").trim();
@@ -3241,7 +3241,7 @@ if (adminPage) {
     formData.append("avatar", file);
 
     try {
-      const response = await fetch("http://localhost:3000/api/users/me/avatar", {
+      const response = await fetch("/api/users/me/avatar", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData

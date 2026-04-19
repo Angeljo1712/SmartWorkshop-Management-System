@@ -44,6 +44,12 @@ Use a separate staging environment to validate the app before the final domain c
 ./scripts/stack-staging.ps1 start
 ```
 
+To rebuild staging:
+
+```powershell
+./scripts/rebuild-staging.ps1
+```
+
 Ports used by default:
 
 - App: `http://localhost:3001`

@@ -25,6 +25,9 @@ app.use(cors);
 app.use("/uploads", express.static(path.join(__dirname, "shared", "uploads")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.static(path.join(__dirname, "..", "public")));
+app.get("/favicon.ico", (_req, res) => {
+  res.status(204).end();
+});
 app.set("views", path.join(__dirname, "..", "views"));
 app.set("view engine", "pug");
 app.use("/", webRouter);

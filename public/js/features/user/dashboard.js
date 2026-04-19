@@ -200,7 +200,7 @@ if (userPage) {
     if (!el) return;
     el.innerHTML = "";
     if (url) {
-      const resolvedUrl = url.startsWith("/uploads") ? `http://localhost:3000${url}` : url;
+      const resolvedUrl = url.startsWith("/uploads") ? url : url;
       const img = document.createElement("img");
       img.src = resolvedUrl;
       img.alt = "";
@@ -1010,7 +1010,7 @@ if (userPage) {
             completionPhotos.length
               ? `<div class="user-booking-photo-grid">${completionPhotos
                   .map((url) => {
-                    const resolved = String(url || "").startsWith("/uploads") ? `http://localhost:3000${url}` : String(url || "");
+                    const resolved = String(url || "").startsWith("/uploads") ? String(url || "") : String(url || "");
                     return `<img src="${escapeHtml(resolved)}" alt="">`;
                   })
                   .join("")}</div>`
@@ -1681,7 +1681,7 @@ if (userPage) {
           .join("") || "U";
         const avatarUrl = String(message.avatar_url || "").trim();
         const resolvedAvatarUrl = avatarUrl
-          ? (avatarUrl.startsWith("/uploads") ? `http://localhost:3000${avatarUrl}` : avatarUrl)
+          ? (avatarUrl.startsWith("/uploads") ? avatarUrl : avatarUrl)
           : "";
         const avatarMarkup = resolvedAvatarUrl
           ? `<img src="${resolvedAvatarUrl}" alt="" />`
@@ -1697,7 +1697,7 @@ if (userPage) {
                   const originalName = String(attachment.original_name || "").trim() || "Attachment";
                   const mimeType = String(attachment.mime_type || "").trim();
                   const isImage = mimeType.startsWith("image/");
-                  const resolvedUrl = fileUrl.startsWith("/uploads") ? `http://localhost:3000${fileUrl}` : fileUrl;
+                  const resolvedUrl = fileUrl.startsWith("/uploads") ? fileUrl : fileUrl;
                   return isImage
                     ? `
                       <a class="mechanic-resolution-message-attachment" href="${resolvedUrl}" target="_blank" rel="noopener noreferrer">
@@ -2495,7 +2495,7 @@ if (userPage) {
     try {
       const profile = getUserProfile() || {};
       if (phone !== (profile.phone || "") || address !== (profile.address || "") || username !== (profile.username || "")) {
-        const response = await fetch("http://localhost:3000/api/users/me", {
+        const response = await fetch("/api/users/me", {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -2510,7 +2510,7 @@ if (userPage) {
       }
 
       if (email && email !== (profile.email || "")) {
-        const response = await fetch("http://localhost:3000/api/users/me/email-change", {
+        const response = await fetch("/api/users/me/email-change", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -2540,7 +2540,7 @@ if (userPage) {
     formData.append("avatar", file);
 
     try {
-      const response = await fetch("http://localhost:3000/api/users/me/avatar", {
+      const response = await fetch("/api/users/me/avatar", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData

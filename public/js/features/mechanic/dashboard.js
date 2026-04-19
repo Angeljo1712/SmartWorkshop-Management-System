@@ -241,7 +241,7 @@ if (mechanicDashboard) {
     if (!el) return;
     el.innerHTML = "";
     if (url) {
-      const resolvedUrl = String(url).startsWith("/uploads") ? `http://localhost:3000${url}` : String(url);
+      const resolvedUrl = String(url).startsWith("/uploads") ? String(url) : String(url);
       const img = document.createElement("img");
       img.src = resolvedUrl;
       img.alt = "";
@@ -1827,7 +1827,7 @@ if (mechanicDashboard) {
                     const originalName = String(attachment.original_name || "").trim() || "Attachment";
                     const mimeType = String(attachment.mime_type || "").trim();
                     const isImage = mimeType.startsWith("image/");
-                    const resolvedUrl = fileUrl.startsWith("/uploads") ? `http://localhost:3000${fileUrl}` : fileUrl;
+                    const resolvedUrl = fileUrl.startsWith("/uploads") ? fileUrl : fileUrl;
                     return isImage
                       ? `
                         <a class="mechanic-resolution-message-attachment" href="${resolvedUrl}" target="_blank" rel="noopener noreferrer">
@@ -2295,7 +2295,7 @@ if (mechanicDashboard) {
     formData.append("avatar", file);
 
     try {
-      const response = await fetch("http://localhost:3000/api/users/me/avatar", {
+      const response = await fetch("/api/users/me/avatar", {
         method: "POST",
         headers: { Authorization: `Bearer ${mechanicToken}` },
         body: formData

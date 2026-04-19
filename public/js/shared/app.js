@@ -15,7 +15,7 @@ const api = (path, options = {}) => {
   if (!(options.body instanceof FormData) && !Object.keys(headers).some((key) => key.toLowerCase() === "content-type")) {
     headers["Content-Type"] = "application/json";
   }
-  return fetch(`http://localhost:3000${path}`, {
+  return fetch(path, {
     ...options,
     headers
   }).then(async (response) => {

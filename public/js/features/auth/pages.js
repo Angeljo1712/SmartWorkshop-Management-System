@@ -63,7 +63,7 @@
       }
 
       try {
-        const response = await fetch("http://localhost:3000/api/auth/login", {
+        const response = await fetch("/api/auth/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ identifier, password })
@@ -124,7 +124,7 @@
       }
 
       try {
-        const response = await fetch("http://localhost:3000/api/auth/login/verify-2fa", {
+        const response = await fetch("/api/auth/login/verify-2fa", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -183,7 +183,7 @@
         return;
       }
       try {
-        const response = await fetch("http://localhost:3000/api/auth/password-reset-request", {
+        const response = await fetch("/api/auth/password-reset-request", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email })
@@ -231,7 +231,7 @@
       }
 
       try {
-        const response = await fetch("http://localhost:3000/api/auth/password-reset", {
+        const response = await fetch("/api/auth/password-reset", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ token, password })
@@ -265,7 +265,7 @@
     if (!token) {
       setStatus("Missing confirmation token.", true);
     } else {
-      fetch(`http://localhost:3000/api/users/confirm-email?token=${encodeURIComponent(token)}`)
+      fetch(`/api/users/confirm-email?token=${encodeURIComponent(token)}`)
         .then(async (response) => {
           const payload = await response.json();
           if (!response.ok) {
