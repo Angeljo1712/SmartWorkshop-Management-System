@@ -2561,6 +2561,69 @@ body.admin-body .admin-edit-menu button:disabled {
   color: #ff8f99;
 }
 
+#adminPage #adminBookingsView .admin-booking-detail-card {
+  display: grid;
+  gap: 18px;
+  /* margin-top: 18px; */
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 16px;
+  color: #ffffff;
+  box-shadow: none;
+  background: #3e434df7;
+}
+
+#adminPage #adminBookingsView .admin-booking-detail-card.is-hidden {
+  display: none;
+}
+
+#adminPage #adminBookingsView .admin-booking-detail-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+#adminPage #adminBookingsView .admin-detail-eyebrow {
+  display: block;
+  margin-bottom: 4px;
+  color: #cbd5e1;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+#adminPage #adminBookingsView .admin-booking-detail-card h3,
+#adminPage #adminBookingsView .admin-booking-detail-card h4 {
+  margin: 0;
+  color: #ffffff;
+}
+
+#adminPage #adminBookingsView .admin-booking-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px 36px;
+}
+
+#adminPage #adminBookingsView .admin-booking-detail-grid p {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 12px;
+  margin: 0;
+  color: #e5edf8;
+}
+
+#adminPage #adminBookingsView .admin-booking-detail-grid strong {
+  color: #ffffff;
+}
+
+@media (max-width: 900px) {
+  #adminPage #adminBookingsView .admin-booking-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 #adminPage #adminContactMessagesView .admin-actions-cell {
   position: relative;
   justify-content: center;

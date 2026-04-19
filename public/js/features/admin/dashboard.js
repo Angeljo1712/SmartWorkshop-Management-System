@@ -119,6 +119,10 @@ if (adminPage) {
   const adminBookingsRowsPerPage = document.getElementById("adminBookingsRowsPerPage");
   const adminBookingsPagination = document.getElementById("adminBookingsPagination");
   const adminBookingsExportBtn = document.getElementById("adminBookingsExportBtn");
+  const adminBookingsDetailCard = document.getElementById("adminBookingsDetailCard");
+  const adminBookingsDetailTitle = document.getElementById("adminBookingsDetailTitle");
+  const adminBookingsDetailBody = document.getElementById("adminBookingsDetailBody");
+  const adminBookingsDetailClose = document.getElementById("adminBookingsDetailClose");
   const adminBookingSortHeaders = document.querySelectorAll("#adminBookingsView [data-booking-sort-key]");
   const adminBookingsEmptyState = document.getElementById("adminBookingsEmptyState");
   const adminResolutionSearch = document.getElementById("adminResolutionSearch");
@@ -990,6 +994,20 @@ if (adminPage) {
       .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
       .join(" ");
 
+  const formatPaymentTransactionStatus = (value) => {
+    const normalized = normaliseFilterToken(value);
+    const labels = {
+      authorized: "Authorized",
+      auth_captured: "Completed",
+      captured: "Completed",
+      refunded: "Refunded",
+      failed: "Failed",
+      completed: "Completed",
+      pending: "Pending"
+    };
+    return labels[normalized] || titleCase(String(value || "-").replace(/[_-]+/g, " "));
+  };
+
   const getContactMessageStatusUi = (value) => {
     const normalized = normaliseFilterToken(value || "new");
     if (normalized === "in_progress") {
@@ -1746,6 +1764,44 @@ if (adminPage) {
     syncAdminBookingSortUi();
   };
 
+  const hideAdminBookingsDetailCard = () => {
+    adminBookingsDetailCard?.classList.add("is-hidden");
+    if (adminBookingsDetailBody) adminBookingsDetailBody.innerHTML = "";
+  };
+
+  const showAdminBookingDetail = (booking) => {
+    if (!adminBookingsDetailCard || !adminBookingsDetailTitle || !adminBookingsDetailBody) return;
+    const detail = booking || {};
+    const reference = String(detail.reference || `Booking ${detail.booking_id || detail.id || "-"}`);
+    const status = titleCase(detail.status || "unknown");
+    const total = Number(detail.total || 0).toFixed(2);
+    const created = formatDate(detail.created_at);
+    const fields = [
+      ["Reference", reference],
+      ["Status", status],
+      ["Customer", detail.customer_name || "-"],
+      ["Mechanic", detail.mechanic_name || "Unassigned"],
+      ["Vehicle", detail.vehicle || "-"],
+      ["Location", detail.location || "-"],
+      ["Services", detail.services || "-"],
+      ["Total", `£${total}`],
+      ["Created", created],
+      ["Booking ID", String(detail.booking_id || detail.id || "-")]
+    ];
+
+    adminBookingsDetailTitle.textContent = `Booking ${reference}`;
+    adminBookingsDetailBody.innerHTML = fields
+      .map(([label, value]) => `
+        <p>
+          <strong>${escapeHtml(label)}</strong>
+          <span>${escapeHtml(value)}</span>
+        </p>
+      `)
+      .join("");
+    adminBookingsDetailCard.classList.remove("is-hidden");
+    adminBookingsDetailCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  };
+
   const renderResolutionCases = () => {
     if (!adminResolutionRows) return;
     const terms = getCombinedSearchTerms("resolution");
@@ -1973,6 +2029,7 @@ if (adminPage) {
           }
           const paymentTypeLabel = titleCase(String(item.payment_type || "-").replace(/_/g, " "));
           const providerLabel = item.provider_brand || item.provider || "-";
+          const statusLabel = formatPaymentTransactionStatus(item.status);
 
           return `
           <tr>
@@ -1983,7 +2040,7 @@ if (adminPage) {
             <td>${escapeHtml(paymentTypeLabel)}</td>
             <td>${escapeHtml(item.booking_reference || "-")}</td>
             <td>${escapeHtml(providerLabel)}</td>
-            <td>${escapeHtml(titleCase(item.status))}</td>
+            <td>${escapeHtml(statusLabel)}</td>
             <td>£${escapeHtml(Number(item.amount || 0).toFixed(2))}</td>
             <td>${escapeHtml(formatDate(item.created_at))}</td>
             <td>
@@ -2837,7 +2894,7 @@ if (adminPage) {
     if (adminPaymentDetailBody) {
       adminPaymentDetailBody.innerHTML = `
         <p><strong>Type of payment</strong><span>${escapeHtml(titleCase(String(detail.payment_type || "-").replace(/_/g, " ")))}</span></p>
-        <p><strong>Status</strong><span>${escapeHtml(titleCase(detail.status))}</span></p>
+        <p><strong>Status</strong><span>${escapeHtml(formatPaymentTransactionStatus(detail.status))}</span></p>
         <p><strong>Booking</strong><span>${escapeHtml(detail.booking_reference || "-")}</span></p>
         <p><strong>Provider</strong><span>${escapeHtml(detail.provider_brand || detail.provider || "-")}</span></p>
         <p><strong>Amount</strong><span>£${escapeHtml(Number(detail.amount || 0).toFixed(2))}</span></p>
@@ -3545,9 +3602,7 @@ if (adminPage) {
     if (action === "view") {
       const booking = adminBookings.find((item) => Number(item.booking_id || item.id) === bookingId);
       if (!booking) return;
-      showAdminFeedback(
-        `${booking.reference || `Booking ${bookingId}`}: ${booking.customer_name || "-"} · ${booking.vehicle || "-"} · ${titleCase(booking.status || "unknown")}.`
-      );
+      showAdminBookingDetail(booking);
       return;
     }
     actionButton.disabled = true;
@@ -3585,6 +3640,7 @@ if (adminPage) {
     link.remove();
     URL.revokeObjectURL(url);
   });
+  adminBookingsDetailClose?.addEventListener("click", hideAdminBookingsDetailCard);
   adminResolutionSearch?.addEventListener("input", () => {
     syncAdminSideSearchFromView();
     adminResolutionPage = 1;
@@ -3893,13 +3949,13 @@ if (adminPage) {
     renderPayments();
   });
   adminPaymentsExportBtn?.addEventListener("click", () => {
-    const headers = ["Reference", "Type of payment", "Booking", "Provider", "Status", "Amount", "Created"];
+    const headers = ["Payment number", "Type of payment", "Booking", "Provider", "Status", "Amount", "Created"];
     const rows = adminPayments.map((item) => [
       item.reference,
       titleCase(String(item.payment_type || "-").replace(/_/g, " ")),
       item.booking_reference || "-",
       item.provider_brand || item.provider || "-",
-      titleCase(item.status),
+      formatPaymentTransactionStatus(item.status),
       Number(item.amount || 0).toFixed(2),
       formatDate(item.created_at)
     ]);
