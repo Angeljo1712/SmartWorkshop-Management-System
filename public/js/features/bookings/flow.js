@@ -112,13 +112,13 @@ const updatePaymentCardBrand = (cardNumberInputElement) => {
   paymentCardBrandValue.textContent = brand;
 };
 
-const syncPaymentCvcConstraints = (cardNumberInputElement) => {
+const syncPaymentCvcConstraints = (cardNumberInputElement, cvcInputElement = document.getElementById("paymentCvc")) => {
   const expectedLength = getExpectedCvcLength(cardNumberInputElement);
-  if (!cvcInput) return expectedLength;
+  if (!cvcInputElement) return expectedLength;
 
-  cvcInput.maxLength = String(expectedLength);
-  const digitsOnly = String(cvcInput.value || "").replace(/\D+/g, "").slice(0, expectedLength);
-  cvcInput.value = digitsOnly;
+  cvcInputElement.maxLength = String(expectedLength);
+  const digitsOnly = String(cvcInputElement.value || "").replace(/\D+/g, "").slice(0, expectedLength);
+  cvcInputElement.value = digitsOnly;
 
   if (paymentCvcHint && !paymentCvcHint.classList.contains("is-error")) {
     paymentCvcHint.textContent = expectedLength === 4
@@ -524,20 +524,20 @@ if (workSummary) {
     const grouped = digitsOnly.replace(/(.{4})/g, "$1 ").trim();
     cardNumberInput.value = grouped;
     updatePaymentCardBrand(cardNumberInput);
-    syncPaymentCvcConstraints(cardNumberInput);
+    syncPaymentCvcConstraints(cardNumberInput, cvcInput);
   });
 
   cardNumberInput?.addEventListener("keyup", () => {
     updatePaymentCardBrand(cardNumberInput);
-    syncPaymentCvcConstraints(cardNumberInput);
+    syncPaymentCvcConstraints(cardNumberInput, cvcInput);
   });
   cardNumberInput?.addEventListener("change", () => {
     updatePaymentCardBrand(cardNumberInput);
-    syncPaymentCvcConstraints(cardNumberInput);
+    syncPaymentCvcConstraints(cardNumberInput, cvcInput);
   });
   cardNumberInput?.addEventListener("paste", () => window.setTimeout(() => {
     updatePaymentCardBrand(cardNumberInput);
-    syncPaymentCvcConstraints(cardNumberInput);
+    syncPaymentCvcConstraints(cardNumberInput, cvcInput);
   }, 0));
 
   cardNameInput?.addEventListener("input", () => {

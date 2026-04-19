@@ -419,9 +419,13 @@ if (mechanicDashboard) {
         amount_eur: row.querySelector("[data-mechanic-part-amount]")?.value || ""
       }));
 
-  const getMechanicPaymentStatusKey = (entry) => String(entry?.payment?.status || "unpaid").trim().toLowerCase();
+  const getMechanicPaymentStatusKey = (entry) => {
+    const rawKey = String(entry?.payment?.status || "unpaid").trim().toLowerCase();
+    return rawKey === "auth_captured" ? "completed" : rawKey;
+  };
   const getMechanicPaymentStatusLabel = (entry) => {
-    const key = getMechanicPaymentStatusKey(entry);
+    const rawKey = String(entry?.payment?.status || "unpaid").trim().toLowerCase();
+    const key = rawKey === "auth_captured" ? "completed" : rawKey;
     if (key === "paid") return "Paid";
     if (key === "pending") return "Pending";
     if (key === "failed") return "Failed";
@@ -432,18 +436,23 @@ if (mechanicDashboard) {
 
   const getMechanicPaymentMethodLabel = (entry) => {
     const value = String(entry?.payment?.payment_method || entry?.booking?.payment_method || "").trim().toLowerCase();
-    if (value.includes("american express") || value === "amex") return "American Express";
-    if (value.includes("mastercard") || value.includes("master card")) return "Mastercard";
-    if (value.includes("visa")) return "Visa";
-    if (value) return value.charAt(0).toUpperCase() + value.slice(1);
-    return "-";
+    if (!value) return "-";
+    if (value.includes("debit")) return "Debit";
+    if (value.includes("credit")) return "Credit";
+    if (value.includes("visa") || value.includes("mastercard") || value.includes("master card") || value.includes("amex") || value.includes("american express")) {
+      return "Credit";
+    }
+    return "Credit";
   };
 
   const getMechanicPaymentNumber = (entry) =>
     String(entry?.payment?.provider_ref || entry?.booking?.payment_number || entry?.invoice?.number || "-").trim() || "-";
 
   const getMechanicCardLast4 = (entry) =>
-    String(entry?.payment?.card_last4 || entry?.booking?.payment_last4 || "").replace(/\D+/g, "").slice(-4).padStart(4, "0").slice(-4) || "-";
+    (() => {
+      const digits = String(entry?.payment?.card_last4 || entry?.booking?.payment_last4 || "").replace(/\D+/g, "").slice(-4);
+      return digits.length === 4 ? digits : "-";
+    })();
 
   const normalizeMechanicPaymentEntry = (entry) => {
     if (!entry) return null;
@@ -1145,7 +1154,7 @@ if (mechanicDashboard) {
     if (!Array.isArray(paymentBookings) || !paymentBookings.length) {
       const emptyRow = document.createElement("tr");
       emptyRow.className = "mechanic-booking-empty-row";
-      emptyRow.innerHTML = '<td colspan="8" class="mechanic-bookings-empty">No completed payments yet.</td>';
+      emptyRow.innerHTML = '<td colspan="7" class="mechanic-bookings-empty">No completed payments yet.</td>';
       mechanicPaymentsList.appendChild(emptyRow);
       if (mechanicPaymentsFooterCount) mechanicPaymentsFooterCount.textContent = "0 payments";
       if (mechanicPaymentsPagination) mechanicPaymentsPagination.innerHTML = "";
@@ -1169,7 +1178,7 @@ if (mechanicDashboard) {
     if (!pagePayments.length) {
       const emptyRow = document.createElement("tr");
       emptyRow.className = "mechanic-booking-empty-row";
-      emptyRow.innerHTML = '<td colspan="8" class="mechanic-bookings-empty">No payments match the selected filters.</td>';
+      emptyRow.innerHTML = '<td colspan="7" class="mechanic-bookings-empty">No payments match the selected filters.</td>';
       mechanicPaymentsList.appendChild(emptyRow);
       activeMechanicPaymentBookingId = null;
       if (mechanicPaymentDetail) mechanicPaymentDetail.innerHTML = "";
@@ -1193,7 +1202,6 @@ if (mechanicDashboard) {
         <td><span class="mechanic-booking-summary-customer">${escapeHtml(entry.customer?.name || "Customer")}</span></td>
         <td><span class="mechanic-booking-summary-date">${escapeHtml(getMechanicPaymentMethodLabel(entry))}</span></td>
         <td><span class="mechanic-booking-summary-date">${escapeHtml(getMechanicPaymentNumber(entry))}</span></td>
-        <td><span class="mechanic-booking-summary-date">${escapeHtml(getMechanicCardLast4(entry))}</span></td>
         <td><span class="mechanic-booking-summary-date">${escapeHtml(formatMechanicCurrency(entry.payment?.amount_eur ?? entry.booking?.total_eur))}</span></td>
         <td><span class="mechanic-booking-summary-date">${escapeHtml(formatDate(entry.booking?.created_at))}</span></td>
       `;
@@ -2108,7 +2116,6 @@ if (mechanicDashboard) {
       Customer: entry.customer?.name || "Customer",
       PaymentMethod: getMechanicPaymentMethodLabel(entry),
       PaymentNumber: getMechanicPaymentNumber(entry),
-      CardLast4: getMechanicCardLast4(entry),
       Total: formatMechanicCurrency(entry.payment?.amount_eur ?? entry.booking?.total_eur),
       Created: formatDate(entry.booking?.created_at),
     }));

@@ -3062,7 +3062,7 @@ body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-divider 
 body.mechanic-body .mechanic-content .settings-card.mechanic-dashboard-card {
   border: 0;
   box-shadow: none;
-  background: transparent;
+  background: #3e434df7;
 }
 
 body.mechanic-body .mechanic-content .mechanic-dashboard-card .mechanic-settings-row {

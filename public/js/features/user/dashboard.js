@@ -524,13 +524,12 @@ if (userPage) {
   const getBookingCancellationReason = (booking) =>
     String(booking?.mechanic_cancellation?.reason || booking?.mechanic_cancelled_reason || "").trim();
 
-  const formatBookingStatus = (status, paymentStatus, cancellationReason = "") => {
+  const formatBookingStatus = (status, _paymentStatus, cancellationReason = "") => {
     const normalizedStatus = String(status || "requested").trim().toLowerCase();
     if (String(cancellationReason || "").trim()) return "CANCELLED";
     if (normalizedStatus === "completed") return "COMPLETED";
     if (normalizedStatus === "in_progress") return "IN PROGRESS";
     if (normalizedStatus === "cancelled" || normalizedStatus === "canceled") return "CANCELLED";
-    if (paymentStatus === "authorized" || paymentStatus === "auth_captured") return "PAID";
     return normalizedStatus.replace(/_/g, " ").toUpperCase();
   };
 
@@ -1274,12 +1273,7 @@ if (userPage) {
     );
     setSimpleOptions(
       userBookingsStatusFilter,
-      [
-        ...bookingList.map((booking) =>
-          titleCase(String(formatBookingStatus(booking.status, booking.payment?.status, getBookingCancellationReason(booking)) || "").toLowerCase())
-        ),
-        "Cancelled"
-      ],
+      ["Requested", "In Progress", "Completed", "Cancelled"],
       "Status"
     );
 

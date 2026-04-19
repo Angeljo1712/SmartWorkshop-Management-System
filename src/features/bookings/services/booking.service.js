@@ -364,25 +364,56 @@ const payDraft = async ({ session_id, provider = "mock", currency = "GBP", payme
       : draftRows[0].vehicle_json
     : null;
 
-  if (!vehiclePayload || !vehiclePayload.registrationNumber) {
+  let resolvedVehiclePayload = vehiclePayload;
+  if (!resolvedVehiclePayload || !resolvedVehiclePayload.registrationNumber) {
+    const [vehicleRows] = await pool.query(
+      `SELECT license_plate, make, model, year, fuel_type, mileage, mot_status, tax_status, vin
+       FROM vehicles
+       WHERE user_id = ?
+       ORDER BY id DESC
+       LIMIT 1`,
+      [draftRows[0].user_id]
+    );
+    if (vehicleRows[0]) {
+      resolvedVehiclePayload = {
+        registrationNumber: vehicleRows[0].license_plate || "",
+        make: vehicleRows[0].make || "",
+        model: vehicleRows[0].model || "",
+        yearOfManufacture: vehicleRows[0].year || null,
+        fuelType: vehicleRows[0].fuel_type || "",
+        mileage: vehicleRows[0].mileage || "",
+        motStatus: vehicleRows[0].mot_status || "",
+        taxStatus: vehicleRows[0].tax_status || "",
+        vin: vehicleRows[0].vin || ""
+      };
+      await pool.query(
+        `UPDATE booking_drafts
+         SET vehicle_json = ?
+         WHERE id = ?`,
+        [JSON.stringify(resolvedVehiclePayload), draftRows[0].id]
+      );
+    }
+  }
+
+  if (!resolvedVehiclePayload || !resolvedVehiclePayload.registrationNumber) {
     throw new AppError("VALIDATION_ERROR", "Vehicle details missing", 400);
   }
 
-  const [vehicleRows] = await pool.query(
+  const [existingVehicleRows] = await pool.query(
     `SELECT id FROM vehicles WHERE user_id = ? AND license_plate = ?`,
-    [draftRows[0].user_id, vehiclePayload.registrationNumber]
+    [draftRows[0].user_id, resolvedVehiclePayload.registrationNumber]
   );
-  let vehicleId = vehicleRows[0]?.id;
+  let vehicleId = existingVehicleRows[0]?.id;
   if (!vehicleId) {
     const [result] = await pool.query(
       `INSERT INTO vehicles (uuid_public, user_id, license_plate, make, model, year)
        VALUES (UUID_TO_BIN(UUID()), ?, ?, ?, ?, ?)`,
       [
         draftRows[0].user_id,
-        vehiclePayload.registrationNumber,
-        vehiclePayload.make || "",
-        vehiclePayload.model || "",
-        vehiclePayload.yearOfManufacture || null
+        resolvedVehiclePayload.registrationNumber,
+        resolvedVehiclePayload.make || "",
+        resolvedVehiclePayload.model || "",
+        resolvedVehiclePayload.yearOfManufacture || null
       ]
     );
     vehicleId = result.insertId;
