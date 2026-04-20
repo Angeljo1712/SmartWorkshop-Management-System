@@ -25,6 +25,12 @@ function Assert-CommandExists([string]$Command, [string]$Label) {
   }
 }
 
+function Assert-LastDockerCommandSucceeded([string]$ActionLabel) {
+  if ($LASTEXITCODE -ne 0) {
+    throw "Docker command failed while trying to $ActionLabel (exit code $LASTEXITCODE)."
+  }
+}
+
 function Start-Staging([switch]$Build) {
   Assert-FileExists $StagingFile "staging compose file"
   Assert-FileExists $EnvFile "staging env file"
@@ -43,6 +49,7 @@ function Start-Staging([switch]$Build) {
     $cmd += @("up", "-d")
   }
   & $cmd[0] $cmd[1..($cmd.Length - 1)] | Out-Host
+  Assert-LastDockerCommandSucceeded "start staging stack"
   Ok "Staging stack started."
 }
 
@@ -53,6 +60,7 @@ function Stop-Staging {
 
   Info "Stopping staging stack..."
   docker compose --project-name $ProjectName --env-file $EnvFile -f $StagingFile down --remove-orphans | Out-Host
+  Assert-LastDockerCommandSucceeded "stop staging stack"
   Ok "Staging stack stopped."
 }
 

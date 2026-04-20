@@ -1,16 +1,26 @@
 $ErrorActionPreference = "Stop"
 
-$dbName = $env:DB_NAME
-$dbUser = $env:DB_USER
-$dbPass = $env:DB_PASSWORD
-$rootPass = $env:DB_ROOT_PASSWORD
+$envFile = Join-Path -Path $PSScriptRoot -ChildPath "..\.env"
 $container = "project_uny_db"
 $inFile = Join-Path -Path $PSScriptRoot -ChildPath "..\\database\\backup.sql"
 
-if (-not $dbName) { $dbName = "smartworkshop" }
-if (-not $dbUser) { $dbUser = "smartworkshop" }
-if (-not $dbPass) { $dbPass = "smartworkshop_pass" }
-if (-not $rootPass) { $rootPass = "smartworkshop_root" }
+function Get-EnvValue([string]$Key, [string]$Default = "") {
+  if (-not (Test-Path $envFile)) {
+    return $Default
+  }
+
+  $line = Get-Content $envFile | Where-Object {
+    $_ -match "^\s*$([regex]::Escape($Key))\s*="
+  } | Select-Object -First 1
+
+  if (-not $line) { return $Default }
+  return ($line -replace "^\s*$([regex]::Escape($Key))\s*=\s*", "").Trim()
+}
+
+$dbName = Get-EnvValue "DB_NAME" "smartworkshop"
+$dbUser = Get-EnvValue "DB_USER" "smartworkshop"
+$dbPass = Get-EnvValue "DB_PASSWORD" "smartworkshop_pass"
+$rootPass = Get-EnvValue "DB_ROOT_PASSWORD" "smartworkshop_root"
 
 if (-not (Test-Path $inFile)) {
   throw "Backup file not found: $inFile"

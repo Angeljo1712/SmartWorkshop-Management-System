@@ -1,7 +1,6 @@
 -- smartworkshop_schema_int.sql
 -- MySQL 8.0, InnoDB, INT/BIGINT AUTO_INCREMENT PKs, no triggers/seeds
-
-USE smartworkshop;
+-- Database selection is provided by Docker MYSQL_DATABASE (local/staging).
 
 -- ================================
 -- Core tables (IDs as BIGINT AUTO_INCREMENT)
@@ -69,8 +68,7 @@ CREATE TABLE IF NOT EXISTS booking_draft_items (
   line_total_eur DECIMAL(10,2) NOT NULL,
   UNIQUE KEY uq_draft_service (draft_id, service_id),
   KEY idx_bdi_draft (draft_id),
-  CONSTRAINT fk_bdi_draft FOREIGN KEY (draft_id) REFERENCES booking_drafts(id) ON DELETE CASCADE,
-  CONSTRAINT fk_bdi_service FOREIGN KEY (service_id) REFERENCES service_catalog(id)
+  CONSTRAINT fk_bdi_draft FOREIGN KEY (draft_id) REFERENCES booking_drafts(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS password_reset_requests (
@@ -226,6 +224,9 @@ CREATE TABLE IF NOT EXISTS service_catalog (
   description TEXT,
   base_labour_minutes INT NOT NULL
 ) ENGINE=InnoDB;
+
+ALTER TABLE booking_draft_items
+  ADD CONSTRAINT fk_bdi_service FOREIGN KEY (service_id) REFERENCES service_catalog(id);
 
 CREATE TABLE IF NOT EXISTS service_pricing (
   id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,

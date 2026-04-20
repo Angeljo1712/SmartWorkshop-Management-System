@@ -20,11 +20,11 @@ const env = {
     scope: process.env.DVSA_SCOPE || "https://tapi.dvsa.gov.uk/.default"
   },
   taxApi: {
-    baseUrl: process.env.TAX_API_BASE_URL || "",
-    tokenUrl: process.env.TAX_API_TOKEN_URL || "",
-    clientId: process.env.TAX_API_CLIENT_ID || "",
-    clientSecret: process.env.TAX_API_CLIENT_SECRET || "",
-    scope: process.env.TAX_API_SCOPE || "",
+    baseUrl: process.env.TAX_API_BASE_URL || process.env.HMRC_BASE_URL || "",
+    tokenUrl: process.env.TAX_API_TOKEN_URL || process.env.HMRC_TOKEN_URL || "",
+    clientId: process.env.TAX_API_CLIENT_ID || process.env.HMRC_CLIENT_ID || "",
+    clientSecret: process.env.TAX_API_CLIENT_SECRET || process.env.HMRC_CLIENT_SECRET || "",
+    scope: process.env.TAX_API_SCOPE || process.env.HMRC_VAT_SCOPE || "",
     verifyUrl: process.env.TAX_API_VERIFY_URL || ""
   },
   db: {
