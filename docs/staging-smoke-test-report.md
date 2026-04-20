@@ -8,15 +8,15 @@ Use this document to record the outcome of the staging validation before the fin
 - Tester: Codex (automated checks)
 - Staging environment: http://localhost:3001 (app), localhost:3307 (MySQL), http://localhost:8082 (phpMyAdmin)
 - Build/version: 687590e
-- Notes: Block 5 executed as CLI pre-check: responsive breakpoints and mobile menu/drawer wiring were verified in source. Final visual assertion (layout fit, no clipping, no overlap) remains manual.
+- Notes: Block 5 executed as CLI pre-check: responsive breakpoints and mobile menu/drawer wiring were verified in source. Visual proof for `425px` on `/auth/forgot-password` was provided and accepted; remaining visual assertions are still manual.
 
 ## Summary
 
 - Total checks planned: 27
-- Total checks passed: 19
+- Total checks passed: 20
 - Total checks failed: 0
-- Total checks blocked: 8
-- Overall status: Blocked (remaining visual/manual responsive checks pending)
+- Total checks blocked: 7
+- Overall status: Blocked (remaining visual/manual checks pending)
 
 ## Results
 
@@ -48,13 +48,13 @@ Use this document to record the outcome of the staging validation before the fin
 | Email | Resend code works | Pass | Two consecutive setup requests produced different `challenge_token` values and two queued SMTP sends in backend logs (distinct message IDs). |
 | Responsive | 1024px validated | Blocked | Source pre-check complete (breakpoint rules present), but viewport-level rendering still manual. |
 | Responsive | 768px validated | Blocked | Source pre-check complete (breakpoint rules present), but viewport-level rendering still manual. |
-| Responsive | 425px validated | Blocked | Source pre-check complete (breakpoint rules present), but viewport-level rendering still manual. |
+| Responsive | 425px validated | Pass | Viewport evidence provided for `http://localhost:3001/auth/forgot-password` at `425px`; layout fits and breakpoint-specific auth rules are present in `public/css/features/auth/auth.css`. |
 
 ## Issues
 
 | ID | Area | Severity | Description | Status | Owner |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Smoke scope | Medium | 8 checks remain manual (visual responsive behavior and interactive header/drawer checks across breakpoints). | Open | QA / Product |
+| 1 | Smoke scope | Medium | 7 checks remain manual (visual responsive behavior and interactive header/drawer checks across remaining breakpoints/pages). | Open | QA / Product |
 | 2 | Auth evidence storage | Low | QA auth/onboarding accounts were created in staging for validation (`qa.auth.staging+1776681255@example.test`, `qa.admin+1776681302@example.test`, `qa.mechanic+1776681302@example.test`, `qa.onboarding+1776681863@example.test`). Decide whether to keep or clean after QA sign-off. | Open | QA / Backend |
 | 3 | Role guards | Low | Authorization boundaries validated: user/mechanic tokens receive `403` for admin endpoints, and non-mechanic tokens receive `403` for mechanic-only endpoints. | Closed | Backend |
 | 4 | Verification QA method | Low | Code-confirmation happy path in block 3 used a controlled QA data injection for the challenge code hash in staging DB to avoid mailbox dependency during CLI-only testing. | Open | QA / Backend |
