@@ -14,7 +14,7 @@ INSERT IGNORE INTO users (
   'admin@smartworkshop.local',
   'admin',
   NULL,
-  '$2a$10$pbXVjfe4Dgc0Cx5m6IA72uB12zroFMoa90C8kf5b1Zu7d3bpPf6vK',
+  '$2a$10$bXPeMaQwOR/NdSy.viiUcumvxr8IXRDoBJBdTKdcN1V92ApcsLgPm',
   'admin',
   'active'
 );
@@ -42,7 +42,7 @@ INSERT IGNORE INTO users (
   'mechanic@smartworkshop.local',
   'mechanic',
   NULL,
-  '$2a$10$CQaCFg3M8oXuZxU1y62OxeF/5XnbG51WoW9KRI16KwRZUJ6xrtMdu',
+  '$2a$10$euF2T5Oe7Sd.PVO/wemAbenhnZ7aWIkFwgMxdNkRs2C..SoN6eXfy',
   'mechanic',
   'active'
 );
@@ -115,7 +115,7 @@ FROM users
 WHERE email = 'mechanic@smartworkshop.local';
 
 INSERT IGNORE INTO mechanic_qualifications (user_id, name)
-SELECT id, 'IMI Level 2'
+SELECT id, 'EV/HEV Qualification/Training'
 FROM users
 WHERE email = 'mechanic@smartworkshop.local';
 
@@ -144,16 +144,16 @@ INSERT IGNORE INTO users (
   role,
   status
 ) VALUES
-  (UUID_TO_BIN(UUID()), 'oliver.king@smartworkshop.local', 'oliver_king', NULL, '$2a$10$D7mHLfsquGphpCxLKAOOFePxTjSu7NifOKqus042b4HKDE3awzvfa', 'mechanic', 'active'),
-  (UUID_TO_BIN(UUID()), 'priya.shah@smartworkshop.local', 'priya_shah', NULL, '$2a$10$xmLkt3impl1flRZNmQWt1OHhdZTt7zPdcqwOL7rY6y4zSChLcdQhy', 'mechanic', 'active'),
-  (UUID_TO_BIN(UUID()), 'marcus.reid@smartworkshop.local', 'marcus_reid', NULL, '$2a$10$9jB3mP/dQlFXtg0Rh1o6ye7B5r61yqqCVdqPMR/6SP7kYNmFeVThO', 'mechanic', 'active'),
-  (UUID_TO_BIN(UUID()), 'elena.brooks@smartworkshop.local', 'elena_brooks', NULL, '$2a$10$2CTpf4DgBq2Co6q3qm22IONIdKRd0YHlhaMt.hirGBqX81wqsEVFi', 'mechanic', 'active'),
-  (UUID_TO_BIN(UUID()), 'hassan.ali@smartworkshop.local', 'hassan_ali', NULL, '$2a$10$819nyms6gCeC2ckqJK4H/OsP63ms4RHHd5n/HtZtgNG.q766xFrZO', 'mechanic', 'active'),
-  (UUID_TO_BIN(UUID()), 'chloe.bennett@smartworkshop.local', 'chloe_bennett', NULL, '$2a$10$pc1xvCC.Jl4YY.FySH9tHey1wbnXr1nEWGRpHFCSH3cCXZXn55wgK', 'mechanic', 'active'),
-  (UUID_TO_BIN(UUID()), 'daniel.foster@smartworkshop.local', 'daniel_foster', NULL, '$2a$10$FpGCYUrby5lSQPS4P/mueO.9J1gh2QYdZ.cvv.A.O6VBJEidu0N6i', 'mechanic', 'active'),
-  (UUID_TO_BIN(UUID()), 'sofia.rossi@smartworkshop.local', 'sofia_rossi', NULL, '$2a$10$RjcQBUJemEGFDat70fML9.bh5jPR3bMmWE8KPemcNqvMIhbMBVtSy', 'mechanic', 'active'),
-  (UUID_TO_BIN(UUID()), 'liam.walker@smartworkshop.local', 'liam_walker', NULL, '$2a$10$HL.t61FgC9BFpoflOG05IelK4ZBchPuD2L2QhPgVm4yBOH6Lez4pK', 'mechanic', 'active'),
-  (UUID_TO_BIN(UUID()), 'ava.patel@smartworkshop.local', 'ava_patel', NULL, '$2a$10$l5vqzFiOh3rJJ6IK0PHpXuy9pYe9urgStKD2UL2IsE4Hy7Hs2EsD2', 'mechanic', 'active');
+  (UUID_TO_BIN(UUID()), 'oliver.king@smartworkshop.local', 'oliver_king', NULL, '$2a$10$P6GUUJMnNjZxdCyl0EQhbO4OXH9rUd481tc//A03qci50Rg9fVgEC', 'mechanic', 'active'),
+  (UUID_TO_BIN(UUID()), 'priya.shah@smartworkshop.local', 'priya_shah', NULL, '$2a$10$pJyM7nLg4AfiR7Opnj4wy.uEUrqu6agy7lMJ9ABeolU3BR/5tDyxi', 'mechanic', 'active'),
+  (UUID_TO_BIN(UUID()), 'marcus.reid@smartworkshop.local', 'marcus_reid', NULL, '$2a$10$li.agC.1/Wxo0BP.6FhWhuAHT4JGaruwnW2BGpnBdTUYz2QKs8WSi', 'mechanic', 'active'),
+  (UUID_TO_BIN(UUID()), 'elena.brooks@smartworkshop.local', 'elena_brooks', NULL, '$2a$10$7o5MMQKis4y3dk0C12sMjubWCB67EtwewS0abhRBxQPRSzuxlR7C2', 'mechanic', 'active'),
+  (UUID_TO_BIN(UUID()), 'hassan.ali@smartworkshop.local', 'hassan_ali', NULL, '$2a$10$s1VOj6xYLQ5X8SWMfqMn0.39EPozTW4git9.dHQxM36nBiHYUgKtG', 'mechanic', 'active'),
+  (UUID_TO_BIN(UUID()), 'chloe.bennett@smartworkshop.local', 'chloe_bennett', NULL, '$2a$10$w5TsxpHEyJWU8Mctgyb/dOv1dPpHmIA.Y1CWau2ZjnAxEJZKbyIGW', 'mechanic', 'active'),
+  (UUID_TO_BIN(UUID()), 'daniel.foster@smartworkshop.local', 'daniel_foster', NULL, '$2a$10$HzTJCpYM17VeGm1LaqgGgOnfczAsefoZNV7U73Mf3jSZ1Udw81Ph.', 'mechanic', 'active'),
+  (UUID_TO_BIN(UUID()), 'sofia.rossi@smartworkshop.local', 'sofia_rossi', NULL, '$2a$10$s7I2p39rjrsp6/1tr4FWA.cYcCg68rEtgBzi7MOBVU79Y1c5bOUAW', 'mechanic', 'active'),
+  (UUID_TO_BIN(UUID()), 'liam.walker@smartworkshop.local', 'liam_walker', NULL, '$2a$10$xBbWg8HXc.mzSXbd1GKSeuYevPYYBwiO88cw7rAyZV5VWt/./lqbm', 'mechanic', 'active'),
+  (UUID_TO_BIN(UUID()), 'ava.patel@smartworkshop.local', 'ava_patel', NULL, '$2a$10$Yq08FgVztAqd3mnQB8UTm.95IpCLoCjDPb8hi6FfKF7Ie5uZRYpOa', 'mechanic', 'active');
 
 INSERT IGNORE INTO user_roles (user_id, role)
 SELECT id, 'mechanic' FROM users WHERE email = 'oliver.king@smartworkshop.local';
@@ -360,35 +360,97 @@ FROM users u WHERE u.email = 'ava.patel@smartworkshop.local'
   AND NOT EXISTS (SELECT 1 FROM addresses a WHERE a.user_id = u.id AND a.label = 'Premises');
 
 INSERT INTO mechanic_qualifications (user_id, name)
-SELECT u.id, 'EV High Voltage Level 3' FROM users u WHERE u.email = 'oliver.king@smartworkshop.local'
-  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'EV High Voltage Level 3');
+SELECT u.id, 'EV/HEV Qualification/Training' FROM users u WHERE u.email = 'oliver.king@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'EV/HEV Qualification/Training');
 INSERT INTO mechanic_qualifications (user_id, name)
-SELECT u.id, 'MOT Tester Certificate' FROM users u WHERE u.email = 'priya.shah@smartworkshop.local'
-  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'MOT Tester Certificate');
+SELECT u.id, 'NVQ Level 3' FROM users u WHERE u.email = 'priya.shah@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'NVQ Level 3');
 INSERT INTO mechanic_qualifications (user_id, name)
-SELECT u.id, 'Brake Systems Specialist' FROM users u WHERE u.email = 'marcus.reid@smartworkshop.local'
-  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'Brake Systems Specialist');
+SELECT u.id, 'City & Guilds Level 3' FROM users u WHERE u.email = 'marcus.reid@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'City & Guilds Level 3');
 INSERT INTO mechanic_qualifications (user_id, name)
-SELECT u.id, 'Transmission Diagnostics' FROM users u WHERE u.email = 'elena.brooks@smartworkshop.local'
-  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'Transmission Diagnostics');
+SELECT u.id, 'NVQ Level 2' FROM users u WHERE u.email = 'elena.brooks@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'NVQ Level 2');
 INSERT INTO mechanic_qualifications (user_id, name)
-SELECT u.id, 'Tyre Fitting Technician' FROM users u WHERE u.email = 'hassan.ali@smartworkshop.local'
-  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'Tyre Fitting Technician');
+SELECT u.id, 'City & Guilds Level 2' FROM users u WHERE u.email = 'hassan.ali@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'City & Guilds Level 2');
 INSERT INTO mechanic_qualifications (user_id, name)
-SELECT u.id, 'Air Conditioning Service Cert' FROM users u WHERE u.email = 'chloe.bennett@smartworkshop.local'
-  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'Air Conditioning Service Cert');
+SELECT u.id, 'NVQ Level 1' FROM users u WHERE u.email = 'chloe.bennett@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'NVQ Level 1');
 INSERT INTO mechanic_qualifications (user_id, name)
-SELECT u.id, 'Advanced Engine Diagnostics' FROM users u WHERE u.email = 'daniel.foster@smartworkshop.local'
-  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'Advanced Engine Diagnostics');
+SELECT u.id, 'City & Guilds Level 1' FROM users u WHERE u.email = 'daniel.foster@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'City & Guilds Level 1');
 INSERT INTO mechanic_qualifications (user_id, name)
-SELECT u.id, 'Body and Trim Repair' FROM users u WHERE u.email = 'sofia.rossi@smartworkshop.local'
-  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'Body and Trim Repair');
+SELECT u.id, 'Other Qualification' FROM users u WHERE u.email = 'sofia.rossi@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'Other Qualification');
 INSERT INTO mechanic_qualifications (user_id, name)
-SELECT u.id, 'Mobile Service Specialist' FROM users u WHERE u.email = 'liam.walker@smartworkshop.local'
-  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'Mobile Service Specialist');
+SELECT u.id, 'EV/HEV Qualification/Training' FROM users u WHERE u.email = 'liam.walker@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'EV/HEV Qualification/Training');
 INSERT INTO mechanic_qualifications (user_id, name)
-SELECT u.id, 'Hybrid Vehicle Certification' FROM users u WHERE u.email = 'ava.patel@smartworkshop.local'
-  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'Hybrid Vehicle Certification');
+SELECT u.id, 'NVQ Level 3' FROM users u WHERE u.email = 'ava.patel@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_qualifications q WHERE q.user_id = u.id AND q.name = 'NVQ Level 3');
+
+INSERT INTO mechanic_accreditations (user_id, name)
+SELECT u.id, 'IRTEC Accredited / Qualified Technician' FROM users u WHERE u.email = 'oliver.king@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_accreditations a WHERE a.user_id = u.id AND a.name = 'IRTEC Accredited / Qualified Technician');
+INSERT INTO mechanic_accreditations (user_id, name)
+SELECT u.id, 'ATA Level 2' FROM users u WHERE u.email = 'priya.shah@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_accreditations a WHERE a.user_id = u.id AND a.name = 'ATA Level 2');
+INSERT INTO mechanic_accreditations (user_id, name)
+SELECT u.id, 'ATA Level 3' FROM users u WHERE u.email = 'marcus.reid@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_accreditations a WHERE a.user_id = u.id AND a.name = 'ATA Level 3');
+INSERT INTO mechanic_accreditations (user_id, name)
+SELECT u.id, 'ATA Level 4' FROM users u WHERE u.email = 'elena.brooks@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_accreditations a WHERE a.user_id = u.id AND a.name = 'ATA Level 4');
+INSERT INTO mechanic_accreditations (user_id, name)
+SELECT u.id, 'Other Accreditation' FROM users u WHERE u.email = 'hassan.ali@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_accreditations a WHERE a.user_id = u.id AND a.name = 'Other Accreditation');
+INSERT INTO mechanic_accreditations (user_id, name)
+SELECT u.id, 'IRTEC Accredited / Qualified Technician' FROM users u WHERE u.email = 'chloe.bennett@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_accreditations a WHERE a.user_id = u.id AND a.name = 'IRTEC Accredited / Qualified Technician');
+INSERT INTO mechanic_accreditations (user_id, name)
+SELECT u.id, 'ATA Level 2' FROM users u WHERE u.email = 'daniel.foster@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_accreditations a WHERE a.user_id = u.id AND a.name = 'ATA Level 2');
+INSERT INTO mechanic_accreditations (user_id, name)
+SELECT u.id, 'ATA Level 3' FROM users u WHERE u.email = 'sofia.rossi@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_accreditations a WHERE a.user_id = u.id AND a.name = 'ATA Level 3');
+INSERT INTO mechanic_accreditations (user_id, name)
+SELECT u.id, 'ATA Level 4' FROM users u WHERE u.email = 'liam.walker@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_accreditations a WHERE a.user_id = u.id AND a.name = 'ATA Level 4');
+INSERT INTO mechanic_accreditations (user_id, name)
+SELECT u.id, 'IRTEC Accredited / Qualified Technician' FROM users u WHERE u.email = 'ava.patel@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_accreditations a WHERE a.user_id = u.id AND a.name = 'IRTEC Accredited / Qualified Technician');
+
+INSERT INTO mechanic_memberships (user_id, name)
+SELECT u.id, 'RMIF' FROM users u WHERE u.email = 'oliver.king@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_memberships m WHERE m.user_id = u.id AND m.name = 'RMIF');
+INSERT INTO mechanic_memberships (user_id, name)
+SELECT u.id, 'IMI' FROM users u WHERE u.email = 'priya.shah@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_memberships m WHERE m.user_id = u.id AND m.name = 'IMI');
+INSERT INTO mechanic_memberships (user_id, name)
+SELECT u.id, 'Other Membership' FROM users u WHERE u.email = 'marcus.reid@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_memberships m WHERE m.user_id = u.id AND m.name = 'Other Membership');
+INSERT INTO mechanic_memberships (user_id, name)
+SELECT u.id, 'RAC Approved Garage' FROM users u WHERE u.email = 'elena.brooks@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_memberships m WHERE m.user_id = u.id AND m.name = 'RAC Approved Garage');
+INSERT INTO mechanic_memberships (user_id, name)
+SELECT u.id, 'Autofirst Network' FROM users u WHERE u.email = 'hassan.ali@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_memberships m WHERE m.user_id = u.id AND m.name = 'Autofirst Network');
+INSERT INTO mechanic_memberships (user_id, name)
+SELECT u.id, 'RMIF' FROM users u WHERE u.email = 'chloe.bennett@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_memberships m WHERE m.user_id = u.id AND m.name = 'RMIF');
+INSERT INTO mechanic_memberships (user_id, name)
+SELECT u.id, 'IMI' FROM users u WHERE u.email = 'daniel.foster@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_memberships m WHERE m.user_id = u.id AND m.name = 'IMI');
+INSERT INTO mechanic_memberships (user_id, name)
+SELECT u.id, 'Other Membership' FROM users u WHERE u.email = 'sofia.rossi@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_memberships m WHERE m.user_id = u.id AND m.name = 'Other Membership');
+INSERT INTO mechanic_memberships (user_id, name)
+SELECT u.id, 'RAC Approved Garage' FROM users u WHERE u.email = 'liam.walker@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_memberships m WHERE m.user_id = u.id AND m.name = 'RAC Approved Garage');
+INSERT INTO mechanic_memberships (user_id, name)
+SELECT u.id, 'Autofirst Network' FROM users u WHERE u.email = 'ava.patel@smartworkshop.local'
+  AND NOT EXISTS (SELECT 1 FROM mechanic_memberships m WHERE m.user_id = u.id AND m.name = 'Autofirst Network');
 
 INSERT IGNORE INTO mechanic_services_offered (user_id, service_type)
 SELECT id, 'ev_specialist' FROM users WHERE email = 'oliver.king@smartworkshop.local';

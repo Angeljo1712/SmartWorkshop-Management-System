@@ -53,7 +53,7 @@
   display: grid;
   gap: 24px;
   align-items: start;
-  background: #344154;
+  background: #3e434df7;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   padding: 30px;
@@ -96,7 +96,7 @@
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 24px 20px 28px;
-  background: #ffffff;
+  background: #1a202b;
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
   display: grid;
   gap: 12px;
@@ -112,11 +112,11 @@
 
 .application-card h3 {
   font-size: 18px;
-  color: #0f172a;
+  color: #ffffff;
 }
 
 .application-card p {
-  color: var(--muted);
+  color: #ffffff;
   font-size: 14px;
   line-height: 1.6;
 }

@@ -65,6 +65,13 @@ To reset staging from scratch:
 ./scripts/staging/reset-staging.ps1
 ```
 
+To start staging on a specific volume:
+
+```powershell
+./scripts/staging/start-staging-v1.ps1
+./scripts/staging/start-staging-v2.ps1
+```
+
 To back up or restore the staging database:
 
 ```powershell
@@ -87,6 +94,7 @@ Ports used by default:
 The staging stack runs against its own MySQL volume, so it stays isolated from local development.
 You can override the staging volume name with `STAGING_DB_VOLUME` if you need to point staging at a different persistent volume.
 Use `./scripts/staging/migrate-staging-volume.ps1` when you want to move the preserved admin/mechanic/catalog data into a new staging volume.
+Use `./scripts/staging/start-staging-v1.ps1` or `./scripts/staging/start-staging-v2.ps1` when you want to start staging against a specific saved volume without changing `.env.staging`.
 Staging bootstrap also seeds 10 extra London mechanic test accounts for booking and search flows.
 
 Smoke test plan for this stage: [docs/staging-smoke-test-plan.md](docs/staging-smoke-test-plan.md)

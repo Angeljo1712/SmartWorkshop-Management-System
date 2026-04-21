@@ -40,6 +40,19 @@ const getMemberships = async (userId) => {
   return rows.map((row) => row.name);
 };
 
+const ensureMechanicAccreditationsTable = async () => {
+  await pool.query(
+    `CREATE TABLE IF NOT EXISTS mechanic_accreditations (
+      id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+      user_id BIGINT UNSIGNED NOT NULL,
+      name VARCHAR(160) NOT NULL,
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      KEY idx_ma_user (user_id),
+      CONSTRAINT fk_ma_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB`
+  );
+};
+
 const addQualification = async ({ userId, name }) => {
   const trimmed = String(name || "").trim();
   if (!trimmed) return;
@@ -254,6 +267,7 @@ const saveApplication = async (payload) => {
     years_experience,
     work_history,
     certifications,
+    accreditations,
     memberships,
     has_website,
     website,
@@ -353,6 +367,15 @@ const saveApplication = async (payload) => {
     const trimmed = String(name || "").trim();
     if (!trimmed) continue;
     await pool.query("INSERT INTO mechanic_qualifications (user_id, name) VALUES (?, ?)", [userId, trimmed]);
+  }
+
+  await ensureMechanicAccreditationsTable();
+  await pool.query("DELETE FROM mechanic_accreditations WHERE user_id = ?", [userId]);
+  const accreditationList = Array.isArray(accreditations) ? accreditations : accreditations ? [accreditations] : [];
+  for (const name of accreditationList) {
+    const trimmed = String(name || "").trim();
+    if (!trimmed) continue;
+    await pool.query("INSERT INTO mechanic_accreditations (user_id, name) VALUES (?, ?)", [userId, trimmed]);
   }
 
   await pool.query("DELETE FROM mechanic_memberships WHERE user_id = ?", [userId]);

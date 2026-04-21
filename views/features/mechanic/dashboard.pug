@@ -543,15 +543,15 @@ block content
                       label(for="mechanicCertificationQualification") Add qualification
                       .mechanic-cert-entry-actions
                         select#mechanicCertificationQualification(name="qualification")
+                          option(value="" selected disabled) Select one
                           option NVQ Level 1
                           option NVQ Level 2
-                          option(selected) NVQ Level 3
+                          option NVQ Level 3
                           option City & Guilds Level 1
                           option City & Guilds Level 2
                           option City & Guilds Level 3
                           option Other Qualification
                           option EV/HEV Qualification/Training
-                          option Institute of the Motor Industry
                         button.primary.mechanic-cert-action#mechanicCertificationQualificationAdd(type="button") Add qualification
                   .mechanic-cert-card
                     h3 Accreditations
@@ -562,13 +562,12 @@ block content
                       .mechanic-cert-entry-actions
                         select#mechanicCertificationAccreditation(name="accreditation")
                           option(value="" selected disabled) Select accreditation
-                          option IMI Accredited
-                          option IMI Professional Register
-                          option DVSA Approved MOT Tester
-                          option ATA Accredited
-                          option Hybrid/EV Accredited
-                          option Manufacturer Trained
-                          option Other accreditation
+                          option ATA Level 2
+                          option ATA Level 3
+                          option ATA Level 4
+                          option Other Accreditation
+                          option IRTEC Accredited / Qualified Technician
+                          option IMI Level 3 Electric/Hybrid Vehicle Repair & Replacement (1000V)
                         button.primary.mechanic-cert-action#mechanicCertificationAccreditationAdd(type="button") Add accreditation
                   .mechanic-cert-card
                     h3 Memberships
@@ -579,13 +578,11 @@ block content
                       .mechanic-cert-entry-actions
                         select#mechanicCertificationMembership(name="membership")
                           option(value="" selected disabled) Select membership
-                          option Institute of the Motor Industry (IMI)
-                          option Retail Motor Industry Federation (RMI)
-                          option Motor Ombudsman
-                          option Independent Garage Association (IGA)
-                          option Good Garage Scheme
-                          option Federation of Small Businesses (FSB)
-                          option Other membership
+                          option RMIF
+                          option IMI
+                          option Other Membership
+                          option RAC Approved Garage
+                          option Autofirst Network
                         button.primary.mechanic-cert-action#mechanicCertificationMembershipAdd(type="button") Add membership
                   .mechanic-cert-actions
                     p.mechanic-cert-status#mechanicCertStatus.is-hidden(role="status" aria-live="polite")
