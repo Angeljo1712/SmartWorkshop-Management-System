@@ -3479,9 +3479,19 @@ body.mechanic-body .mechanic-edit-profile-card--skills {
   background: #3e434df7;
 }
 
+body.mechanic-body .mechanic-edit-profile-card--skills label {
+  display: grid;
+  gap: 16px;
+}
+
 body.mechanic-body .mechanic-edit-profile-card--coverage {
   grid-area: coverage;
   background: #3e434df7;
+}
+
+body.mechanic-body .mechanic-edit-profile-card--coverage label {
+  display: grid;
+  gap: 16px;
 }
 
 body.mechanic-body .mechanic-edit-profile-card--fulfilment {

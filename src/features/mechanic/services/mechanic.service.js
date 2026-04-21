@@ -7,6 +7,11 @@ const {
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
+const resolveMechanicAvatarUrl = (user) => {
+  if (String(user?.role || "").toLowerCase() === "mechanic") return "";
+  return String(user?.avatar_url || "").trim();
+};
+
 const getLatestAddress = async (userId) => {
   const [rows] = await pool.query(
     `SELECT line1, line2, city, postal_code, country,
@@ -681,7 +686,7 @@ const getProfile = async (userId) => {
     name,
     location,
     email: user.email,
-    avatar_url: user.avatar_url,
+    avatar_url: resolveMechanicAvatarUrl(user),
     rating: user.rating_avg || 0,
     jobs_done: user.jobs_done || 0,
     created_at: user.created_at,

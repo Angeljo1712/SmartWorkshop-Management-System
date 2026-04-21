@@ -80,11 +80,31 @@ const renderEmailLayout = ({ title, intro, ctaLabel, ctaUrl, footerNote }) => `
 const sendEmailChangeConfirmation = async ({ to, confirmUrl }) => {
   const from = env.smtp.from || "no-reply@smartworkshop.local";
   const subject = "Confirm your new email";
-  const text = `Please confirm your new email by visiting: ${confirmUrl}`;
-  const html = `
-    <p>Please confirm your new email by clicking the link below:</p>
-    <p><a href="${confirmUrl}">${confirmUrl}</a></p>
-  `;
+  const text = [
+    "We received a request to update your SmartWorkshop email address.",
+    `Please confirm the change by visiting: ${confirmUrl}`,
+    "If you did not request this change, you can ignore this message and no updates will be made."
+  ].join("\n");
+  const html = renderEmailLayout({
+    title: "Confirm your new email",
+    intro: `
+      <p style="margin:0 0 14px;">Hello,</p>
+      <p style="margin:0;">
+        We received a request to update your SmartWorkshop email address. Click the button below to confirm the new email before any changes are applied.
+      </p>
+    `,
+    ctaLabel: "Confirm Email",
+    ctaUrl: confirmUrl,
+    footerNote: `
+      <p style="margin:0 0 12px;">Changed fields:</p>
+      <ul style="margin:0 0 18px; padding:0 0 0 18px; color:#e9eef6; font-size:16px; line-height:1.8;">
+        <li style="margin:0 0 10px;">Email address</li>
+      </ul>
+      <p style="margin:0;">
+        If you did not request this change, you can safely ignore this email and your current address will remain unchanged.
+      </p>
+    `
+  });
 
   await transporter.sendMail({ from, to, subject, text, html });
 };

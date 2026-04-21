@@ -19,6 +19,11 @@ const { verifyVatNumber, normalizeVatNumber, isLikelyUkVatNumber } = require("..
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 
+const resolveMechanicAvatarUrl = (user) => {
+  if (String(user?.role || "").toLowerCase() === "mechanic") return "";
+  return String(user?.avatar_url || "").trim();
+};
+
 const toRoleLabel = (role) => {
   const normalized = String(role || "").toLowerCase();
   if (normalized === "user") return "CUSTOMER";
@@ -1474,7 +1479,7 @@ const getMechanicProfile = async (userId) => {
     name,
     location,
     email: user.email,
-    avatar_url: user.avatar_url,
+    avatar_url: resolveMechanicAvatarUrl(user),
     rating: Number(user.rating_avg || 0),
     jobs_done: Number(user.jobs_done || 0),
     created_at: user.created_at,

@@ -2,13 +2,22 @@ extends ../../layouts/main
 
 block vars
   - var title = "SmartWorkshop - Confirm Email"
-  - var bodyClass = ""
+  - var bodyClass = "user-body app-shell-body"
 
 block content
-  include ../../partials/navbar
-  main.page-shell#confirmEmailPage
-    h1 Confirming your email
-    p.muted#confirmEmailStatus Please wait...
-    p#confirmEmailDetails
-    p
-      a(href="/auth/login") Go to sign in
+  header.main-header.basic-header
+    .body-content
+      a.main-brand(href="/")
+        span.main-logo SW
+        div
+          strong SmartWorkshop
+          span Vehicle Service Marketplace
+      a.bookings-header-help(href="/auth/login") Need help?
+  main.primari-shell.confirm-email-shell#confirmEmailPage
+    .confirm-email-card
+      h1#confirmEmailTitle Confirming your email
+      p#confirmEmailStatus Please wait...
+      p#confirmEmailDetails
+      .confirm-email-actions
+        a.confirm-email-action#confirmEmailAction(href="/auth/login") Go to sign in
+  include ../../partials/general-footer

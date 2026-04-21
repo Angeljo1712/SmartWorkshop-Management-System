@@ -252,18 +252,41 @@
 
   const confirmEmailPage = document.getElementById("confirmEmailPage");
   if (confirmEmailPage) {
+    const titleEl = document.getElementById("confirmEmailTitle");
     const statusEl = document.getElementById("confirmEmailStatus");
     const detailsEl = document.getElementById("confirmEmailDetails");
+    const actionEl = document.getElementById("confirmEmailAction");
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
 
-    const setStatus = (text, isError = false) => {
-      if (statusEl) statusEl.textContent = text;
-      if (detailsEl) detailsEl.textContent = isError ? "Please request a new email change." : "";
+    const setStatus = (title, message, details = "", actionLabel = "OK", actionHref = "/auth/login") => {
+      if (titleEl) titleEl.textContent = title;
+      if (statusEl) statusEl.textContent = message;
+      if (detailsEl) detailsEl.textContent = details;
+      if (actionEl) {
+        actionEl.textContent = actionLabel;
+        actionEl.setAttribute("href", actionHref);
+      }
     };
 
+    actionEl?.addEventListener("click", (event) => {
+      const targetHref = actionEl.getAttribute("href") || "/auth/login";
+      if (targetHref !== "/auth/login") {
+        return;
+      }
+      event.preventDefault();
+      clearStoredSessionData();
+      window.location.href = targetHref;
+    });
+
     if (!token) {
-      setStatus("Missing confirmation token.", true);
+      setStatus(
+        "Email confirmation",
+        "Missing confirmation token.",
+        "Please request a new email change.",
+        "Go to sign in",
+        "/auth/login"
+      );
     } else {
       fetch(`/api/users/confirm-email?token=${encodeURIComponent(token)}`)
         .then(async (response) => {
@@ -274,12 +297,25 @@
           if (payload.user) {
             setStoredAuthValue("userProfile", JSON.stringify(payload.user));
           }
-          setStatus("Email confirmed. You can sign in with the new email.");
+          setStatus(
+            "Email changed successfully",
+            "Your email address has been updated successfully.",
+            "",
+            "OK",
+            "/auth/login"
+          );
         })
         .catch((err) => {
-          setStatus(err?.error?.message || err?.message || "Unable to confirm email.", true);
-      });
+          setStatus(
+            "Email confirmation",
+            err?.error?.message || err?.message || "Unable to confirm email.",
+            "Please request a new email change.",
+            "Go to sign in",
+            "/auth/login"
+          );
+        });
     }
+
   }
 
   const rolePickerButtons = document.querySelectorAll("[data-role-target]");

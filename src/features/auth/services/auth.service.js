@@ -19,6 +19,10 @@ const roleToLabel = (role) => {
   if (normalized === "admin") return "ADMIN";
   return String(role || "").toUpperCase();
 };
+const resolveMechanicAvatarUrl = (user) => {
+  if (String(user?.role || "").toLowerCase() === "mechanic") return "";
+  return String(user?.avatar_url || "").trim();
+};
 
 const normalizeRole = (role) => String(role || "").trim().toLowerCase();
 
@@ -71,7 +75,7 @@ const getAuthUserById = async (userId) => {
       email: user.email,
       username: user.username,
       phone: user.phone,
-      avatar_url: user.avatar_url,
+      avatar_url: resolveMechanicAvatarUrl(user),
       role: user.role,
       status: user.status,
       role_name: primaryRole,
@@ -147,6 +151,7 @@ const register = async ({ full_name, name, lastname, email, password, role }) =>
     lastname: resolvedLastname,
     email,
     username,
+      avatar_url: "",
     role: normalizedRole,
     status,
     role_name: roleLabel,

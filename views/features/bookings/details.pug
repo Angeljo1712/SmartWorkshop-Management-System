@@ -114,6 +114,8 @@ block content
                   .toggle-options
                     button.toggle(type="button") Yes
                     button.toggle(type="button") No
+                p#bookingVehicleDrivableNotice.booking-vehicle-notice.is-hidden
+                  | This booking will only be offered to mechanics who provide collection and delivery.
               p.form-error#bookingDetailsError(role="alert" aria-live="polite")
               button.primary.details-submit(type="submit") Continue to payment
       .details-auth-modal.is-hidden#detailsAuthModal(hidden)

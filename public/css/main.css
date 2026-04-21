@@ -259,6 +259,141 @@ header.main-header:not(.home-header):not(.general-header):not(.basic-header) {
   z-index: 10;
 }
 
+.main-header.basic-header {
+  background: var(--bg-surface-dark);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #f0f3f9;
+  display: block;
+  padding: 14px 48px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: none;
+}
+
+.main-header.basic-header .main-brand strong,
+.main-header.basic-header .main-brand span {
+  color: #f0f3f9;
+}
+
+.main-header.basic-header .main-logo {
+  background: var(--surface-light-12);
+  color: #f0f3f9;
+}
+
+.main-header.basic-header .body-content {
+  width: min(1280px, 100%);
+  margin: 0 auto;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: transparent;
+}
+
+.main-header.basic-header .main-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  transition: transform 0.2s ease;
+  transform-origin: left center;
+}
+
+.main-header.basic-header .main-logo {
+  transition: transform 0.2s ease;
+  transform-origin: center;
+}
+
+.main-header.basic-header .main-brand:hover {
+  transform: scale(1.12);
+}
+
+.bookings-header-help {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  color: #f0f3f9;
+  font-weight: 600;
+  border: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.bookings-header-help:hover {
+  color: #ffffff;
+  background: var(--brand-blue);
+}
+
+.confirm-email-shell {
+  min-height: calc(100vh - 176px);
+  display: grid;
+  place-items: center;
+  padding: 48px 24px;
+}
+
+.confirm-email-card {
+  position: relative;
+  width: min(520px, 100%);
+  background: #1b1d22;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 20px;
+  padding: 44px 32px 32px;
+  display: grid;
+  gap: 18px;
+  color: #e9eef6;
+  text-align: center;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.3);
+}
+
+.confirm-email-card h1 {
+  margin: 0;
+  font-size: clamp(2rem, 3vw, 2.7rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.confirm-email-card p {
+  margin: 0;
+  color: #cfd6e2;
+  font-size: 1.08rem;
+  line-height: 1.8;
+}
+
+.confirm-email-close {
+  display: none;
+}
+
+.confirm-email-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 6px;
+}
+
+.confirm-email-action {
+  min-width: 150px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 10px 18px;
+  border-radius: 999px;
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 700;
+  background: #5a6f90;
+  border: 1px solid #5a6f90;
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.confirm-email-action:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
 .main-header.general-header .body-content {
   width: min(1280px, 100%);
   margin: 0 auto;
@@ -750,7 +885,7 @@ body.admin-body .settings-card {
 .settings-profile {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 16px;
+  /* gap: 16px; */
   align-items: center;
 }
 
@@ -811,7 +946,6 @@ body.admin-body .settings-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  
   gap: 16px;
 }
 

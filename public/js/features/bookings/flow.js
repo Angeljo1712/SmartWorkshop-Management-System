@@ -827,6 +827,7 @@ if (bookingDetailsForm) {
   const detailsAuthTwoFactorMessage = document.getElementById("detailsAuthTwoFactorMessage");
   const detailsAuthTwoFactorError = document.getElementById("detailsAuthTwoFactorError");
   const detailsAuthBackToLogin = document.getElementById("detailsAuthBackToLogin");
+  const vehicleDrivableNotice = document.getElementById("bookingVehicleDrivableNotice");
   let pendingDetailsChallengeToken = "";
   let pendingDetailsLoginIdentifier = "";
   const availabilityGrid = bookingDetailsForm.querySelector("#availabilityGrid");
@@ -838,6 +839,11 @@ if (bookingDetailsForm) {
   const monthFormatter = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" });
   const initialAvailabilityDate = new Date();
   initialAvailabilityDate.setHours(0, 0, 0, 0);
+  const syncVehicleDrivableNotice = () => {
+    if (!vehicleDrivableNotice) return;
+    const selected = bookingDetailsForm.querySelector(".toggle.is-active")?.textContent?.trim().toLowerCase();
+    vehicleDrivableNotice.classList.toggle("is-hidden", selected !== "no");
+  };
   const minimumAvailabilityDate = new Date(initialAvailabilityDate);
   minimumAvailabilityDate.setDate(minimumAvailabilityDate.getDate() + 1);
   let currentAvailabilityStartDate = new Date(minimumAvailabilityDate);
@@ -1029,8 +1035,10 @@ if (bookingDetailsForm) {
     btn.addEventListener("click", () => {
       toggleButtons.forEach((b) => b.classList.remove("is-active"));
       btn.classList.add("is-active");
+      syncVehicleDrivableNotice();
     });
   });
+  syncVehicleDrivableNotice();
 
   detailsEmailInput?.addEventListener("blur", checkBookingDetailsEmail);
   detailsExistingAccountLink?.addEventListener("click", (event) => {

@@ -216,6 +216,9 @@ if (mechanicDashboard) {
   const formatCurrency = window.SWApp?.formatCurrency || ((value) => String(value || "0"));
   const escapeHtml = window.SWApp?.escapeHtml || ((value) => String(value ?? ""));
   const getInitials = window.SWApp?.getInitials || ((name) => String(name || "ME"));
+  const getMechanicFallbackAvatarUrl = (user) => {
+    return "";
+  };
   const formatBookingReference = (value) => String(Number(value) || 0).padStart(8, "0");
   const formatResolutionReference = (value, bookingId) => {
     if (value) {
@@ -519,7 +522,7 @@ if (mechanicDashboard) {
         .toUpperCase() || "ME";
       const roles = Array.isArray(user?.roles) && user.roles.length ? user.roles : [user?.role_name || "MECHANIC"];
       const activeRole = roles.includes("MECHANIC") ? "MECHANIC" : roles[0];
-      setAvatar(mechanicDashboardHeroAvatar, initials, user?.avatar_url);
+      setAvatar(mechanicDashboardHeroAvatar, initials, getMechanicFallbackAvatarUrl(user));
       if (mechanicDashboardHeroName) mechanicDashboardHeroName.textContent = name;
       if (mechanicDashboardHeroRole) mechanicDashboardHeroRole.textContent = activeRole;
       if (nameEl) nameEl.textContent = name;
@@ -528,8 +531,8 @@ if (mechanicDashboard) {
         const base = (user.uuid_public || user.id || "0000").toString().slice(-4).toUpperCase();
         idEl.textContent = `AG${base}`;
       }
-      setAvatar(mechanicAccountAvatar, initials, user?.avatar_url);
-      setAvatar(mechanicAccountAvatarSecondary, initials, user?.avatar_url);
+      setAvatar(mechanicAccountAvatar, initials, getMechanicFallbackAvatarUrl(user));
+      setAvatar(mechanicAccountAvatarSecondary, initials, getMechanicFallbackAvatarUrl(user));
       setLabeledText(mechanicAccountPhone, "Phone:", user?.phone);
       setLabeledText(mechanicAccountPhoneSecondary, "Phone:", user?.phone);
       setLabeledText(mechanicAccountEmail, "Email:", user?.email);
@@ -542,7 +545,7 @@ if (mechanicDashboard) {
         if (mechanicAccountRoleSecondary) mechanicAccountRoleSecondary.textContent = activeRole;
         setMechanicAccountStatus(mechanicAccountStatusSecondary, resolveMechanicAccountStatus(user));
         if (mechanicSettingsWelcomeName) mechanicSettingsWelcomeName.textContent = name;
-      setAvatar(mechanicSettingsAvatarSettings, getInitials(name, activeRole), user?.avatar_url);
+      setAvatar(mechanicSettingsAvatarSettings, getInitials(name, activeRole), getMechanicFallbackAvatarUrl(user));
       if (mechanicSettingsFullName) mechanicSettingsFullName.textContent = name;
       if (mechanicSettingsPhone) mechanicSettingsPhone.textContent = user?.phone || "-";
       if (mechanicSettingsUsername) mechanicSettingsUsername.textContent = user?.username || "-";
@@ -564,7 +567,7 @@ if (mechanicDashboard) {
       if (mechanicProfilePostcode) mechanicProfilePostcode.textContent = user?.address_details?.postal_code || "-";
       if (mechanicProfileRadius) mechanicProfileRadius.textContent = "5 miles";
       if (mechanicProfileServiceType) mechanicProfileServiceType.textContent = "Mobile mechanic";
-      setAvatar(mechanicProfileAvatar, initials || "ME", user?.avatar_url);
+      setAvatar(mechanicProfileAvatar, initials || "ME", getMechanicFallbackAvatarUrl(user));
       renderMechanicCertificationState();
       if (mechanicEditContactCity) mechanicEditContactCity.value = user?.address_details?.city || "";
       if (mechanicEditContactPostcode) mechanicEditContactPostcode.value = user?.address_details?.postal_code || "";
@@ -1480,8 +1483,9 @@ if (mechanicDashboard) {
         setMechanicTaxStatus("", "");
       }
       if (mechanicProfileAvatar) {
-        if (profileData.avatar_url) {
-          mechanicProfileAvatar.innerHTML = `<img src="${profileData.avatar_url}" alt="Profile photo">`;
+        const profileAvatarUrl = getMechanicFallbackAvatarUrl(profileData);
+        if (profileAvatarUrl) {
+          mechanicProfileAvatar.innerHTML = `<img src="${profileAvatarUrl}" alt="Profile photo">`;
         } else {
           const initials = String(profileData.name || "ME")
             .split(/\s+/)

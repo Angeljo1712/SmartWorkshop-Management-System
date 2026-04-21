@@ -35,6 +35,10 @@ const syncAuthStateFromLocalStorage = () => {
     const sessionValue = sessionStorage.getItem(key);
     if (localValue !== null && sessionValue !== localValue) {
       sessionStorage.setItem(key, localValue);
+      return;
+    }
+    if (localValue === null && sessionValue !== null) {
+      sessionStorage.removeItem(key);
     }
   });
 };

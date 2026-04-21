@@ -369,6 +369,14 @@
   color: #6b7280;
 }
 
+.booking-vehicle-notice {
+  margin: 6px 0 0;
+  color: #dbeafe;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
 .step.is-complete .step-dot {
   background: #2563eb;
   border-color: #2563eb;

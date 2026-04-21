@@ -1272,6 +1272,12 @@ if (adminPage) {
       type: "text",
       getValue: (user) => user.username || ""
     },
+    email: {
+      label: "Email address",
+      description: "A confirmation email will be sent to the new address. The change only applies after confirmation.",
+      type: "email",
+      getValue: (user) => user.email || ""
+    },
     address: {
       label: "Address",
       description: "Update the user's address.",
@@ -4570,6 +4576,30 @@ if (adminPage) {
     }
     const user = adminUsers.find((item) => String(item.user_id) === String(activeAdminEditUserId));
     if (!user) return;
+    if (activeAdminEditField === "email") {
+      const newEmail = adminSettingsEditInput?.value?.trim() || "";
+      if (!newEmail) {
+        if (adminSettingsEditMessage) adminSettingsEditMessage.textContent = "Please enter an email address.";
+        return;
+      }
+      if (adminSettingsEditSave) adminSettingsEditSave.disabled = true;
+      if (adminSettingsEditMessage) adminSettingsEditMessage.textContent = "";
+      try {
+        const response = await apiAuth(`/api/admin/users/${encodeURIComponent(activeAdminEditUserId)}/email-change`, token, {
+          method: "POST",
+          body: JSON.stringify({ email: newEmail })
+        });
+        closeAdminSettingsEditModal();
+        showAdminFeedback(response?.message || "Confirmation email sent.");
+        await fetchUsers();
+      } catch (err) {
+        if (adminSettingsEditMessage) {
+          adminSettingsEditMessage.textContent = err?.error?.message || err?.message || "Unable to update this field.";
+        }
+        if (adminSettingsEditSave) adminSettingsEditSave.disabled = false;
+      }
+      return;
+    }
       const payload = {
         full_name: user.full_name || "",
         phone: user.phone || "",

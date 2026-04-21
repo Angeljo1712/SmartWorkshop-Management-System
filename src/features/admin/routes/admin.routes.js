@@ -9,6 +9,7 @@ const {
   listUsersHandler,
   listApplicationsHandler,
   listApplicationDocumentsHandler,
+  requestUserEmailChangeHandler,
   updateApplicationStatusHandler,
   listBookingsHandler,
   updateBookingStatusHandler,
@@ -62,6 +63,7 @@ router.patch("/catalog/:serviceId", authenticate, authorizeRoles("ADMIN"), async
 router.patch("/catalog/:serviceId/order", authenticate, authorizeRoles("ADMIN"), asyncHandler(updateCatalogServiceOrderHandler));
 router.delete("/catalog/:serviceId", authenticate, authorizeRoles("ADMIN"), asyncHandler(deleteCatalogServiceHandler));
 router.post("/users", authenticate, authorizeRoles("ADMIN"), asyncHandler(createUserHandler));
+router.post("/users/:userId/email-change", authenticate, authorizeRoles("ADMIN"), asyncHandler(requestUserEmailChangeHandler));
 router.patch("/users/:userId/roles", authenticate, authorizeRoles("ADMIN"), asyncHandler(setUserRoleHandler));
 router.patch("/users/:userId/status", authenticate, authorizeRoles("ADMIN"), asyncHandler(setUserStatusHandler));
 router.patch("/users/:userId", authenticate, authorizeRoles("ADMIN"), asyncHandler(updateUserHandler));

@@ -4,6 +4,7 @@ const { pool } = require("../../../shared/config/pool");
 const { AppError } = require("../../../shared/utils/appError");
 
 const normalizeName = (value) => String(value || "").trim();
+const COLLECTION_DELIVERY_SERVICE_TYPES = new Set(["collection_and_delivery", "collection_delivery"]);
 
 let paymentMetadataColumnsEnsured = false;
 
@@ -150,7 +151,7 @@ const ensureDraft = async (sessionId) => {
   return result.insertId;
 };
 
-const findEligibleMechanicIds = async ({ bookingAddressId, serviceIds }) => {
+const findEligibleMechanicIds = async ({ bookingAddressId, serviceIds, vehicleDrivable }) => {
   const requiredServiceIds = [...new Set((Array.isArray(serviceIds) ? serviceIds : [])
     .map((value) => Number(value))
     .filter((value) => Number.isInteger(value) && value > 0))];
@@ -208,13 +209,32 @@ const findEligibleMechanicIds = async ({ bookingAddressId, serviceIds }) => {
     coverageByMechanic.get(mechanicId).set(Number(row.service_id), Boolean(row.enabled));
   });
 
-  return mechanicIds.filter((mechanicId) => {
+  let filteredMechanicIds = mechanicIds.filter((mechanicId) => {
     const coverage = coverageByMechanic.get(mechanicId);
     if (!coverage || coverage.size === 0) {
       return true;
     }
     return requiredServiceIds.every((serviceId) => coverage.get(serviceId) === true);
   });
+
+  if (String(vehicleDrivable || "").toLowerCase() === "no" && filteredMechanicIds.length) {
+    const [serviceRows] = await pool.query(
+      `SELECT DISTINCT user_id
+       FROM mechanic_services_offered
+       WHERE user_id IN (?)
+         AND service_type IN (?)`,
+      [filteredMechanicIds, Array.from(COLLECTION_DELIVERY_SERVICE_TYPES)]
+    );
+    const deliveryMechanicIds = new Set(
+      serviceRows
+        .map((row) => Number(row.user_id))
+        .filter((value) => Number.isInteger(value) && value > 0)
+    );
+
+    filteredMechanicIds = filteredMechanicIds.filter((mechanicId) => deliveryMechanicIds.has(mechanicId));
+  }
+
+  return filteredMechanicIds;
 };
 
 const getDraft = async (sessionId) => {
@@ -482,7 +502,8 @@ const payDraft = async ({ session_id, provider = "mock", currency = "GBP", payme
 
   const mechanicIds = await findEligibleMechanicIds({
     bookingAddressId: addressRows[0].id,
-    serviceIds: draft.items.map((item) => item.service_id)
+    serviceIds: draft.items.map((item) => item.service_id),
+    vehicleDrivable: draft.vehicle_drivable
   });
 
   if (mechanicIds.length) {
