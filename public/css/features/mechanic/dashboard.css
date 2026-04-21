@@ -180,7 +180,7 @@
   align-content: start;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 0;
+  padding-right: 10px;
   padding-top: 2px;
 }
 
@@ -416,6 +416,17 @@ body.mechanic-body .mechanic-content {
   background: rgba(9, 13, 21, 0.96);
   /* padding: 15px; */
   overflow: hidden;
+}
+
+body.mechanic-body #mechanicPaymentsView {
+  align-self: start;
+  height: auto;
+  min-height: 0;
+  align-content: start;
+}
+
+body.mechanic-body #mechanicPaymentsView .mechanic-table-layout {
+  align-self: start;
 }
 
 body.mechanic-body #mechanicSettingsView .settings-card {
@@ -830,6 +841,11 @@ body.mechanic-body .mechanic-table-layout {
   border-radius: 14px;
 }
 
+body.mechanic-body .mechanic-table-layout.is-empty-state {
+  grid-template-rows: auto auto auto;
+  align-content: start;
+}
+
 body.mechanic-body .mechanic-table-layout > .mechanic-table-head,
 body.mechanic-body .mechanic-table-layout > .mechanic-table-wrap,
 body.mechanic-body .mechanic-table-layout > .mechanic-table-footer {
@@ -953,7 +969,7 @@ body.mechanic-body .mechanic-table {
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 12px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(9, 13, 21, 0.96);
   border-collapse: separate;
   border-spacing: 0;
 }
@@ -3225,8 +3241,8 @@ body.mechanic-body .mechanic-profile-avatar {
   border-radius: 24px;
   display: grid;
   place-items: center;
-  background: rgba(255, 255, 255, 0.08);
-  color: #4da3ff;
+  /* background: rgba(255, 255, 255, 0.08); */
+  /* color: #4da3ff; */
   font-size: 56px;
   overflow: hidden;
 }
@@ -3503,6 +3519,12 @@ body.mechanic-body .mechanic-edit-profile-card h3 {
   margin: 0;
   color: #eef3fc;
   font-size: 1.05rem;
+}
+
+body.mechanic-body .mechanic-edit-profile-card--skills > h3,
+body.mechanic-body .mechanic-edit-profile-card--coverage > h3,
+body.mechanic-body .mechanic-edit-profile-card--fulfilment > h3 {
+  font-size: 1.5rem;
 }
 
 body.mechanic-body .mechanic-edit-profile-card p,

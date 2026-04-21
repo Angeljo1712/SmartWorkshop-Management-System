@@ -674,7 +674,7 @@ body.user-body #userSettingsSecurity {
 
 body.user-body #userSettingsSecurity .security-card {
   display: grid;
-  /* gap: 26px; */
+  gap: 15px;
   padding: 24px;
   border: 2px solid #ffffff;
   border-radius: 14px;
@@ -1147,7 +1147,7 @@ body.user-body #userBookingsView .user-table tbody td {
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 12px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(9, 13, 21, 0.96);
   border-collapse: separate;
   border-spacing: 0;
 }

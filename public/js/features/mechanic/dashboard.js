@@ -62,6 +62,7 @@ if (mechanicDashboard) {
   const mechanicPaymentsFooterCount = document.getElementById("mechanicPaymentsFooterCount");
   const mechanicPaymentsPagination = document.getElementById("mechanicPaymentsPagination");
   const mechanicPaymentsExport = mechanicDashboard.querySelector(".mechanic-payments-export");
+  const mechanicPaymentsLayout = mechanicPaymentsView?.querySelector(".mechanic-table-layout");
   const mechanicAccountAvatar = document.getElementById("mechanicAccountAvatar");
   const mechanicAccountAvatarSecondary = document.getElementById("mechanicAccountAvatarSecondary");
   const mechanicAccountPhone = document.getElementById("mechanicAccountPhone");
@@ -1163,10 +1164,14 @@ if (mechanicDashboard) {
     const paymentBookings = (Array.isArray(bookings) ? bookings : latestMechanicAssignedBookings)
       .map((entry) => normalizeMechanicPaymentEntry(entry))
       .filter(Boolean);
+    const setEmptyState = (isEmpty) => {
+      mechanicPaymentsLayout?.classList.toggle("is-empty-state", Boolean(isEmpty));
+    };
     mechanicPaymentsList.innerHTML = "";
     if (mechanicPaymentDetail) mechanicPaymentDetail.innerHTML = "";
 
     if (!Array.isArray(paymentBookings) || !paymentBookings.length) {
+      setEmptyState(true);
       const emptyRow = document.createElement("tr");
       emptyRow.className = "mechanic-booking-empty-row";
       emptyRow.innerHTML = '<td colspan="7" class="mechanic-bookings-empty">No completed payments yet.</td>';
@@ -1191,6 +1196,7 @@ if (mechanicDashboard) {
     const pagePayments = filteredPayments.slice(startIndex, startIndex + pageSize);
 
     if (!pagePayments.length) {
+      setEmptyState(true);
       const emptyRow = document.createElement("tr");
       emptyRow.className = "mechanic-booking-empty-row";
       emptyRow.innerHTML = '<td colspan="7" class="mechanic-bookings-empty">No payments match the selected filters.</td>';
@@ -1201,6 +1207,7 @@ if (mechanicDashboard) {
       if (mechanicPaymentsPagination) mechanicPaymentsPagination.innerHTML = "";
       return;
     }
+    setEmptyState(false);
 
     const selectedBookingId = pagePayments.some((entry) => Number(entry.booking?.id) === Number(activeMechanicPaymentBookingId))
       ? activeMechanicPaymentBookingId
