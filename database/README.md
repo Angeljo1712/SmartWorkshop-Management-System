@@ -17,6 +17,7 @@ This project initializes MySQL through Docker Compose by mounting only:
 - The active database name comes from `MYSQL_DATABASE` in compose/env (`smartworkshop` for local, `smartworkshop_staging` for staging).
 - `schema.sql` must stay database-agnostic (no hardcoded `USE <db_name>`).
 - Staging uses a separate persistent volume so a fresh stack starts with a clean database and only the bootstrap admin account.
+- `STAGING_DB_VOLUME` can override the staging volume name when you want to move data into a new persistent volume.
 
 ## Rebuild reminder
 

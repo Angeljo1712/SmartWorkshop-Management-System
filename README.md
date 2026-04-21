@@ -72,6 +72,12 @@ To back up or restore the staging database:
 ./scripts/staging/restore-staging-db.ps1
 ```
 
+To migrate preserved staging data to a new volume:
+
+```powershell
+./scripts/staging/migrate-staging-volume.ps1
+```
+
 Ports used by default:
 
 - App: `http://localhost:3001`
@@ -79,6 +85,9 @@ Ports used by default:
 - phpMyAdmin: `http://localhost:8082`
 
 The staging stack runs against its own MySQL volume, so it stays isolated from local development.
+You can override the staging volume name with `STAGING_DB_VOLUME` if you need to point staging at a different persistent volume.
+Use `./scripts/staging/migrate-staging-volume.ps1` when you want to move the preserved admin/mechanic/catalog data into a new staging volume.
+Staging bootstrap also seeds 10 extra London mechanic test accounts for booking and search flows.
 
 Smoke test plan for this stage: [docs/staging-smoke-test-plan.md](docs/staging-smoke-test-plan.md)
 Smoke test report template: [docs/staging-smoke-test-report-template.md](docs/staging-smoke-test-report-template.md)
