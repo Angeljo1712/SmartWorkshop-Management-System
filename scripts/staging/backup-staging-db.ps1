@@ -1,8 +1,9 @@
 $ErrorActionPreference = "Stop"
 
-$stagingEnvFile = Join-Path -Path $PSScriptRoot -ChildPath "..\.env.staging"
+$RepoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+$stagingEnvFile = Join-Path -Path $RepoRoot -ChildPath ".env.staging"
 $container = "smartworkshop_staging_db"
-$outFile = Join-Path -Path $PSScriptRoot -ChildPath "..\database\staging-backup.sql"
+$outFile = Join-Path -Path $RepoRoot -ChildPath "database\staging-backup.sql"
 
 function Get-EnvValue([string]$Key, [string]$Default = "") {
   if (-not (Test-Path $stagingEnvFile)) {

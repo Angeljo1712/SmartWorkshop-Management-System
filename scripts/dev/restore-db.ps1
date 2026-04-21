@@ -1,8 +1,9 @@
 $ErrorActionPreference = "Stop"
 
-$envFile = Join-Path -Path $PSScriptRoot -ChildPath "..\.env"
+$RepoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+$envFile = Join-Path -Path $RepoRoot -ChildPath ".env"
 $container = "project_uny_db"
-$inFile = Join-Path -Path $PSScriptRoot -ChildPath "..\\database\\backup.sql"
+$inFile = Join-Path -Path $RepoRoot -ChildPath "database\\backup.sql"
 
 function Get-EnvValue([string]$Key, [string]$Default = "") {
   if (-not (Test-Path $envFile)) {

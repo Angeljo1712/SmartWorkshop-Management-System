@@ -15,6 +15,7 @@ services:
       - db_data_staging:/var/lib/mysql
       - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
       - ./database/seed.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+      - ./database/staging-bootstrap.sql:/docker-entrypoint-initdb.d/03_staging_bootstrap.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -u$$MYSQL_USER -p$$MYSQL_PASSWORD --silent"]
       interval: 10s

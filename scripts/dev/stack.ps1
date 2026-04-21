@@ -7,7 +7,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 # ---------- Paths ----------
-$Root        = Split-Path -Parent $PSScriptRoot
+$Root        = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $ComposeFile = Join-Path $Root "docker-compose.yml"
 $EnvFile     = Join-Path $Root ".env"
 

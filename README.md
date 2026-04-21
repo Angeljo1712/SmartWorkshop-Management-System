@@ -29,6 +29,15 @@ This starts:
 - App (API + UI) on `localhost:3000`
 - phpMyAdmin on `localhost:8081`
 
+Dev scripts live in `scripts/dev/`:
+
+- `./scripts/dev/start.ps1`
+- `./scripts/dev/build.ps1`
+- `./scripts/dev/stop.ps1`
+- `./scripts/dev/recreate.ps1`
+- `./scripts/dev/backup-db.ps1`
+- `./scripts/dev/restore-db.ps1`
+
 ## Staging Stack
 
 Use a separate staging environment to validate the app before the final domain cutover.
@@ -41,13 +50,26 @@ Use a separate staging environment to validate the app before the final domain c
 3. Start the staging stack:
 
 ```powershell
-./scripts/stack-staging.ps1 start
+./scripts/staging/stack-staging.ps1 start
 ```
 
 To rebuild staging:
 
 ```powershell
-./scripts/rebuild-staging.ps1
+./scripts/staging/rebuild-staging.ps1
+```
+
+To reset staging from scratch:
+
+```powershell
+./scripts/staging/reset-staging.ps1
+```
+
+To back up or restore the staging database:
+
+```powershell
+./scripts/staging/backup-staging-db.ps1
+./scripts/staging/restore-staging-db.ps1
 ```
 
 Ports used by default:
@@ -64,6 +86,7 @@ Plain text report template: [docs/staging-smoke-test-report-template.txt](docs/s
 Plain text plan: [docs/staging-smoke-test-plan.txt](docs/staging-smoke-test-plan.txt)
 
 The database schema is created automatically from `database/schema.sql`. Seed data is inserted automatically when the app starts.
+For staging, the database is now intentionally isolated and boots with a clean dataset plus the default admin and mechanic demo accounts only.
 
 ## Default Seed Accounts
 
@@ -169,9 +192,10 @@ This removes containers/volumes and recreates the stack from scratch.
 ## Start/Stop Stack (PowerShell)
 
 ```powershell
-./scripts/stack.ps1 start
-./scripts/stack.ps1 build
-./scripts/stack.ps1 stop
+./scripts/dev/start.ps1
+./scripts/dev/build.ps1
+./scripts/dev/stop.ps1
+./scripts/dev/recreate.ps1
 ```
 
 Host - <http://localhost:3000/>

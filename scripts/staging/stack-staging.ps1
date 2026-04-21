@@ -6,9 +6,9 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Root        = Split-Path -Parent $PSScriptRoot
-$StagingFile = Join-Path $Root "docker-compose.staging.yml"
-$EnvFile     = Join-Path $Root ".env.staging"
+$RepoRoot    = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+$StagingFile = Join-Path $RepoRoot "docker-compose.staging.yml"
+$EnvFile     = Join-Path $RepoRoot ".env.staging"
 $ProjectName = "smartworkshop-staging"
 
 function Info($msg) { Write-Host "[INFO] $msg" }

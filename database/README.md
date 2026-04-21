@@ -4,6 +4,7 @@ This project initializes MySQL through Docker Compose by mounting only:
 
 - `database/schema.sql` as `/docker-entrypoint-initdb.d/01_schema.sql`
 - `database/seed.sql` as `/docker-entrypoint-initdb.d/02_seed.sql`
+- `database/staging-bootstrap.sql` as `/docker-entrypoint-initdb.d/03_staging_bootstrap.sql` in staging only
 
 ## Why this matters
 
@@ -15,7 +16,10 @@ This project initializes MySQL through Docker Compose by mounting only:
 
 - The active database name comes from `MYSQL_DATABASE` in compose/env (`smartworkshop` for local, `smartworkshop_staging` for staging).
 - `schema.sql` must stay database-agnostic (no hardcoded `USE <db_name>`).
+- Staging uses a separate persistent volume so a fresh stack starts with a clean database and only the bootstrap admin account.
 
 ## Rebuild reminder
 
 If you change schema/seed and need to reapply from scratch, recreate the DB volume for the target stack before starting it again.
+For staging, `scripts/staging/reset-staging.ps1` removes the staging volume and recreates the stack with the clean bootstrap.
+Backups and restores for staging live in `scripts/staging/backup-staging-db.ps1` and `scripts/staging/restore-staging-db.ps1`.
