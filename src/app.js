@@ -24,6 +24,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors);
 app.use("/uploads", express.static(path.join(__dirname, "shared", "uploads")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(
+  "/.well-known",
+  express.static(path.join(__dirname, "..", "public", ".well-known"), {
+    dotfiles: "allow"
+  })
+);
 app.use(express.static(path.join(__dirname, "..", "public")));
 app.get("/favicon.ico", (_req, res) => {
   res.status(204).end();

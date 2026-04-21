@@ -1414,7 +1414,8 @@ const getMechanicProfile = async (userId) => {
     `SELECT u.id, u.email, u.created_at,
             p.name, p.lastname, p.avatar_url,
             mp.display_name, mp.about, mp.jobs_done, mp.rating_avg, mp.is_mobile, mp.vat_id, mp.vat_registered,
-            mp.years_experience, mp.work_history, mp.travel_radius_miles
+            mp.years_experience, mp.work_history, mp.travel_radius_miles,
+            mp.application_status, mp.account_status
      FROM users u
      LEFT JOIN user_profiles p ON p.user_id = u.id
      LEFT JOIN mechanic_profiles mp ON mp.user_id = u.id
@@ -1483,6 +1484,8 @@ const getMechanicProfile = async (userId) => {
     years_experience: user.years_experience || null,
     work_history: user.work_history || "",
     travel_radius_miles: user.travel_radius_miles || null,
+    application_status: user.application_status || null,
+    account_status: user.account_status || null,
     address: contactAddress,
     contact_address: contactAddress,
     premises_address: premisesAddress,

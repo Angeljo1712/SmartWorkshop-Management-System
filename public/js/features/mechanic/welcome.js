@@ -20,9 +20,6 @@ if (document.body.classList.contains("mechanic-welcome")) {
 
   const setVerificationStepVisible = (visible) => {
     verificationStep?.classList.toggle("is-hidden", !visible);
-    if (passwordSubmitBtn) {
-      passwordSubmitBtn.textContent = visible ? "Accept and continue" : "Save password";
-    }
     if (resendCodeBtn) {
       resendCodeBtn.classList.toggle("is-hidden", !visible);
     }

@@ -78,6 +78,9 @@
     });
   };
 
+  const fileKey = (file) =>
+    [file?.name || "", file?.size || 0, file?.type || "", file?.lastModified || 0].join("|");
+
   document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("documentsUploadForm");
     const input = document.getElementById("documentsUploadInput");
@@ -119,13 +122,23 @@
     };
 
     input.addEventListener("change", () => {
-      currentFiles = Array.from(input.files || []);
+      const selectedFiles = Array.from(input.files || []);
+      const mergedFiles = [...currentFiles];
+      const seen = new Set(currentFiles.map((file) => fileKey(file)));
+      for (const file of selectedFiles) {
+        const key = fileKey(file);
+        if (seen.has(key)) continue;
+        seen.add(key);
+        mergedFiles.push(file);
+      }
+      currentFiles = mergedFiles;
       const files = currentFiles.map((file) => ({
         name: file.name,
         size: file.size,
         type: (file.type || "").split("/").pop().toUpperCase() || "FILE"
       }));
       writeDraftFiles(files);
+      syncInputFiles();
       renderFiles(list, files);
     });
 

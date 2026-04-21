@@ -52,7 +52,7 @@ const documentsFileFilter = (_req, file, cb) => {
     "application/pdf"
   ]);
   if (!allowedMimeTypes.has(file.mimetype)) {
-    return cb(new AppError("INVALID_FILE", "Formato incorrecto", 400));
+    return cb(new AppError("INVALID_FILE", "Invalid file format", 400));
   }
   return cb(null, true);
 };

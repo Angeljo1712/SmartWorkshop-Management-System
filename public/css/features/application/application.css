@@ -1,4 +1,5 @@
 .application-body {
+  font-size: 125%;
 }
 
 .application-body .primari-shell {
@@ -42,7 +43,7 @@
   color: #ffffff;
   text-decoration: none;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 15px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -81,15 +82,15 @@
 }
 
 .application-join-layout h1 {
-  font-size: clamp(2rem, 3.6vw, 2.8rem);
+  font-size: clamp(2.5rem, 4.5vw, 3.5rem);
   color: #ffffff;
 }
 
 .application-grid {
   width: min(980px, 100%);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 30px;
 }
 
 .application-card {
@@ -106,18 +107,18 @@
 .application-link {
   text-decoration: none;
   color: inherit;
-  display: grid;
+  /* display: grid; */
   gap: 12px;
 }
 
 .application-card h3 {
-  font-size: 18px;
+  font-size: 23px;
   color: #ffffff;
 }
 
 .application-card p {
   color: #ffffff;
-  font-size: 14px;
+  font-size: 18px;
   line-height: 1.6;
 }
 
@@ -128,7 +129,7 @@
   background: #f5f7ff;
   display: grid;
   place-items: center;
-  margin: 0 auto;
+  margin: 0 auto 15px;
 }
 
 .application-icon svg {
@@ -163,7 +164,7 @@
 }
 
 .application-form-layout h2 {
-  font-size: 22px;
+  font-size: 35px;
   color: #ffffff;
 }
 
@@ -194,7 +195,7 @@
 }
 
 .form-section h3 {
-  font-size: 14px;
+  font-size: 18px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #ffffff;
@@ -204,7 +205,7 @@
 }
 
 .form-section h4 {
-  font-size: 13px;
+  /* font-size: 16px; */
   color: #ffffff;
   margin-top: 6px;
 }
@@ -218,7 +219,7 @@
 .form-section label {
   display: grid;
   gap: 6px;
-  font-size: 13px;
+  font-size: 16px;
   color: #ffffff;
 }
 
@@ -226,7 +227,8 @@
 .form-section select {
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 10px 12px;
+  padding: 13px 15px;
+  font-size: 16px;
 }
 
 .section-business .business-question {
@@ -283,14 +285,32 @@ label.checkbox,
 label.radio {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   color: var(--ink);
   font-weight: 500;
+  line-height: 1.35;
+  font-size: 16px;
+}
+
+label.checkbox input,
+label.radio input {
+  transform: scale(1.15);
+  transform-origin: center;
+}
+
+.application-form-layout .primary,
+.application-form-layout .secondary,
+.application-form-layout .ghost,
+.application-form-layout .link-button,
+.application-form-layout button.primary {
+  font-size: 16px;
+  padding: 14px 18px;
+  min-height: 48px;
 }
 
 .subtle {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 15px;
 }
 
 @media (max-width: 768px) {
@@ -307,5 +327,9 @@ label.radio {
 
   .application-join-layout {
     padding: 24px;
+  }
+
+  .application-grid {
+    grid-template-columns: 1fr;
   }
 }

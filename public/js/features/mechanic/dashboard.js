@@ -307,15 +307,27 @@ if (mechanicDashboard) {
     if (!el) return;
     const key = String(value || "").trim().toLowerCase();
     const normalized = key || "pending";
-    const label = normalized === "active"
-      ? "Active"
-      : normalized === "pending"
-        ? "Pending"
-        : normalized === "inactive"
-          ? "Inactive"
-          : normalized.charAt(0).toUpperCase() + normalized.slice(1);
+    const labelMap = {
+      active: "Active",
+      pending: "Pending",
+      password_pending: "Pending",
+      lead_created: "Pending",
+      inactive: "Inactive",
+      disabled: "Disabled",
+      suspended: "Suspended",
+      rejected: "Rejected"
+    };
+    const label = labelMap[normalized] || normalized.charAt(0).toUpperCase() + normalized.slice(1);
     el.textContent = label;
     el.dataset.status = normalized;
+  };
+  const resolveMechanicAccountStatus = (user) => {
+    const applicationStatus = String(user?.application_status || "").trim().toLowerCase();
+    const accountStatus = String(user?.account_status || "").trim().toLowerCase();
+    if (applicationStatus !== "approved") {
+      return "pending";
+    }
+    return accountStatus || "pending";
   };
   const syncMechanicSecurity2faButton = () => {
     if (!mechanicSecurity2faEnable) return;
@@ -528,7 +540,7 @@ if (mechanicDashboard) {
         setLabeledText(mechanicAccountAddressSecondary, "Address:", user?.address);
         if (mechanicAccountRole) mechanicAccountRole.textContent = activeRole;
         if (mechanicAccountRoleSecondary) mechanicAccountRoleSecondary.textContent = activeRole;
-        setMechanicAccountStatus(mechanicAccountStatusSecondary, user?.status);
+        setMechanicAccountStatus(mechanicAccountStatusSecondary, resolveMechanicAccountStatus(user));
         if (mechanicSettingsWelcomeName) mechanicSettingsWelcomeName.textContent = name;
       setAvatar(mechanicSettingsAvatarSettings, getInitials(name, activeRole), user?.avatar_url);
       if (mechanicSettingsFullName) mechanicSettingsFullName.textContent = name;
@@ -1455,6 +1467,7 @@ if (mechanicDashboard) {
       if (mechanicProfileServiceType) {
         mechanicProfileServiceType.textContent = profileData.is_mobile ? "Mobile mechanic" : "Workshop service";
       }
+      setMechanicAccountStatus(mechanicAccountStatusSecondary, resolveMechanicAccountStatus(profileData));
       if (mechanicTaxVat) {
         mechanicTaxVat.value = profileData.vat_id || "";
       }
@@ -2839,7 +2852,7 @@ if (documentsShell) {
       const state = document.createElement("span");
       const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
       state.className = `documents-upload-state ${isPdf ? "is-valid" : "is-invalid"}`;
-      state.textContent = isPdf ? "Formato correcto" : "Formato incorrecto";
+      state.textContent = isPdf ? "Valid format" : "Invalid file format";
 
       const remove = document.createElement("button");
       remove.type = "button";

@@ -181,7 +181,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: 0;
-  padding-top: 15px;
+  padding-top: 2px;
 }
 
 #mechanicPage .mainRail .rail-item {
@@ -632,6 +632,7 @@ body.mechanic-body #mechanicAccountView .settings-row {
 body.mechanic-body #mechanicAccountView .settings-profile {
   padding-bottom: 0;
   border-bottom: 0;
+  /* padding-top: 0; */
 }
 
 body.mechanic-body #mechanicAccountView .settings-row:last-of-type {

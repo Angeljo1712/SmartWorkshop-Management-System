@@ -43,9 +43,12 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
       SEED_ON_START: "false"
+    volumes:
+      - ./:/app
+      - /app/node_modules
     ports:
       - "${STAGING_APP_PORT}:3000"
-    command: npm start
+    command: npm run dev
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest

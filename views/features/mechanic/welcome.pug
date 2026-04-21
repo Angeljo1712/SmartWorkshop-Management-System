@@ -33,6 +33,7 @@ block content
         .welcome-password-card.is-hidden#mechanicSetPasswordCard
           h2 Set your password
           p.subtle Finish creating your mechanic account by setting a password.
+          p.password-hint Password must be: at least 8 characters, 1 capital letter, and 1 symbol.
           form#setMechanicPasswordForm
             input(type="text" name="username" id="mechanicPasswordEmail" autocomplete="username" hidden)
             input(type="text" name="challenge_token" id="mechanicPasswordChallengeToken" hidden)
@@ -49,7 +50,7 @@ block content
                 input(type="text" name="code" id="mechanicPasswordCode" placeholder="123456" inputmode="numeric" autocomplete="one-time-code")
               button.primary.ghost-link#mechanicResendCodeBtn(type="button") Resend code
             p.form-error#mechanicPasswordError(role="alert" aria-live="polite")
-            button.primary#mechanicPasswordSubmit(type="submit") Save password
+            button.primary#mechanicPasswordSubmit(type="submit") Save
 
   include ../../partials/general-footer
 

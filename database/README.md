@@ -19,6 +19,7 @@ This project initializes MySQL through Docker Compose by mounting only:
 - Staging uses a separate persistent volume so a fresh stack starts with a clean database and only the bootstrap admin account.
 - `STAGING_DB_VOLUME` can override the staging volume name when you want to move data into a new persistent volume.
 - `scripts/staging/start-staging-v1.ps1` and `scripts/staging/start-staging-v2.ps1` are convenience wrappers for starting staging on `db_data_staging` or `db_data_staging_v2` without editing `.env.staging`.
+- `scripts/staging/start-staging-dev.ps1` starts staging on `db_data_staging_v2` with `nodemon` enabled in the backend container.
 
 ## Rebuild reminder
 

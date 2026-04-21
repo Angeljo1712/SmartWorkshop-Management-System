@@ -525,7 +525,7 @@ const setPasswordByEmail = async ({ email, password }) => {
 const startPasswordSetupByEmail = async ({ email, password, confirm }) => {
   const normalizedEmail = String(email || "").trim().toLowerCase();
   if (!normalizedEmail || !password || !confirm) {
-    throw new AppError("VALIDATION_ERROR", "email, password and confirm are required", 400);
+    throw new AppError("VALIDATION_ERROR", "Please save your password to continue.", 400);
   }
   if (password !== confirm) {
     throw new AppError("VALIDATION_ERROR", "Passwords do not match.", 400);
@@ -659,7 +659,8 @@ const getProfile = async (userId) => {
     `SELECT u.id, u.email, u.created_at,
             p.name, p.lastname, p.avatar_url,
             mp.display_name, mp.about, mp.jobs_done, mp.rating_avg, mp.is_mobile, mp.vat_id, mp.vat_registered,
-            mp.years_experience, mp.work_history
+            mp.years_experience, mp.work_history,
+            mp.application_status, mp.account_status
      FROM users u
      LEFT JOIN user_profiles p ON p.user_id = u.id
      LEFT JOIN mechanic_profiles mp ON mp.user_id = u.id
@@ -689,6 +690,8 @@ const getProfile = async (userId) => {
     vat_registered: Boolean(user.vat_registered),
     years_experience: user.years_experience || null,
     work_history: user.work_history || "",
+    application_status: user.application_status || null,
+    account_status: user.account_status || null,
     address,
     qualifications,
     memberships

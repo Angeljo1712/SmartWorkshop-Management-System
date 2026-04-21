@@ -78,11 +78,12 @@
 }
 
 .welcome-layout1 h1 {
-  font-size: 22px;
+  font-size: 38px;
   margin-bottom: 12px;
 }
 
 .welcome-layout1 {
+  font-size: 125%;
   display: grid;
   gap: 24px;
   align-items: start;
@@ -94,8 +95,14 @@
   padding: 30px;
 }
 
+.welcome-layout1 .subtle {
+  font-size: 1em;
+  line-height: 1.6;
+  color: #ffffff;
+}
+
 .welcome-layout1 .ghost-link {
-  background: #3e434df7;
+  background: #5a6f90;
   border-color: #3e434df7;
   color: #ffffff;
   justify-self: center;
@@ -116,24 +123,33 @@
   background: #171c24;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
-  text-align: left;
-  justify-items: stretch;
+  text-align: center;
+  justify-items: center;
 }
 
 .welcome-password-card h2 {
   margin: 0;
+  color: #ffffff;
+}
+
+.welcome-password-card .password-hint {
+  margin: -8px 0 0;
+  color: #ffffff;
+  line-height: 1.5;
 }
 
 .welcome-password-card .field-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
+  width: 100%;
 }
 
 .mechanic-verification-step {
   display: grid;
   gap: 10px;
   justify-items: center;
+  padding: 30px;
 }
 
 .mechanic-verification-step .primary {
@@ -148,6 +164,7 @@
   display: grid;
   gap: 8px;
   color: #ffffff;
+  text-align: center;
 }
 
 .welcome-password-card input {
@@ -162,6 +179,11 @@
 .welcome-password-card .primary {
   justify-self: center;
   width: fit-content;
+}
+
+.welcome-password-card .form-error {
+  text-align: center;
+  padding: 20px;
 }
 
 .mechanic-view-tabs {

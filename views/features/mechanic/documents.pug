@@ -44,10 +44,6 @@ block content
               | Email us at 
               a(href="mailto:documents@smartworkshop.com") documents@smartworkshop.com
               |  and we'll help you out.
-            if uploadStatus === "success"
-              p.documents-status Upload completed successfully.
-            else if uploadStatus === "error"
-              p.documents-status.documents-status--error= uploadMessage || "Formato incorrecto"
 
           .documents-upload-card
             .documents-upload-head
@@ -57,6 +53,11 @@ block content
               input#documentsUploadInput(type="file" name="documents" multiple accept=".pdf")
               .documents-upload-list#documentsUploadList
               button.primary(type="submit") Submit
+
+          if uploadStatus === "success"
+            p.documents-status Documents uploaded successfully.
+          else if uploadStatus === "error"
+            p.documents-status.documents-status--error= uploadMessage || "Invalid file format"
 
           form.documents-next-step(method="post" action="/mechanic/documents/complete")
             input(type="hidden" name="email" id="docsEmail" value=mechanicEmail || "")

@@ -1156,14 +1156,50 @@ const applicationForm = document.querySelector(".application-form-layout-2");
 if (applicationForm) {
   const websiteRadios = applicationForm.querySelectorAll('input[name="has_website"]');
   const websiteField = applicationForm.querySelector(".business-website-field");
+  const websiteInput = applicationForm.querySelector('input[name="website"]');
+  const websiteError = applicationForm.querySelector("#applicationWebsiteError");
   const businessTypeRadios = applicationForm.querySelectorAll('input[name="business_type"]');
   const serviceCheckboxes = applicationForm.querySelectorAll('input[name="services"]');
   const specialistCheckboxes = applicationForm.querySelectorAll('input[name="specialist_services"]');
   const premisesField = applicationForm.querySelector(".business-premises");
   const specialistOtherField = applicationForm.querySelector(".business-specialist-other");
+  const clearWebsiteError = () => {
+    if (websiteError) websiteError.textContent = "";
+    if (websiteInput) websiteInput.setCustomValidity("");
+  };
+  const validateWebsite = () => {
+    const selected = applicationForm.querySelector('input[name="has_website"]:checked')?.value;
+    const value = String(websiteInput?.value || "").trim();
+    if (selected !== "yes") {
+      clearWebsiteError();
+      return true;
+    }
+    if (!value) {
+      const message = "Please enter your website address.";
+      if (websiteError) websiteError.textContent = message;
+      if (websiteInput) websiteInput.setCustomValidity(message);
+      return false;
+    }
+    try {
+      const parsed = new URL(value);
+      if (!["http:", "https:"].includes(parsed.protocol)) {
+        throw new Error("Invalid protocol");
+      }
+    } catch {
+      const message = "Please enter a valid website URL, for example https://example.com.";
+      if (websiteError) websiteError.textContent = message;
+      if (websiteInput) websiteInput.setCustomValidity(message);
+      return false;
+    }
+    clearWebsiteError();
+    return true;
+  };
   const syncWebsiteField = () => {
     const selected = applicationForm.querySelector('input[name="has_website"]:checked')?.value;
     websiteField?.classList.toggle("is-hidden", selected !== "yes");
+    if (selected !== "yes") {
+      clearWebsiteError();
+    }
   };
   const syncPremisesField = () => {
     const selectedBusinessType = applicationForm.querySelector('input[name="business_type"]:checked')?.value;
@@ -1184,6 +1220,8 @@ if (applicationForm) {
     specialistOtherField?.classList.toggle("is-hidden", !hasOther);
   };
   websiteRadios.forEach((radio) => radio.addEventListener("change", syncWebsiteField));
+  websiteInput?.addEventListener("input", clearWebsiteError);
+  websiteInput?.addEventListener("blur", validateWebsite);
   businessTypeRadios.forEach((radio) => radio.addEventListener("change", syncPremisesField));
   serviceCheckboxes.forEach((checkbox) => checkbox.addEventListener("change", syncPremisesField));
   specialistCheckboxes.forEach((checkbox) => checkbox.addEventListener("change", syncSpecialistOtherField));
@@ -1191,8 +1229,13 @@ if (applicationForm) {
   syncPremisesField();
   syncSpecialistOtherField();
 
-  applicationForm.addEventListener("submit", () => {
+  applicationForm.addEventListener("submit", (event) => {
     sessionStorage.setItem("fromApplication", "1");
+    if (!validateWebsite()) {
+      event.preventDefault();
+      websiteInput?.reportValidity?.();
+      return;
+    }
     const ensureHiddenInput = (name, value) => {
       let input = applicationForm.querySelector(`input[type="hidden"][name="${name}"]`);
       if (!input) {
