@@ -498,6 +498,10 @@ header.main-header:not(.home-header):not(.general-header):not(.basic-header) {
   background: rgba(15, 23, 42, 0.08);
 }
 
+.admin-header-menu-panel {
+  min-width: 230px;
+}
+
 .mechanic-header-menu {
   position: relative;
 }

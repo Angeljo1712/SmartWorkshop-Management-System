@@ -309,7 +309,8 @@ const buildCustomerHeaderMenuMarkup = () => `
       <button class="customer-header-menu-item" type="button" data-view="dashboard">Dashboard</button>
       <button class="customer-header-menu-item" type="button" data-view="account">Account</button>
       <button class="customer-header-menu-item" type="button" data-view="vehicle">Vehicle</button>
-      <button class="customer-header-menu-item" type="button" data-view="bookings">Bookings</button>
+      <button class="customer-header-menu-item" type="button" data-view="bookings">Booking information</button>
+      <button class="customer-header-menu-item" type="button" data-view="resolution">Resolution center</button>
       <button class="customer-header-menu-item" type="button" data-view="settings">Settings</button>
       <button class="customer-header-menu-item" type="button" data-action="logout">Logout</button>
     </div>
@@ -324,12 +325,14 @@ const buildAdminHeaderMenuMarkup = () => `
     </button>
     <div class="admin-header-menu-panel is-hidden">
       <button class="admin-header-menu-item" type="button" data-view="dashboard">Dashboard</button>
+      <button class="admin-header-menu-item" type="button" data-view="account">Account</button>
+      <button class="admin-header-menu-item" type="button" data-view="bookings">Booking information</button>
       <button class="admin-header-menu-item" type="button" data-view="users">Users</button>
       <button class="admin-header-menu-item" type="button" data-view="applications">Applications</button>
-      <button class="admin-header-menu-item" type="button" data-view="bookings">Bookings</button>
       <button class="admin-header-menu-item" type="button" data-view="resolution">Resolution</button>
       <button class="admin-header-menu-item" type="button" data-view="payments">Payments</button>
       <button class="admin-header-menu-item" type="button" data-view="catalog">Catalog</button>
+      <button class="admin-header-menu-item" type="button" data-view="contact-messages">Contact messages</button>
       <button class="admin-header-menu-item" type="button" data-view="settings">Settings</button>
       <button class="admin-header-menu-item" type="button" data-action="logout">Logout</button>
     </div>

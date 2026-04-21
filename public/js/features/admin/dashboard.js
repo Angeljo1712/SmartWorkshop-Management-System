@@ -56,6 +56,14 @@ if (adminPage) {
   const adminSettingsEditMessage = document.getElementById("adminSettingsEditMessage");
   const adminSettingsEditCancel = document.getElementById("adminSettingsEditCancel");
   const adminSettingsEditSave = document.getElementById("adminSettingsEditSave");
+  const adminApplicationNoteModal = document.getElementById("adminApplicationNoteModal");
+  const adminApplicationNoteTitle = document.getElementById("adminApplicationNoteTitle");
+  const adminApplicationNoteDescription = document.getElementById("adminApplicationNoteDescription");
+  const adminApplicationNoteFieldLabel = document.getElementById("adminApplicationNoteFieldLabel");
+  const adminApplicationNoteInput = document.getElementById("adminApplicationNoteInput");
+  const adminApplicationNoteMessage = document.getElementById("adminApplicationNoteMessage");
+  const adminApplicationNoteCancel = document.getElementById("adminApplicationNoteCancel");
+  const adminApplicationNoteSave = document.getElementById("adminApplicationNoteSave");
   const adminDeleteModal = document.getElementById("adminDeleteModal");
   const adminDeleteDescription = document.getElementById("adminDeleteDescription");
   const adminDeleteCancel = document.getElementById("adminDeleteCancel");
@@ -250,6 +258,8 @@ if (adminPage) {
   let activeAdminEditField = null;
   let activeAdminEditUserId = null;
   let pendingAdminDeleteUser = null;
+  let pendingAdminApplicationNoteUserId = null;
+  let pendingAdminApplicationNoteAction = "request_info";
   let adminUserSort = { key: "joined_date", direction: "desc" };
   let adminApplicationsPageSize = Number(adminApplicationsRowsPerPage?.value || 10);
   let adminApplicationsPage = 1;
@@ -1393,6 +1403,52 @@ if (adminPage) {
     adminDeleteModal?.classList.add("is-hidden");
     if (adminDeleteModal) adminDeleteModal.hidden = true;
     if (adminDeleteConfirm) adminDeleteConfirm.disabled = false;
+  };
+
+  const closeAdminApplicationNoteModal = () => {
+    pendingAdminApplicationNoteUserId = null;
+    pendingAdminApplicationNoteAction = "request_info";
+    adminApplicationNoteModal?.classList.add("is-hidden");
+    if (adminApplicationNoteModal) adminApplicationNoteModal.hidden = true;
+    if (adminApplicationNoteInput) adminApplicationNoteInput.value = "";
+    if (adminApplicationNoteMessage) adminApplicationNoteMessage.textContent = "";
+    if (adminApplicationNoteDescription) {
+      adminApplicationNoteDescription.textContent = "Write the information you need from the mechanic.";
+    }
+    if (adminApplicationNoteFieldLabel) adminApplicationNoteFieldLabel.textContent = "Note";
+    if (adminApplicationNoteSave) adminApplicationNoteSave.textContent = "Send request";
+    if (adminApplicationNoteSave) adminApplicationNoteSave.disabled = false;
+  };
+
+  const openAdminApplicationNoteModal = (user, action = "request_info") => {
+    if (!user || !adminApplicationNoteModal) return;
+    pendingAdminApplicationNoteUserId = Number(user.user_id || user.id || 0) || null;
+    if (!pendingAdminApplicationNoteUserId) return;
+    pendingAdminApplicationNoteAction = action === "reject" ? "reject" : "request_info";
+    if (adminApplicationNoteTitle) {
+      adminApplicationNoteTitle.textContent = pendingAdminApplicationNoteAction === "reject" ? "Reject application" : "Request info";
+    }
+    if (adminApplicationNoteDescription) {
+      adminApplicationNoteDescription.textContent = pendingAdminApplicationNoteAction === "reject"
+        ? "Write the reason for rejecting this mechanic application."
+        : "Write the information you need from the mechanic.";
+    }
+    if (adminApplicationNoteFieldLabel) {
+      adminApplicationNoteFieldLabel.textContent = pendingAdminApplicationNoteAction === "reject" ? "Reason" : "Note";
+    }
+    if (adminApplicationNoteInput) adminApplicationNoteInput.value = "";
+    if (adminApplicationNoteMessage) adminApplicationNoteMessage.textContent = "";
+    if (adminApplicationNoteInput) {
+      adminApplicationNoteInput.placeholder = pendingAdminApplicationNoteAction === "reject"
+        ? "Write the rejection reason here"
+        : "Write the request note here";
+    }
+    if (adminApplicationNoteSave) {
+      adminApplicationNoteSave.textContent = pendingAdminApplicationNoteAction === "reject" ? "Reject application" : "Send request";
+    }
+    adminApplicationNoteModal.classList.remove("is-hidden");
+    adminApplicationNoteModal.hidden = false;
+    adminApplicationNoteInput?.focus();
   };
 
   const closeAdminCatalogEditModal = () => {
@@ -3503,12 +3559,12 @@ if (adminPage) {
       return;
     }
     if (action === "request_info") {
-      const note = window.prompt("Request information note for this mechanic application:", "");
-      if (note === null) return;
+      openAdminApplicationNoteModal(adminApplications.find((item) => Number(item.user_id) === userId), "request_info");
+      return;
     }
     if (action === "reject") {
-      const reason = window.prompt("Reason for rejecting this mechanic application:", "");
-      if (reason === null) return;
+      openAdminApplicationNoteModal(adminApplications.find((item) => Number(item.user_id) === userId), "reject");
+      return;
     }
     actionButton.disabled = true;
     try {
@@ -4557,6 +4613,7 @@ if (adminPage) {
 
   adminDeleteCancel?.addEventListener("click", closeAdminDeleteModal);
   adminSettingsEditCancel?.addEventListener("click", closeAdminSettingsEditModal);
+  adminApplicationNoteCancel?.addEventListener("click", closeAdminApplicationNoteModal);
   adminCatalogEditBack?.addEventListener("click", closeAdminCatalogEditModal);
   adminSettingsEditModal?.querySelectorAll("[data-admin-edit-close]").forEach((element) => {
     element.addEventListener("click", closeAdminSettingsEditModal);
@@ -4564,8 +4621,45 @@ if (adminPage) {
   adminDeleteModal?.querySelectorAll("[data-admin-delete-close]").forEach((element) => {
     element.addEventListener("click", closeAdminDeleteModal);
   });
+  adminApplicationNoteModal?.querySelectorAll("[data-admin-application-note-close]").forEach((element) => {
+    element.addEventListener("click", closeAdminApplicationNoteModal);
+  });
   adminCatalogEditModal?.querySelectorAll("[data-admin-catalog-edit-close]").forEach((element) => {
     element.addEventListener("click", closeAdminCatalogEditModal);
+  });
+  adminApplicationNoteSave?.addEventListener("click", async () => {
+    if (!pendingAdminApplicationNoteUserId) return;
+    const token = getAdminToken();
+    if (!token) {
+      if (adminApplicationNoteMessage) adminApplicationNoteMessage.textContent = "Sign in as admin first.";
+      return;
+    }
+    const note = String(adminApplicationNoteInput?.value || "").trim();
+    if (!note) {
+      if (adminApplicationNoteMessage) {
+        adminApplicationNoteMessage.textContent = pendingAdminApplicationNoteAction === "reject"
+          ? "Please write the rejection reason."
+          : "Please write the request note.";
+      }
+      return;
+    }
+    if (adminApplicationNoteSave) adminApplicationNoteSave.disabled = true;
+    if (adminApplicationNoteMessage) adminApplicationNoteMessage.textContent = "";
+    try {
+      await apiAuth(`/api/admin/applications/${encodeURIComponent(pendingAdminApplicationNoteUserId)}/status`, token, {
+        method: "PATCH",
+        body: JSON.stringify({ action: pendingAdminApplicationNoteAction, note })
+      });
+      closeAdminApplicationNoteModal();
+      showAdminFeedback("Application updated.");
+      await loadAdminApplications();
+    } catch (err) {
+      console.error("Unable to update application status", err);
+      if (adminApplicationNoteMessage) {
+        adminApplicationNoteMessage.textContent = err?.error?.message || err?.message || "Unable to update application.";
+      }
+      if (adminApplicationNoteSave) adminApplicationNoteSave.disabled = false;
+    }
   });
   adminSettingsEditSave?.addEventListener("click", async () => {
     if (!activeAdminEditUserId || !activeAdminEditField) return;

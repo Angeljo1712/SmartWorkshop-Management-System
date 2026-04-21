@@ -49,6 +49,7 @@ if (mechanicDashboard) {
   const mechanicDashboardOpenCasesCount = document.getElementById("mechanicDashboardOpenCasesCount");
   const mechanicDashboardRecentBookings = document.getElementById("mechanicDashboardRecentBookings");
   const mechanicDashboardOffersStatus = document.getElementById("mechanicDashboardOffersStatus");
+  const mechanicDashboardInfoRequestSecondary = document.getElementById("mechanicDashboardInfoRequestSecondary");
   const mechanicDashboardRecentStatus = document.getElementById("mechanicDashboardRecentStatus");
   const mechanicBookingInformationStatus = document.getElementById("mechanicBookingInformationStatus");
   const mechanicPaymentsStatus = document.getElementById("mechanicPaymentsStatus");
@@ -71,11 +72,12 @@ if (mechanicDashboard) {
   const mechanicAccountEmailSecondary = document.getElementById("mechanicAccountEmailSecondary");
   const mechanicAccountUsername = document.getElementById("mechanicAccountUsername");
   const mechanicAccountUsernameSecondary = document.getElementById("mechanicAccountUsernameSecondary");
-  const mechanicAccountAddress = document.getElementById("mechanicAccountAddress");
   const mechanicAccountAddressSecondary = document.getElementById("mechanicAccountAddressSecondary");
+  const mechanicAccountPremisesAddressSecondary = document.getElementById("mechanicAccountPremisesAddressSecondary");
   const mechanicAccountRole = document.getElementById("mechanicAccountRole");
   const mechanicAccountRoleSecondary = document.getElementById("mechanicAccountRoleSecondary");
   const mechanicAccountStatusSecondary = document.getElementById("mechanicAccountStatusSecondary");
+  const mechanicDocumentsInfoRequestSecondary = document.getElementById("mechanicDocumentsInfoRequestSecondary");
   const mechanicProfileAvatar = document.getElementById("mechanicProfileAvatar");
   const mechanicProfileHeading = document.getElementById("mechanicProfileHeading");
   const mechanicProfileRatings = document.getElementById("mechanicProfileRatings");
@@ -173,11 +175,16 @@ if (mechanicDashboard) {
   const mechanicResolutionMessages = document.getElementById("mechanicResolutionMessages");
   const mechanicResolutionMessageInput = document.getElementById("mechanicResolutionMessageInput");
   const mechanicResolutionSendBtn = document.getElementById("mechanicResolutionSendBtn");
+  const mechanicResolutionCaseAttachBtn = document.getElementById("mechanicResolutionCaseAttachBtn");
+  const mechanicResolutionCaseAttachmentInput = document.getElementById("mechanicResolutionCaseAttachmentInput");
+  const mechanicResolutionCaseAttachmentPreview = document.getElementById("mechanicResolutionCaseAttachmentPreview");
   const mechanicResolutionSidebarTitle = document.getElementById("mechanicResolutionSidebarTitle");
   const mechanicResolutionSidebarCustomer = document.getElementById("mechanicResolutionSidebarCustomer");
   const mechanicResolutionSidebarCar = document.getElementById("mechanicResolutionSidebarCar");
   const mechanicResolutionSidebarAddress = document.getElementById("mechanicResolutionSidebarAddress");
   const mechanicResolutionSidebarWork = document.getElementById("mechanicResolutionSidebarWork");
+  const mechanicResolutionSidebarArrivalTime = document.getElementById("mechanicResolutionSidebarArrivalTime");
+  const mechanicResolutionSidebarParts = document.getElementById("mechanicResolutionSidebarParts");
   const mechanicResolutionSidebarTotal = document.getElementById("mechanicResolutionSidebarTotal");
   const mechanicSettingsSubnavLinks = mechanicDashboard.querySelectorAll("[data-mechanic-settings-subview]");
   const mechanicSettingsGeneral = document.getElementById("mechanicSettingsGeneral");
@@ -190,6 +197,7 @@ if (mechanicDashboard) {
   const editLink = document.getElementById("mechanicEditProfile");
   const viewLink = document.getElementById("mechanicViewProfile");
   const profile = getStoredAuthValue("userProfile");
+  let currentMechanicUser = null;
   let latestMechanicCoverage = [];
   let latestMechanicResolutionCases = [];
   let latestMechanicAssignedBookings = [];
@@ -213,6 +221,7 @@ if (mechanicDashboard) {
   let activeMechanicResolutionFilter = "all";
   let pendingResolutionBookingId = null;
   let pendingResolutionCaseId = null;
+  const pendingMechanicResolutionCaseAttachments = new Map();
   const formatDate = window.SWApp?.formatShortDate || ((value) => String(value || "-"));
   const formatCurrency = window.SWApp?.formatCurrency || ((value) => String(value || "0"));
   const escapeHtml = window.SWApp?.escapeHtml || ((value) => String(value ?? ""));
@@ -324,6 +333,47 @@ if (mechanicDashboard) {
     const label = labelMap[normalized] || normalized.charAt(0).toUpperCase() + normalized.slice(1);
     el.textContent = label;
     el.dataset.status = normalized;
+  };
+  const renderMechanicInfoRequestBlock = (element, noteText) => {
+    if (!element) return;
+    const introText = "SmartWorkshop requires this document in order to complete your application. Thanks";
+    const requestText = String(noteText || "").trim() || "The admin requested additional information for your application.";
+    element.innerHTML = "";
+    const introLine = document.createElement("span");
+    introLine.className = "mechanic-info-request-intro";
+    introLine.textContent = introText;
+    const labelLine = document.createElement("span");
+    labelLine.className = "mechanic-info-request-label";
+    labelLine.textContent = "Request info:";
+    const noteLine = document.createElement("span");
+    noteLine.className = "mechanic-info-request-note";
+    noteLine.textContent = requestText;
+    element.append(introLine, labelLine, noteLine);
+  };
+
+  const renderMechanicInfoRequestNotes = (user) => {
+    const applicationStatus = String(user?.application_status || "").trim().toLowerCase();
+    const requestNote = String(user?.info_request_note || "").trim();
+
+    if (mechanicDocumentsInfoRequestSecondary) {
+      if (applicationStatus === "info_requested") {
+        mechanicDocumentsInfoRequestSecondary.classList.remove("is-hidden");
+        renderMechanicInfoRequestBlock(mechanicDocumentsInfoRequestSecondary, requestNote);
+      } else {
+        mechanicDocumentsInfoRequestSecondary.classList.add("is-hidden");
+        mechanicDocumentsInfoRequestSecondary.textContent = "";
+      }
+    }
+
+    if (mechanicDashboardInfoRequestSecondary) {
+      if (applicationStatus === "info_requested") {
+        mechanicDashboardInfoRequestSecondary.classList.remove("is-hidden");
+        renderMechanicInfoRequestBlock(mechanicDashboardInfoRequestSecondary, requestNote);
+      } else {
+        mechanicDashboardInfoRequestSecondary.classList.add("is-hidden");
+        mechanicDashboardInfoRequestSecondary.textContent = "";
+      }
+    }
   };
   const resolveMechanicAccountStatus = (user) => {
     const applicationStatus = String(user?.application_status || "").trim().toLowerCase();
@@ -514,6 +564,7 @@ if (mechanicDashboard) {
   if (profile) {
     try {
       const user = JSON.parse(profile);
+      currentMechanicUser = user;
       const name = [user.name, user.lastname].filter(Boolean).join(" ") || user.email || "Mechanic";
       const initials = name
         .split(/\s+/)
@@ -540,12 +591,29 @@ if (mechanicDashboard) {
       setLabeledText(mechanicAccountEmailSecondary, "Email:", user?.email);
       setLabeledText(mechanicAccountUsername, "Username:", user?.username);
       setLabeledText(mechanicAccountUsernameSecondary, "Username:", user?.username);
-        setLabeledText(mechanicAccountAddress, "Address:", user?.address);
-        setLabeledText(mechanicAccountAddressSecondary, "Address:", user?.address);
-        if (mechanicAccountRole) mechanicAccountRole.textContent = activeRole;
-        if (mechanicAccountRoleSecondary) mechanicAccountRoleSecondary.textContent = activeRole;
-        setMechanicAccountStatus(mechanicAccountStatusSecondary, resolveMechanicAccountStatus(user));
-        if (mechanicSettingsWelcomeName) mechanicSettingsWelcomeName.textContent = name;
+        const contactAddress = user?.contact_address || user?.address || "";
+      setLabeledText(mechanicAccountAddressSecondary, "Contact address:", contactAddress);
+        const premisesAddress = user?.premises_address || "";
+        const premisesAddressDetails = user?.premises_address_details || null;
+        const premisesAddressValue = premisesAddressDetails
+          ? [premisesAddressDetails.line1, premisesAddressDetails.line2, premisesAddressDetails.city, premisesAddressDetails.postal_code, premisesAddressDetails.country]
+              .filter((value) => String(value || "").trim())
+              .join(", ")
+          : String(premisesAddress || "").trim();
+        if (premisesAddressValue) {
+          if (mechanicAccountPremisesAddressSecondary) {
+            mechanicAccountPremisesAddressSecondary.classList.remove("is-hidden");
+            setLabeledText(mechanicAccountPremisesAddressSecondary, "Premises address:", premisesAddressValue);
+          }
+        } else if (mechanicAccountPremisesAddressSecondary) {
+          mechanicAccountPremisesAddressSecondary.classList.add("is-hidden");
+          mechanicAccountPremisesAddressSecondary.textContent = "Premises address: -";
+        }
+      if (mechanicAccountRole) mechanicAccountRole.textContent = activeRole;
+      if (mechanicAccountRoleSecondary) mechanicAccountRoleSecondary.textContent = activeRole;
+      setMechanicAccountStatus(mechanicAccountStatusSecondary, resolveMechanicAccountStatus(user));
+      renderMechanicInfoRequestNotes(user);
+      if (mechanicSettingsWelcomeName) mechanicSettingsWelcomeName.textContent = name;
       setAvatar(mechanicSettingsAvatarSettings, getInitials(name, activeRole), getMechanicFallbackAvatarUrl(user));
       if (mechanicSettingsFullName) mechanicSettingsFullName.textContent = name;
       if (mechanicSettingsPhone) mechanicSettingsPhone.textContent = user?.phone || "-";
@@ -583,6 +651,32 @@ if (mechanicDashboard) {
       }
     } catch {}
   }
+
+  const refreshMechanicProfileFromApi = async () => {
+    const token = getStoredAuthValue("userToken");
+    if (!token) return null;
+    try {
+      const response = await fetch("/api/users/me/mechanic-profile", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      if (!response.ok) return null;
+      const freshProfile = await response.json();
+      currentMechanicUser = {
+        ...(currentMechanicUser || {}),
+        ...freshProfile
+      };
+      setStoredAuthValue("userProfile", JSON.stringify(currentMechanicUser));
+      setMechanicAccountStatus(mechanicAccountStatusSecondary, resolveMechanicAccountStatus(currentMechanicUser));
+      renderMechanicInfoRequestNotes(currentMechanicUser);
+      return currentMechanicUser;
+    } catch {
+      return null;
+    }
+  };
+
+  void refreshMechanicProfileFromApi();
 
   mechanicBackBtn?.addEventListener("click", () => {
     window.location.href = "/auth/select-role";
@@ -1838,6 +1932,20 @@ if (mechanicDashboard) {
     if (mechanicResolutionSidebarWork) {
       mechanicResolutionSidebarWork.textContent = (detail?.items || []).map((item) => item.name).join(", ") || "-";
     }
+    if (mechanicResolutionSidebarArrivalTime) {
+      mechanicResolutionSidebarArrivalTime.textContent = detail?.booking?.arrival_time
+        ? formatMechanicDateTime(detail.booking.arrival_time)
+        : (detail?.booking?.assigned_at ? `Assigned on ${formatMechanicDateTime(detail.booking.assigned_at)}` : "-");
+    }
+    if (mechanicResolutionSidebarParts) {
+      const invoiceParts = Array.isArray(detail?.invoice?.totals?.completion?.added_parts)
+        ? detail.invoice.totals.completion.added_parts
+        : Array.isArray(detail?.completion?.added_parts)
+          ? detail.completion.added_parts
+          : [];
+      const bookingParts = invoiceParts.map((part) => part?.description || part?.name).filter(Boolean);
+      mechanicResolutionSidebarParts.textContent = bookingParts.length ? bookingParts.join(", ") : "-";
+    }
     if (mechanicResolutionSidebarTotal) {
       mechanicResolutionSidebarTotal.textContent = formatMechanicCurrency(detail?.booking?.total_eur);
     }
@@ -1906,7 +2014,52 @@ if (mechanicDashboard) {
         });
       }
     }
+    renderMechanicResolutionCaseAttachmentPreview();
   };
+
+  const renderMechanicResolutionCaseAttachmentPreview = () => {
+    if (!mechanicResolutionCaseAttachmentPreview) return;
+    const files = pendingMechanicResolutionCaseAttachments.get(pendingResolutionCaseId) || [];
+    mechanicResolutionCaseAttachmentPreview.innerHTML = "";
+    mechanicResolutionCaseAttachmentPreview.classList.toggle("is-hidden", !files.length);
+    if (!files.length) {
+      mechanicResolutionCaseAttachmentPreview.innerHTML = '<span class="mechanic-resolution-compose-empty">No files selected yet.</span>';
+      return;
+    }
+
+    files.forEach((file) => {
+      const item = document.createElement("div");
+      item.className = "mechanic-resolution-compose-file";
+      const isImage = String(file.type || "").startsWith("image/");
+      if (isImage) {
+        const objectUrl = URL.createObjectURL(file);
+        item.innerHTML = `
+          <img alt="${escapeHtml(file.name || "Attachment")}" src="${objectUrl}">
+          <span>${escapeHtml(file.name || "Attachment")}</span>
+        `;
+        const img = item.querySelector("img");
+        if (img) {
+          img.addEventListener("load", () => URL.revokeObjectURL(objectUrl), { once: true });
+          img.addEventListener("error", () => URL.revokeObjectURL(objectUrl), { once: true });
+        }
+      } else {
+        item.innerHTML = `
+          <span class="mechanic-resolution-compose-file-icon">FILE</span>
+          <span>${escapeHtml(file.name || "Attachment")}</span>
+        `;
+      }
+      mechanicResolutionCaseAttachmentPreview.appendChild(item);
+    });
+  };
+
+  const clearMechanicResolutionCaseAttachments = (caseId = pendingResolutionCaseId) => {
+    if (caseId) {
+      pendingMechanicResolutionCaseAttachments.set(Number(caseId), []);
+    }
+    if (mechanicResolutionCaseAttachmentInput) mechanicResolutionCaseAttachmentInput.value = "";
+    renderMechanicResolutionCaseAttachmentPreview();
+  };
+
   mechanicBookingsList?.addEventListener("click", async (event) => {
     const offerAction = event.target.closest(".mechanic-offer-table-action[data-offer-id][data-offer-action]");
     if (offerAction) {
@@ -2585,15 +2738,45 @@ if (mechanicDashboard) {
     renderMechanicResolutionCaseDetail(detail);
     setMechanicResolutionSubview("case", detail.booking?.reference || detail.booking_id);
   });
+  mechanicResolutionCaseAttachBtn?.addEventListener("click", () => {
+    mechanicResolutionCaseAttachmentInput?.click();
+  });
+
+  mechanicResolutionCaseAttachmentInput?.addEventListener("change", () => {
+    if (!pendingResolutionCaseId) return;
+    const selectedFiles = Array.from(mechanicResolutionCaseAttachmentInput?.files || []);
+    if (!selectedFiles.length) {
+      renderMechanicResolutionCaseAttachmentPreview();
+      return;
+    }
+    const existingFiles = pendingMechanicResolutionCaseAttachments.get(pendingResolutionCaseId) || [];
+    pendingMechanicResolutionCaseAttachments.set(pendingResolutionCaseId, [...existingFiles, ...selectedFiles]);
+    if (mechanicResolutionCaseAttachmentInput) mechanicResolutionCaseAttachmentInput.value = "";
+    renderMechanicResolutionCaseAttachmentPreview();
+  });
+
   mechanicResolutionSendBtn?.addEventListener("click", async () => {
     if (!pendingResolutionCaseId || !mechanicToken) return;
     const body = mechanicResolutionMessageInput?.value?.trim();
-    if (!body) return;
-    const detail = await apiAuth(`/api/users/me/mechanic-resolution-cases/${encodeURIComponent(pendingResolutionCaseId)}/messages`, mechanicToken, {
-      method: "POST",
-      body: JSON.stringify({ body })
-    });
+    const attachments = pendingMechanicResolutionCaseAttachments.get(pendingResolutionCaseId) || [];
+    if (!body && !attachments.length) return;
+    const route = `/api/users/me/mechanic-resolution-cases/${encodeURIComponent(pendingResolutionCaseId)}/messages`;
+    const detail = attachments.length
+      ? await apiAuth(route, mechanicToken, (() => {
+          const formData = new FormData();
+          formData.append("body", body);
+          attachments.forEach((file) => formData.append("attachments", file));
+          return {
+            method: "POST",
+            body: formData
+          };
+        })())
+      : await apiAuth(route, mechanicToken, {
+          method: "POST",
+          body: JSON.stringify({ body })
+        });
     if (mechanicResolutionMessageInput) mechanicResolutionMessageInput.value = "";
+    clearMechanicResolutionCaseAttachments(pendingResolutionCaseId);
     renderMechanicResolutionCaseDetail(detail);
     await syncMechanicResolutionOverview();
   });

@@ -52,9 +52,11 @@ const getAuthUserById = async (userId) => {
   const [rows] = await pool.query(
     `SELECT u.id, BIN_TO_UUID(u.uuid_public) AS uuid_public, u.email, u.username, u.phone, u.password_hash, u.role, u.status, u.last_login_at,
             p.name, p.lastname, p.avatar_url,
+            mp.application_status, mp.account_status, mp.info_request_note, mp.info_requested_at,
             COALESCE(MAX(uss.two_factor_email_enabled), 0) AS two_factor_email_enabled
      FROM users u
      LEFT JOIN user_profiles p ON p.user_id = u.id
+     LEFT JOIN mechanic_profiles mp ON mp.user_id = u.id
      LEFT JOIN user_security_settings uss ON uss.user_id = u.id
      WHERE u.id = ?`,
     [userId]
@@ -76,6 +78,10 @@ const getAuthUserById = async (userId) => {
       username: user.username,
       phone: user.phone,
       avatar_url: resolveMechanicAvatarUrl(user),
+      application_status: user.application_status || null,
+      account_status: user.account_status || null,
+      info_request_note: user.info_request_note || "",
+      info_requested_at: user.info_requested_at || null,
       role: user.role,
       status: user.status,
       role_name: primaryRole,

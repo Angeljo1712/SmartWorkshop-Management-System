@@ -248,8 +248,10 @@ const getUserById = async (userId) => {
   );
   const user = rows[0];
   if (!user) return null;
-  const addressRow = await getLatestAddress(userId);
-  const address = formatAddressRow(addressRow) || "";
+  const contactAddressRow = (await getAddressByLabel(userId, "Contact")) || (await getLatestAddress(userId));
+  const premisesAddressRow = await getAddressByLabel(userId, "Premises");
+  const contactAddress = formatAddressRow(contactAddressRow) || "";
+  const premisesAddress = formatAddressRow(premisesAddressRow) || "";
   const roles = (user.roles ? String(user.roles).split(",") : [user.role]).map(toRoleLabel);
   const primaryRole = roles.includes("ADMIN")
     ? "ADMIN"
@@ -258,14 +260,34 @@ const getUserById = async (userId) => {
       : "CUSTOMER";
   return {
     ...user,
-    address,
-    address_details: addressRow
+    address: contactAddress,
+    address_details: contactAddressRow
       ? {
-          line1: addressRow.line1 || "",
-          line2: addressRow.line2 || "",
-          city: addressRow.city || "",
-          postal_code: addressRow.postal_code || "",
-          country: addressRow.country || "GB"
+          line1: contactAddressRow.line1 || "",
+          line2: contactAddressRow.line2 || "",
+          city: contactAddressRow.city || "",
+          postal_code: contactAddressRow.postal_code || "",
+          country: contactAddressRow.country || "GB"
+        }
+      : null,
+    contact_address: contactAddress,
+    contact_address_details: contactAddressRow
+      ? {
+          line1: contactAddressRow.line1 || "",
+          line2: contactAddressRow.line2 || "",
+          city: contactAddressRow.city || "",
+          postal_code: contactAddressRow.postal_code || "",
+          country: contactAddressRow.country || "GB"
+        }
+      : null,
+    premises_address: premisesAddress,
+    premises_address_details: premisesAddressRow
+      ? {
+          line1: premisesAddressRow.line1 || "",
+          line2: premisesAddressRow.line2 || "",
+          city: premisesAddressRow.city || "",
+          postal_code: premisesAddressRow.postal_code || "",
+          country: premisesAddressRow.country || "GB"
         }
       : null,
     role_name: primaryRole,
@@ -1420,7 +1442,7 @@ const getMechanicProfile = async (userId) => {
             p.name, p.lastname, p.avatar_url,
             mp.display_name, mp.about, mp.jobs_done, mp.rating_avg, mp.is_mobile, mp.vat_id, mp.vat_registered,
             mp.years_experience, mp.work_history, mp.travel_radius_miles,
-            mp.application_status, mp.account_status
+            mp.application_status, mp.account_status, mp.info_request_note, mp.info_requested_at
      FROM users u
      LEFT JOIN user_profiles p ON p.user_id = u.id
      LEFT JOIN mechanic_profiles mp ON mp.user_id = u.id
@@ -1491,6 +1513,8 @@ const getMechanicProfile = async (userId) => {
     travel_radius_miles: user.travel_radius_miles || null,
     application_status: user.application_status || null,
     account_status: user.account_status || null,
+    info_request_note: user.info_request_note || "",
+    info_requested_at: user.info_requested_at || null,
     address: contactAddress,
     contact_address: contactAddress,
     premises_address: premisesAddress,

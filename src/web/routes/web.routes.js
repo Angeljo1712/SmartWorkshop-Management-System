@@ -251,11 +251,22 @@ router.get("/mechanic/:id/preferences", (req, res) => {
   res.render("features/mechanic/preferences", { mechanicId: req.params.id });
 });
 
-router.get("/mechanic/documents", (req, res) => {
-  const uploadStatus = req.query.upload === "success" ? "success" : req.query.upload === "error" ? "error" : null;
-  const uploadMessage = typeof req.query.message === "string" ? req.query.message : null;
-  const mechanicEmail = typeof req.query.email === "string" ? req.query.email.trim().toLowerCase() : "";
-  res.render("features/mechanic/documents", { mechanicId: null, uploadStatus, uploadMessage, mechanicEmail });
+router.get("/mechanic/documents", async (req, res, next) => {
+  try {
+    const uploadStatus = req.query.upload === "success" ? "success" : req.query.upload === "error" ? "error" : null;
+    const uploadMessage = typeof req.query.message === "string" ? req.query.message : null;
+    const mechanicEmail = typeof req.query.email === "string" ? req.query.email.trim().toLowerCase() : "";
+    const onboarding = mechanicEmail ? await mechanicService.getOnboardingByEmail(mechanicEmail) : null;
+    res.render("features/mechanic/documents", {
+      mechanicId: null,
+      uploadStatus,
+      uploadMessage,
+      mechanicEmail,
+      mechanicInfoRequest: onboarding?.application_status === "info_requested" ? onboarding : null
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.post("/mechanic/documents/upload", uploadMechanicDocuments.array("documents", 10), (req, res) => {

@@ -8,6 +8,7 @@ block vars
 block head
   link(rel="stylesheet" href="/css/features/mechanic/edit.css")
   link(rel="stylesheet" href="/css/features/mechanic/home.css")
+  link(rel="stylesheet" href="/css/features/mechanic/dashboard.css")
   link(rel="stylesheet" href="/css/features/bookings/bookings.css")
 
 block content
@@ -44,6 +45,15 @@ block content
               | Email us at 
               a(href="mailto:documents@smartworkshop.com") documents@smartworkshop.com
               |  and we'll help you out.
+
+          if mechanicInfoRequest
+            .documents-request-note
+              h3 Request info
+              p.mechanic-info-request-intro SmartWorkshop requires this document in order to complete your application. Thanks
+              p.mechanic-info-request-label Request info:
+              p.mechanic-info-request-note= mechanicInfoRequest.info_request_note || "The admin requested additional information for your application."
+              if mechanicInfoRequest.info_requested_at
+                small Requested on #{mechanicInfoRequest.info_requested_at}
 
           .documents-upload-card
             .documents-upload-head

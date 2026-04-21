@@ -25,6 +25,19 @@ const getLatestAddress = async (userId) => {
   return rows[0] || null;
 };
 
+const getAddressByLabel = async (userId, label) => {
+  const [rows] = await pool.query(
+    `SELECT line1, line2, city, postal_code, country,
+            ST_Y(location) AS lat, ST_X(location) AS lng
+     FROM addresses
+     WHERE user_id = ? AND label = ?
+     ORDER BY id DESC
+     LIMIT 1`,
+    [userId, label]
+  );
+  return rows[0] || null;
+};
+
 const getQualifications = async (userId) => {
   const [rows] = await pool.query(
     `SELECT name FROM mechanic_qualifications
@@ -130,6 +143,61 @@ const ensureMechanicDocumentsTable = async () => {
       CONSTRAINT fk_md_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     ) ENGINE=InnoDB`
   );
+};
+
+const backfillMechanicApplicationStatuses = async () => {
+  await ensureMechanicDocumentsTable();
+  await pool.query(
+    `UPDATE mechanic_profiles mp
+     SET application_status = 'documents_uploaded'
+     WHERE mp.application_status IN ('application_saved', 'documents_uploaded', 'lead_created', 'password_pending', 'password_created')
+       AND EXISTS (
+         SELECT 1
+         FROM mechanic_documents md
+         WHERE md.user_id = mp.user_id
+       )`
+  );
+  await pool.query(
+    `UPDATE mechanic_profiles
+     SET account_status = 'active'
+     WHERE application_status = 'approved'`
+  );
+  await pool.query(
+    `UPDATE mechanic_profiles
+     SET account_status = 'rejected'
+     WHERE application_status = 'rejected'`
+  );
+  await pool.query(
+    `UPDATE mechanic_profiles
+     SET account_status = 'pending'
+     WHERE application_status IN ('application_saved', 'documents_uploaded', 'info_requested', 'password_created', 'password_pending', 'lead_created')`
+  );
+};
+
+const ensureMechanicInfoRequestColumns = async () => {
+  const [rows] = await pool.query(
+    `SELECT COLUMN_NAME
+     FROM information_schema.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE()
+       AND TABLE_NAME = 'mechanic_profiles'
+       AND COLUMN_NAME IN ('info_request_note', 'info_requested_at')`
+  );
+  const existing = new Set(rows.map((row) => row.COLUMN_NAME));
+  if (!existing.has("info_request_note")) {
+    await pool.query("ALTER TABLE mechanic_profiles ADD COLUMN info_request_note TEXT NULL AFTER account_status");
+  }
+  if (!existing.has("info_requested_at")) {
+    await pool.query("ALTER TABLE mechanic_profiles ADD COLUMN info_requested_at DATETIME NULL AFTER info_request_note");
+  }
+};
+
+const resolveNextMechanicAccountStatus = (profileRow) => {
+  const applicationStatus = String(profileRow?.application_status || "").trim().toLowerCase();
+  const accountStatus = String(profileRow?.account_status || "").trim().toLowerCase();
+  if (applicationStatus === "approved" || accountStatus === "active") {
+    return "active";
+  }
+  return "pending";
 };
 
 const listMechanicDocumentsByUserId = async (userId) => {
@@ -244,6 +312,8 @@ const ensureMechanicProfileOnboardingColumns = async () => {
       "ALTER TABLE mechanic_profiles ADD COLUMN referral_source VARCHAR(255) NULL AFTER availability_pref"
     );
   }
+
+  await backfillMechanicApplicationStatuses();
 };
 
 const ensureMechanicPasswordSetupTables = async () => {
@@ -261,6 +331,15 @@ const ensureMechanicPasswordSetupTables = async () => {
       CONSTRAINT fk_mpsc_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     ) ENGINE=InnoDB`
   );
+};
+
+const hasMechanicUploadedDocuments = async (userId) => {
+  await ensureMechanicDocumentsTable();
+  const [[row]] = await pool.query(
+    "SELECT COUNT(*) AS count FROM mechanic_documents WHERE user_id = ?",
+    [userId]
+  );
+  return Number(row?.count || 0) > 0;
 };
 
 const saveApplication = async (payload) => {
@@ -317,6 +396,7 @@ const saveApplication = async (payload) => {
   const leadPostcodeValue = String(postcode || "").trim().toUpperCase() || null;
 
   await ensureMechanicProfileOnboardingColumns();
+  await ensureMechanicInfoRequestColumns();
 
   await pool.query(
     `INSERT INTO mechanic_profiles
@@ -336,7 +416,7 @@ const saveApplication = async (payload) => {
        application_type = VALUES(application_type),
        lead_postcode = VALUES(lead_postcode),
        application_status = VALUES(application_status),
-       account_status = COALESCE(mechanic_profiles.account_status, VALUES(account_status)),
+       account_status = VALUES(account_status),
        travel_radius_miles = VALUES(travel_radius_miles),
        availability_pref = VALUES(availability_pref),
        referral_source = VALUES(referral_source)`,
@@ -352,7 +432,7 @@ const saveApplication = async (payload) => {
       applicationTypeValue,
       leadPostcodeValue,
       "application_saved",
-      "lead_created",
+      "pending",
       travel,
       availability || null,
       referral || null
@@ -440,6 +520,16 @@ const saveUploadedDocumentsByEmail = async ({ email, files }) => {
     );
   }
 
+  await ensureMechanicProfileOnboardingColumns();
+  await ensureMechanicInfoRequestColumns();
+  await pool.query(
+    `UPDATE mechanic_profiles
+     SET application_status = 'documents_uploaded',
+         account_status = 'pending'
+     WHERE user_id = ?`,
+    [user.id]
+  );
+
   return { userId: user.id, count: files.length };
 };
 
@@ -467,8 +557,12 @@ const completeApplication = async ({ email }) => {
   );
   await pool.query("UPDATE users SET role = 'mechanic', status = 'pending' WHERE id = ?", [user.id]);
   await ensureMechanicProfileOnboardingColumns();
+  await ensureMechanicInfoRequestColumns();
 
   const displayName = [user.name, user.lastname].filter(Boolean).join(" ") || user.email;
+  const applicationStatus = (await hasMechanicUploadedDocuments(user.id))
+    ? "documents_uploaded"
+    : "password_created";
   await pool.query(
     `INSERT INTO mechanic_profiles (user_id, display_name, legal_name, application_status, account_status)
      VALUES (?, ?, ?, ?, ?)
@@ -477,7 +571,7 @@ const completeApplication = async ({ email }) => {
        legal_name = VALUES(legal_name),
        application_status = VALUES(application_status),
        account_status = VALUES(account_status)`,
-    [user.id, displayName, displayName, "documents_uploaded", "password_pending"]
+    [user.id, displayName, displayName, applicationStatus, "pending"]
   );
 
   return { userId: user.id, fullName: displayName };
@@ -508,13 +602,25 @@ const setPasswordByEmail = async ({ email, password }) => {
   }
 
   await ensureMechanicProfileOnboardingColumns();
+  await ensureMechanicInfoRequestColumns();
   const passwordHash = await bcrypt.hash(password, 10);
   await pool.query("UPDATE users SET password_hash = ?, status = 'active' WHERE id = ?", [passwordHash, user.id]);
+  const [profileRows] = await pool.query(
+    `SELECT application_status, account_status
+     FROM mechanic_profiles
+     WHERE user_id = ?
+     LIMIT 1`,
+    [user.id]
+  );
+  const applicationStatus = (await hasMechanicUploadedDocuments(user.id))
+    ? "documents_uploaded"
+    : "password_created";
+  const accountStatus = resolveNextMechanicAccountStatus(profileRows[0]);
   await pool.query(
     `UPDATE mechanic_profiles
      SET application_status = ?, account_status = ?, password_set_at = NOW()
      WHERE user_id = ?`,
-    ["password_created", "active", user.id]
+    [applicationStatus, accountStatus, user.id]
   );
   try {
     await sendMechanicAccountReadyEmail({
@@ -608,6 +714,7 @@ const confirmPasswordSetupByEmail = async ({ email, challengeToken, code }) => {
 
   await ensureMechanicPasswordSetupTables();
   await ensureMechanicProfileOnboardingColumns();
+  await ensureMechanicInfoRequestColumns();
 
   const [challengeRows] = await pool.query(
     `SELECT id, code_hash, password_hash, expires_at, consumed_at
@@ -637,11 +744,22 @@ const confirmPasswordSetupByEmail = async ({ email, challengeToken, code }) => {
     challenge.password_hash,
     user.id
   ]);
+  const [profileRows] = await pool.query(
+    `SELECT application_status, account_status
+     FROM mechanic_profiles
+     WHERE user_id = ?
+     LIMIT 1`,
+    [user.id]
+  );
+  const applicationStatus = (await hasMechanicUploadedDocuments(user.id))
+    ? "documents_uploaded"
+    : "password_created";
+  const accountStatus = resolveNextMechanicAccountStatus(profileRows[0]);
   await pool.query(
     `UPDATE mechanic_profiles
      SET application_status = ?, account_status = ?, password_set_at = NOW()
      WHERE user_id = ?`,
-    ["password_created", "active", user.id]
+    [applicationStatus, accountStatus, user.id]
   );
   await pool.query("UPDATE mechanic_password_setup_challenges SET consumed_at = NOW() WHERE id = ?", [
     challenge.id
@@ -660,12 +778,13 @@ const confirmPasswordSetupByEmail = async ({ email, challengeToken, code }) => {
 };
 
 const getProfile = async (userId) => {
+  await ensureMechanicInfoRequestColumns();
   const [rows] = await pool.query(
     `SELECT u.id, u.email, u.created_at,
             p.name, p.lastname, p.avatar_url,
             mp.display_name, mp.about, mp.jobs_done, mp.rating_avg, mp.is_mobile, mp.vat_id, mp.vat_registered,
             mp.years_experience, mp.work_history,
-            mp.application_status, mp.account_status
+            mp.application_status, mp.account_status, mp.info_request_note, mp.info_requested_at
      FROM users u
      LEFT JOIN user_profiles p ON p.user_id = u.id
      LEFT JOIN mechanic_profiles mp ON mp.user_id = u.id
@@ -675,11 +794,12 @@ const getProfile = async (userId) => {
   const user = rows[0];
   if (!user) return null;
 
-  const address = await getLatestAddress(userId);
+  const contactAddress = (await getAddressByLabel(userId, "Contact")) || (await getLatestAddress(userId));
+  const premisesAddress = await getAddressByLabel(userId, "Premises");
   const qualifications = await getQualifications(userId);
   const memberships = await getMemberships(userId);
   const name = user.display_name || [user.name, user.lastname].filter(Boolean).join(" ") || user.email;
-  const location = address?.city || "Surrey";
+  const location = contactAddress?.city || "Surrey";
 
   return {
     id: user.id,
@@ -697,14 +817,73 @@ const getProfile = async (userId) => {
     work_history: user.work_history || "",
     application_status: user.application_status || null,
     account_status: user.account_status || null,
-    address,
+    info_request_note: user.info_request_note || "",
+    info_requested_at: user.info_requested_at || null,
+    address: formatAddressRow(contactAddress) || "",
+    address_details: contactAddress
+      ? {
+          line1: contactAddress.line1 || "",
+          line2: contactAddress.line2 || "",
+          city: contactAddress.city || "",
+          postal_code: contactAddress.postal_code || "",
+          country: contactAddress.country || "GB"
+        }
+      : null,
+    contact_address: formatAddressRow(contactAddress) || "",
+    contact_address_details: contactAddress
+      ? {
+          line1: contactAddress.line1 || "",
+          line2: contactAddress.line2 || "",
+          city: contactAddress.city || "",
+          postal_code: contactAddress.postal_code || "",
+          country: contactAddress.country || "GB"
+        }
+      : null,
+    premises_address: formatAddressRow(premisesAddress) || "",
+    premises_address_details: premisesAddress
+      ? {
+          line1: premisesAddress.line1 || "",
+          line2: premisesAddress.line2 || "",
+          city: premisesAddress.city || "",
+          postal_code: premisesAddress.postal_code || "",
+          country: premisesAddress.country || "GB"
+        }
+      : null,
     qualifications,
     memberships
   };
 };
 
+const getOnboardingByEmail = async (email) => {
+  const normalizedEmail = String(email || "").trim().toLowerCase();
+  if (!normalizedEmail) return null;
+
+  await ensureMechanicProfileOnboardingColumns();
+  await ensureMechanicInfoRequestColumns();
+
+  const [rows] = await pool.query(
+    `SELECT u.id, u.email, mp.application_status, mp.account_status, mp.info_request_note, mp.info_requested_at
+     FROM users u
+     LEFT JOIN mechanic_profiles mp ON mp.user_id = u.id
+     WHERE u.email = ?
+     LIMIT 1`,
+    [normalizedEmail]
+  );
+  const row = rows[0];
+  if (!row) return null;
+  return {
+    userId: row.id,
+    email: row.email,
+    application_status: row.application_status || null,
+    account_status: row.account_status || null,
+    info_request_note: row.info_request_note || "",
+    info_requested_at: row.info_requested_at || null
+  };
+};
+
 module.exports = {
   getProfile,
+  getOnboardingByEmail,
   addQualification,
   updateProfile,
   saveApplication,

@@ -55,10 +55,10 @@ const requestUserEmailChangeHandler = async (req, res) => {
 
 const updateApplicationStatusHandler = async (req, res) => {
   const userId = Number(req.params.userId);
-  const { action } = req.body || {};
+  const { action, note } = req.body || {};
   const previousApplications = await adminService.listApplications();
   const previous = previousApplications.find((item) => Number(item.user_id) === Number(userId)) || null;
-  const result = await adminService.updateApplicationStatus({ userId, action });
+  const result = await adminService.updateApplicationStatus({ userId, action, note });
   if (previous?.email && result) {
     try {
       await sendAccountChangeNotification({

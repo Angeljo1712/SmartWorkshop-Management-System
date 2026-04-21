@@ -81,6 +81,36 @@
   const fileKey = (file) =>
     [file?.name || "", file?.size || 0, file?.type || "", file?.lastModified || 0].join("|");
 
+  const renderInfoRequestNote = (payload) => {
+    const applicationStatus = String(payload?.application_status || "").trim().toLowerCase();
+    if (applicationStatus !== "info_requested") return;
+
+    const introText = "SmartWorkshop requires this document in order to complete your application. Thanks";
+    const requestText = String(payload?.info_request_note || "").trim() || "The admin requested additional information for your application.";
+    let noteEl = document.querySelector(".documents-request-note");
+    if (!noteEl) {
+      const uploadCard = document.querySelector(".documents-upload-card");
+      if (!uploadCard) return;
+      noteEl = document.createElement("div");
+      noteEl.className = "documents-request-note";
+      uploadCard.parentElement?.insertBefore(noteEl, uploadCard);
+    }
+    noteEl.innerHTML = "";
+    const title = document.createElement("h3");
+    title.textContent = "Request info";
+    const intro = document.createElement("p");
+    intro.className = "mechanic-info-request-intro";
+    intro.textContent = introText;
+    const label = document.createElement("p");
+    label.className = "mechanic-info-request-label";
+    label.textContent = "Request info:";
+    const noteTextEl = document.createElement("p");
+    noteTextEl.className = "mechanic-info-request-note";
+    noteTextEl.textContent = requestText;
+    noteEl.append(title, intro, label, noteTextEl);
+    noteEl.classList.remove("is-hidden");
+  };
+
   document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("documentsUploadForm");
     const input = document.getElementById("documentsUploadInput");
@@ -172,5 +202,17 @@
       syncInputFiles();
       renderFiles(list, files);
     });
+
+    const token = getStoredAuthValue("userToken");
+    if (token) {
+      fetch("/api/users/me/mechanic-profile", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+        .then((response) => (response.ok ? response.json() : null))
+        .then((profile) => renderInfoRequestNote(profile))
+        .catch(() => {});
+    }
   });
 })();

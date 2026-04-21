@@ -50,7 +50,7 @@ const ensureMechanicProfileWorkflowColumns = async () => {
      FROM information_schema.COLUMNS
      WHERE TABLE_SCHEMA = DATABASE()
        AND TABLE_NAME = 'mechanic_profiles'
-       AND COLUMN_NAME IN ('application_type', 'lead_postcode', 'application_status', 'account_status', 'password_set_at')`
+       AND COLUMN_NAME IN ('application_type', 'lead_postcode', 'application_status', 'account_status', 'password_set_at', 'info_request_note', 'info_requested_at')`
   );
 
   const existing = new Set(rows.map((row) => row.COLUMN_NAME));
@@ -69,6 +69,12 @@ const ensureMechanicProfileWorkflowColumns = async () => {
   }
   if (!existing.has('password_set_at')) {
     await pool.query("ALTER TABLE mechanic_profiles ADD COLUMN password_set_at DATETIME NULL AFTER account_status");
+  }
+  if (!existing.has('info_request_note')) {
+    await pool.query("ALTER TABLE mechanic_profiles ADD COLUMN info_request_note TEXT NULL AFTER account_status");
+  }
+  if (!existing.has('info_requested_at')) {
+    await pool.query("ALTER TABLE mechanic_profiles ADD COLUMN info_requested_at DATETIME NULL AFTER info_request_note");
   }
 };
 
@@ -193,6 +199,8 @@ const listApplications = async () => {
             mp.lead_postcode,
             mp.application_status,
             mp.account_status,
+            mp.info_request_note,
+            mp.info_requested_at,
             mp.password_set_at,
             COUNT(md.id) AS documents_count
      FROM users u
@@ -214,6 +222,8 @@ const listApplications = async () => {
     business_type: row.business_type || "",
     application_status: row.application_status || "unknown",
     account_status: row.account_status || "unknown",
+    info_request_note: row.info_request_note || "",
+    info_requested_at: row.info_requested_at || null,
     user_status: row.user_status || "pending",
     documents_count: Number(row.documents_count || 0),
     password_set_at: row.password_set_at || null
@@ -239,18 +249,18 @@ const listApplicationDocuments = async (userId) => {
   }));
 };
 
-const updateApplicationStatus = async ({ userId, action }) => {
+const updateApplicationStatus = async ({ userId, action, note }) => {
   await ensureMechanicProfileWorkflowColumns();
   const normalizedAction = String(action || "").trim().toLowerCase();
   const statesByAction = {
     approve: {
       application_status: "approved",
-      account_status: "password_pending",
-      user_status: "pending"
+      account_status: "active",
+      user_status: "active"
     },
     request_info: {
       application_status: "info_requested",
-      account_status: "lead_created",
+      account_status: "pending",
       user_status: "pending"
     },
     reject: {
@@ -265,11 +275,18 @@ const updateApplicationStatus = async ({ userId, action }) => {
     throw new AppError("APPLICATION_ACTION_INVALID", "Application action not supported", 400);
   }
 
+  const infoRequestNote = normalizedAction === "request_info" ? String(note || "").trim() : "";
   await pool.query(
     `UPDATE mechanic_profiles
-     SET application_status = ?, account_status = ?
+     SET application_status = ?, account_status = ?, info_request_note = ?, info_requested_at = ?
      WHERE user_id = ?`,
-    [nextState.application_status, nextState.account_status, userId]
+    [
+      nextState.application_status,
+      nextState.account_status,
+      infoRequestNote || null,
+      normalizedAction === "request_info" ? new Date() : null,
+      userId
+    ]
   );
 
   await pool.query("UPDATE users SET status = ? WHERE id = ?", [nextState.user_status, userId]);

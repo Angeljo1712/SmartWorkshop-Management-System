@@ -853,6 +853,19 @@ block content
                 .settings-edit-actions
                   button.secondary#adminSettingsEditCancel(type="button") Cancel
                   button.ghost#adminSettingsEditSave(type="button") Update
+            .admin-application-note-modal.is-hidden#adminApplicationNoteModal(hidden)
+              .admin-application-note-backdrop(data-admin-application-note-close="true")
+              .admin-application-note-dialog(role="dialog" aria-modal="true" aria-labelledby="adminApplicationNoteTitle")
+                .admin-application-note-head
+                  h3#adminApplicationNoteTitle Request info
+                  p#adminApplicationNoteDescription Write the information you need from the mechanic.
+                label.admin-application-note-field(for="adminApplicationNoteInput")
+                  span#adminApplicationNoteFieldLabel Note
+                  textarea#adminApplicationNoteInput(rows="5" placeholder="Write the request note here")
+                p.form-error#adminApplicationNoteMessage(role="alert" aria-live="polite")
+                .admin-application-note-actions
+                  button.secondary#adminApplicationNoteCancel(type="button") Cancel
+                  button.primary#adminApplicationNoteSave(type="button") Send request
             .admin-delete-modal.is-hidden#adminDeleteModal(hidden)
               .admin-delete-backdrop(data-admin-delete-close="true")
               .admin-delete-dialog(role="dialog" aria-modal="true" aria-labelledby="adminDeleteTitle")
