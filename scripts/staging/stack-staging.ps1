@@ -31,10 +31,41 @@ function Assert-LastDockerCommandSucceeded([string]$ActionLabel) {
   }
 }
 
+function Get-StagingVolumeName {
+  if ($null -ne $env:STAGING_DB_VOLUME -and $env:STAGING_DB_VOLUME.Trim() -ne "") {
+    return $env:STAGING_DB_VOLUME.Trim()
+  }
+
+  return "db_data_staging"
+}
+
+function Ensure-StagingVolumeExists {
+  param(
+    [string]$VolumeName
+  )
+
+  if ([string]::IsNullOrWhiteSpace($VolumeName)) {
+    return
+  }
+
+  docker volume inspect $VolumeName | Out-Null
+  if ($LASTEXITCODE -eq 0) {
+    Info "Using docker volume '$VolumeName'."
+    return
+  }
+
+  Info "Creating docker volume '$VolumeName'..."
+  docker volume create $VolumeName | Out-Host
+  Assert-LastDockerCommandSucceeded "create staging volume"
+}
+
 function Start-Staging([switch]$Build) {
   Assert-FileExists $StagingFile "staging compose file"
   Assert-FileExists $EnvFile "staging env file"
   Assert-CommandExists "docker" "Docker"
+
+  $VolumeName = Get-StagingVolumeName
+  Ensure-StagingVolumeExists -VolumeName $VolumeName
 
   Info "Starting staging stack..."
   $cmd = @(
