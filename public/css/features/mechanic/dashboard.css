@@ -2278,10 +2278,20 @@ body.mechanic-body .mechanic-resolution-notice {
 }
 
 body.mechanic-body .mechanic-resolution-case {
-  display: contents;
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 0.9fr);
+  grid-template-areas: "thread sidebar";
+  gap: 24px;
+  align-items: start;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  border-radius: 0;
 }
 
 body.mechanic-body .mechanic-resolution-thread {
+  grid-area: thread;
   display: grid;
   gap: 18px;
 }
@@ -2521,6 +2531,12 @@ body.mechanic-body .mechanic-resolution-sidebar-card {
 body.mechanic-body .mechanic-resolution-sidebar-card h4 {
   margin: 0;
   color: #ffffff;
+}
+
+body.mechanic-body .mechanic-resolution-sidebar {
+  grid-area: sidebar;
+  display: grid;
+  align-self: start;
 }
 
 body.mechanic-body .mechanic-resolution-sidebar-row {

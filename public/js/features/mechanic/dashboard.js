@@ -2805,6 +2805,9 @@ if (mechanicDashboard) {
     mechanicPreferencesView?.classList.toggle("is-hidden", view !== "preferences");
     mechanicTypesView?.classList.toggle("is-hidden", view !== "types");
     mechanicSettingsView?.classList.toggle("is-hidden", view !== "settings");
+    if (view === "resolution") {
+      setMechanicResolutionSubview("overview");
+    }
     if (view === "profile" && latestMechanicProfile) {
       setTimeout(() => renderMechanicProfileMap(latestMechanicProfile), 80);
     }
