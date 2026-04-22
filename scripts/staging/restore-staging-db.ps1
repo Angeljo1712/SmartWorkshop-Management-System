@@ -1,3 +1,8 @@
+param(
+  [string]$BackupFile = "",
+  [string]$VolumeName = ""
+)
+
 $ErrorActionPreference = "Stop"
 
 $RepoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
@@ -21,6 +26,14 @@ function Get-EnvValue([string]$Key, [string]$Default = "") {
 function Get-LatestBackupFile {
   if (-not (Test-Path $backupDir)) {
     return $null
+  }
+
+  if ($requestedVolumeName -and $requestedVolumeName.Trim() -ne "") {
+    $volumePattern = "staging-backup-$($requestedVolumeName.Trim())-*.sql"
+    $volumeFiles = Get-ChildItem -Path $backupDir -Filter $volumePattern -File | Sort-Object LastWriteTime -Descending
+    if ($volumeFiles.Count -gt 0) {
+      return $volumeFiles[0].FullName
+    }
   }
 
   $preferredPattern = "staging-backup-*.sql"
@@ -90,7 +103,18 @@ $dbName = Get-EnvValue "DB_NAME" "smartworkshop_staging"
 $dbUser = Get-EnvValue "DB_USER" "smartworkshop_staging"
 $dbPass = Get-EnvValue "DB_PASSWORD" "smartworkshop_staging_password"
 $rootPass = Get-EnvValue "DB_ROOT_PASSWORD" "smartworkshop_staging_root_password"
-$inFile = Get-LatestBackupFile
+$requestedVolumeName = if ($VolumeName -and $VolumeName.Trim() -ne "") {
+  $VolumeName.Trim()
+} else {
+  Get-EnvValue "STAGING_DB_VOLUME" "db_data_staging"
+}
+
+if ($BackupFile -and $BackupFile.Trim() -ne "") {
+  $inFile = $BackupFile.Trim()
+}
+else {
+  $inFile = Get-LatestBackupFile
+}
 
 if (-not $inFile) {
   throw "Backup file not found in $backupDir"

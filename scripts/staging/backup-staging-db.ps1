@@ -1,3 +1,7 @@
+param(
+  [string]$ExpectedVolumeName = ""
+)
+
 $ErrorActionPreference = "Stop"
 
 $RepoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
@@ -19,7 +23,7 @@ function Get-EnvValue([string]$Key, [string]$Default = "") {
 }
 
 function Get-BackupFilePath {
-  $volumeName = Get-EnvValue "STAGING_DB_VOLUME" "db_data_staging"
+  $volumeName = Get-ActiveStagingVolumeName
   $safeVolumeName = ($volumeName -replace '[^a-zA-Z0-9._-]', '_').Trim('_')
   if ([string]::IsNullOrWhiteSpace($safeVolumeName)) {
     $safeVolumeName = "db_data_staging"
@@ -30,16 +34,39 @@ function Get-BackupFilePath {
   return Join-Path -Path $backupDir -ChildPath $fileName
 }
 
+function Get-ActiveStagingVolumeName {
+  try {
+    $inspection = docker inspect $container | ConvertFrom-Json
+    $mount = $inspection[0].Mounts | Where-Object {
+      $_.Destination -eq "/var/lib/mysql"
+    } | Select-Object -First 1
+
+    if ($mount -and $mount.Name) {
+      return $mount.Name
+    }
+  }
+  catch {
+    # Fall back to env/config below.
+  }
+
+  return Get-EnvValue "STAGING_DB_VOLUME" "db_data_staging"
+}
+
 $dbName = Get-EnvValue "DB_NAME" "smartworkshop_staging"
 $dbUser = Get-EnvValue "DB_USER" "smartworkshop_staging"
 $dbPass = Get-EnvValue "DB_PASSWORD" "smartworkshop_staging_password"
 $outFile = Get-BackupFilePath
+$activeVolume = Get-ActiveStagingVolumeName
+
+if ($ExpectedVolumeName -and $ExpectedVolumeName.Trim() -ne "" -and $ExpectedVolumeName.Trim() -ne $activeVolume) {
+  throw "Active staging volume '$activeVolume' does not match expected '$ExpectedVolumeName'. Start the correct staging stack before backing up."
+}
 
 if (-not (Test-Path $backupDir)) {
   New-Item -ItemType Directory -Path $backupDir | Out-Null
 }
 
-Write-Host "Backing up staging database '$dbName' to $outFile"
+Write-Host "Backing up staging database '$dbName' from volume '$activeVolume' to $outFile"
 
 $psi = New-Object System.Diagnostics.ProcessStartInfo
 $psi.FileName = "docker"
