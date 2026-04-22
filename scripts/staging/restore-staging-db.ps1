@@ -3,7 +3,7 @@ $ErrorActionPreference = "Stop"
 $RepoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $stagingEnvFile = Join-Path -Path $RepoRoot -ChildPath ".env.staging"
 $container = "smartworkshop_staging_db"
-$inFile = Join-Path -Path $RepoRoot -ChildPath "database\staging-backup.sql"
+$backupDir = Join-Path -Path $RepoRoot -ChildPath "database"
 
 function Get-EnvValue([string]$Key, [string]$Default = "") {
   if (-not (Test-Path $stagingEnvFile)) {
@@ -16,6 +16,25 @@ function Get-EnvValue([string]$Key, [string]$Default = "") {
 
   if (-not $line) { return $Default }
   return ($line -replace "^\s*$([regex]::Escape($Key))\s*=\s*", "").Trim()
+}
+
+function Get-LatestBackupFile {
+  if (-not (Test-Path $backupDir)) {
+    return $null
+  }
+
+  $preferredPattern = "staging-backup-*.sql"
+  $files = Get-ChildItem -Path $backupDir -Filter $preferredPattern -File | Sort-Object LastWriteTime -Descending
+  if ($files.Count -gt 0) {
+    return $files[0].FullName
+  }
+
+  $legacyFile = Join-Path -Path $backupDir -ChildPath "staging-backup.sql"
+  if (Test-Path $legacyFile) {
+    return $legacyFile
+  }
+
+  return $null
 }
 
 function Invoke-DockerMysqlRestore {
@@ -71,9 +90,10 @@ $dbName = Get-EnvValue "DB_NAME" "smartworkshop_staging"
 $dbUser = Get-EnvValue "DB_USER" "smartworkshop_staging"
 $dbPass = Get-EnvValue "DB_PASSWORD" "smartworkshop_staging_password"
 $rootPass = Get-EnvValue "DB_ROOT_PASSWORD" "smartworkshop_staging_root_password"
+$inFile = Get-LatestBackupFile
 
-if (-not (Test-Path $inFile)) {
-  throw "Backup file not found: $inFile"
+if (-not $inFile) {
+  throw "Backup file not found in $backupDir"
 }
 
 Write-Host "Restoring staging database '$dbName' from $inFile"

@@ -3,7 +3,7 @@ $ErrorActionPreference = "Stop"
 $RepoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $stagingEnvFile = Join-Path -Path $RepoRoot -ChildPath ".env.staging"
 $container = "smartworkshop_staging_db"
-$outFile = Join-Path -Path $RepoRoot -ChildPath "database\staging-backup.sql"
+$backupDir = Join-Path -Path $RepoRoot -ChildPath "database"
 
 function Get-EnvValue([string]$Key, [string]$Default = "") {
   if (-not (Test-Path $stagingEnvFile)) {
@@ -18,9 +18,26 @@ function Get-EnvValue([string]$Key, [string]$Default = "") {
   return ($line -replace "^\s*$([regex]::Escape($Key))\s*=\s*", "").Trim()
 }
 
+function Get-BackupFilePath {
+  $volumeName = Get-EnvValue "STAGING_DB_VOLUME" "db_data_staging"
+  $safeVolumeName = ($volumeName -replace '[^a-zA-Z0-9._-]', '_').Trim('_')
+  if ([string]::IsNullOrWhiteSpace($safeVolumeName)) {
+    $safeVolumeName = "db_data_staging"
+  }
+
+  $dateStamp = Get-Date -Format "yyyy-MM-dd-HHmmss"
+  $fileName = "staging-backup-$safeVolumeName-$dateStamp.sql"
+  return Join-Path -Path $backupDir -ChildPath $fileName
+}
+
 $dbName = Get-EnvValue "DB_NAME" "smartworkshop_staging"
 $dbUser = Get-EnvValue "DB_USER" "smartworkshop_staging"
 $dbPass = Get-EnvValue "DB_PASSWORD" "smartworkshop_staging_password"
+$outFile = Get-BackupFilePath
+
+if (-not (Test-Path $backupDir)) {
+  New-Item -ItemType Directory -Path $backupDir | Out-Null
+}
 
 Write-Host "Backing up staging database '$dbName' to $outFile"
 
