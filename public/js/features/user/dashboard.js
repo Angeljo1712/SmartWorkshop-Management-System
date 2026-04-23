@@ -76,6 +76,7 @@ if (userPage) {
   const userSettingsThemeValue = document.getElementById("userSettingsThemeValue");
   const userSettingsThemeBtn = document.getElementById("userSettingsThemeBtn");
   const USER_THEME_STORAGE_KEY = "sw_user_theme";
+  const USER_RAIL_STORAGE_KEY = "sw_user_rail_collapsed";
   const setUserLabeledText = (el, label, value) => {
     if (!el) return;
     el.innerHTML = `<span class="account-field-label">${escapeHtml(label)}</span><span class="account-field-value">${escapeHtml(value || "-")}</span>`;
@@ -108,6 +109,8 @@ if (userPage) {
   const userSecurity2faMessage = document.getElementById("userSecurity2faMessage");
   const userSecurity2faEnable = document.getElementById("userSecurity2faEnable");
   const userNavLinks = document.querySelectorAll(".user-nav-link");
+  const userRail = document.querySelector("#userPage .mainRail");
+  const userRailToggle = document.getElementById("userRailToggle");
   const userDashboardView = document.getElementById("userDashboardView");
   const userDashboardName = document.getElementById("userDashboardName");
   const userWelcomeNames = document.querySelectorAll(".user-welcome-name");
@@ -184,6 +187,17 @@ if (userPage) {
   let pendingUserResolutionComplaintAttachments = [];
   let pendingUserBookingReviewId = null;
   let pendingUserBookingReviewRating = 5;
+  const getFriendlyVehicleErrorMessage = (error) => {
+    const code = String(error?.error?.code || error?.code || "").trim().toUpperCase();
+    const message = String(error?.error?.message || error?.message || "").trim();
+    if (code === "VALIDATION_ERROR" && /registration/i.test(message)) {
+      return message || "The registration number looks incorrect. Please check it and try again.";
+    }
+    if (!message || /dvla enquiry failed/i.test(message) || /vehicle lookup/i.test(message)) {
+      return "We couldn't check that vehicle right now. Please try again in a moment.";
+    }
+    return message;
+  };
 
   const getInitials = window.SWApp?.getInitials || ((name) => String(name || "NA"));
 
@@ -234,6 +248,21 @@ if (userPage) {
     const hasSelection = Boolean(userSecurity2faEmail?.checked || userSecurity2faSms?.checked);
     userSecurity2faEnable?.classList.toggle("is-active", hasSelection);
     if (userSecurity2faEnable) userSecurity2faEnable.disabled = false;
+  };
+
+  const setUserRailState = (collapsed) => {
+    const nextCollapsed = Boolean(collapsed);
+    userRail?.classList.toggle("is-collapsed", nextCollapsed);
+    userPage?.classList.toggle("is-rail-collapsed", nextCollapsed);
+    if (userRailToggle) {
+      userRailToggle.setAttribute("aria-expanded", String(!nextCollapsed));
+      userRailToggle.setAttribute("aria-label", nextCollapsed ? "Expand sidebar" : "Collapse sidebar");
+    }
+    localStorage.setItem(USER_RAIL_STORAGE_KEY, nextCollapsed ? "collapsed" : "expanded");
+  };
+
+  const initializeUserRail = () => {
+    setUserRailState(false);
   };
 
   const setUserHeader = (user) => {
@@ -2102,7 +2131,7 @@ if (userPage) {
       };
 
       if (dashboardVehicles.some((vehicle) => vehicle.registrationNumber === vehicleData.registrationNumber)) {
-        if (errorOutput) errorOutput.textContent = "This vehicle is already in your dashboard.";
+        if (errorOutput) errorOutput.textContent = "This vehicle is already saved in your dashboard.";
         return;
       }
 
@@ -2121,7 +2150,7 @@ if (userPage) {
       if (registrationInput) registrationInput.value = "";
     } catch (err) {
       if (errorOutput) {
-        errorOutput.textContent = err?.error?.message || err?.message || "Unable to look up vehicle details.";
+        errorOutput.textContent = getFriendlyVehicleErrorMessage(err);
       }
     }
   };
@@ -2300,6 +2329,10 @@ if (userPage) {
     window.location.href = `/bookings/work/?type=${encodeURIComponent(selectedType)}`;
   });
 
+  userRailToggle?.addEventListener("click", () => {
+    setUserRailState(!userRail?.classList.contains("is-collapsed"));
+  });
+
   settingsSubnavLinks.forEach((link) => {
     link.addEventListener("click", () => {
       const view = link.dataset.subview;
@@ -2308,6 +2341,7 @@ if (userPage) {
     });
   });
 
+  initializeUserRail();
   userSecurity2faEmail?.addEventListener("change", syncSecurity2faButton);
   userSecurity2faSms?.addEventListener("change", syncSecurity2faButton);
   syncSecurity2faButton();

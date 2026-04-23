@@ -84,6 +84,10 @@ block content
               span.rail-text Settings
           .rail-footer
             button.admin-signout#userLogoutBtn(type="button") Sign out
+        button.user-rail-toggle#userRailToggle(type="button" aria-label="Collapse sidebar" aria-expanded="true")
+          svg(viewBox="0 0 24 24" aria-hidden="true")
+            rect(x="4" y="4" width="6" height="16" rx="1.5")
+            rect(x="14" y="4" width="6" height="16" rx="1.5")
         section.mainSection
           .user-dashboard-hero
             .settings-header
@@ -122,38 +126,42 @@ block content
 
                 .user-panel
                   .car-panel
-                    h3.user-section-title Add another vehicle
+                    h3.user-section-title Add a vehicle
+                    p.user-add-vehicle-help Add your car registration to keep MOT, tax, and mileage details in one place.
                     .dashboard-section.dashboard-section--add-form
                       .user-add-vehicle
                         input#userDashboardCarReg(type="text" placeholder="Enter Car Reg")
-                        button.primary#userAddVehicleBtn(type="button") Add Vehicle
+                        button.primary#userAddVehicleBtn(type="button") Add vehicle
                       p.form-error#userDashboardCarError(role="alert" aria-live="polite")
 
                 .settings-divider
 
                 .user-panel
                   .car-panel
+                    .user-quick-quote-intro
+                      h3.user-section-title Reserve your service in under 2 minutes
+                      p.user-quick-quote-lead Choose your vehicle, pick a service, and book now.
                     .dashboard-section.dashboard-section--quote
                       .user-quick-quote
                         label
                           | Vehicle Registration
-                          input#userQuickQuoteReg(type="text" value="")
+                          input#userQuickQuoteReg(type="text" placeholder="Enter Car Reg" value="")
                         label
                           | Postcode
                           input(type="text" placeholder="Enter Your Postcode")
                         label
-                          | Products
+                          | Services
                           select#userQuickQuoteProduct
-                            option(value="" selected) Select a product
+                            option(value="" selected) Select a service
                             option(value="repair") Repairs
                             option(value="diagnostics") Diagnostics
                             option(value="service") Servicing & MOT
                             option(value="tyres") Tyres
                             option(value="inspection") Pre-purchase inspections
-                        button.primary#userQuickQuoteBtn(type="button") Compare Prices Instantly
+                        button.primary#userQuickQuoteBtn(type="button") Book now
                       .user-verify-card
                         h3.user-verify-title Need help with your next booking?
-                        p.user-verify-text Review your vehicles, compare prices instantly, and keep your account details up to date before you book.
+                        p.user-verify-text Review your vehicles, compare options, and book now when you're ready.
   
             section.user-view.is-hidden#userAccountView
                 .settings-card.user-account-card

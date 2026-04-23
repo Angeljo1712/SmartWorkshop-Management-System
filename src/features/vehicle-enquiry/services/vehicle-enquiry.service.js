@@ -27,7 +27,27 @@ const enquireVehicle = async (registrationNumber) => {
 
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
-    const message = payload?.message || payload?.error || "DVLA enquiry failed";
+    const rawMessage = String(payload?.message || payload?.error || "").trim();
+    const looksInvalid =
+      response.status === 400 ||
+      response.status === 404 ||
+      response.status === 422 ||
+      /invalid/i.test(rawMessage) ||
+      /not found/i.test(rawMessage) ||
+      /unrecognized/i.test(rawMessage);
+
+    if (looksInvalid) {
+      throw new AppError(
+        "VALIDATION_ERROR",
+        "The registration number looks incorrect. Please check it and try again.",
+        400
+      );
+    }
+
+    const message =
+      !rawMessage || /dvla enquiry failed/i.test(rawMessage)
+        ? "We couldn't check that vehicle right now. Please try again in a moment."
+        : rawMessage;
     throw new AppError("DVLA_ERROR", message, response.status);
   }
 

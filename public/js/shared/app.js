@@ -955,6 +955,18 @@ const renderVehicleSummary = () => {
   }
 };
 
+const getFriendlyVehicleErrorMessage = (error) => {
+  const code = String(error?.error?.code || error?.code || "").trim().toUpperCase();
+  const message = String(error?.error?.message || error?.message || "").trim();
+  if (code === "VALIDATION_ERROR" && /registration/i.test(message)) {
+    return message || "The registration number looks incorrect. Please check it and try again.";
+  }
+  if (!message || /dvla enquiry failed/i.test(message) || /vehicle lookup/i.test(message)) {
+    return "We couldn't check that vehicle right now. Please try again in a moment.";
+  }
+  return message;
+};
+
 const authPanel = document.querySelector(".auth-panel");
 if (authPanel) {
   const toggleButtons = authPanel.querySelectorAll("[data-auth-toggle]");
@@ -1029,8 +1041,7 @@ if (vehicleForm) {
       });
       window.location.href = "/bookings/work/";
     } catch (err) {
-      const message = err?.error?.message || err?.message || "Unable to look up vehicle details.";
-      errorEl.textContent = message;
+      errorEl.textContent = getFriendlyVehicleErrorMessage(err);
     }
   });
 }
@@ -1081,8 +1092,7 @@ if (authVehicleForm) {
       });
       window.location.href = "/bookings/work/";
     } catch (err) {
-      const message = err?.error?.message || err?.message || "Unable to look up vehicle details.";
-      errorEl.textContent = message;
+      errorEl.textContent = getFriendlyVehicleErrorMessage(err);
     }
   });
 }
