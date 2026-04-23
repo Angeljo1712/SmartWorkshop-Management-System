@@ -443,6 +443,17 @@ body.mechanic-body #mechanicPaymentsView .mechanic-table-layout {
   align-self: start;
 }
 
+body.mechanic-body #mechanicPaymentsView #mechanicPaymentDetail.mechanic-booking-detail {
+  margin-top: 20px;
+  min-height: 320px;
+  padding: 0px;
+  display: block;
+}
+
+body.mechanic-body #mechanicPaymentsView #mechanicPaymentDetail .mechanic-booking-card {
+  min-height: 320px;
+}
+
 body.mechanic-body #mechanicSettingsView .settings-card {
   gap: 0;
   background: #3e434df7;
@@ -484,15 +495,15 @@ body.mechanic-body #mechanicAccountView .mechanic-account-layout {
   min-width: 0;
 }
 
-body.mechanic-body #mechanicAccountView .user-settings-panel-head {
-  min-height: 0;
-}
-
 body.mechanic-body #mechanicAccountView .user-account-panel {
   display: grid;
   gap: 18px;
   width: 100%;
   min-width: 0;
+}
+
+body.mechanic-body #mechanicAccountView .user-settings-panel-head {
+  min-height: 0;
 }
 
 body.mechanic-body #mechanicAccountView .settings-avatar {
@@ -3145,7 +3156,7 @@ body.mechanic-body .mechanic-booking-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px 18px;
   color: #d9e3f3;
-  padding: 0 18px;
+  padding: 20px 18px;
 }
 
 body.mechanic-body .mechanic-booking-items {
