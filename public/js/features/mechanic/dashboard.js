@@ -578,11 +578,9 @@ if (mechanicDashboard) {
 
   const renderMechanicFullNameRows = (el, user) => {
     if (!el) return;
-    const rawName = String(user?.name || user?.full_name || user?.display_name || "").trim();
-    const rawNameParts = rawName.split(/\s+/).filter(Boolean);
-    const firstName = rawNameParts[0] || "";
-    const middleName = String(user?.middle_name || "").trim() || (rawNameParts.length > 2 ? rawNameParts.slice(1, -1).join(" ") : "");
-    const lastName = String(user?.lastname || "").trim() || (rawNameParts.length > 1 ? rawNameParts.slice(-1).join(" ") : "");
+    const firstName = String(user?.name || "").trim().split(/\s+/)[0] || "";
+    const middleName = String(user?.middle_name || "").trim();
+    const lastName = String(user?.lastname || "").trim();
     const rows = [
       ["First name", firstName],
       ["Middle name", middleName],
@@ -598,6 +596,21 @@ if (mechanicDashboard) {
         `
       )
       .join("");
+  };
+  const cleanMechanicLastName = (lastName, middleName = "") => {
+    let value = String(lastName || "").trim();
+    const middle = String(middleName || "").trim();
+    if (!value || !middle) return value;
+    const escapedMiddle = middle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const repeatedMiddlePattern = new RegExp(`^(?:${escapedMiddle})(?:\\s+${escapedMiddle})+\\s*`, "i");
+    while (repeatedMiddlePattern.test(value)) {
+      value = value.replace(repeatedMiddlePattern, "").trim();
+    }
+    const leadingMiddlePattern = new RegExp(`^${escapedMiddle}\\s+`, "i");
+    while (leadingMiddlePattern.test(value)) {
+      value = value.replace(leadingMiddlePattern, "").trim();
+    }
+    return value;
   };
 
   const buildDisplayName = (user, fallback = "Mechanic") => {
@@ -1086,30 +1099,14 @@ if (mechanicDashboard) {
       mechanicSettingsEditInput.parentElement.classList.toggle("is-hidden", !!config.isNameField || !!config.isAddressField);
     }
     if (config.isNameField) {
-      const fullName = String(profileData?.display_name || profileData?.full_name || profileData?.name || "").trim();
-      const profileNameParts = fullName.split(/\s+/).filter(Boolean);
-      const storedLastName = String(profileData?.lastname || "").trim();
       if (mechanicSettingsEditFirstName) {
-        mechanicSettingsEditFirstName.value = profileNameParts[0] || profileData?.name || "";
+        mechanicSettingsEditFirstName.value = String(profileData?.name || "").trim().split(/\s+/)[0] || "";
       }
-      const storedMiddleName = String(profileData?.middle_name || "").trim();
       if (mechanicSettingsEditMiddleName) {
-        if (storedMiddleName) {
-          mechanicSettingsEditMiddleName.value = storedMiddleName;
-        } else {
-          mechanicSettingsEditMiddleName.value = profileNameParts.length > 1
-            ? profileNameParts.slice(1).join(" ")
-            : "";
-        }
+        mechanicSettingsEditMiddleName.value = profileData?.middle_name || "";
       }
       if (mechanicSettingsEditLastName) {
-        if (storedLastName) {
-          mechanicSettingsEditLastName.value = storedLastName;
-        } else if (profileNameParts.length > 1) {
-          mechanicSettingsEditLastName.value = profileNameParts.slice(storedMiddleName ? 2 : 1).join(" ");
-        } else {
-          mechanicSettingsEditLastName.value = "";
-        }
+        mechanicSettingsEditLastName.value = cleanMechanicLastName(profileData?.lastname || "", profileData?.middle_name || "");
       }
     } else if (config.isAddressField) {
       const addressDetails = profileData?.address_details || {};
@@ -2707,9 +2704,9 @@ if (mechanicDashboard) {
 
     try {
       if (config.isNameField) {
-        const firstName = mechanicSettingsEditFirstName?.value?.trim() || "";
+        const firstName = String(mechanicSettingsEditFirstName?.value || "").trim().split(/\s+/)[0] || "";
         const middleName = mechanicSettingsEditMiddleName?.value?.trim() || "";
-        const lastName = mechanicSettingsEditLastName?.value?.trim() || "";
+        const lastName = cleanMechanicLastName(mechanicSettingsEditLastName?.value?.trim() || "", middleName);
         if (!firstName || !lastName) {
           throw { message: "First name and last name are required." };
         }

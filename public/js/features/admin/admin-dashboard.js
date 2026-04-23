@@ -340,26 +340,26 @@ if (adminPage) {
     return collapseRepeatedNameParts(user?.display_name || user?.full_name || joined || user?.email || fallback);
   };
 
+  const cleanLastName = (lastName, middleName = "") => {
+    let value = String(lastName || "").trim();
+    const middle = String(middleName || "").trim();
+    if (!value || !middle) return value;
+    const escapedMiddle = middle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const repeatedMiddlePattern = new RegExp(`^(?:${escapedMiddle})(?:\\s+${escapedMiddle})+\\s*`, "i");
+    while (repeatedMiddlePattern.test(value)) {
+      value = value.replace(repeatedMiddlePattern, "").trim();
+    }
+    const leadingMiddlePattern = new RegExp(`^${escapedMiddle}\\s+`, "i");
+    while (leadingMiddlePattern.test(value)) {
+      value = value.replace(leadingMiddlePattern, "").trim();
+    }
+    return value;
+  };
+
   const getNameParts = (user, fallback = "Admin") => {
-    const fullName = collapseRepeatedNameParts(buildDisplayName(user, fallback));
-    const nameParts = fullName ? fullName.split(/\s+/).filter(Boolean) : [];
-    const firstName = String(user?.name || nameParts[0] || "").trim();
-    const middleName = String(user?.middle_name || "").trim() || (nameParts.length > 2 ? nameParts.slice(1, -1).join(" ") : "");
-    const firstNamePattern = firstName ? new RegExp(`^${firstName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*`, "i") : null;
-    let remainder = fullName;
-    if (firstNamePattern) {
-      remainder = remainder.replace(firstNamePattern, "").trim();
-    }
-    if (middleName) {
-      const middlePattern = new RegExp(`^(${middleName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})(?:\\s+\\1)+\\s*`, "i");
-      remainder = remainder.replace(middlePattern, "").trim();
-      const repeatedMiddlePattern = new RegExp(`^${middleName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*`, "i");
-      while (remainder && repeatedMiddlePattern.test(remainder)) {
-        remainder = remainder.replace(repeatedMiddlePattern, "").trim();
-      }
-    }
-    const fallbackLastName = nameParts.length > 1 ? nameParts.slice(1 + (middleName ? 1 : 0)).join(" ") : "";
-    const lastName = String(remainder || fallbackLastName || user?.lastname || "").trim();
+    const firstName = String(user?.name || "").trim();
+    const middleName = String(user?.middle_name || "").trim();
+    const lastName = cleanLastName(user?.lastname || "", middleName);
     return {
       firstName: firstName || "-",
       middleName: middleName || "-",
@@ -1516,25 +1516,10 @@ if (adminPage) {
       if (adminSettingsEditInput?.parentElement) adminSettingsEditInput.parentElement.classList.add("is-hidden");
       adminSettingsEditSelectField?.classList.add("is-hidden");
       adminSettingsEditNameGrid?.classList.remove("is-hidden");
-      const fullName = collapseRepeatedNameParts(String(user.display_name || user.full_name || config.getValue(user) || "").trim());
-      const nameParts = fullName ? fullName.split(/\s+/).filter(Boolean) : [];
-      const firstName = String(user.name || nameParts[0] || "").trim();
-      const firstNamePattern = firstName ? new RegExp(`^${firstName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*`, "i") : null;
-      const middleName = String(user.middle_name || "").trim() || (nameParts.length > 2 ? nameParts.slice(1, -1).join(" ") : "");
-      let remainder = fullName;
-      if (firstNamePattern) {
-        remainder = remainder.replace(firstNamePattern, "").trim();
-      }
-      if (middleName) {
-        const middlePattern = new RegExp(`^(${middleName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})(?:\\s+\\1)+\\s*`, "i");
-        remainder = remainder.replace(middlePattern, "").trim();
-        const repeatedMiddlePattern = new RegExp(`^${middleName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*`, "i");
-        while (remainder && repeatedMiddlePattern.test(remainder)) {
-          remainder = remainder.replace(repeatedMiddlePattern, "").trim();
-        }
-      }
-      const fallbackLastName = nameParts.length > 1 ? nameParts.slice(1 + (middleName ? 1 : 0)).join(" ") : "";
-      const lastName = String(remainder || fallbackLastName || user.lastname || "").trim();
+      const nameParts = getNameParts(user, "Admin");
+      const firstName = String(user.name || nameParts.firstName || "").trim();
+      const middleName = String(user.middle_name || nameParts.middleName || "").trim();
+      const lastName = String(cleanLastName(user.lastname || nameParts.lastName || "", middleName)).trim();
       if (adminSettingsEditFirstName) adminSettingsEditFirstName.value = firstName;
       if (adminSettingsEditMiddleName) adminSettingsEditMiddleName.value = middleName;
       if (adminSettingsEditLastName) adminSettingsEditLastName.value = lastName;
@@ -4882,7 +4867,7 @@ if (adminPage) {
       } else if (activeAdminEditField === "full_name") {
         const firstName = adminSettingsEditFirstName?.value?.trim() || "";
         const middleName = adminSettingsEditMiddleName?.value?.trim() || "";
-        const lastName = adminSettingsEditLastName?.value?.trim() || "";
+        const lastName = cleanLastName(adminSettingsEditLastName?.value?.trim() || "", middleName);
         payload.full_name = [firstName, middleName, lastName].filter(Boolean).join(" ").trim();
         payload.middle_name = middleName;
       } else if (activeAdminEditField === "address") {

@@ -119,6 +119,8 @@ const ensureUserByEmail = async ({ email, firstName, lastName, phone }) => {
   const passwordHash = await bcrypt.hash(crypto.randomBytes(18).toString("hex"), 10);
   const username = String(normalizedEmail || "").trim().toLowerCase();
   await ensureUserProfileMiddleNameColumn();
+  const normalizedFirstName = String(firstName || "").trim();
+  const normalizedLastName = String(lastName || "").trim();
   const [result] = await pool.query(
     "INSERT INTO users (uuid_public, email, username, password_hash, role, status, phone) VALUES (UUID_TO_BIN(UUID()), ?, ?, ?, ?, ?, ?)",
     [normalizedEmail, username, passwordHash, "user", "active", phone || null]
@@ -126,7 +128,7 @@ const ensureUserByEmail = async ({ email, firstName, lastName, phone }) => {
   const userId = result.insertId;
   await pool.query(
     "INSERT INTO user_profiles (user_id, name, middle_name, lastname) VALUES (?, ?, ?, ?)",
-    [userId, firstName || "-", null, lastName || "-"]
+    [userId, normalizedFirstName || "-", null, normalizedLastName || "-"]
   );
   await pool.query("INSERT INTO user_roles (user_id, role) VALUES (?, ?)", [userId, "user"]);
   return userId;

@@ -803,12 +803,13 @@ body.mechanic-body #mechanicAccountView .settings-profile {
 
 body.mechanic-body #mechanicAccountView .settings-row:last-of-type {
   padding-bottom: 20px;
+  border-bottom: 0;
 }
 
 body.mechanic-body #mechanicAccountView .settings-meta h4,
 body.mechanic-body #mechanicAccountView .settings-row h4,
 body.mechanic-body #mechanicAccountView .settings-profile h4 {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: 700;
   text-transform: none;
   letter-spacing: normal;
@@ -1932,7 +1933,7 @@ body.mechanic-body #mechanicAccountView .mechanic-full-name-label,
 body.mechanic-body #mechanicAccountView .mechanic-full-name-value,
 body.mechanic-body #mechanicSettingsView .mechanic-full-name-label,
 body.mechanic-body #mechanicSettingsView .mechanic-full-name-value {
-  font-size: 1.05rem;
+  font-size: 1.2rem;
   line-height: 1.35;
   white-space: nowrap;
 }

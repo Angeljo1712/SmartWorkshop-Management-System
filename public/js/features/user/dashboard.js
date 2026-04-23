@@ -102,6 +102,21 @@ if (userPage) {
       )
       .join("");
   };
+  const cleanUserLastName = (lastName, middleName = "") => {
+    let value = String(lastName || "").trim();
+    const middle = String(middleName || "").trim();
+    if (!value || !middle) return value;
+    const escapedMiddle = middle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const repeatedMiddlePattern = new RegExp(`^(?:${escapedMiddle})(?:\\s+${escapedMiddle})+\\s*`, "i");
+    while (repeatedMiddlePattern.test(value)) {
+      value = value.replace(repeatedMiddlePattern, "").trim();
+    }
+    const leadingMiddlePattern = new RegExp(`^${escapedMiddle}\\s+`, "i");
+    while (leadingMiddlePattern.test(value)) {
+      value = value.replace(leadingMiddlePattern, "").trim();
+    }
+    return value;
+  };
   const setUserAccountStatus = (el, rawStatus) => {
     if (!el) return;
     const normalized = String(rawStatus || "pending").trim().toLowerCase();
@@ -466,17 +481,8 @@ if (userPage) {
     }
     if (config.isNameField) {
       if (userSettingsEditFirstName) userSettingsEditFirstName.value = profileData?.name || "";
-      if (userSettingsEditMiddleName) {
-        const storedMiddleName = String(profileData?.middle_name || "").trim();
-        if (storedMiddleName) {
-          userSettingsEditMiddleName.value = storedMiddleName;
-        } else {
-          const lastNameParts = String(profileData?.lastname || "").trim().split(/\s+/).filter(Boolean);
-          userSettingsEditMiddleName.value = lastNameParts.length > 1 ? lastNameParts.slice(0, -1).join(" ") : "";
-        }
-      }
-      const lastNameParts = String(profileData?.lastname || "").trim().split(/\s+/).filter(Boolean);
-      if (userSettingsEditLastName) userSettingsEditLastName.value = lastNameParts.pop() || "";
+      if (userSettingsEditMiddleName) userSettingsEditMiddleName.value = profileData?.middle_name || "";
+      if (userSettingsEditLastName) userSettingsEditLastName.value = cleanUserLastName(profileData?.lastname || "", profileData?.middle_name || "");
     } else if (config.isAddressField) {
       const addressDetails = profileData?.address_details || (typeof profileData?.address === "object" && profileData.address ? profileData.address : {});
       if (userSettingsEditAddressLine1) userSettingsEditAddressLine1.value = addressDetails.line1 || "";
@@ -2512,7 +2518,7 @@ if (userPage) {
       if (config.isNameField) {
         const firstName = userSettingsEditFirstName?.value?.trim() || "";
         const middleName = userSettingsEditMiddleName?.value?.trim() || "";
-        const lastName = userSettingsEditLastName?.value?.trim() || "";
+        const lastName = cleanUserLastName(userSettingsEditLastName?.value?.trim() || "", middleName);
         if (!firstName || !lastName) {
           throw { message: "First name and Last name are required, Middle name is optional" };
         }

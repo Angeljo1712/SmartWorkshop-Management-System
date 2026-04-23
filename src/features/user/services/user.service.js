@@ -362,7 +362,18 @@ const updateUserSecuritySettings = async (userId, { two_factor_email_enabled }) 
 const resolveNames = (payload) => {
   const name = String(payload.name || "").trim();
   const middleName = String(payload.middle_name || "").trim();
-  const lastname = String(payload.lastname || "").trim();
+  let lastname = String(payload.lastname || "").trim();
+  if (lastname && middleName) {
+    const escapedMiddle = middleName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const repeatedMiddlePattern = new RegExp(`^(?:${escapedMiddle})(?:\\s+${escapedMiddle})+\\s*`, "i");
+    while (repeatedMiddlePattern.test(lastname)) {
+      lastname = lastname.replace(repeatedMiddlePattern, "").trim();
+    }
+    const leadingMiddlePattern = new RegExp(`^${escapedMiddle}\\s+`, "i");
+    while (leadingMiddlePattern.test(lastname)) {
+      lastname = lastname.replace(leadingMiddlePattern, "").trim();
+    }
+  }
   if (name && lastname) {
     return { name, middle_name: middleName || null, lastname };
   }
