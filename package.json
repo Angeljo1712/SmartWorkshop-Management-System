@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
-    "test": "echo \"No tests yet\""
+    "smoke": "node scripts/smoke-test.js",
+    "test": "node scripts/smoke-test.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
