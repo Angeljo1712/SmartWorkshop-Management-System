@@ -159,6 +159,12 @@ block content
                   path(d="M15 18l-6-6 6-6")
               span.rail-text Back
             button.admin-signout#mechanicLogoutBtn(type="button") Sign out
+        button.mechanic-rail-toggle#mechanicRailToggle(type="button" aria-label="Collapse sidebar" aria-expanded="true")
+          svg(viewBox="0 0 24 24" aria-hidden="true")
+            rect(x="4" y="4" width="6" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6")
+            rect(x="12" y="4" width="8" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6")
+            path(d="M11 12h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round")
+            path(d="M13.5 10.5 16 12l-2.5 1.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round")
 
         section.mainSection
           .mechanic-dashboard-hero

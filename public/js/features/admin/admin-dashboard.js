@@ -70,6 +70,9 @@ if (adminPage) {
   const adminDeleteConfirm = document.getElementById("adminDeleteConfirm");
   const filterSections = document.querySelectorAll("[data-filter-section]");
   const railNavLinks = adminPage.querySelectorAll(".mainRail .rail-item[data-view]");
+  const adminRail = adminPage.querySelector(".mainRail");
+  const adminRailToggle = document.getElementById("adminRailToggle");
+  const ADMIN_RAIL_STORAGE_KEY = "sw_admin_rail_collapsed";
   const adminMobileMenuLinks = adminPage.querySelectorAll(".admin-mobile-menu .rail-nav-link");
   const adminDashboardView = document.getElementById("adminDashboardView");
   const adminApplicationsView = document.getElementById("adminApplicationsView");
@@ -400,6 +403,21 @@ if (adminPage) {
     const hasSelection = Boolean(adminSecurity2faEmail?.checked || adminSecurity2faSms?.checked);
     adminSecurity2faEnable.disabled = false;
     adminSecurity2faEnable.classList.toggle("is-active", hasSelection);
+  };
+
+  const setAdminRailState = (collapsed) => {
+    const nextCollapsed = Boolean(collapsed);
+    adminRail?.classList.toggle("is-collapsed", nextCollapsed);
+    adminPage?.classList.toggle("is-rail-collapsed", nextCollapsed);
+    if (adminRailToggle) {
+      adminRailToggle.setAttribute("aria-expanded", String(!nextCollapsed));
+      adminRailToggle.setAttribute("aria-label", nextCollapsed ? "Expand sidebar" : "Collapse sidebar");
+    }
+    localStorage.setItem(ADMIN_RAIL_STORAGE_KEY, nextCollapsed ? "collapsed" : "expanded");
+  };
+
+  const initializeAdminRail = () => {
+    setAdminRailState(false);
   };
 
   const setAdminVisibility = (loggedIn) => {
@@ -3289,6 +3307,10 @@ if (adminPage) {
 
   adminMobileMenuBackdrop?.addEventListener("click", closeAdminMobileMenu);
 
+  adminRailToggle?.addEventListener("click", () => {
+    setAdminRailState(!adminRail?.classList.contains("is-collapsed"));
+  });
+
   const syncAdminViewState = (view) => {
     activeAdminView = view;
     railNavLinks.forEach((btn) => btn.classList.toggle("active", btn.dataset.view === view));
@@ -3332,6 +3354,8 @@ if (adminPage) {
       setAdminSettingsSubview(link.dataset.adminSettingsSubview || "general");
     });
   });
+
+  initializeAdminRail();
 
   adminSettingsActionButtons.forEach((button) => {
     button.addEventListener("click", () => {

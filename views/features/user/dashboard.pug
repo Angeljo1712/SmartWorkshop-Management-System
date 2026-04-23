@@ -31,9 +31,9 @@ block content
           nav.user-mobile-menu-nav
             button.user-mobile-menu-link.user-nav-link.active(type="button" data-view="dashboard") Dashboard
             button.user-mobile-menu-link.user-nav-link(type="button" data-view="account") Account
-            button.user-mobile-menu-link.user-nav-link(type="button" data-view="bookings") Booking information
+            button.user-mobile-menu-link.user-nav-link(type="button" data-view="bookings") Bookings
             button.user-mobile-menu-link.user-nav-link(type="button" data-view="vehicle") Vehicle
-            button.user-mobile-menu-link.user-nav-link(type="button" data-view="resolution") Resolution center
+            button.user-mobile-menu-link.user-nav-link(type="button" data-view="resolution") Support
             button.user-mobile-menu-link.user-nav-link(type="button" data-view="settings") Settings
           button.user-mobile-signout#userMobileLogoutBtn(type="button") Logout
         aside.mainRail.rail-base
@@ -61,7 +61,7 @@ block content
                   path(d="M8 3v4")
                   path(d="M16 3v4")
                   rect(x="3" y="7" width="18" height="14" rx="2")
-              span.rail-text Booking information
+              span.rail-text Bookings
             button.rail-nav-link.rail-item.user-nav-link(type="button" data-view="vehicle")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
@@ -75,7 +75,7 @@ block content
                 svg(viewBox="0 0 24 24")
                   circle(cx="12" cy="8" r="4")
                   path(d="M5 20a7 7 0 0 1 14 0")
-              span.rail-text Resolution center
+              span.rail-text Support
             button.rail-nav-link.rail-item.user-nav-link(type="button" data-view="settings")
               span.rail-icon(aria-hidden="true")
                 svg(viewBox="0 0 24 24")
@@ -168,56 +168,48 @@ block content
             section.user-view.is-hidden#userAccountView
                 .settings-card.user-account-card
                   .user-account-layout
-                    .dashboard-section.dashboard-section--welcome.account-section--welcome
-                      .settings-header
+                    .user-settings-panel-head
+
+                    .user-settings-panel
+                      .account-section.account-section--avatar
+                        .settings-photo-row
+                          .settings-avatar.settings-avatar-lg#userSettingsAvatar AG
+
+                      .settings-divider
+    
+                      .account-section.account-section--profile
+                        .settings-profile
+                          .settings-meta
+                            h4 Full Name
+                            p#userSettingsName Angel Gomes
+                            span#userSettingsRoleBadge.is-hidden CUSTOMER
+
+                      .settings-divider
+    
+                      .account-section.account-section--contacts
                         div
-                          h2 Welcome back
-                          p.user-welcome-name User
-                        .user-welcome-corner-wrap
-                          h2.user-welcome-corner Account Details
-                          p.user-welcome-corner-subtitle Review your profile information.
+                          h4 Contacts Details
+                          p#userSettingsPhone Phone: -
+                          p#userSettingsEmailDetail Email: admin@smartworkshop.local
+                          p#userSettingsUsername Username: -
+                          p#userSettingsAddress Address: -
 
-                    .settings-divider
-  
-                    .account-section.account-section--avatar
-                      .settings-photo-row
-                        .settings-avatar.settings-avatar-lg#userSettingsAvatar AG
+                      .settings-divider
+    
+                      .account-section.account-section--role
+                        div
+                          h4 Role
+                          p#userSettingsRole ADMIN
 
-                    .settings-divider
-  
-                    .account-section.account-section--profile
-                      .settings-profile
-                        .settings-meta
-                          h4 Full Name
-                          p#userSettingsName Angel Gomes
-                          span#userSettingsRoleBadge.is-hidden CUSTOMER
-
-                    .settings-divider
-  
-                    .account-section.account-section--contacts
-                      div
-                        h4 Contacts Details
-                        p#userSettingsPhone Phone: -
-                        p#userSettingsEmailDetail Email: admin@smartworkshop.local
-                        p#userSettingsUsername Username: -
-                        p#userSettingsAddress Address: -
-
-                    .settings-divider
-  
-                    .account-section.account-section--role
-                      div
-                        h4 Role
-                        p#userSettingsRole ADMIN
-
-                    .account-section.account-section--status
-                      div
-                        h4 Account status
-                        p#userSettingsStatus.user-account-status-pill(data-status="pending") Pending
-  
-                    .account-section.account-section--integration
-                      div
-                        h4 Integration
-                        p No integrations connected
+                      .account-section.account-section--status
+                        div
+                          h4 Account status
+                          p#userSettingsStatus.user-account-status-pill(data-status="pending") Pending
+    
+                      .account-section.account-section--integration
+                        div
+                          h4 Integration
+                          p No integrations connected
   
   
             section.user-view.is-hidden#userVehicleView

@@ -9,6 +9,9 @@ if (mechanicDashboard) {
   const mechanicMobileLogoutBtn = document.getElementById("mechanicMobileLogoutBtn");
   const mechanicMobileMenuLinks = mechanicDashboard.querySelectorAll(".mechanic-mobile-menu [data-view], .mechanic-mobile-menu [data-target-view], .mechanic-mobile-menu [data-target-page], .mechanic-mobile-menu [data-action], .mechanic-mobile-menu [data-href]");
   const mechanicNavLinks = mechanicDashboard.querySelectorAll(".rail-nav .rail-item[data-view]");
+  const mechanicRail = mechanicDashboard.querySelector(".mainRail");
+  const mechanicRailToggle = document.getElementById("mechanicRailToggle");
+  const MECHANIC_RAIL_STORAGE_KEY = "sw_mechanic_rail_collapsed";
   const mechanicDashboardView = document.getElementById("mechanicDashboardView");
   const mechanicBookingInformationView = document.getElementById("mechanicBookingInformationView");
   const mechanicResolutionCenterView = document.getElementById("mechanicResolutionCenterView");
@@ -387,6 +390,21 @@ if (mechanicDashboard) {
     if (!mechanicSecurity2faEnable) return;
     const hasSelection = Boolean(mechanicSecurity2faEmail?.checked || mechanicSecurity2faSms?.checked);
     mechanicSecurity2faEnable.classList.toggle("is-active", hasSelection);
+  };
+
+  const setMechanicRailState = (collapsed) => {
+    const nextCollapsed = Boolean(collapsed);
+    mechanicRail?.classList.toggle("is-collapsed", nextCollapsed);
+    mechanicDashboard?.classList.toggle("is-rail-collapsed", nextCollapsed);
+    if (mechanicRailToggle) {
+      mechanicRailToggle.setAttribute("aria-expanded", String(!nextCollapsed));
+      mechanicRailToggle.setAttribute("aria-label", nextCollapsed ? "Expand sidebar" : "Collapse sidebar");
+    }
+    localStorage.setItem(MECHANIC_RAIL_STORAGE_KEY, nextCollapsed ? "collapsed" : "expanded");
+  };
+
+  const initializeMechanicRail = () => {
+    setMechanicRailState(false);
   };
 
   const setSimpleOptions = (select, labels, defaultLabel) => {
@@ -2831,6 +2849,10 @@ if (mechanicDashboard) {
 
   mechanicMobileMenuBackdrop?.addEventListener("click", closeMechanicMobileMenu);
 
+  mechanicRailToggle?.addEventListener("click", () => {
+    setMechanicRailState(!mechanicRail?.classList.contains("is-collapsed"));
+  });
+
   mechanicMobileMenuLinks.forEach((link) => {
     link.addEventListener("click", async () => {
       const action = link.dataset.action || "";
@@ -2983,6 +3005,7 @@ if (mechanicDashboard) {
   syncMechanicResolutionOverview();
   setMechanicSettingsSubview("general");
   setMechanicResolutionSubview("overview");
+  initializeMechanicRail();
   window.addEventListener("focus", syncMechanicBookings);
 }
 

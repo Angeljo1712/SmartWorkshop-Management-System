@@ -15,6 +15,7 @@ body.admin-body .primari-shell {
 }
 
 #adminPage.mainLayout {
+      position: relative;
       display: grid;
       grid-template-columns: auto minmax(0, 1fr);
       gap: 0;
@@ -90,8 +91,8 @@ body.admin-body .primari-shell {
 
 #adminPage .rail-base {
   position: static;
-  width: 70px;
-  min-width: 70px;
+  width: 180px;
+  min-width: 180px;
   min-height: auto;
   background: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -104,17 +105,22 @@ body.admin-body .primari-shell {
 }
 
 #adminPage .mainRail {
-  padding: 14px 10px;
-  justify-items: center;
+  padding: 14px 12px 16px;
+  justify-items: stretch;
+  gap: 0;
 }
 
 #adminPage .mainRail:hover {
-  width: 200px;
+  width: 180px;
 }
 
 #adminPage .mainRail .rail-brand {
   width: 100%;
-  padding: 0 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 4px 0 14px;
 }
 
 #adminPage .mainRail .rail-brand .logo {
@@ -130,22 +136,23 @@ body.admin-body .primari-shell {
   top: var(--general-header-height, 71px);
   width: 100%;
   align-self: start;
-  justify-items: center;
+  justify-items: stretch;
   gap: 10px;
   padding-top: 3px;
 }
 
 #adminPage .mainRail .rail-item {
-  width: 48px;
-  max-width: 48px;
-  height: 48px;
-  justify-content: center;
-  padding: 0;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  min-height: 48px;
+  justify-content: flex-start;
+  padding: 10px 14px;
   border-radius: 14px;
   border: 1px solid transparent;
   background: transparent;
   color: #334155;
-  gap: 0;
+  gap: 10px;
   transition: max-width 0.22s ease, width 0.22s ease, padding 0.22s ease, justify-content 0.22s ease, background 0.18s ease;
 }
 
@@ -161,11 +168,12 @@ body.admin-body .primari-shell {
   }
 
 #adminPage .mainRail .rail-text {
-  width: 0;
-  opacity: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  transition: width 0.18s ease, opacity 0.18s ease;
+  width: auto;
+  opacity: 1;
+  overflow: visible;
+  white-space: normal;
+  line-height: 1.2;
+  transition: opacity 0.18s ease;
 }
 
 #adminPage .mainRail .rail-icon {
@@ -177,25 +185,26 @@ body.admin-body .primari-shell {
 #adminPage .mainRail .rail-footer {
   width: 100%;
   display: grid;
-  justify-items: center;
+  justify-items: stretch;
   padding-top: 10px;
   border-top: 1px dashed rgba(15, 23, 42, 0.12);
 }
 
 #adminPage .mainRail .admin-signout {
-  width: 48px;
-  min-width: 48px;
+  width: 100%;
+  min-width: 0;
   height: 48px;
-  padding: 0;
+  padding: 0 14px 0 40px;
   border-radius: 14px;
   overflow: hidden;
-  color: transparent;
-  font-size: 0;
+  color: #334155;
+  font-size: 0.88rem;
+  font-weight: 600;
   background: rgba(15, 23, 42, 0.04);
   border: 1px solid rgba(15, 23, 42, 0.08);
   position: relative;
   display: grid;
-  place-items: center;
+  place-items: center start;
 }
 
 #adminPage .mainRail .admin-signout::before {
@@ -212,48 +221,101 @@ body.admin-body .primari-shell {
 }
 
 #adminPage .mainRail:hover .rail-item {
-    width: 100%;
-    max-width: 100%;
-    justify-content: flex-start;
+  width: 100%;
+  max-width: 100%;
+  justify-content: flex-start;
   gap: 10px;
   height: auto;
   min-height: 48px;
   align-items: center;
-    padding: 10px 14px;
-  }
-
-#adminPage .mainRail:hover .rail-item.active {
-    width: calc(100% + 16px);
-    max-width: calc(100% + 16px);
-    margin-left: 0;
-    margin-right: -16px;
-    border-radius: 0;
-  }
-
-#adminPage .mainRail:hover .rail-text {
-  display: block;
-  width: auto;
-  opacity: 1;
-  white-space: normal;
-  line-height: 1.2;
+  padding: 10px 14px;
 }
 
-#adminPage .mainRail:hover .rail-footer {
-  justify-items: stretch;
+#adminPage .mainRail.is-collapsed:hover {
+  width: 70px;
 }
 
-#adminPage .mainRail:hover .admin-signout {
-  width: 100%;
-  color: #334155;
-  font-size: 0.88rem;
-  font-weight: 600;
-  padding: 0 14px 0 40px;
-  justify-content: flex-start;
+#adminPage .mainRail.is-collapsed {
+  width: 70px;
+  min-width: 70px;
+  padding: 14px 10px 16px;
+  justify-items: center;
+  gap: 20px;
 }
 
-#adminPage .mainRail:hover .admin-signout::before {
-  inset: 0 auto 0 14px;
-  width: 18px;
+#adminPage .mainRail.is-collapsed .rail-brand {
+  justify-content: center;
+  padding-bottom: 8px;
+}
+
+#adminPage .mainRail.is-collapsed .rail-brand .logo {
+  display: inline-grid;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  margin: 0 auto;
+}
+
+#adminPage .mainRail.is-collapsed .rail-item {
+  width: 48px;
+  max-width: 48px;
+  justify-content: center;
+  padding: 0;
+  gap: 0;
+}
+
+#adminPage .mainRail.is-collapsed .rail-text {
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#adminPage .mainRail.is-collapsed .rail-footer {
+  justify-items: center;
+}
+
+#adminPage .mainRail.is-collapsed .admin-signout {
+  width: 48px;
+  min-width: 48px;
+  padding: 0;
+  color: transparent;
+  font-size: 0;
+  justify-content: center;
+  place-items: center;
+}
+
+#adminPage .mainRail.is-collapsed .admin-signout::before {
+  inset: 0;
+}
+
+#adminPage .admin-rail-toggle {
+  position: absolute;
+  top: 152px;
+  left: 156px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: #090d15;
+  color: #ffffff;
+  cursor: pointer;
+  z-index: 6;
+  box-shadow: 0 8px 18px rgba(8, 15, 31, 0.24);
+}
+
+#adminPage .admin-rail-toggle svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+#adminPage.is-rail-collapsed .admin-rail-toggle {
+  left: 46px;
 }
 
 body.admin-body .admin-header-menu-toggle,
@@ -3522,6 +3584,10 @@ body.admin-body #adminSettingsNotifications .notifications-check {
   }
 
   #adminPage .rail-base {
+    display: none !important;
+  }
+
+  #adminPage .admin-rail-toggle {
     display: none !important;
   }
 

@@ -9,16 +9,16 @@
 
 #userPage .user-rail-toggle {
   position: absolute;
-  top: 152px;
-  left: 216px;
+  top: 118px;
+  left: 163px;
   width: 48px;
   height: 48px;
   padding: 0;
   display: grid;
   place-items: center;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
-  background: #090d15;
+  border-radius: 15px;
+  background: #3e434df7;
   color: #ffffff;
   cursor: pointer;
   z-index: 6;
@@ -32,7 +32,7 @@
 }
 
 #userPage.is-rail-collapsed .user-rail-toggle {
-  left: 62px;
+  left: 54px;
 }
 
 .user-mobile-topbar,
@@ -194,7 +194,7 @@ body.user-body .page-shell-content {
   background: #090d15;
   border: 0;
   border-radius: 0;
-  padding: 30px;
+  padding: 33px;
   overflow: hidden;
   min-height: auto;
   height: auto;
@@ -216,8 +216,8 @@ body.user-body .main-header.general-header {
 
 #userPage .rail-base {
   position: static;
-  width: 230px;
-  min-width: 230px;
+  width: 180px;
+  min-width: 180px;
   min-height: auto;
   background: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -232,11 +232,11 @@ body.user-body .main-header.general-header {
 #userPage .mainRail {
   padding: 14px 12px 16px;
   justify-items: stretch;
-  gap: 0;
+  gap: 10px;
 }
 
 #userPage .mainRail:hover {
-  width: 230px;
+  width: 180px;
 }
 
 #userPage .mainRail.is-collapsed:hover {
@@ -266,7 +266,7 @@ body.user-body .main-header.general-header {
   width: 100%;
   align-self: start;
   justify-items: stretch;
-  gap: 10px;
+  gap: 20px;
 }
 
 #userPage .mainRail .rail-footer {
@@ -2448,63 +2448,38 @@ body.user-body #userAccountView {
 
 body.user-body #userAccountView .user-account-layout {
   min-height: 100%;
-  /* align-content: start; */
   padding: 20px;
 }
 
 .user-account-layout {
   display: grid;
-  grid-template-areas:
-    "welcome"
-    "divider-top"
-    "avatar"
-    "divider-mid"
-    "profile"
-    "divider-profile"
-    "contacts"
-    "divider-bottom"
-    "role"
-    "status"
-    "integration";
-  gap: 30px;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+  align-content: start;
 }
 
-.user-account-layout > .settings-divider:nth-of-type(1) {
-  grid-area: divider-top;
+body.user-body #userAccountView .user-settings-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
 }
 
-.account-section--avatar {
-  grid-area: avatar;
+body.user-body #userAccountView .user-settings-panel {
+  display: grid;
+  gap: 22px;
+  align-content: start;
+  align-items: start;
 }
 
-.user-account-layout > .settings-divider:nth-of-type(2) {
-  grid-area: divider-mid;
-}
-
-.account-section--profile {
-  grid-area: profile;
-}
-
-.user-account-layout > .settings-divider:nth-of-type(3) {
-  grid-area: divider-profile;
-}
-
-.account-section--contacts {
-  grid-area: contacts;
-}
-
-.account-section--role {
-  grid-area: role;
+body.user-body #userAccountView .user-settings-panel-head .account-section--welcome {
+  display: grid;
 }
 
 .account-section--status {
-  grid-area: status;
   border-top: 3px solid #ffffff;
   padding-top: 14px;
-}
-
-.user-account-layout > .settings-divider:nth-of-type(4) {
-  grid-area: divider-bottom;
 }
 
 .account-section--role .settings-row {
@@ -2513,7 +2488,6 @@ body.user-body #userAccountView .user-account-layout {
 }
 
 .account-section--integration {
-  grid-area: integration;
   border-top: 3px solid #ffffff;
   padding-top: 14px;
 }
@@ -2677,6 +2651,7 @@ body.user-body #userDashboardView .dashboard-section--quote {
 body.user-body #userDashboardView .user-panel-head h2 {
   text-align: left;
   color: #ffffff;
+  margin-left: 10px;
 }
 
 body.user-body #userDashboardView .user-panel-head p {
@@ -2859,8 +2834,6 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
 }
 
 #userDashboardView .dashboard-section--welcome,
-#userAccountView .account-section--welcome,
-#userAccountView .user-account-layout > .settings-divider:nth-of-type(1),
 #userVehicleView .vehicle-section--welcome,
 #userVehicleView .user-vehicle-layout > .settings-divider,
 #userBookingsView .bookings-section--welcome,
@@ -2870,19 +2843,6 @@ body.user-body #userDashboardView .user-quick-quote input::placeholder {
 #userSettingsView .settings-section--welcome,
 #userSettingsView .settings-section--divider {
   display: none;
-}
-
-.user-account-layout {
-  grid-template-areas:
-    "avatar"
-    "divider-mid"
-    "profile"
-    "divider-profile"
-    "contacts"
-    "divider-bottom"
-    "role"
-    "status"
-    "integration";
 }
 
 .user-vehicle-layout {
@@ -3684,21 +3644,21 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
   }
 
   #userPage .rail-base {
-    width: 230px;
-    min-width: 230px;
+    width: 180px;
+    min-width: 180px;
     min-height: auto;
     grid-template-rows: auto 1fr auto;
   }
 
   #userPage .mainRail {
-    width: 230px;
+    width: 180px;
     padding: 8px 10px 12px;
     justify-items: stretch;
     align-content: start;
   }
 
   #userPage .mainRail:hover {
-    width: 230px;
+    width: 180px;
   }
 
   #userPage .mainRail .rail-brand {
@@ -4159,6 +4119,16 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
     gap: 16px;
   }
 
+  body.user-body #userAccountView .user-settings-panel-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  body.user-body #userAccountView .user-settings-panel {
+    gap: 16px;
+  }
+
   body.user-body #userAccountView .settings-avatar-lg {
     width: 96px;
     height: 96px;
@@ -4441,7 +4411,7 @@ body.user-body.user-light-mode #userDashboardView .user-dashboard-layout > .sett
 }
 
 body.user-body.user-light-mode #userAccountView .settings-divider,
-body.user-body.user-light-mode #userAccountView .user-account-layout > .settings-divider {
+body.user-body.user-light-mode #userAccountView .user-settings-panel > .settings-divider {
   background: #000000 !important;
 }
 
