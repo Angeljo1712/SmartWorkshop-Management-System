@@ -258,10 +258,6 @@ block content
     
             section.mechanic-content.is-hidden#mechanicResolutionCenterView
               .settings-card.mechanic-dashboard-card
-                .settings-header
-                  div
-                    h2 Resolution center
-                    p Manage customer issues and active resolutions.
                 .mechanic-resolution-layout#mechanicResolutionOverview
                   .mechanic-resolution-card
                     h3 Current cases
@@ -282,6 +278,46 @@ block content
                     .mechanic-resolution-card-body
                       p.mechanic-resolution-copy Need to contact your customer, or have a problem that needs resolving? Select the relevant booking below to get started:
                       #mechanicResolutionBookings
+                  .settings-card.mechanic-caseView.is-hidden#mechanicResolutionCaseView
+                    .mechanic-detail-card.mechanic-resolution-case
+                      .mechanic-resolution-thread
+                        .mechanic-resolution-thread-title
+                          span#mechanicResolutionCaseTitle General Enquiry
+                        p.mechanic-resolution-thread-copy You can use this page to discuss your booking with your customer. Your messages will be sent directly to the customer, and you will receive an email whenever there's an update.
+                        #mechanicResolutionMessages
+                        .mechanic-resolution-compose
+                          textarea#mechanicResolutionMessageInput(placeholder="Add a new message here")
+                          .mechanic-resolution-compose-actions
+                            button.mechanic-resolution-back#mechanicResolutionCaseBackBtn(type="button") Back
+                            .mechanic-resolution-compose-actions-right
+                              button.primary#mechanicResolutionSendBtn(type="button") Send message
+                              label.secondary#mechanicResolutionCaseAttachBtn(for="mechanicResolutionCaseAttachmentInput") Attach file(s)
+                              input#mechanicResolutionCaseAttachmentInput.is-hidden(type="file" multiple accept="image/*,application/pdf")
+                              .mechanic-resolution-compose-preview#mechanicResolutionCaseAttachmentPreview
+                      aside.mechanic-resolution-sidebar
+                        .mechanic-resolution-sidebar-card
+                          h4#mechanicResolutionSidebarTitle Current status of booking #16334274
+                          .mechanic-resolution-sidebar-row
+                            strong Customer
+                            span#mechanicResolutionSidebarCustomer -
+                          .mechanic-resolution-sidebar-row
+                            strong Car
+                            span#mechanicResolutionSidebarCar -
+                          .mechanic-resolution-sidebar-row
+                            strong Address
+                            span#mechanicResolutionSidebarAddress -
+                          .mechanic-resolution-sidebar-row
+                            strong Work
+                            span#mechanicResolutionSidebarWork -
+                          .mechanic-resolution-sidebar-row
+                            strong Arrival Time
+                            span#mechanicResolutionSidebarArrivalTime -
+                          .mechanic-resolution-sidebar-row
+                            strong Parts
+                            span#mechanicResolutionSidebarParts -
+                          .mechanic-resolution-sidebar-row
+                            strong Total Price
+                            span#mechanicResolutionSidebarTotal -
                 .mechanic-resolution-detail.is-hidden#mechanicResolutionMessageView
                   .mechanic-resolution-detail-head
                     button.mechanic-resolution-back(type="button" id="mechanicResolutionBackBtn") Back
@@ -305,46 +341,6 @@ block content
                           span Updated at
                           span Subject
                           span
-                .settings-card.mechanic-caseView.is-hidden#mechanicResolutionCaseView
-                  .mechanic-detail-card.mechanic-resolution-case
-                    .mechanic-resolution-thread
-                      .mechanic-resolution-thread-title
-                        span#mechanicResolutionCaseTitle General Enquiry
-                      p.mechanic-resolution-thread-copy You can use this page to discuss your booking with your customer. Your messages will be sent directly to the customer, and you will receive an email whenever there's an update.
-                      #mechanicResolutionMessages
-                      .mechanic-resolution-compose
-                        textarea#mechanicResolutionMessageInput(placeholder="Add a new message here")
-                        .mechanic-resolution-compose-actions
-                          button.mechanic-resolution-back#mechanicResolutionCaseBackBtn(type="button") Back
-                          .mechanic-resolution-compose-actions-right
-                            button.primary#mechanicResolutionSendBtn(type="button") Send message
-                            label.secondary#mechanicResolutionCaseAttachBtn(for="mechanicResolutionCaseAttachmentInput") Attach file(s)
-                            input#mechanicResolutionCaseAttachmentInput.is-hidden(type="file" multiple accept="image/*,application/pdf")
-                            .mechanic-resolution-compose-preview#mechanicResolutionCaseAttachmentPreview
-                    aside.mechanic-resolution-sidebar
-                      .mechanic-resolution-sidebar-card
-                        h4#mechanicResolutionSidebarTitle Current status of booking #16334274
-                        .mechanic-resolution-sidebar-row
-                          strong Customer
-                          span#mechanicResolutionSidebarCustomer -
-                        .mechanic-resolution-sidebar-row
-                          strong Car
-                          span#mechanicResolutionSidebarCar -
-                        .mechanic-resolution-sidebar-row
-                          strong Address
-                          span#mechanicResolutionSidebarAddress -
-                        .mechanic-resolution-sidebar-row
-                          strong Work
-                          span#mechanicResolutionSidebarWork -
-                        .mechanic-resolution-sidebar-row
-                          strong Arrival Time
-                          span#mechanicResolutionSidebarArrivalTime -
-                        .mechanic-resolution-sidebar-row
-                          strong Parts
-                          span#mechanicResolutionSidebarParts -
-                        .mechanic-resolution-sidebar-row
-                          strong Total Price
-                          span#mechanicResolutionSidebarTotal -
             section.mechanic-content.is-hidden#mechanicProcedureView
               .settings-card.mechanic-dashboard-card
                 .settings-header

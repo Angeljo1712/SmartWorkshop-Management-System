@@ -2002,6 +2002,44 @@ if (mechanicDashboard) {
     }
     setMechanicResolutionSubview("message", bookingReference);
   };
+
+  const openMechanicResolutionCaseForBooking = async (bookingId, type = "general") => {
+    if (!bookingId || !mechanicToken) return;
+    const bookingEntry = latestMechanicAssignedBookings.find((entry) => Number(entry.booking?.id) === Number(bookingId));
+    const bookingReference = bookingEntry?.booking?.reference || bookingId;
+    pendingResolutionBookingId = Number(bookingId);
+
+    const existingCase =
+      latestMechanicResolutionCases.find(
+        (entry) =>
+          Number(entry.booking_id) === Number(bookingId) &&
+          String(entry.type || "").toLowerCase() === String(type || "general").toLowerCase() &&
+          String(entry.status || "").toLowerCase() === "open"
+      ) ||
+      latestMechanicResolutionCases.find(
+        (entry) =>
+          Number(entry.booking_id) === Number(bookingId) &&
+          String(entry.type || "").toLowerCase() === String(type || "general").toLowerCase()
+      ) ||
+      null;
+
+    let detail = null;
+    if (existingCase?.id) {
+      detail = await apiAuth(`/api/users/me/mechanic-resolution-cases/${encodeURIComponent(existingCase.id)}`, mechanicToken);
+    } else {
+      const created = await apiAuth("/api/users/me/mechanic-resolution-cases", mechanicToken, {
+        method: "POST",
+        body: JSON.stringify({ booking_id: bookingId, type })
+      });
+      detail = created;
+      await syncMechanicResolutionOverview();
+    }
+
+    if (detail) {
+      renderMechanicResolutionCaseDetail(detail);
+      setMechanicResolutionSubview("case", detail.booking?.reference || bookingReference);
+    }
+  };
   const renderMechanicResolutionCaseDetail = (detail) => {
     pendingResolutionCaseId = Number(detail?.id || 0) || null;
     pendingResolutionBookingId = Number(detail?.booking_id || detail?.booking?.id || 0) || null;
@@ -2564,7 +2602,7 @@ if (mechanicDashboard) {
   };
 
   const setMechanicResolutionSubview = (subview, bookingReference = "16334274") => {
-    mechanicResolutionOverview?.classList.toggle("is-hidden", subview !== "overview");
+    mechanicResolutionOverview?.classList.toggle("is-hidden", subview === "message");
     mechanicResolutionMessageView?.classList.toggle("is-hidden", subview !== "message");
     mechanicResolutionCaseView?.classList.toggle("is-hidden", subview !== "case");
     if (subview === "message" && mechanicResolutionDetailTitle) {
@@ -2793,7 +2831,7 @@ if (mechanicDashboard) {
     if (!button) return;
     syncMechanicNavState("resolution");
     setMechanicView("resolution");
-    await openMechanicResolutionMessage(button.dataset.resolutionBookingId, "general");
+    await openMechanicResolutionCaseForBooking(button.dataset.resolutionBookingId, "general");
   });
 
   mechanicResolutionBookingCasesTable?.addEventListener("click", async (event) => {

@@ -2127,7 +2127,7 @@ body.mechanic-body #mechanicSecurity2faEnable.is-active {
 body.mechanic-body .mechanic-resolution-layout {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 22px;
+  gap: 16px;
 }
 
 body.mechanic-body .mechanic-resolution-detail {
@@ -2141,6 +2141,7 @@ body.mechanic-body .settings-card.mechanic-caseView {
   background: #3e434df7;
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: none;
+  margin-top: 6px;
   padding: 20px;
 }
 
@@ -3503,7 +3504,7 @@ body.mechanic-body .mechanic-profile-map {
 }
 
 body.mechanic-body .mechanic-profile-avatar-card {
-  min-height: 340px;
+  min-height: 270px;
   display: grid;
   place-items: center;
   padding: 24px;
