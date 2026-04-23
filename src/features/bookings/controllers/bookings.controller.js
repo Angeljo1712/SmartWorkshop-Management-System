@@ -1,4 +1,4 @@
-const bookingService = require("../services/booking.service");
+const bookingService = require("../services/bookings.service");
 
 const saveBookingDetailsHandler = async (req, res) => {
   const result = await bookingService.saveBookingDetails(req.body || {});

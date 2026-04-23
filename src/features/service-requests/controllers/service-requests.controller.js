@@ -1,4 +1,4 @@
-const serviceRequestService = require("../services/service-request.service");
+const serviceRequestService = require("../services/service-requests.service");
 const { AppError } = require("../../../shared/utils/appError");
 
 const createRequestHandler = async (req, res) => {

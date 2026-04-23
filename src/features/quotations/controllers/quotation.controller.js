@@ -1,5 +1,5 @@
 const quotationService = require("../services/quotation.service");
-const serviceRequestService = require("../../service-requests/services/service-request.service");
+const serviceRequestService = require("../../service-requests/services/service-requests.service");
 const { AppError } = require("../../../shared/utils/appError");
 
 const createQuotationHandler = async (req, res) => {

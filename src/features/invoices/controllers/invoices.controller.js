@@ -1,4 +1,4 @@
-const invoiceService = require("../services/invoice.service");
+const invoiceService = require("../services/invoices.service");
 
 const getBookingInvoiceHandler = async (req, res) => {
   const bookingId = Number(req.params.bookingId);

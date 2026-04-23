@@ -1,6 +1,6 @@
 const { pool } = require("../../../shared/config/pool");
 const { AppError } = require("../../../shared/utils/appError");
-const { issueInvoiceForBooking } = require("../../invoices/services/invoice.service");
+const { issueInvoiceForBooking } = require("../../invoices/services/invoices.service");
 const { getResolutionCaseAttachmentsByMessageIds } = require("../../resolution/services/resolutionAttachment.service");
 
 const formatBookingReference = (value) => String(Number(value) || 0).padStart(8, "0");

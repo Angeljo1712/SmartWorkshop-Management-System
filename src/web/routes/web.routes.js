@@ -98,7 +98,7 @@ router.get("/sign-in", (_req, res) => {
 });
 
 router.get("/auth", (_req, res) => {
-  res.render("features/auth/index");
+  res.render("features/auth/landing");
 });
 
 router.get("/auth/login", (_req, res) => {
@@ -134,11 +134,11 @@ router.get("/user", (_req, res) => {
 });
 
 router.get("/user/dashboard", (_req, res) => {
-  res.render("features/user/index");
+  res.render("features/user/dashboard");
 });
 
 router.get("/profile", (_req, res) => {
-  res.render("features/user/index");
+  res.render("features/user/dashboard");
 });
 
 router.get("/shop", (_req, res) => {
@@ -150,7 +150,7 @@ router.get("/bookings/vehicle", (_req, res) => {
 });
 
 router.get("/bookings", (_req, res) => {
-  res.render("features/bookings/index");
+  res.render("features/bookings/start");
 });
 
 const renderBookingsWork = (req, res) => {
@@ -158,7 +158,7 @@ const renderBookingsWork = (req, res) => {
   if (type) {
     return res.render("features/bookings/work", { type: String(type) });
   }
-  return res.render("features/bookings/index");
+  return res.render("features/bookings/start");
 };
 
 router.get("/bookings/work", renderBookingsWork);
@@ -181,7 +181,7 @@ router.get("/bookings/confirm", (_req, res) => {
 });
 
 router.get("/application", (_req, res) => {
-  res.render("features/mechanic/home");
+  res.render("features/mechanic/application");
 });
 
 router.get("/mechanic/home", (_req, res) => {
@@ -221,7 +221,7 @@ router.post("/mechanic/:id/profile", (req, res, next) => {
 });
 
 router.get("/mechanic/:id/picture", (req, res) => {
-  res.render("features/mechanic/picture", { mechanicId: req.params.id });
+  res.render("features/mechanic/profile-picture", { mechanicId: req.params.id });
 });
 
 router.get("/mechanic/:id/certifications", (req, res) => {
@@ -257,7 +257,7 @@ router.get("/mechanic/documents", async (req, res, next) => {
     const uploadMessage = typeof req.query.message === "string" ? req.query.message : null;
     const mechanicEmail = typeof req.query.email === "string" ? req.query.email.trim().toLowerCase() : "";
     const onboarding = mechanicEmail ? await mechanicService.getOnboardingByEmail(mechanicEmail) : null;
-    res.render("features/mechanic/documents", {
+    res.render("features/mechanic/onboarding-documents", {
       mechanicId: null,
       uploadStatus,
       uploadMessage,
@@ -292,7 +292,7 @@ router.get("/mechanic/welcome/:id", (req, res, next) => {
   const mechanicId = Number(req.params.id);
   mechanicService
     .getProfile(mechanicId)
-    .then((profile) => res.render("features/mechanic/welcome", { profile }))
+    .then((profile) => res.render("features/mechanic/onboarding-complete", { profile }))
     .catch(next);
 });
 
@@ -320,14 +320,14 @@ router.post("/mechanic/set-password", (req, res, next) => {
 });
 
 router.get("/mechanic/:id/types", (req, res) => {
-  res.render("features/mechanic/types", { mechanicId: req.params.id });
+  res.render("features/mechanic/service-coverage", { mechanicId: req.params.id });
 });
 
 router.get("/mechanic/:id", async (req, res, next) => {
   try {
     const mechanicId = Number(req.params.id);
     const profile = await mechanicService.getProfile(mechanicId);
-    res.render("features/mechanic/view", { mechanicId: req.params.id, profile });
+    res.render("features/mechanic/public-profile", { mechanicId: req.params.id, profile });
   } catch (err) {
     next(err);
   }

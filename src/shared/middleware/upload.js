@@ -3,10 +3,12 @@ const path = require("path");
 const multer = require("multer");
 const { AppError } = require("../utils/appError");
 
-const uploadRoot = path.join(__dirname, "../uploads/avatars");
-const documentsUploadRoot = path.join(__dirname, "../uploads/mechanic-documents");
-const bookingCompletionUploadRoot = path.join(__dirname, "../uploads/booking-completion");
-const resolutionCaseAttachmentUploadRoot = path.join(__dirname, "../uploads/resolution-case-attachments");
+const uploadsRoot = path.join(__dirname, "../uploads");
+const uploadRoot = path.join(uploadsRoot, "avatars");
+const documentsUploadRoot = path.join(uploadsRoot, "mechanic-documents");
+const bookingCompletionUploadRoot = path.join(uploadsRoot, "booking-completion");
+const resolutionCaseAttachmentUploadRoot = path.join(uploadsRoot, "resolution-case-attachments");
+fs.mkdirSync(uploadsRoot, { recursive: true });
 fs.mkdirSync(uploadRoot, { recursive: true });
 fs.mkdirSync(documentsUploadRoot, { recursive: true });
 fs.mkdirSync(bookingCompletionUploadRoot, { recursive: true });

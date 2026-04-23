@@ -6,7 +6,7 @@ const {
   getMyRequestsHandler,
   getRequestByIdHandler,
   getAvailableRequestsHandler
-} = require("../controllers/service-request.controller");
+} = require("../controllers/service-requests.controller");
 
 const router = express.Router();
 

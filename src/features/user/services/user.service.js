@@ -1,12 +1,12 @@
 const { pool } = require("../../../shared/config/pool");
 const { env } = require("../../../shared/config/env");
 const { AppError } = require("../../../shared/utils/appError");
-const { issueInvoiceForBooking } = require("../../invoices/services/invoice.service");
+const { issueInvoiceForBooking } = require("../../invoices/services/invoices.service");
 const {
   ensureBookingCompletionTables,
   saveBookingCompletionArtifacts,
   getBookingCompletionArtifactsByBookingIds
-} = require("../../bookings/services/bookingCompletion.service");
+} = require("../../bookings/services/booking-completion.service");
 const {
   saveResolutionCaseMessageAttachments,
   getResolutionCaseAttachmentsByMessageIds

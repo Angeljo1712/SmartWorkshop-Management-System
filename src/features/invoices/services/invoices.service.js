@@ -3,7 +3,7 @@ const { AppError } = require("../../../shared/utils/appError");
 const {
   ensureBookingCompletionTables,
   getBookingCompletionArtifactsByBookingIds
-} = require("../../bookings/services/bookingCompletion.service");
+} = require("../../bookings/services/booking-completion.service");
 
 const formatBookingReference = (value) => String(Number(value) || 0).padStart(8, "0");
 
