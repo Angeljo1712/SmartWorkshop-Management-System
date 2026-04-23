@@ -311,7 +311,7 @@ if (adminPage) {
   };
 
   const setAdminHeader = (user) => {
-    const joinedName = [user?.name, user?.lastname].filter(Boolean).join(" ").trim();
+    const joinedName = [user?.name, user?.middle_name, user?.lastname].filter(Boolean).join(" ").trim();
     const displayName = user?.full_name || joinedName || user?.email || "Admin";
     const heroDisplayName = joinedName || displayName;
     const role = "ADMINISTRATOR";
@@ -1387,7 +1387,7 @@ if (adminPage) {
       const nameParts = fullName ? fullName.split(/\s+/).filter(Boolean) : [];
       const firstName = user.name || nameParts[0] || "";
       const lastName = user.lastname || (nameParts.length > 1 ? nameParts[nameParts.length - 1] : "");
-      const middleName = nameParts.length > 2 ? nameParts.slice(1, -1).join(" ") : "";
+      const middleName = user.middle_name || (nameParts.length > 2 ? nameParts.slice(1, -1).join(" ") : "");
       if (adminSettingsEditFirstName) adminSettingsEditFirstName.value = firstName;
       if (adminSettingsEditMiddleName) adminSettingsEditMiddleName.value = middleName;
       if (adminSettingsEditLastName) adminSettingsEditLastName.value = lastName;
@@ -2504,8 +2504,9 @@ if (adminPage) {
       const avatarUrl = getAvatarUrl(user);
       const statusClass = String(status).toLowerCase().replace(/\s+/g, "-");
       const firstName = user.name || user.full_name?.split(" ")[0] || "";
+      const middleName = user.middle_name || "";
       const lastName = user.lastname || user.full_name?.split(" ").slice(1).join(" ") || "";
-      const fullName = `${firstName} ${lastName}`.trim() || user.full_name || user.email || "Unknown user";
+      const fullName = [firstName, middleName, lastName].filter(Boolean).join(" ").trim() || user.full_name || user.email || "Unknown user";
       const displayName = fullName;
       const userId = String(user.user_id || user.id || `${index}`);
       const isChecked = selectedAdminUsers.has(userId);
@@ -4720,6 +4721,7 @@ if (adminPage) {
     }
       const payload = {
         full_name: user.full_name || "",
+        middle_name: user.middle_name || "",
         phone: user.phone || "",
         username: user.username || "",
         address: user.address || "",
@@ -4733,6 +4735,7 @@ if (adminPage) {
         const middleName = adminSettingsEditMiddleName?.value?.trim() || "";
         const lastName = adminSettingsEditLastName?.value?.trim() || "";
         payload.full_name = [firstName, middleName, lastName].filter(Boolean).join(" ").trim();
+        payload.middle_name = middleName;
       } else if (activeAdminEditField === "address") {
         payload.address = [
           adminSettingsEditAddressLine1?.value?.trim() || "",

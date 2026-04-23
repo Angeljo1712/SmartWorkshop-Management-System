@@ -42,6 +42,7 @@ const formatBookingReference = (value) => String(Number(value) || 0).padStart(8,
 let ensureBookingCancellationFieldsPromise = null;
 let ensurePaymentMetadataFieldsPromise = null;
 let ensureMechanicAccreditationsTablePromise = null;
+let ensureUserProfileMiddleNameColumnPromise = null;
 
 const ensureBookingCancellationFields = async () => {
   if (!ensureBookingCancellationFieldsPromise) {
@@ -162,6 +163,29 @@ const getAddressByLabel = async (userId, label) => {
   return rows[0] || null;
 };
 
+const ensureUserProfileMiddleNameColumn = async () => {
+  if (!ensureUserProfileMiddleNameColumnPromise) {
+    ensureUserProfileMiddleNameColumnPromise = (async () => {
+      const [rows] = await pool.query(
+        `SELECT COLUMN_NAME
+         FROM information_schema.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = 'user_profiles'
+           AND COLUMN_NAME = 'middle_name'`
+      );
+
+      if (!rows.length) {
+        await pool.query("ALTER TABLE user_profiles ADD COLUMN middle_name VARCHAR(120) NULL AFTER name");
+      }
+    })().catch((error) => {
+      ensureUserProfileMiddleNameColumnPromise = null;
+      throw error;
+    });
+  }
+
+  return ensureUserProfileMiddleNameColumnPromise;
+};
+
 const geocodeAddress = async ({ line1, line2, city, postal_code, country }) => {
   const normalizedLine1 = String(line1 || "").trim();
   const normalizedLine2 = String(line2 || "").trim();
@@ -233,9 +257,10 @@ const geocodeAddress = async ({ line1, line2, city, postal_code, country }) => {
 
 const getUserById = async (userId) => {
   await ensureTwoFactorTables();
+  await ensureUserProfileMiddleNameColumn();
   const [rows] = await pool.query(
     `SELECT u.id, BIN_TO_UUID(u.uuid_public) AS uuid_public, u.email, u.username, u.phone, u.role, u.status, u.created_at, u.last_login_at,
-            p.name, p.lastname, p.avatar_url,
+            p.name, p.middle_name, p.lastname, p.avatar_url,
             COALESCE(MAX(uss.two_factor_email_enabled), 0) AS two_factor_email_enabled,
             GROUP_CONCAT(ur.role) AS roles
      FROM users u
@@ -302,19 +327,27 @@ const updateUserSecuritySettings = async (userId, { two_factor_email_enabled }) 
 };
 
 const resolveNames = (payload) => {
-  if (payload.name && payload.lastname) {
-    return { name: payload.name.trim(), lastname: payload.lastname.trim() };
+  const name = String(payload.name || "").trim();
+  const middleName = String(payload.middle_name || "").trim();
+  const lastname = String(payload.lastname || "").trim();
+  if (name && lastname) {
+    return { name, middle_name: middleName || null, lastname };
   }
   if (payload.full_name) {
-    const parts = String(payload.full_name).trim().split(/\s+/);
-    const name = parts.shift() || "";
-    const lastname = parts.join(" ") || "-";
-    return { name, lastname };
+    const parts = String(payload.full_name).trim().split(/\s+/).filter(Boolean);
+    const firstName = parts.shift() || "";
+    const lastName = parts.pop() || "";
+    const resolvedMiddleName = parts.join(" ").trim();
+    return {
+      name: firstName,
+      middle_name: resolvedMiddleName || null,
+      lastname: lastName || null
+    };
   }
-  return { name: null, lastname: null };
+  return { name: null, middle_name: null, lastname: null };
 };
 
-const updateUserProfile = async (userId, { name, lastname, full_name, phone, username, address }) => {
+const updateUserProfile = async (userId, { name, middle_name, lastname, full_name, phone, username, address }) => {
   const updates = [];
   const params = [];
 
@@ -377,13 +410,15 @@ const updateUserProfile = async (userId, { name, lastname, full_name, phone, use
     }
   }
 
-  const resolved = resolveNames({ name, lastname, full_name });
+  await ensureUserProfileMiddleNameColumn();
+
+  const resolved = resolveNames({ name, middle_name, lastname, full_name });
   if (resolved.name && resolved.lastname) {
     await pool.query(
-      `INSERT INTO user_profiles (user_id, name, lastname)
-       VALUES (?, ?, ?)
-       ON DUPLICATE KEY UPDATE name = VALUES(name), lastname = VALUES(lastname)`,
-      [userId, resolved.name, resolved.lastname]
+      `INSERT INTO user_profiles (user_id, name, middle_name, lastname)
+       VALUES (?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE name = VALUES(name), middle_name = VALUES(middle_name), lastname = VALUES(lastname)`,
+      [userId, resolved.name, resolved.middle_name, resolved.lastname]
     );
   } else if (!updates.length && address === undefined) {
     throw new AppError("VALIDATION_ERROR", "No profile fields provided", 400);

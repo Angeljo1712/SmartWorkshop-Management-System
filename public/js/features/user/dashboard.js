@@ -266,9 +266,12 @@ if (userPage) {
   };
 
   const setUserHeader = (user) => {
-    const joinedName = [user?.name, user?.lastname].filter(Boolean).join(" ").trim();
+    const joinedName = [user?.name, user?.middle_name, user?.lastname].filter(Boolean).join(" ").trim();
     const displayName = user?.full_name || joinedName || user?.email || "User";
     const firstName = String(user?.name || displayName || "User").trim().split(/\s+/)[0];
+    const lastnameParts = String(user?.lastname || "").trim().split(/\s+/).filter(Boolean);
+    const heroLastName = lastnameParts.length ? lastnameParts[0] : "";
+    const heroDisplayName = [firstName, heroLastName].filter(Boolean).join(" ").trim() || firstName || displayName;
     const roles = Array.isArray(user?.roles) && user.roles.length ? user.roles : [user?.role_name || "CUSTOMER"];
     const activeRole = resolveActiveRole(roles);
     const initials = getInitials(displayName);
@@ -277,7 +280,7 @@ if (userPage) {
     if (userProfileName) userProfileName.textContent = displayName;
     if (userProfileRole) userProfileRole.textContent = activeRole;
     setAvatar(userDashboardHeroAvatar, initials, user?.avatar_url);
-    if (userDashboardHeroName) userDashboardHeroName.textContent = displayName;
+    if (userDashboardHeroName) userDashboardHeroName.textContent = heroDisplayName;
     if (userDashboardHeroRole) userDashboardHeroRole.textContent = activeRole;
     setAvatar(userSettingsAvatar, initials, user?.avatar_url);
     userSettingsName.textContent = displayName;
@@ -361,7 +364,7 @@ if (userPage) {
       label: "Full name",
       description: "Update the full name shown in your profile.",
       type: "text",
-      getValue: (user) => user?.full_name || [user?.name, user?.lastname].filter(Boolean).join(" ").trim(),
+      getValue: (user) => user?.full_name || [user?.name, user?.middle_name, user?.lastname].filter(Boolean).join(" ").trim(),
       isNameField: true
     },
     phone: {
@@ -422,9 +425,17 @@ if (userPage) {
     }
     if (config.isNameField) {
       if (userSettingsEditFirstName) userSettingsEditFirstName.value = profileData?.name || "";
+      if (userSettingsEditMiddleName) {
+        const storedMiddleName = String(profileData?.middle_name || "").trim();
+        if (storedMiddleName) {
+          userSettingsEditMiddleName.value = storedMiddleName;
+        } else {
+          const lastNameParts = String(profileData?.lastname || "").trim().split(/\s+/).filter(Boolean);
+          userSettingsEditMiddleName.value = lastNameParts.length > 1 ? lastNameParts.slice(0, -1).join(" ") : "";
+        }
+      }
       const lastNameParts = String(profileData?.lastname || "").trim().split(/\s+/).filter(Boolean);
       if (userSettingsEditLastName) userSettingsEditLastName.value = lastNameParts.pop() || "";
-      if (userSettingsEditMiddleName) userSettingsEditMiddleName.value = lastNameParts.join(" ");
     } else if (config.isAddressField) {
       const addressDetails = profileData?.address_details || {};
       if (userSettingsEditAddressLine1) userSettingsEditAddressLine1.value = addressDetails.line1 || "";
@@ -1574,7 +1585,21 @@ if (userPage) {
   const renderUserResolutionCaseRows = (target, cases) => {
     if (!target) return;
     target.innerHTML = "";
-    if (!Array.isArray(cases) || !cases.length) return;
+    if (!Array.isArray(cases) || !cases.length) {
+      const emptyState = document.createElement("div");
+      emptyState.className = "user-empty-state user-resolution-empty-state";
+      emptyState.innerHTML = activeUserResolutionFilter === "complaint"
+        ? `
+          <strong>No complaints found</strong>
+          <span>You haven’t created any complaints yet.</span>
+        `
+        : `
+          <strong>No resolution cases yet</strong>
+          <span>Your resolution cases will appear here once you create one.</span>
+        `;
+      target.appendChild(emptyState);
+      return;
+    }
     cases.forEach((entry) => {
       const caseType = String(entry.type || entry.case_type || "general").toLowerCase();
       const statusLabel = caseType === "complaint" ? "COMPLAINT" : "GENERAL ENQUIRY";
@@ -2450,7 +2475,8 @@ if (userPage) {
           method: "PATCH",
           body: JSON.stringify({
             name: firstName,
-            lastname: [middleName, lastName].filter(Boolean).join(" ")
+            middle_name: middleName,
+            lastname: lastName
           })
         });
         setStoredAuthValue("userProfile", JSON.stringify(payload));

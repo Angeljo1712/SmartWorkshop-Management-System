@@ -9,7 +9,7 @@
 
 #userPage .user-rail-toggle {
   position: absolute;
-  top: 118px;
+  top: 115px;
   left: 163px;
   width: 48px;
   height: 48px;
@@ -262,7 +262,7 @@ body.user-body .main-header.general-header {
 
 #userPage .mainRail .rail-nav {
   position: sticky;
-  top: var(--general-header-height, 71px);
+  top: var(--general-header-height, 72px);
   width: 100%;
   align-self: start;
   justify-items: stretch;
@@ -1426,6 +1426,8 @@ body.user-body .user-booking-actions.primary,
   text-align: center;
   padding: 10px 12px;
   font: inherit;
+  font-weight: 800;
+  color: #1e293b;
   cursor: pointer;
   width: 100%;
 }
@@ -1590,6 +1592,10 @@ body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-row > span {
+  color: #ffffff;
+}
+
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-status {
   display: inline-flex;
   align-items: center;
@@ -1605,11 +1611,15 @@ body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-
 }
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-link {
-  border: 0;
-  background: transparent;
-  color: #4ea3ff;
-  font: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #5a6f90;
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 10px 18px;
+  min-height: 42px;
+  font-weight: 700;
   cursor: pointer;
+  justify-self: end;
 }
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-detail,
@@ -2377,9 +2387,16 @@ body.user-body .user-resolution-card .mechanic-resolution-table-row {
 }
 
 body.user-body .user-resolution-card .mechanic-resolution-table-head {
-  color: #d6dfef;
-  font-weight: 700;
-  font-size: 0.95rem;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 1.02rem;
+  justify-items: center;
+  text-align: center;
+}
+
+body.user-body .user-resolution-card .mechanic-resolution-table-head > span {
+  color: #ffffff;
+  font-weight: 800;
 }
 
 body.user-body .user-resolution-card .mechanic-resolution-table-row {
@@ -2460,10 +2477,7 @@ body.user-body #userAccountView .user-account-layout {
 }
 
 body.user-body #userAccountView .user-settings-panel-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
+  display: none;
 }
 
 body.user-body #userAccountView .user-settings-panel {
@@ -4042,23 +4056,23 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
   }
 
   #userPage .user-dashboard-hero .settings-header {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 8px;
   }
 
   #userPage .user-dashboard-hero .settings-header .settings-header-aside {
-    justify-content: flex-end;
-    text-align: right;
-    width: auto;
+    justify-content: flex-start;
+    text-align: left;
+    width: 100%;
     min-width: 0;
-    max-width: calc(100% - 116px);
+    max-width: none;
   }
 
   #userPage .user-dashboard-hero-copy {
-    width: auto;
-    justify-content: flex-end;
+    width: 100%;
+    justify-content: flex-start;
     gap: 10px;
   }
 
@@ -4073,7 +4087,7 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
   #userPage .user-dashboard-hero .settings-header .settings-header-aside h2,
   #userPage .user-dashboard-hero #userDashboardHeroName,
   #userPage .user-dashboard-hero #userDashboardHeroRole {
-    white-space: nowrap;
+    white-space: normal;
   }
 
   #userPage .user-dashboard-hero .admin-profile-avatar {
@@ -4084,6 +4098,7 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
 
   #userPage .user-dashboard-hero .settings-header-copy {
     min-width: 0;
+    width: 100%;
   }
 
   #userPage .user-dashboard-layout {

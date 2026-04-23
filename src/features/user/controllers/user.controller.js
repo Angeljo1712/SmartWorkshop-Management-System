@@ -34,10 +34,11 @@ const changePasswordHandler = async (req, res) => {
 };
 
 const updateMeHandler = async (req, res) => {
-  const { name, lastname, full_name, phone, username, address } = req.body || {};
+  const { name, middle_name, lastname, full_name, phone, username, address } = req.body || {};
   const currentUser = await userService.getUserById(req.user.userId);
   const user = await userService.updateUserProfile(req.user.userId, {
     name,
+    middle_name,
     lastname,
     full_name,
     phone,
@@ -55,7 +56,7 @@ const updateMeHandler = async (req, res) => {
     if (address !== undefined) {
       changes.push("Address");
     }
-    if (name !== undefined || lastname !== undefined || full_name !== undefined) {
+    if (name !== undefined || middle_name !== undefined || lastname !== undefined || full_name !== undefined) {
       changes.push("Full name");
     }
     if (changes.length) {

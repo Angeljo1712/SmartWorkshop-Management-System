@@ -47,11 +47,37 @@ const getUserRoles = async (userId, fallbackRole) => {
   return [];
 };
 
+let ensureUserProfileMiddleNameColumnPromise = null;
+
+const ensureUserProfileMiddleNameColumn = async () => {
+  if (!ensureUserProfileMiddleNameColumnPromise) {
+    ensureUserProfileMiddleNameColumnPromise = (async () => {
+      const [rows] = await pool.query(
+        `SELECT COLUMN_NAME
+         FROM information_schema.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = 'user_profiles'
+           AND COLUMN_NAME = 'middle_name'`
+      );
+
+      if (!rows.length) {
+        await pool.query("ALTER TABLE user_profiles ADD COLUMN middle_name VARCHAR(120) NULL AFTER name");
+      }
+    })().catch((error) => {
+      ensureUserProfileMiddleNameColumnPromise = null;
+      throw error;
+    });
+  }
+
+  return ensureUserProfileMiddleNameColumnPromise;
+};
+
 const getAuthUserById = async (userId) => {
   await ensureTwoFactorTables();
+  await ensureUserProfileMiddleNameColumn();
   const [rows] = await pool.query(
     `SELECT u.id, BIN_TO_UUID(u.uuid_public) AS uuid_public, u.email, u.username, u.phone, u.password_hash, u.role, u.status, u.last_login_at,
-            p.name, p.lastname, p.avatar_url,
+            p.name, p.middle_name, p.lastname, p.avatar_url,
             mp.application_status, mp.account_status, mp.info_request_note, mp.info_requested_at,
             COALESCE(MAX(uss.two_factor_email_enabled), 0) AS two_factor_email_enabled
      FROM users u
@@ -73,6 +99,7 @@ const getAuthUserById = async (userId) => {
       id: user.id,
       uuid_public: user.uuid_public,
       name: user.name,
+      middle_name: user.middle_name,
       lastname: user.lastname,
       email: user.email,
       username: user.username,
@@ -109,14 +136,16 @@ const sortRoles = (roles) => {
 
 const splitFullName = (value) => {
   const parts = String(value || "").trim().split(/\s+/).filter(Boolean);
-  if (!parts.length) return { name: "", lastname: "" };
+  if (!parts.length) return { name: "", middle_name: "", lastname: "" };
   const name = parts.shift();
-  const lastname = parts.join(" ");
-  return { name, lastname: lastname || "-" };
+  const lastname = parts.pop() || "";
+  const middle_name = parts.join(" ");
+  return { name, middle_name, lastname: lastname || "-" };
 };
 
-const register = async ({ full_name, name, lastname, email, password, role }) => {
+const register = async ({ full_name, name, middle_name, lastname, email, password, role }) => {
   const resolvedName = name || splitFullName(full_name).name;
+  const resolvedMiddleName = middle_name || splitFullName(full_name).middle_name || "";
   const resolvedLastname = lastname || splitFullName(full_name).lastname;
   if (!resolvedName || !resolvedLastname || !email || !password) {
     throw new AppError("VALIDATION_ERROR", "name, lastname, email, password are required", 400);
@@ -133,6 +162,7 @@ const register = async ({ full_name, name, lastname, email, password, role }) =>
     throw new AppError("EMAIL_IN_USE", "Email already registered", 409);
   }
 
+  await ensureUserProfileMiddleNameColumn();
   const passwordHash = await bcrypt.hash(password, 10);
   const status = normalizedRole === "mechanic" ? "pending" : "active";
   const username = String(email || "").trim().toLowerCase();
@@ -145,8 +175,8 @@ const register = async ({ full_name, name, lastname, email, password, role }) =>
     normalizedRole
   ]);
   await pool.query(
-    "INSERT INTO user_profiles (user_id, name, lastname) VALUES (?, ?, ?)",
-    [result.insertId, resolvedName, resolvedLastname]
+    "INSERT INTO user_profiles (user_id, name, middle_name, lastname) VALUES (?, ?, ?, ?)",
+    [result.insertId, resolvedName, resolvedMiddleName || null, resolvedLastname]
   );
 
   const roleLabel = roleToLabel(normalizedRole);
@@ -154,6 +184,7 @@ const register = async ({ full_name, name, lastname, email, password, role }) =>
   const user = {
     id: result.insertId,
     name: resolvedName,
+    middle_name: resolvedMiddleName || null,
     lastname: resolvedLastname,
     email,
     username,

@@ -250,6 +250,9 @@ const updateUserHandler = async (req, res) => {
     if (req.body?.full_name !== undefined && String(req.body.full_name || "").trim() !== String(previous.full_name || "").trim()) {
       changes.push("Full name");
     }
+    if (req.body?.middle_name !== undefined && String(req.body.middle_name || "").trim() !== String(previous.middle_name || "").trim()) {
+      if (!changes.includes("Full name")) changes.push("Full name");
+    }
     if (req.body?.phone !== undefined && String(req.body.phone || "").trim() !== String(previous.phone || "").trim()) {
       changes.push("Phone");
     }

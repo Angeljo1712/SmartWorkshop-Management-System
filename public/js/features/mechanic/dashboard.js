@@ -583,7 +583,7 @@ if (mechanicDashboard) {
     try {
       const user = JSON.parse(profile);
       currentMechanicUser = user;
-      const name = [user.name, user.lastname].filter(Boolean).join(" ") || user.email || "Mechanic";
+      const name = [user.name, user.middle_name, user.lastname].filter(Boolean).join(" ") || user.email || "Mechanic";
       const initials = name
         .split(/\s+/)
         .slice(0, 2)
@@ -996,9 +996,17 @@ if (mechanicDashboard) {
     }
     if (config.isNameField) {
       if (mechanicSettingsEditFirstName) mechanicSettingsEditFirstName.value = profileData?.name || "";
+      const storedMiddleName = String(profileData?.middle_name || "").trim();
+      if (mechanicSettingsEditMiddleName) {
+        if (storedMiddleName) {
+          mechanicSettingsEditMiddleName.value = storedMiddleName;
+        } else {
+          const lastNameParts = String(profileData?.lastname || "").trim().split(/\s+/).filter(Boolean);
+          mechanicSettingsEditMiddleName.value = lastNameParts.length > 1 ? lastNameParts.slice(0, -1).join(" ") : "";
+        }
+      }
       const lastNameParts = String(profileData?.lastname || "").trim().split(/\s+/).filter(Boolean);
       if (mechanicSettingsEditLastName) mechanicSettingsEditLastName.value = lastNameParts.pop() || "";
-      if (mechanicSettingsEditMiddleName) mechanicSettingsEditMiddleName.value = lastNameParts.join(" ");
     } else if (config.isAddressField) {
       const addressDetails = profileData?.address_details || {};
       if (mechanicSettingsEditAddressLine1) mechanicSettingsEditAddressLine1.value = addressDetails.line1 || "";
@@ -2523,11 +2531,12 @@ if (mechanicDashboard) {
       const payload = await response.json();
       if (!response.ok) throw payload;
       setStoredAuthValue("userProfile", JSON.stringify(payload));
-      setAvatar(mechanicDashboardHeroAvatar, getInitials([payload?.name, payload?.lastname].filter(Boolean).join(" ") || payload?.email || "Mechanic"), payload?.avatar_url);
-      setAvatar(mechanicAccountAvatar, getInitials([payload?.name, payload?.lastname].filter(Boolean).join(" ") || payload?.email || "Mechanic"), payload?.avatar_url);
-      setAvatar(mechanicAccountAvatarSecondary, getInitials([payload?.name, payload?.lastname].filter(Boolean).join(" ") || payload?.email || "Mechanic"), payload?.avatar_url);
-      setAvatar(mechanicSettingsAvatarSettings, getInitials([payload?.name, payload?.lastname].filter(Boolean).join(" ") || payload?.email || "Mechanic"), payload?.avatar_url);
-      setAvatar(mechanicProfileAvatar, getInitials([payload?.name, payload?.lastname].filter(Boolean).join(" ") || payload?.email || "Mechanic"), payload?.avatar_url);
+      const displayName = [payload?.name, payload?.middle_name, payload?.lastname].filter(Boolean).join(" ") || payload?.email || "Mechanic";
+      setAvatar(mechanicDashboardHeroAvatar, getInitials(displayName), payload?.avatar_url);
+      setAvatar(mechanicAccountAvatar, getInitials(displayName), payload?.avatar_url);
+      setAvatar(mechanicAccountAvatarSecondary, getInitials(displayName), payload?.avatar_url);
+      setAvatar(mechanicSettingsAvatarSettings, getInitials(displayName), payload?.avatar_url);
+      setAvatar(mechanicProfileAvatar, getInitials(displayName), payload?.avatar_url);
     } catch (err) {
       window.alert(err?.error?.message || err?.message || "Unable to upload this image.");
     } finally {
@@ -2565,7 +2574,8 @@ if (mechanicDashboard) {
           method: "PATCH",
           body: JSON.stringify({
             name: firstName,
-            lastname: [middleName, lastName].filter(Boolean).join(" ")
+            middle_name: middleName,
+            lastname: lastName
           })
         });
         setStoredAuthValue("userProfile", JSON.stringify(payload));

@@ -58,6 +58,28 @@ const getMemberships = async (userId) => {
   return rows.map((row) => row.name);
 };
 
+let ensureUserProfileMiddleNameColumnPromise = null;
+const ensureUserProfileMiddleNameColumn = async () => {
+  if (!ensureUserProfileMiddleNameColumnPromise) {
+    ensureUserProfileMiddleNameColumnPromise = (async () => {
+      const [rows] = await pool.query(
+        `SELECT COLUMN_NAME
+         FROM information_schema.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = 'user_profiles'
+           AND COLUMN_NAME = 'middle_name'`
+      );
+      if (!rows.length) {
+        await pool.query("ALTER TABLE user_profiles ADD COLUMN middle_name VARCHAR(120) NULL AFTER name");
+      }
+    })().catch((error) => {
+      ensureUserProfileMiddleNameColumnPromise = null;
+      throw error;
+    });
+  }
+  return ensureUserProfileMiddleNameColumnPromise;
+};
+
 const ensureMechanicAccreditationsTable = async () => {
   await pool.query(
     `CREATE TABLE IF NOT EXISTS mechanic_accreditations (
@@ -96,14 +118,15 @@ const ensureUserByEmail = async ({ email, firstName, lastName, phone }) => {
 
   const passwordHash = await bcrypt.hash(crypto.randomBytes(18).toString("hex"), 10);
   const username = String(normalizedEmail || "").trim().toLowerCase();
+  await ensureUserProfileMiddleNameColumn();
   const [result] = await pool.query(
     "INSERT INTO users (uuid_public, email, username, password_hash, role, status, phone) VALUES (UUID_TO_BIN(UUID()), ?, ?, ?, ?, ?, ?)",
     [normalizedEmail, username, passwordHash, "user", "active", phone || null]
   );
   const userId = result.insertId;
   await pool.query(
-    "INSERT INTO user_profiles (user_id, name, lastname) VALUES (?, ?, ?)",
-    [userId, firstName || "-", lastName || "-"]
+    "INSERT INTO user_profiles (user_id, name, middle_name, lastname) VALUES (?, ?, ?, ?)",
+    [userId, firstName || "-", null, lastName || "-"]
   );
   await pool.query("INSERT INTO user_roles (user_id, role) VALUES (?, ?)", [userId, "user"]);
   return userId;
@@ -540,7 +563,7 @@ const completeApplication = async ({ email }) => {
   }
 
   const [rows] = await pool.query(
-    `SELECT u.id, u.email, p.name, p.lastname
+    `SELECT u.id, u.email, p.name, p.middle_name, p.lastname
      FROM users u
      LEFT JOIN user_profiles p ON p.user_id = u.id
      WHERE u.email = ?`,
@@ -559,7 +582,7 @@ const completeApplication = async ({ email }) => {
   await ensureMechanicProfileOnboardingColumns();
   await ensureMechanicInfoRequestColumns();
 
-  const displayName = [user.name, user.lastname].filter(Boolean).join(" ") || user.email;
+  const displayName = [user.name, user.middle_name, user.lastname].filter(Boolean).join(" ") || user.email;
   const applicationStatus = (await hasMechanicUploadedDocuments(user.id))
     ? "documents_uploaded"
     : "password_created";
@@ -779,9 +802,10 @@ const confirmPasswordSetupByEmail = async ({ email, challengeToken, code }) => {
 
 const getProfile = async (userId) => {
   await ensureMechanicInfoRequestColumns();
+  await ensureUserProfileMiddleNameColumn();
   const [rows] = await pool.query(
     `SELECT u.id, u.email, u.created_at,
-            p.name, p.lastname, p.avatar_url,
+            p.name, p.middle_name, p.lastname, p.avatar_url,
             mp.display_name, mp.about, mp.jobs_done, mp.rating_avg, mp.is_mobile, mp.vat_id, mp.vat_registered,
             mp.years_experience, mp.work_history,
             mp.application_status, mp.account_status, mp.info_request_note, mp.info_requested_at
@@ -798,7 +822,7 @@ const getProfile = async (userId) => {
   const premisesAddress = await getAddressByLabel(userId, "Premises");
   const qualifications = await getQualifications(userId);
   const memberships = await getMemberships(userId);
-  const name = user.display_name || [user.name, user.lastname].filter(Boolean).join(" ") || user.email;
+  const name = user.display_name || [user.name, user.middle_name, user.lastname].filter(Boolean).join(" ") || user.email;
   const location = contactAddress?.city || "Surrey";
 
   return {

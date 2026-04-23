@@ -97,6 +97,28 @@ const ensurePaymentAdminNotesTable = async () => {
   paymentAdminNotesTableReady = true;
 };
 
+let ensureUserProfileMiddleNameColumnPromise = null;
+const ensureUserProfileMiddleNameColumn = async () => {
+  if (!ensureUserProfileMiddleNameColumnPromise) {
+    ensureUserProfileMiddleNameColumnPromise = (async () => {
+      const [rows] = await pool.query(
+        `SELECT COLUMN_NAME
+         FROM information_schema.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = 'user_profiles'
+           AND COLUMN_NAME = 'middle_name'`
+      );
+      if (!rows.length) {
+        await pool.query("ALTER TABLE user_profiles ADD COLUMN middle_name VARCHAR(120) NULL AFTER name");
+      }
+    })().catch((error) => {
+      ensureUserProfileMiddleNameColumnPromise = null;
+      throw error;
+    });
+  }
+  return ensureUserProfileMiddleNameColumnPromise;
+};
+
 let resolutionCaseStatusEnumReady = false;
 const ensureResolutionCaseInProgressStatus = async () => {
   if (resolutionCaseStatusEnumReady) return;
@@ -126,9 +148,10 @@ const roleLabel = (role) => {
 };
 
 const listUsers = async () => {
+  await ensureUserProfileMiddleNameColumn();
   const [rows] = await pool.query(
     `SELECT u.id, u.email, u.username, u.phone, u.created_at, u.role, u.status,
-            p.name, p.lastname, p.avatar_url,
+            p.name, p.middle_name, p.lastname, p.avatar_url,
             a.line1,
             a.line2,
             a.city,
@@ -163,8 +186,9 @@ const listUsers = async () => {
     return {
       user_id: row.id,
       name: row.name || "",
+      middle_name: row.middle_name || "",
       lastname: row.lastname || "",
-      full_name: [row.name, row.lastname].filter(Boolean).join(" ") || "-",
+      full_name: [row.name, row.middle_name, row.lastname].filter(Boolean).join(" ") || "-",
       email: row.email,
       username: row.username,
       status: row.status || "active",
@@ -186,6 +210,7 @@ const listUsers = async () => {
 
 const listApplications = async () => {
   await ensureMechanicProfileWorkflowColumns();
+  await ensureUserProfileMiddleNameColumn();
   const [rows] = await pool.query(
     `SELECT u.id,
             u.email,
@@ -193,6 +218,7 @@ const listApplications = async () => {
             u.status AS user_status,
             u.created_at,
             p.name,
+            p.middle_name,
             p.lastname,
             mp.application_type,
             mp.business_type,
@@ -213,7 +239,7 @@ const listApplications = async () => {
 
   return rows.map((row) => ({
     user_id: row.id,
-    full_name: [row.name, row.lastname].filter(Boolean).join(" ") || row.email,
+    full_name: [row.name, row.middle_name, row.lastname].filter(Boolean).join(" ") || row.email,
     email: row.email,
     phone: row.phone || "",
     created_at: row.created_at,
@@ -332,8 +358,8 @@ const listBookings = async () => {
     status: row.status || "requested",
     total: Number(row.total_eur || 0),
     created_at: row.created_at,
-    customer_name: [row.customer_name, row.customer_lastname].filter(Boolean).join(" ") || row.customer_email || "-",
-    mechanic_name: [row.mechanic_name, row.mechanic_lastname].filter(Boolean).join(" ") || row.mechanic_email || "Unassigned",
+    customer_name: [row.customer_name, row.customer_middle_name, row.customer_lastname].filter(Boolean).join(" ") || row.customer_email || "-",
+    mechanic_name: [row.mechanic_name, row.mechanic_middle_name, row.mechanic_lastname].filter(Boolean).join(" ") || row.mechanic_email || "Unassigned",
     vehicle: [row.make, row.model, row.license_plate].filter(Boolean).join(" · ") || "-",
     location: [row.city, row.postal_code].filter(Boolean).join(" ") || "-",
     services: row.services || "-"
@@ -373,9 +399,11 @@ const listResolutionCases = async () => {
             rc.updated_at,
             customer.email AS customer_email,
             customer_profile.name AS customer_name,
+            customer_profile.middle_name AS customer_middle_name,
             customer_profile.lastname AS customer_lastname,
             mechanic.email AS mechanic_email,
             mechanic_profile.name AS mechanic_name,
+            mechanic_profile.middle_name AS mechanic_middle_name,
             mechanic_profile.lastname AS mechanic_lastname
      FROM resolution_cases rc
      INNER JOIN users customer ON customer.id = rc.customer_id
@@ -393,8 +421,8 @@ const listResolutionCases = async () => {
     reference: row.reference || `${String(row.booking_id).padStart(8, "0")}/1`,
     status: row.status || "open",
     updated_at: row.updated_at,
-    customer_name: [row.customer_name, row.customer_lastname].filter(Boolean).join(" ") || row.customer_email || "-",
-    mechanic_name: [row.mechanic_name, row.mechanic_lastname].filter(Boolean).join(" ") || row.mechanic_email || "-"
+    customer_name: [row.customer_name, row.customer_middle_name, row.customer_lastname].filter(Boolean).join(" ") || row.customer_email || "-",
+    mechanic_name: [row.mechanic_name, row.mechanic_middle_name, row.mechanic_lastname].filter(Boolean).join(" ") || row.mechanic_email || "-"
   }));
 };
 
@@ -431,9 +459,11 @@ const getResolutionCaseDetail = async (caseId) => {
             a.line1, a.line2, a.city, a.postal_code, a.country,
             customer.email AS customer_email,
             customer_profile.name AS customer_name,
+            customer_profile.middle_name AS customer_middle_name,
             customer_profile.lastname AS customer_lastname,
             mechanic.email AS mechanic_email,
             mechanic_profile.name AS mechanic_name,
+            mechanic_profile.middle_name AS mechanic_middle_name,
             mechanic_profile.lastname AS mechanic_lastname
      FROM resolution_cases rc
      INNER JOIN bookings b ON b.id = rc.booking_id
@@ -461,7 +491,7 @@ const getResolutionCaseDetail = async (caseId) => {
   );
   const [messageRows] = await pool.query(
     `SELECT rcm.id, rcm.body, rcm.created_at, rcm.sender_id,
-            up.name, up.lastname, up.avatar_url, u.email
+            up.name, up.middle_name, up.lastname, up.avatar_url, u.email
      FROM resolution_case_messages rcm
      INNER JOIN users u ON u.id = rcm.sender_id
      LEFT JOIN user_profiles up ON up.user_id = rcm.sender_id
@@ -489,12 +519,12 @@ const getResolutionCaseDetail = async (caseId) => {
     },
     customer: {
       id: customerId,
-      name: [row.customer_name, row.customer_lastname].filter(Boolean).join(" ") || row.customer_email || "Customer",
+      name: [row.customer_name, row.customer_middle_name, row.customer_lastname].filter(Boolean).join(" ") || row.customer_email || "Customer",
       email: row.customer_email || ""
     },
     mechanic: {
       id: mechanicId,
-      name: [row.mechanic_name, row.mechanic_lastname].filter(Boolean).join(" ") || row.mechanic_email || "Mechanic",
+      name: [row.mechanic_name, row.mechanic_middle_name, row.mechanic_lastname].filter(Boolean).join(" ") || row.mechanic_email || "Mechanic",
       email: row.mechanic_email || ""
     },
     vehicle: {
@@ -520,7 +550,7 @@ const getResolutionCaseDetail = async (caseId) => {
       body: message.body,
       created_at: message.created_at,
       sender_id: message.sender_id,
-      sender_name: [message.name, message.lastname].filter(Boolean).join(" ") || message.email || "User",
+      sender_name: [message.name, message.middle_name, message.lastname].filter(Boolean).join(" ") || message.email || "User",
       avatar_url: message.avatar_url || "",
       sender_role:
         Number(message.sender_id) === customerId
@@ -705,6 +735,7 @@ const listPayments = async () => {
             p.created_at,
             customer.email AS customer_email,
             customer_profile.name AS customer_name,
+            customer_profile.middle_name AS customer_middle_name,
             customer_profile.lastname AS customer_lastname
      FROM payments p
      INNER JOIN bookings b ON b.id = p.booking_id
@@ -721,6 +752,7 @@ const listPayments = async () => {
             b.total_eur,
             customer.email AS customer_email,
             customer_profile.name AS customer_name,
+            customer_profile.middle_name AS customer_middle_name,
             customer_profile.lastname AS customer_lastname
      FROM invoices inv
      INNER JOIN bookings b ON b.id = inv.booking_id
@@ -739,6 +771,7 @@ const listPayments = async () => {
             po.created_at,
             mechanic.email AS mechanic_email,
             mechanic_profile.name AS mechanic_name,
+            mechanic_profile.middle_name AS mechanic_middle_name,
             mechanic_profile.lastname AS mechanic_lastname
      FROM payouts po
      INNER JOIN wallets w ON w.id = po.wallet_id
@@ -752,7 +785,7 @@ const listPayments = async () => {
     kind: "customer_payment",
     reference: `PAY-${row.id}`,
     booking_reference: String(row.booking_id).padStart(8, "0"),
-    party: [row.customer_name, row.customer_lastname].filter(Boolean).join(" ") || row.customer_email || "-",
+    party: [row.customer_name, row.customer_middle_name, row.customer_lastname].filter(Boolean).join(" ") || row.customer_email || "-",
     provider: row.provider || "-",
     provider_brand: normaliseCardBrand(row.payment_method || row.provider),
     payment_type: normalisePaymentType(row.payment_method),
@@ -767,7 +800,7 @@ const listPayments = async () => {
     kind: "invoiced_payment",
     reference: row.invoice_number || `INV-${String(row.booking_id || "").padStart(8, "0")}`,
     booking_reference: String(row.booking_id).padStart(8, "0"),
-    party: [row.customer_name, row.customer_lastname].filter(Boolean).join(" ") || row.customer_email || "-",
+    party: [row.customer_name, row.customer_middle_name, row.customer_lastname].filter(Boolean).join(" ") || row.customer_email || "-",
     provider: "Invoice",
     provider_brand: null,
     payment_type: "credit_card",
@@ -782,7 +815,7 @@ const listPayments = async () => {
     kind: "mechanic_payout",
     reference: `PAYOUT-${row.id}`,
     booking_reference: "-",
-    party: [row.mechanic_name, row.mechanic_lastname].filter(Boolean).join(" ") || row.mechanic_email || "-",
+    party: [row.mechanic_name, row.mechanic_middle_name, row.mechanic_lastname].filter(Boolean).join(" ") || row.mechanic_email || "-",
     provider: row.provider_ref || "-",
     provider_brand: null,
     payment_type: "-",
@@ -852,7 +885,7 @@ const getPaymentDetail = async ({ kind, recordId }) => {
 
   const [notesRows] = await pool.query(
     `SELECT pan.id, pan.note, pan.created_at, pan.admin_id,
-            up.name, up.lastname, u.email
+            up.name, up.middle_name, up.lastname, u.email
      FROM payment_admin_notes pan
      INNER JOIN users u ON u.id = pan.admin_id
      LEFT JOIN user_profiles up ON up.user_id = pan.admin_id
@@ -868,7 +901,7 @@ const getPaymentDetail = async ({ kind, recordId }) => {
       note: row.note || "",
       created_at: row.created_at,
       admin_id: Number(row.admin_id),
-      admin_name: [row.name, row.lastname].filter(Boolean).join(" ") || row.email || "Admin"
+      admin_name: [row.name, row.middle_name, row.lastname].filter(Boolean).join(" ") || row.email || "Admin"
     }))
   };
 };
@@ -1139,6 +1172,7 @@ const setUserStatus = async ({ userId, status }) => {
 const updateUser = async ({
   userId,
   full_name,
+  middle_name,
   phone,
   username,
   address,
@@ -1151,7 +1185,7 @@ const updateUser = async ({
 
     const [[existing]] = await connection.query(
       `SELECT u.id, u.username, u.phone, u.status, u.role,
-              p.name, p.lastname,
+              p.name, p.middle_name, p.lastname,
               GROUP_CONCAT(DISTINCT ur.role) AS roles
        FROM users u
        LEFT JOIN user_profiles p ON p.user_id = u.id
@@ -1168,6 +1202,7 @@ const updateUser = async ({
     const trimmedName = String(full_name || "").trim();
     const [firstName = "", ...lastNameParts] = trimmedName.split(/\s+/).filter(Boolean);
     const lastName = lastNameParts.join(" ");
+    const resolvedMiddleName = String(middle_name || "").trim();
     const nextPhone = String(phone || "").trim() || null;
     const nextUsername = String(username || "").trim() || null;
     const nextAddress = String(address || "").trim();
@@ -1201,10 +1236,10 @@ const updateUser = async ({
     ]);
 
     await connection.query(
-      `INSERT INTO user_profiles (user_id, name, lastname)
-       VALUES (?, ?, ?)
-       ON DUPLICATE KEY UPDATE name = VALUES(name), lastname = VALUES(lastname)`,
-      [userId, firstName || trimmedName, lastName || null]
+      `INSERT INTO user_profiles (user_id, name, middle_name, lastname)
+       VALUES (?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE name = VALUES(name), middle_name = VALUES(middle_name), lastname = VALUES(lastname)`,
+      [userId, firstName || trimmedName, resolvedMiddleName || null, lastName || null]
     );
 
     await connection.query("DELETE FROM user_roles WHERE user_id = ?", [userId]);
