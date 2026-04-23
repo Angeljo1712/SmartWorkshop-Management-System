@@ -3013,7 +3013,7 @@ body.admin-body .admin-edit-menu button:disabled {
 
 #adminPage .admin-account-section {
   display: grid;
-  gap: 10px;
+  gap: 20px;
 }
 
 #adminPage .admin-account-section h4,
@@ -3023,7 +3023,7 @@ body.admin-body .admin-edit-menu button:disabled {
 }
 
 #adminPage .admin-account-section h4 {
-  font-size: 1.2rem;
+  font-size: 1.7rem;
   font-weight: 700;
   text-transform: none;
   letter-spacing: normal;
@@ -3031,9 +3031,9 @@ body.admin-body .admin-edit-menu button:disabled {
 }
 
 #adminPage .admin-account-section p {
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 500;
-  line-height: 1.4;
+  line-height: 1.5;
   opacity: 0.92;
   display: grid;
   grid-template-columns: 110px minmax(0, 1fr);
@@ -3047,6 +3047,7 @@ body.admin-body .admin-edit-menu button:disabled {
 #adminPage .account-field-value {
   display: inline-block;
   vertical-align: top;
+  font-size: 1.2rem;
 }
 
 #adminPage .account-field-label {
@@ -3223,7 +3224,7 @@ body.admin-body #adminSettingsView .settings-row p {
 body.admin-body #adminSettingsView .settings-meta h4,
 body.admin-body #adminSettingsView .settings-profile h4 {
   margin: 0 0 10px;
-  font-size: 1.4rem;
+  font-size: 1.7rem;
   font-weight: 700;
   text-transform: none;
   letter-spacing: normal;
@@ -3233,6 +3234,7 @@ body.admin-body #adminSettingsView .settings-meta p,
 body.admin-body #adminSettingsView .settings-profile p,
 body.admin-body #adminSettingsView .settings-contact-copy p {
   margin: 0;
+  font-size: 1.4rem;
 }
 
 body.admin-body #adminPage .settings-profile > div {
@@ -3254,7 +3256,7 @@ body.admin-body #adminPage .admin-name-row {
 }
 
 body.admin-body #adminPage .admin-name-row strong {
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 700;
   text-transform: none;
   letter-spacing: normal;
@@ -3263,7 +3265,7 @@ body.admin-body #adminPage .admin-name-row strong {
 
 body.admin-body #adminPage .admin-name-row span {
   color: #ffffff;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 500;
   white-space: nowrap;
   overflow: visible;
@@ -3277,7 +3279,7 @@ body.admin-body #adminPage #adminSettingsEmail,
 body.admin-body #adminPage #adminSettingsAddress {
   display: flex;
   align-items: baseline;
-  gap: 12px;
+  gap: 14px;
   flex-wrap: nowrap;
   min-width: 0;
 }
@@ -3290,7 +3292,7 @@ body.admin-body #adminSettingsView .settings-contact-list {
 body.admin-body #adminSettingsView .settings-contact-heading {
   margin: 0 0 8px;
   color: #ffffff;
-  font-size: 1.4rem;
+  font-size: 1.7rem;
   font-weight: 700;
 }
 
@@ -3317,7 +3319,7 @@ body.admin-body #adminSettingsView .settings-contact-label {
   padding-right: 12px;
   margin-right: 12px;
   border-right: 2px solid rgba(255, 255, 255, 0.72);
-  font-size: 1rem;
+  font-size: 1.2rem;
   line-height: 1.2;
   white-space: nowrap;
 }
@@ -3329,7 +3331,7 @@ body.admin-body #adminSettingsView .settings-contact-label::after {
 body.admin-body #adminSettingsView .settings-contact-copy p {
   margin: 0;
   color: #ffffff;
-  font-size: 1.05rem;
+  font-size: 1.2rem;
   line-height: 1.35;
   min-width: 0;
   white-space: nowrap;
