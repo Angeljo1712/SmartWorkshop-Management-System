@@ -86,8 +86,10 @@ block content
             button.admin-signout#userLogoutBtn(type="button") Sign out
         button.user-rail-toggle#userRailToggle(type="button" aria-label="Collapse sidebar" aria-expanded="true")
           svg(viewBox="0 0 24 24" aria-hidden="true")
-            rect(x="4" y="4" width="6" height="16" rx="1.5")
-            rect(x="14" y="4" width="6" height="16" rx="1.5")
+            rect(x="4" y="4" width="6" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6")
+            rect(x="12" y="4" width="8" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6")
+            path(d="M11 12h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round")
+            path(d="M13.5 10.5 16 12l-2.5 1.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round")
         section.mainSection
           .user-dashboard-hero
             .settings-header
