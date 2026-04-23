@@ -576,6 +576,30 @@ if (mechanicDashboard) {
     return tokens.join(" ").trim();
   };
 
+  const renderMechanicFullNameRows = (el, user) => {
+    if (!el) return;
+    const rawName = String(user?.name || user?.full_name || user?.display_name || "").trim();
+    const rawNameParts = rawName.split(/\s+/).filter(Boolean);
+    const firstName = rawNameParts[0] || "";
+    const middleName = String(user?.middle_name || "").trim() || (rawNameParts.length > 2 ? rawNameParts.slice(1, -1).join(" ") : "");
+    const lastName = String(user?.lastname || "").trim() || (rawNameParts.length > 1 ? rawNameParts.slice(-1).join(" ") : "");
+    const rows = [
+      ["First name", firstName],
+      ["Middle name", middleName],
+      ["Last name", lastName]
+    ];
+    el.innerHTML = rows
+      .map(
+        ([label, value]) => `
+          <div class="mechanic-full-name-row">
+            <span class="mechanic-full-name-label">${escapeHtml(label)}:</span>
+            <span class="mechanic-full-name-value">${escapeHtml(value || "-")}</span>
+          </div>
+        `
+      )
+      .join("");
+  };
+
   const buildDisplayName = (user, fallback = "Mechanic") => {
     const joined = [user?.name, user?.middle_name, user?.lastname].filter(Boolean).join(" ").trim();
     return collapseRepeatedNameParts(user?.display_name || user?.full_name || joined || user?.email || fallback);
@@ -663,7 +687,6 @@ if (mechanicDashboard) {
       if (mechanicDashboardHeroName) mechanicDashboardHeroName.textContent = heroDisplayName;
       if (mechanicDashboardHeroRole) mechanicDashboardHeroRole.textContent = activeRole;
       if (nameEl) nameEl.textContent = name;
-      if (mechanicAccountName) mechanicAccountName.textContent = name;
       if (idEl) {
         const base = (user.uuid_public || user.id || "0000").toString().slice(-4).toUpperCase();
         idEl.textContent = `AG${base}`;
@@ -700,7 +723,8 @@ if (mechanicDashboard) {
       renderMechanicInfoRequestNotes(user);
       if (mechanicSettingsWelcomeName) mechanicSettingsWelcomeName.textContent = heroDisplayName;
       setAvatar(mechanicSettingsAvatarSettings, getInitials(name, activeRole), getMechanicFallbackAvatarUrl(user));
-      if (mechanicSettingsFullName) mechanicSettingsFullName.textContent = name;
+      renderMechanicFullNameRows(mechanicAccountName, user);
+      renderMechanicFullNameRows(mechanicSettingsFullName, user);
       if (mechanicSettingsPhone) mechanicSettingsPhone.textContent = user?.phone || "-";
       if (mechanicSettingsUsername) mechanicSettingsUsername.textContent = user?.username || "-";
       if (mechanicSettingsEmail) mechanicSettingsEmail.textContent = user?.email || "-";

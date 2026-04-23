@@ -18,6 +18,6 @@ button.secondary {
 }
 
 button.ghost {
-  background: transparent;
+  background: #5a6f90;
   border: 1px solid var(--border);
 }

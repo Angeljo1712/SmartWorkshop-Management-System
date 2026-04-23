@@ -1911,6 +1911,32 @@ body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-copy {
   gap: 10px;
 }
 
+body.mechanic-body #mechanicAccountView .mechanic-full-name-grid,
+body.mechanic-body #mechanicSettingsView .mechanic-full-name-grid {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+body.mechanic-body #mechanicAccountView .mechanic-full-name-row,
+body.mechanic-body #mechanicSettingsView .mechanic-full-name-row {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  column-gap: 14px;
+  align-items: baseline;
+  width: 100%;
+  min-width: 0;
+}
+
+body.mechanic-body #mechanicAccountView .mechanic-full-name-label,
+body.mechanic-body #mechanicAccountView .mechanic-full-name-value,
+body.mechanic-body #mechanicSettingsView .mechanic-full-name-label,
+body.mechanic-body #mechanicSettingsView .mechanic-full-name-value {
+  font-size: 1.05rem;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
 body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-list {
   display: grid;
   gap: 14px;

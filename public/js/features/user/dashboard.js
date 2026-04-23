@@ -81,6 +81,27 @@ if (userPage) {
     if (!el) return;
     el.innerHTML = `<span class="account-field-label">${escapeHtml(label)}</span><span class="account-field-value">${escapeHtml(value || "-")}</span>`;
   };
+  const renderUserFullNameRows = (el, user) => {
+    if (!el) return;
+    const firstName = String(user?.name || "").trim();
+    const middleName = String(user?.middle_name || "").trim();
+    const lastName = String(user?.lastname || "").trim();
+    const rows = [
+      ["First name", firstName],
+      ["Middle name", middleName],
+      ["Last name", lastName]
+    ];
+    el.innerHTML = rows
+      .map(
+        ([label, value]) => `
+          <div class="user-full-name-row">
+            <span class="account-field-label">${escapeHtml(label)}:</span>
+            <span class="account-field-value">${escapeHtml(value || "-")}</span>
+          </div>
+        `
+      )
+      .join("");
+  };
   const setUserAccountStatus = (el, rawStatus) => {
     if (!el) return;
     const normalized = String(rawStatus || "pending").trim().toLowerCase();
@@ -303,7 +324,6 @@ if (userPage) {
     if (userDashboardHeroName) userDashboardHeroName.textContent = heroDisplayName;
     if (userDashboardHeroRole) userDashboardHeroRole.textContent = activeRole;
     setAvatar(userSettingsAvatar, initials, user?.avatar_url);
-    userSettingsName.textContent = displayName;
     if (userSettingsEmail) userSettingsEmail.textContent = user?.email || "-";
     setUserLabeledText(userSettingsEmailDetail, "Email:", user?.email);
     if (userSettingsUsername) setUserLabeledText(userSettingsUsername, "Username:", user?.username);
@@ -313,7 +333,8 @@ if (userPage) {
     setUserLabeledText(userSettingsPhone, "Phone:", user?.phone);
     if (userSettingsAddress) setUserLabeledText(userSettingsAddress, "Address:", formatAddressText(user?.address));
     if (userSettingsAvatarSettings) setAvatar(userSettingsAvatarSettings, initials, user?.avatar_url);
-    if (userSettingsNameSettings) userSettingsNameSettings.textContent = displayName;
+    renderUserFullNameRows(userSettingsName, user);
+    renderUserFullNameRows(userSettingsNameSettings, user);
     if (userSettingsEmailDetailSettings)
       userSettingsEmailDetailSettings.textContent = `Email: ${user?.email || "-"}`;
     if (userSettingsRoleSettings) userSettingsRoleSettings.textContent = activeRole;

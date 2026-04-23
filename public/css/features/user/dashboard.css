@@ -2595,6 +2595,40 @@ body.user-body #userAccountView .account-section > div {
   gap: 10px;
 }
 
+body.user-body #userAccountView .user-full-name-grid,
+body.user-body #userSettingsView .user-full-name-grid {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+body.user-body #userAccountView .user-full-name-row,
+body.user-body #userSettingsView .user-full-name-row {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  column-gap: 14px;
+  align-items: baseline;
+  width: 100%;
+  min-width: 0;
+}
+
+body.user-body #userAccountView .user-full-name-row .account-field-label,
+body.user-body #userAccountView .user-full-name-row .account-field-value,
+body.user-body #userSettingsView .user-full-name-row .account-field-label,
+body.user-body #userSettingsView .user-full-name-row .account-field-value {
+  font-size: 1.05rem;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+body.user-body #userAccountView .user-full-name-row .account-field-label,
+body.user-body #userSettingsView .user-full-name-row .account-field-label {
+  width: auto;
+  margin-right: 0;
+  padding-right: 0;
+  border-right: 0;
+}
+
 body.user-body #userAccountView .settings-divider {
   height: 3px;
   background: #ffffff;
