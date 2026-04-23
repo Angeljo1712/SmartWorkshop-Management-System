@@ -331,7 +331,7 @@ block content
                         .mechanic-resolution-complaint-actions
                           button.primary#userResolutionComplaintSendBtn(type="button") Send
                         .mechanic-resolution-complaint-footer
-                          label.secondary#userResolutionComplaintAttachBtn(for="userResolutionComplaintAttachmentInput") Attach file(s)
+                          button.secondary#userResolutionComplaintAttachBtn(type="button") Attach file(s)
                         input#userResolutionComplaintAttachmentInput.is-hidden(type="file" multiple accept="image/*,application/pdf")
                         .mechanic-resolution-compose-preview#userResolutionComplaintAttachmentPreview
                   .user-resolution-card
@@ -358,10 +358,10 @@ block content
                           .mechanic-resolution-compose
                             textarea#userResolutionMessageInput(rows="5" placeholder="Add a new message here")
                             .mechanic-resolution-compose-actions
-                              button.primary#userResolutionSendBtn(type="button") Send message
                               button.mechanic-resolution-back#userResolutionCaseBackBtn(type="button") Back
+                              button.primary#userResolutionSendBtn(type="button") Send message
                             .mechanic-resolution-compose-attachments
-                              label.secondary#userResolutionCaseAttachBtn(for="userResolutionCaseAttachmentInput") Attach file(s)
+                              button.secondary#userResolutionCaseAttachBtn(type="button") Attach file(s)
                               input#userResolutionCaseAttachmentInput.is-hidden(type="file" multiple accept="image/*,application/pdf")
                               .mechanic-resolution-compose-preview#userResolutionCaseAttachmentPreview
                         aside.mechanic-resolution-sidebar

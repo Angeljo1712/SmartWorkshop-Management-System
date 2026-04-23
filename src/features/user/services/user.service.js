@@ -39,6 +39,36 @@ const formatAddressRow = (row) =>
 
 const formatBookingReference = (value) => String(Number(value) || 0).padStart(8, "0");
 
+const collapseRepeatedNameParts = (value) => {
+  const tokens = String(value || "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (!tokens.length) return "";
+
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (let size = Math.floor(tokens.length / 2); size >= 1; size -= 1) {
+      const tail = tokens.slice(-size).join(" ").toLowerCase();
+      const previous = tokens.slice(-size * 2, -size).join(" ").toLowerCase();
+      if (tail && tail === previous) {
+        tokens.splice(tokens.length - size * 2, size);
+        changed = true;
+        break;
+      }
+    }
+  }
+
+  return tokens.join(" ").trim();
+};
+
+const buildDisplayName = ({ name, middle_name, lastname, full_name, email }, fallback = "User") => {
+  const joined = [name, middle_name, lastname].filter(Boolean).join(" ").trim();
+  return collapseRepeatedNameParts(full_name || joined || email || fallback);
+};
+
 let ensureBookingCancellationFieldsPromise = null;
 let ensurePaymentMetadataFieldsPromise = null;
 let ensureMechanicAccreditationsTablePromise = null;
@@ -283,8 +313,11 @@ const getUserById = async (userId) => {
     : roles.includes("MECHANIC")
       ? "MECHANIC"
       : "CUSTOMER";
+  const displayName = buildDisplayName(user, "Customer");
   return {
     ...user,
+    full_name: displayName,
+    display_name: displayName,
     address: contactAddress,
     address_details: contactAddressRow
       ? {
@@ -420,6 +453,18 @@ const updateUserProfile = async (userId, { name, middle_name, lastname, full_nam
        ON DUPLICATE KEY UPDATE name = VALUES(name), middle_name = VALUES(middle_name), lastname = VALUES(lastname)`,
       [userId, resolved.name, resolved.middle_name, resolved.lastname]
     );
+
+    const [roleRows] = await pool.query("SELECT role FROM users WHERE id = ? LIMIT 1", [userId]);
+    const role = String(roleRows[0]?.role || "").trim().toLowerCase();
+    if (role === "mechanic") {
+      const displayName = [resolved.name, resolved.middle_name, resolved.lastname].filter(Boolean).join(" ");
+      await pool.query(
+        `INSERT INTO mechanic_profiles (user_id, display_name, legal_name)
+         VALUES (?, ?, ?)
+         ON DUPLICATE KEY UPDATE display_name = VALUES(display_name), legal_name = VALUES(legal_name)`,
+        [userId, displayName, displayName]
+      );
+    }
   } else if (!updates.length && address === undefined) {
     throw new AppError("VALIDATION_ERROR", "No profile fields provided", 400);
   }
@@ -1474,7 +1519,7 @@ const getMechanicProfile = async (userId) => {
   await ensureMechanicAccreditationsTable();
   const [rows] = await pool.query(
     `SELECT u.id, u.email, u.created_at,
-            p.name, p.lastname, p.avatar_url,
+            p.name, p.middle_name, p.lastname, p.avatar_url,
             mp.display_name, mp.about, mp.jobs_done, mp.rating_avg, mp.is_mobile, mp.vat_id, mp.vat_registered,
             mp.years_experience, mp.work_history, mp.travel_radius_miles,
             mp.application_status, mp.account_status, mp.info_request_note, mp.info_requested_at
@@ -1521,7 +1566,7 @@ const getMechanicProfile = async (userId) => {
     [userId]
   );
 
-  const name = user.display_name || [user.name, user.lastname].filter(Boolean).join(" ") || user.email;
+  const displayName = buildDisplayName(user, "Mechanic");
   const location = contactAddress?.city || "Surrey";
   const [serviceRows] = await pool.query(
     `SELECT service_type
@@ -1533,7 +1578,9 @@ const getMechanicProfile = async (userId) => {
 
   return {
     id: user.id,
-    name,
+    name: displayName,
+    display_name: displayName,
+    middle_name: user.middle_name || null,
     location,
     email: user.email,
     avatar_url: resolveMechanicAvatarUrl(user),
@@ -1682,11 +1729,30 @@ const updateMechanicServiceCoverage = async (userId, payload) => {
 };
 
 const saveAddressWithLabel = async (userId, label, payload) => {
-  const line1 = String(payload?.line1 || "").trim();
-  const line2 = String(payload?.line2 || "").trim();
-  const city = String(payload?.city || "").trim();
-  const postalCode = String(payload?.postal_code || "").trim();
-  const country = String(payload?.country || "GB").trim() || "GB";
+  const source = typeof payload === "string"
+    ? (() => {
+        const parts = String(payload || "")
+          .split(",")
+          .map((part) => String(part || "").trim())
+          .filter(Boolean);
+        if (parts.length >= 4) {
+          return {
+            line1: parts.slice(0, Math.max(1, parts.length - 3)).join(", "),
+            line2: parts[parts.length - 3] || "",
+            city: parts[parts.length - 2] || "",
+            postal_code: parts[parts.length - 1] || "",
+            country: "GB"
+          };
+        }
+        return { line1: payload };
+      })()
+    : payload || {};
+
+  const line1 = String(source?.line1 || "").trim();
+  const line2 = String(source?.line2 || "").trim();
+  const city = String(source?.city || "").trim();
+  const postalCode = String(source?.postal_code || "").trim();
+  const country = String(source?.country || "GB").trim() || "GB";
 
   if (!line1 || !city || !postalCode) {
     return;

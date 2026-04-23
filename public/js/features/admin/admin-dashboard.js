@@ -310,13 +310,65 @@ if (adminPage) {
     adminHeaderMobileMenuToggle?.setAttribute("aria-expanded", "false");
   };
 
+  const collapseRepeatedNameParts = (value) => {
+    const tokens = String(value || "")
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+
+    if (!tokens.length) return "";
+
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (let size = Math.floor(tokens.length / 2); size >= 1; size -= 1) {
+        const tail = tokens.slice(-size).join(" ").toLowerCase();
+        const previous = tokens.slice(-size * 2, -size).join(" ").toLowerCase();
+        if (tail && tail === previous) {
+          tokens.splice(tokens.length - size * 2, size);
+          changed = true;
+          break;
+        }
+      }
+    }
+
+    return tokens.join(" ").trim();
+  };
+
+  const buildDisplayName = (user, fallback = "Admin") => {
+    const joined = [user?.name, user?.middle_name, user?.lastname].filter(Boolean).join(" ").trim();
+    return collapseRepeatedNameParts(user?.display_name || user?.full_name || joined || user?.email || fallback);
+  };
+
+  const formatAddressText = (value) => {
+    if (value === null || value === undefined) return "";
+    if (typeof value === "string") return value.trim();
+    if (typeof value === "object") {
+      const parts = [
+        value.line1,
+        value.line2,
+        value.city,
+        value.postal_code,
+        value.country
+      ]
+        .map((part) => String(part || "").trim())
+        .filter(Boolean);
+      if (parts.length) return parts.join(", ");
+      if (value.address) return String(value.address).trim();
+      if (value.formatted_address) return String(value.formatted_address).trim();
+    }
+    return String(value).trim();
+  };
+
   const setAdminHeader = (user) => {
-    const joinedName = [user?.name, user?.middle_name, user?.lastname].filter(Boolean).join(" ").trim();
-    const displayName = user?.full_name || joinedName || user?.email || "Admin";
-    const heroDisplayName = joinedName || displayName;
+    const displayName = buildDisplayName(user, "Admin");
+    const heroFirstName = String(user?.name || displayName || "Admin").trim().split(/\s+/)[0];
+    const heroLastNameParts = String(user?.lastname || "").trim().split(/\s+/).filter(Boolean);
+    const heroLastName = heroLastNameParts.length ? heroLastNameParts[0] : "";
+    const heroDisplayName = [heroFirstName, heroLastName].filter(Boolean).join(" ").trim() || heroFirstName || displayName;
     const role = "ADMINISTRATOR";
     const initials = getInitials(displayName);
-    const addressText = user?.address
+    const addressText = formatAddressText(user?.address)
       || user?.full_address
       || user?.formatted_address
       || user?.address_text
@@ -360,7 +412,7 @@ if (adminPage) {
     if (adminProfileRole) adminProfileRole.textContent = role;
     setAdminAvatar(adminSettingsAvatar, initials, user?.avatar_url);
     if (adminSettingsName) adminSettingsName.textContent = displayName;
-    if (adminMobileMenuName) adminMobileMenuName.textContent = displayName.toUpperCase();
+    if (adminMobileMenuName) adminMobileMenuName.textContent = heroDisplayName.toUpperCase();
     if (adminSettingsEmail) setAdminLabeledText(adminSettingsEmail, "Email:", user?.email || "admin@smartworkshop.local");
     if (adminSettingsEmailDetail) {
       setAdminLabeledText(adminSettingsEmailDetail, "Email:", user?.email || "admin@smartworkshop.local");
@@ -369,9 +421,9 @@ if (adminPage) {
     if (adminSettingsPhone) setAdminLabeledText(adminSettingsPhone, "Phone:", user?.phone);
     if (adminSettingsUsername) setAdminLabeledText(adminSettingsUsername, "Username:", user?.username);
     if (adminSettingsAddress) setAdminLabeledText(adminSettingsAddress, "Address:", addressText);
-    if (adminSettingsWelcomeName) adminSettingsWelcomeName.textContent = displayName;
+    if (adminSettingsWelcomeName) adminSettingsWelcomeName.textContent = heroDisplayName;
     setAdminAvatar(adminSettingsViewAvatar, initials, user?.avatar_url);
-    if (adminSettingsViewName) adminSettingsViewName.textContent = displayName;
+    if (adminSettingsViewName) adminSettingsViewName.textContent = heroDisplayName;
     if (adminSettingsViewPhone) adminSettingsViewPhone.textContent = user?.phone || "-";
     if (adminSettingsViewUsername) adminSettingsViewUsername.textContent = user?.username || "-";
     if (adminSettingsViewEmail) adminSettingsViewEmail.textContent = user?.email || "admin@smartworkshop.local";
@@ -1310,7 +1362,7 @@ if (adminPage) {
       label: "Address",
       description: "Update the user's address.",
       type: "address",
-      getValue: (user) => user.address || ""
+      getValue: (user) => formatAddressText(user.address || "")
     },
     role: {
       label: "Role",
@@ -1383,11 +1435,14 @@ if (adminPage) {
       if (adminSettingsEditInput?.parentElement) adminSettingsEditInput.parentElement.classList.add("is-hidden");
       adminSettingsEditSelectField?.classList.add("is-hidden");
       adminSettingsEditNameGrid?.classList.remove("is-hidden");
-      const fullName = String(config.getValue(user) || "").trim();
+      const fullName = String(user.display_name || user.full_name || config.getValue(user) || "").trim();
       const nameParts = fullName ? fullName.split(/\s+/).filter(Boolean) : [];
-      const firstName = user.name || nameParts[0] || "";
-      const lastName = user.lastname || (nameParts.length > 1 ? nameParts[nameParts.length - 1] : "");
-      const middleName = user.middle_name || (nameParts.length > 2 ? nameParts.slice(1, -1).join(" ") : "");
+      const firstName = String(user.name || nameParts[0] || "").trim();
+      const middleName = String(user.middle_name || "").trim() || (nameParts.length > 2 ? nameParts.slice(1, -1).join(" ") : "");
+      const derivedLastName = nameParts.length > 1
+        ? (middleName ? nameParts.slice(1 + (user.middle_name ? 1 : 0)).join(" ") : nameParts.slice(1).join(" "))
+        : "";
+      const lastName = String(derivedLastName || user.lastname || "").trim();
       if (adminSettingsEditFirstName) adminSettingsEditFirstName.value = firstName;
       if (adminSettingsEditMiddleName) adminSettingsEditMiddleName.value = middleName;
       if (adminSettingsEditLastName) adminSettingsEditLastName.value = lastName;
@@ -1395,10 +1450,11 @@ if (adminPage) {
         if (adminSettingsEditInput?.parentElement) adminSettingsEditInput.parentElement.classList.add("is-hidden");
         adminSettingsEditSelectField?.classList.add("is-hidden");
       adminSettingsEditAddressGrid?.classList.remove("is-hidden");
-      if (adminSettingsEditAddressLine1) adminSettingsEditAddressLine1.value = user.address_line_1 || "";
-      if (adminSettingsEditAddressLine2) adminSettingsEditAddressLine2.value = user.address_line_2 || "";
-      if (adminSettingsEditCity) adminSettingsEditCity.value = user.city || "";
-      if (adminSettingsEditPostcode) adminSettingsEditPostcode.value = user.postal_code || "";
+      const addressObject = typeof user.address === "object" && user.address ? user.address : null;
+      if (adminSettingsEditAddressLine1) adminSettingsEditAddressLine1.value = user.address_line_1 || addressObject?.line1 || "";
+      if (adminSettingsEditAddressLine2) adminSettingsEditAddressLine2.value = user.address_line_2 || addressObject?.line2 || "";
+      if (adminSettingsEditCity) adminSettingsEditCity.value = user.city || addressObject?.city || "";
+      if (adminSettingsEditPostcode) adminSettingsEditPostcode.value = user.postal_code || addressObject?.postal_code || "";
     } else {
       if (adminSettingsEditInput?.parentElement) adminSettingsEditInput.parentElement.classList.remove("is-hidden");
       adminSettingsEditSelectField?.classList.add("is-hidden");
@@ -2503,10 +2559,11 @@ if (adminPage) {
       const lastActive = getLastActive(user, index);
       const avatarUrl = getAvatarUrl(user);
       const statusClass = String(status).toLowerCase().replace(/\s+/g, "-");
-      const firstName = user.name || user.full_name?.split(" ")[0] || "";
-      const middleName = user.middle_name || "";
-      const lastName = user.lastname || user.full_name?.split(" ").slice(1).join(" ") || "";
-      const fullName = [firstName, middleName, lastName].filter(Boolean).join(" ").trim() || user.full_name || user.email || "Unknown user";
+      const fullName = buildDisplayName(user, user.email || "Unknown user");
+      const nameParts = fullName.split(/\s+/).filter(Boolean);
+      const firstName = nameParts[0] || "";
+      const middleName = user.middle_name || (nameParts.length > 2 ? nameParts.slice(1, -1).join(" ") : "");
+      const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : String(user.lastname || "").trim();
       const displayName = fullName;
       const userId = String(user.user_id || user.id || `${index}`);
       const isChecked = selectedAdminUsers.has(userId);
@@ -4724,9 +4781,9 @@ if (adminPage) {
         middle_name: user.middle_name || "",
         phone: user.phone || "",
         username: user.username || "",
-        address: user.address || "",
-      role: String(user.role_name || "CUSTOMER").toLowerCase() === "customer" ? "user" : String(user.role_name || "").toLowerCase(),
-      status: String(user.status || "active").toLowerCase()
+        address: formatAddressText(user.address || ""),
+        role: String(user.role_name || "CUSTOMER").toLowerCase() === "customer" ? "user" : String(user.role_name || "").toLowerCase(),
+        status: String(user.status || "active").toLowerCase()
       };
       if (activeAdminEditField === "role" || activeAdminEditField === "status") {
         payload[activeAdminEditField] = adminSettingsEditSelect?.value || payload[activeAdminEditField];

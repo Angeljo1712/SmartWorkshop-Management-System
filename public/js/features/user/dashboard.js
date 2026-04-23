@@ -250,6 +250,26 @@ if (userPage) {
     if (userSecurity2faEnable) userSecurity2faEnable.disabled = false;
   };
 
+  const formatAddressText = (value) => {
+    if (value === null || value === undefined) return "";
+    if (typeof value === "string") return value.trim();
+    if (typeof value === "object") {
+      const parts = [
+        value.line1,
+        value.line2,
+        value.city,
+        value.postal_code,
+        value.country
+      ]
+        .map((part) => String(part || "").trim())
+        .filter(Boolean);
+      if (parts.length) return parts.join(", ");
+      if (value.address) return String(value.address).trim();
+      if (value.formatted_address) return String(value.formatted_address).trim();
+    }
+    return String(value).trim();
+  };
+
   const setUserRailState = (collapsed) => {
     const nextCollapsed = Boolean(collapsed);
     userRail?.classList.toggle("is-collapsed", nextCollapsed);
@@ -291,7 +311,7 @@ if (userPage) {
     if (userSettingsRoleBadge) userSettingsRoleBadge.textContent = activeRole;
     setUserAccountStatus(userSettingsStatus, user?.status);
     setUserLabeledText(userSettingsPhone, "Phone:", user?.phone);
-    if (userSettingsAddress) setUserLabeledText(userSettingsAddress, "Address:", user?.address);
+    if (userSettingsAddress) setUserLabeledText(userSettingsAddress, "Address:", formatAddressText(user?.address));
     if (userSettingsAvatarSettings) setAvatar(userSettingsAvatarSettings, initials, user?.avatar_url);
     if (userSettingsNameSettings) userSettingsNameSettings.textContent = displayName;
     if (userSettingsEmailDetailSettings)
@@ -302,7 +322,7 @@ if (userPage) {
     if (userSettingsPhoneValueSettings) userSettingsPhoneValueSettings.textContent = user?.phone || "-";
     if (userSettingsUsernameValueSettings) userSettingsUsernameValueSettings.textContent = user?.username || "-";
     if (userSettingsEmailValueSettings) userSettingsEmailValueSettings.textContent = user?.email || "-";
-    if (userSettingsAddressValueSettings) userSettingsAddressValueSettings.textContent = user?.address || "-";
+    if (userSettingsAddressValueSettings) userSettingsAddressValueSettings.textContent = formatAddressText(user?.address) || "-";
     if (userSecurity2faEmail) userSecurity2faEmail.checked = Boolean(user?.two_factor_email_enabled);
     if (userSecurity2faSms) userSecurity2faSms.checked = false;
     syncSecurity2faButton();
@@ -389,7 +409,7 @@ if (userPage) {
       label: "Address",
       description: "Update your address.",
       type: "text",
-      getValue: (user) => user?.address || "",
+      getValue: (user) => formatAddressText(user?.address || user?.contact_address || ""),
       isAddressField: true
     }
   };
@@ -437,7 +457,7 @@ if (userPage) {
       const lastNameParts = String(profileData?.lastname || "").trim().split(/\s+/).filter(Boolean);
       if (userSettingsEditLastName) userSettingsEditLastName.value = lastNameParts.pop() || "";
     } else if (config.isAddressField) {
-      const addressDetails = profileData?.address_details || {};
+      const addressDetails = profileData?.address_details || (typeof profileData?.address === "object" && profileData.address ? profileData.address : {});
       if (userSettingsEditAddressLine1) userSettingsEditAddressLine1.value = addressDetails.line1 || "";
       if (userSettingsEditAddressLine2) userSettingsEditAddressLine2.value = addressDetails.line2 || "";
       if (userSettingsEditCity) userSettingsEditCity.value = addressDetails.city || "";
@@ -2308,6 +2328,10 @@ if (userPage) {
     userResolutionCaseAttachmentInput?.click();
   });
 
+  userResolutionComplaintAttachBtn?.addEventListener("click", () => {
+    userResolutionComplaintAttachmentInput?.click();
+  });
+
   userResolutionCaseAttachmentInput?.addEventListener("change", () => {
     if (!pendingUserResolutionCaseId) return;
     const selectedFiles = Array.from(userResolutionCaseAttachmentInput?.files || []);
@@ -2548,7 +2572,8 @@ if (userPage) {
     userSettingsContactMessage.textContent = "";
     try {
       const profile = getUserProfile() || {};
-      if (phone !== (profile.phone || "") || address !== (profile.address || "") || username !== (profile.username || "")) {
+      const profileAddress = formatAddressText(profile.address || profile.contact_address || "");
+      if (phone !== (profile.phone || "") || address !== profileAddress || username !== (profile.username || "")) {
         const response = await fetch("/api/users/me", {
           method: "PATCH",
           headers: {

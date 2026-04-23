@@ -266,9 +266,29 @@ if (mechanicDashboard) {
     }
     el.textContent = initials;
   };
+  const formatMechanicAddressText = (value) => {
+    if (value === null || value === undefined) return "";
+    if (typeof value === "string") return value.trim();
+    if (typeof value === "object") {
+      const parts = [
+        value.line1,
+        value.line2,
+        value.city,
+        value.postal_code,
+        value.country
+      ]
+        .map((part) => String(part || "").trim())
+        .filter(Boolean);
+      if (parts.length) return parts.join(", ");
+      if (value.address) return String(value.address).trim();
+      if (value.formatted_address) return String(value.formatted_address).trim();
+    }
+    return String(value).trim();
+  };
   const setLabeledText = (el, label, value) => {
     if (!el) return;
-    el.innerHTML = `<span class="mechanic-account-label">${escapeHtml(label)}</span><span class="mechanic-account-value">${escapeHtml(value || "-")}</span>`;
+    const text = formatMechanicAddressText(value) || "-";
+    el.innerHTML = `<span class="mechanic-account-label">${escapeHtml(label)}</span><span class="mechanic-account-value">${escapeHtml(text)}</span>`;
   };
   const renderMechanicProfileReviews = (reviews = []) => {
     if (!mechanicProfileReviewsList) return;
@@ -518,6 +538,36 @@ if (mechanicDashboard) {
     return key.charAt(0).toUpperCase() + key.slice(1);
   };
 
+  const collapseRepeatedNameParts = (value) => {
+    const tokens = String(value || "")
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+
+    if (!tokens.length) return "";
+
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (let size = Math.floor(tokens.length / 2); size >= 1; size -= 1) {
+        const tail = tokens.slice(-size).join(" ").toLowerCase();
+        const previous = tokens.slice(-size * 2, -size).join(" ").toLowerCase();
+        if (tail && tail === previous) {
+          tokens.splice(tokens.length - size * 2, size);
+          changed = true;
+          break;
+        }
+      }
+    }
+
+    return tokens.join(" ").trim();
+  };
+
+  const buildDisplayName = (user, fallback = "Mechanic") => {
+    const joined = [user?.name, user?.middle_name, user?.lastname].filter(Boolean).join(" ").trim();
+    return collapseRepeatedNameParts(user?.display_name || user?.full_name || joined || user?.email || fallback);
+  };
+
   const getMechanicPaymentMethodLabel = (entry) => {
     const value = String(entry?.payment?.payment_method || entry?.booking?.payment_method || "").trim().toLowerCase();
     if (!value) return "-";
@@ -583,7 +633,11 @@ if (mechanicDashboard) {
     try {
       const user = JSON.parse(profile);
       currentMechanicUser = user;
-      const name = [user.name, user.middle_name, user.lastname].filter(Boolean).join(" ") || user.email || "Mechanic";
+      const name = buildDisplayName(user, "Mechanic");
+      const heroFirstName = String(user?.name || name || "Mechanic").trim().split(/\s+/)[0];
+      const heroLastNameParts = String(user?.lastname || "").trim().split(/\s+/).filter(Boolean);
+      const heroLastName = heroLastNameParts.length ? heroLastNameParts[0] : "";
+      const heroDisplayName = [heroFirstName, heroLastName].filter(Boolean).join(" ").trim() || heroFirstName || name;
       const initials = name
         .split(/\s+/)
         .slice(0, 2)
@@ -593,7 +647,7 @@ if (mechanicDashboard) {
       const roles = Array.isArray(user?.roles) && user.roles.length ? user.roles : [user?.role_name || "MECHANIC"];
       const activeRole = roles.includes("MECHANIC") ? "MECHANIC" : roles[0];
       setAvatar(mechanicDashboardHeroAvatar, initials, getMechanicFallbackAvatarUrl(user));
-      if (mechanicDashboardHeroName) mechanicDashboardHeroName.textContent = name;
+      if (mechanicDashboardHeroName) mechanicDashboardHeroName.textContent = heroDisplayName;
       if (mechanicDashboardHeroRole) mechanicDashboardHeroRole.textContent = activeRole;
       if (nameEl) nameEl.textContent = name;
       if (mechanicAccountName) mechanicAccountName.textContent = name;
@@ -609,7 +663,7 @@ if (mechanicDashboard) {
       setLabeledText(mechanicAccountEmailSecondary, "Email:", user?.email);
       setLabeledText(mechanicAccountUsername, "Username:", user?.username);
       setLabeledText(mechanicAccountUsernameSecondary, "Username:", user?.username);
-        const contactAddress = user?.contact_address || user?.address || "";
+        const contactAddress = formatMechanicAddressText(user?.contact_address || user?.address || "");
       setLabeledText(mechanicAccountAddressSecondary, "Contact address:", contactAddress);
         const premisesAddress = user?.premises_address || "";
         const premisesAddressDetails = user?.premises_address_details || null;
@@ -631,26 +685,26 @@ if (mechanicDashboard) {
       if (mechanicAccountRoleSecondary) mechanicAccountRoleSecondary.textContent = activeRole;
       setMechanicAccountStatus(mechanicAccountStatusSecondary, resolveMechanicAccountStatus(user));
       renderMechanicInfoRequestNotes(user);
-      if (mechanicSettingsWelcomeName) mechanicSettingsWelcomeName.textContent = name;
+      if (mechanicSettingsWelcomeName) mechanicSettingsWelcomeName.textContent = heroDisplayName;
       setAvatar(mechanicSettingsAvatarSettings, getInitials(name, activeRole), getMechanicFallbackAvatarUrl(user));
       if (mechanicSettingsFullName) mechanicSettingsFullName.textContent = name;
       if (mechanicSettingsPhone) mechanicSettingsPhone.textContent = user?.phone || "-";
       if (mechanicSettingsUsername) mechanicSettingsUsername.textContent = user?.username || "-";
       if (mechanicSettingsEmail) mechanicSettingsEmail.textContent = user?.email || "-";
-      if (mechanicSettingsAddress) mechanicSettingsAddress.textContent = user?.address || "-";
+      if (mechanicSettingsAddress) mechanicSettingsAddress.textContent = formatMechanicAddressText(user?.address || user?.contact_address || "-") || "-";
       if (mechanicSecurity2faEmail) mechanicSecurity2faEmail.checked = Boolean(user?.two_factor_email_enabled);
       if (mechanicSecurity2faSms) mechanicSecurity2faSms.checked = false;
       syncMechanicSecurity2faButton();
       if (mechanicSecurityUsername) mechanicSecurityUsername.value = user?.email || user?.username || "";
       if (mechanicProfileHeading) {
-        const location = user?.address_details?.city || user?.address || "Surrey";
+        const location = user?.address_details?.city || formatMechanicAddressText(user?.address || user?.contact_address || "") || "Surrey";
         mechanicProfileHeading.textContent = `${name}, ${location}`;
       }
       if (mechanicProfileRatings) mechanicProfileRatings.textContent = "(0 ratings)";
       if (mechanicProfileExperience) mechanicProfileExperience.textContent = "5 years professional experience";
       if (mechanicProfileActiveSince) mechanicProfileActiveSince.textContent = "Active since February 2026";
       if (mechanicProfileJobsCompleted) mechanicProfileJobsCompleted.textContent = "0 jobs completed";
-      if (mechanicProfileBaseLocation) mechanicProfileBaseLocation.textContent = user?.address_details?.city || user?.address || "Surrey";
+      if (mechanicProfileBaseLocation) mechanicProfileBaseLocation.textContent = user?.address_details?.city || formatMechanicAddressText(user?.address || user?.contact_address || "") || "Surrey";
       if (mechanicProfilePostcode) mechanicProfilePostcode.textContent = user?.address_details?.postal_code || "-";
       if (mechanicProfileRadius) mechanicProfileRadius.textContent = "5 miles";
       if (mechanicProfileServiceType) mechanicProfileServiceType.textContent = "Mobile mechanic";
@@ -995,18 +1049,31 @@ if (mechanicDashboard) {
       mechanicSettingsEditInput.parentElement.classList.toggle("is-hidden", !!config.isNameField || !!config.isAddressField);
     }
     if (config.isNameField) {
-      if (mechanicSettingsEditFirstName) mechanicSettingsEditFirstName.value = profileData?.name || "";
+      const fullName = String(profileData?.display_name || profileData?.full_name || profileData?.name || "").trim();
+      const profileNameParts = fullName.split(/\s+/).filter(Boolean);
+      const storedLastName = String(profileData?.lastname || "").trim();
+      if (mechanicSettingsEditFirstName) {
+        mechanicSettingsEditFirstName.value = profileNameParts[0] || profileData?.name || "";
+      }
       const storedMiddleName = String(profileData?.middle_name || "").trim();
       if (mechanicSettingsEditMiddleName) {
         if (storedMiddleName) {
           mechanicSettingsEditMiddleName.value = storedMiddleName;
         } else {
-          const lastNameParts = String(profileData?.lastname || "").trim().split(/\s+/).filter(Boolean);
-          mechanicSettingsEditMiddleName.value = lastNameParts.length > 1 ? lastNameParts.slice(0, -1).join(" ") : "";
+          mechanicSettingsEditMiddleName.value = profileNameParts.length > 1
+            ? profileNameParts.slice(1).join(" ")
+            : "";
         }
       }
-      const lastNameParts = String(profileData?.lastname || "").trim().split(/\s+/).filter(Boolean);
-      if (mechanicSettingsEditLastName) mechanicSettingsEditLastName.value = lastNameParts.pop() || "";
+      if (mechanicSettingsEditLastName) {
+        if (storedLastName) {
+          mechanicSettingsEditLastName.value = storedLastName;
+        } else if (profileNameParts.length > 1) {
+          mechanicSettingsEditLastName.value = profileNameParts.slice(storedMiddleName ? 2 : 1).join(" ");
+        } else {
+          mechanicSettingsEditLastName.value = "";
+        }
+      }
     } else if (config.isAddressField) {
       const addressDetails = profileData?.address_details || {};
       if (mechanicSettingsEditAddressLine1) mechanicSettingsEditAddressLine1.value = addressDetails.line1 || "";

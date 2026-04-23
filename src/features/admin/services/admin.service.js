@@ -147,6 +147,63 @@ const roleLabel = (role) => {
   return String(role || "").toUpperCase();
 };
 
+const collapseRepeatedNameParts = (value) => {
+  const tokens = String(value || "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (!tokens.length) return "";
+
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (let size = Math.floor(tokens.length / 2); size >= 1; size -= 1) {
+      const tail = tokens.slice(-size).join(" ").toLowerCase();
+      const previous = tokens.slice(-size * 2, -size).join(" ").toLowerCase();
+      if (tail && tail === previous) {
+        tokens.splice(tokens.length - size * 2, size);
+        changed = true;
+        break;
+      }
+    }
+  }
+
+  return tokens.join(" ").trim();
+};
+
+const buildDisplayName = ({ name, middle_name, lastname, full_name, email }, fallback = "User") => {
+  const joined = [name, middle_name, lastname].filter(Boolean).join(" ").trim();
+  return collapseRepeatedNameParts(full_name || joined || email || fallback);
+};
+
+const normalizeAddressPayload = (payload) => {
+  if (payload === null || payload === undefined) return null;
+  if (typeof payload === "object" && !Array.isArray(payload)) {
+    const line1 = String(payload.line1 || "").trim();
+    const line2 = String(payload.line2 || "").trim();
+    const city = String(payload.city || "").trim();
+    const postal_code = String(payload.postal_code || "").trim();
+    const country = String(payload.country || "GB").trim() || "GB";
+    if (!line1 && !city && !postal_code) return null;
+    return { line1, line2, city, postal_code, country };
+  }
+
+  const text = String(payload || "").trim();
+  if (!text) return null;
+  const parts = text.split(",").map((part) => String(part || "").trim()).filter(Boolean);
+  if (parts.length >= 4) {
+    return {
+      line1: parts.slice(0, Math.max(1, parts.length - 3)).join(", "),
+      line2: parts[parts.length - 3] || "",
+      city: parts[parts.length - 2] || "",
+      postal_code: parts[parts.length - 1] || "",
+      country: "GB"
+    };
+  }
+  return { line1: text, line2: "", city: "", postal_code: "", country: "GB" };
+};
+
 const listUsers = async () => {
   await ensureUserProfileMiddleNameColumn();
   const [rows] = await pool.query(
@@ -188,7 +245,7 @@ const listUsers = async () => {
       name: row.name || "",
       middle_name: row.middle_name || "",
       lastname: row.lastname || "",
-      full_name: [row.name, row.middle_name, row.lastname].filter(Boolean).join(" ") || "-",
+      full_name: buildDisplayName(row, "-") || "-",
       email: row.email,
       username: row.username,
       status: row.status || "active",
@@ -239,7 +296,7 @@ const listApplications = async () => {
 
   return rows.map((row) => ({
     user_id: row.id,
-    full_name: [row.name, row.middle_name, row.lastname].filter(Boolean).join(" ") || row.email,
+    full_name: buildDisplayName(row, row.email),
     email: row.email,
     phone: row.phone || "",
     created_at: row.created_at,
@@ -550,7 +607,7 @@ const getResolutionCaseDetail = async (caseId) => {
       body: message.body,
       created_at: message.created_at,
       sender_id: message.sender_id,
-      sender_name: [message.name, message.middle_name, message.lastname].filter(Boolean).join(" ") || message.email || "User",
+    sender_name: buildDisplayName(message, message.email || "User"),
       avatar_url: message.avatar_url || "",
       sender_role:
         Number(message.sender_id) === customerId
@@ -1182,6 +1239,7 @@ const updateUser = async ({
   const connection = await pool.getConnection();
   try {
     await connection.beginTransaction();
+    await ensureUserProfileMiddleNameColumn();
 
     const [[existing]] = await connection.query(
       `SELECT u.id, u.username, u.phone, u.status, u.role,
@@ -1205,7 +1263,7 @@ const updateUser = async ({
     const resolvedMiddleName = String(middle_name || "").trim();
     const nextPhone = String(phone || "").trim() || null;
     const nextUsername = String(username || "").trim() || null;
-    const nextAddress = String(address || "").trim();
+    const nextAddress = normalizeAddressPayload(address);
     const normalizedRole = String(role || "").trim().toLowerCase();
     const normalizedStatus = String(status || "").trim().toLowerCase();
 
@@ -1242,27 +1300,25 @@ const updateUser = async ({
       [userId, firstName || trimmedName, resolvedMiddleName || null, lastName || null]
     );
 
+    if (normalizedRole === "mechanic") {
+      const displayName = [firstName || trimmedName, resolvedMiddleName || null, lastName || null].filter(Boolean).join(" ").trim();
+      await connection.query(
+        `INSERT INTO mechanic_profiles (user_id, display_name, legal_name)
+         VALUES (?, ?, ?)
+         ON DUPLICATE KEY UPDATE display_name = VALUES(display_name), legal_name = VALUES(legal_name)`,
+        [userId, displayName, displayName]
+      );
+    }
+
     await connection.query("DELETE FROM user_roles WHERE user_id = ?", [userId]);
     await connection.query("INSERT INTO user_roles (user_id, role) VALUES (?, ?)", [userId, normalizedRole]);
     await connection.query("UPDATE users SET role = ? WHERE id = ?", [normalizedRole, userId]);
 
     if (nextAddress) {
-      const addressParts = String(nextAddress)
-        .split(",")
-        .map((part) => String(part || "").trim())
-        .filter(Boolean);
-
-      let line1 = addressParts[0] || nextAddress;
-      let line2 = addressParts[1] || "";
-      let city = addressParts[2] || "-";
-      let postalCode = addressParts[3] || "-";
-
-      if (addressParts.length > 4) {
-        line1 = addressParts.slice(0, Math.max(1, addressParts.length - 3)).join(", ");
-        line2 = addressParts[addressParts.length - 3] || "";
-        city = addressParts[addressParts.length - 2] || "-";
-        postalCode = addressParts[addressParts.length - 1] || "-";
-      }
+      const line1 = nextAddress.line1 || "";
+      const line2 = nextAddress.line2 || "";
+      const city = nextAddress.city || "-";
+      const postalCode = nextAddress.postal_code || "-";
 
       const [addressRows] = await connection.query(
         `SELECT id
@@ -1276,13 +1332,13 @@ const updateUser = async ({
       if (addressRows.length) {
         await connection.query(
           "UPDATE addresses SET line1 = ?, line2 = ?, city = ?, postal_code = ?, country = ? WHERE id = ?",
-          [line1, line2 || null, city || "-", postalCode || "-", "GB", addressRows[0].id]
+          [line1, line2 || null, city || "-", postalCode || "-", nextAddress.country || "GB", addressRows[0].id]
         );
       } else {
         await connection.query(
           `INSERT INTO addresses (uuid_public, user_id, label, line1, line2, city, postal_code, country, location)
            VALUES (UUID_TO_BIN(UUID()), ?, 'Primary', ?, ?, ?, ?, ?, ST_GeomFromText('POINT(0 0)', 4326))`,
-          [userId, line1, line2 || null, city || "-", postalCode || "-", "GB"]
+          [userId, line1, line2 || null, city || "-", postalCode || "-", nextAddress.country || "GB"]
         );
       }
     }

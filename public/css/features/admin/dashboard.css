@@ -161,11 +161,15 @@ body.admin-body .primari-shell {
 }
 
 #adminPage .mainRail .rail-item.active {
-    background: #0d1220;
-    border-color: rgba(15, 23, 42, 0.08);
-    color: #ffffff;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
-  }
+  background: linear-gradient(90deg, #090d15 0%, #090d15 calc(100% + 20px), transparent calc(100% + 20px));
+  border-color: rgba(15, 23, 42, 0.08);
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  width: calc(100% + 20px);
+  margin-right: -20px;
+}
 
 #adminPage .mainRail .rail-text {
   width: auto;
