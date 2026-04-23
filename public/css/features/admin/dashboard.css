@@ -50,7 +50,7 @@ body.admin-body .primari-shell {
   background: transparent;
   border: 0;
   border-radius: 0;
-  padding: 15px;
+  padding: 33px;
   overflow: visible;
   min-height: 0;
   height: 100%;
@@ -107,7 +107,7 @@ body.admin-body .primari-shell {
 #adminPage .mainRail {
   padding: 14px 12px 16px;
   justify-items: stretch;
-  gap: 0;
+  gap: 10px;
 }
 
 #adminPage .mainRail:hover {
@@ -137,7 +137,7 @@ body.admin-body .primari-shell {
   width: 100%;
   align-self: start;
   justify-items: stretch;
-  gap: 10px;
+  gap: 20px;
   padding-top: 3px;
 }
 
@@ -157,7 +157,13 @@ body.admin-body .primari-shell {
 }
 
 #adminPage .mainRail .rail-item:hover {
-  background: rgba(15, 23, 42, 0.06);
+  background: transparent;
+}
+
+#adminPage .mainRail .rail-item.active:hover {
+  background: linear-gradient(90deg, #090d15 0%, #090d15 calc(100% + 20px), transparent calc(100% + 20px));
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
 #adminPage .mainRail .rail-item.active {
@@ -167,8 +173,9 @@ body.admin-body .primari-shell {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
-  width: calc(100% + 20px);
-  margin-right: -20px;
+  width: calc(100% + 36px);
+  margin-right: -36px;
+  z-index: 2;
 }
 
 #adminPage .mainRail .rail-text {
@@ -224,7 +231,7 @@ body.admin-body .primari-shell {
   z-index: 1;
 }
 
-#adminPage .mainRail:hover .rail-item {
+#adminPage .mainRail:hover .rail-item:not(.active) {
   width: 100%;
   max-width: 100%;
   justify-content: flex-start;
@@ -296,7 +303,7 @@ body.admin-body .primari-shell {
 
 #adminPage .admin-rail-toggle {
   position: absolute;
-  top: 152px;
+  top: 118px;
   left: 156px;
   width: 48px;
   height: 48px;
@@ -305,7 +312,7 @@ body.admin-body .primari-shell {
   place-items: center;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 999px;
-  background: #090d15;
+  background: #3e434df7;
   color: #ffffff;
   cursor: pointer;
   z-index: 6;
@@ -319,7 +326,7 @@ body.admin-body .primari-shell {
 }
 
 #adminPage.is-rail-collapsed .admin-rail-toggle {
-  left: 46px;
+  left: 54px;
 }
 
 body.admin-body .admin-header-menu-toggle,
@@ -2928,31 +2935,48 @@ body.admin-body .admin-edit-menu button:disabled {
   padding: 1px;
 }
 
-#adminPage .admin-account-card {
+#adminPage .admin-account-card,
+#adminPage .admin-settings-card {
   display: grid;
+  width: 100%;
   background: #3e434df7;
   border: 1px solid var(--dashboard-panel-border);
   border-radius: var(--dashboard-panel-radius);
   box-shadow: var(--dashboard-panel-shadow);
   padding: 24px;
   color: #ffffff;
-  min-height: 100%;
-  height: 100%;
   align-content: start;
   align-self: stretch;
+  overflow: hidden;
 }
 
 #adminPage .admin-account-layout {
   display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   gap: 18px;
   color: #ffffff;
+  min-height: calc(100vh - var(--general-header-height, 71px) - 140px);
+  height: 100%;
+  align-content: stretch;
+}
+
+#adminPage .admin-account-panel {
+  display: grid;
+  gap: 18px;
+  align-self: start;
+}
+
+#adminPage .admin-account-panel-head {
   min-height: 0;
-  height: auto;
-  align-content: start;
+  height: 100%;
 }
 
 #adminPage #adminProfileView {
   min-height: 100%;
+}
+
+#adminPage #adminProfileView > .settings-card.admin-account-card {
+  min-height: calc(100vh - var(--general-header-height, 71px) - 140px);
 }
 
 #adminPage .admin-account-avatar-row {
@@ -2999,7 +3023,7 @@ body.admin-body .admin-edit-menu button:disabled {
 }
 
 #adminPage .admin-account-section h4 {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: 700;
   text-transform: none;
   letter-spacing: normal;
@@ -3007,10 +3031,16 @@ body.admin-body .admin-edit-menu button:disabled {
 }
 
 #adminPage .admin-account-section p {
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 500;
   line-height: 1.4;
   opacity: 0.92;
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 12px;
+  min-width: 0;
+  white-space: nowrap;
 }
 
 #adminPage .account-field-label,
@@ -3026,29 +3056,27 @@ body.admin-body .admin-edit-menu button:disabled {
   border-right: 2px solid rgba(255, 255, 255, 0.72);
 }
 
+#adminPage .account-field-value {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
 #adminPage .admin-settings-card {
-  display: grid;
-  width: 100%;
-  min-height: 100%;
-  height: 100%;
-  padding: 24px;
-  background: #3e434df7;
-  border: 1px solid var(--dashboard-panel-border);
-  border-radius: var(--dashboard-panel-radius);
-  box-shadow: var(--dashboard-panel-shadow);
+  min-height: calc(100vh - var(--general-header-height, 71px) - 110px);
+  height: calc(100vh - var(--general-header-height, 71px) - 110px);
   align-items: start;
   align-content: start;
-  color: #ffffff;
-  overflow: hidden;
 }
 
 #adminPage .admin-settings-layout {
   display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   grid-template-columns: minmax(0, 1fr);
   gap: 14px;
   align-items: start;
   align-content: start;
-  min-height: 0;
+  min-height: 100%;
+  height: 100%;
 }
 
 #adminPage .admin-settings-topbar {
@@ -3067,12 +3095,22 @@ body.admin-body .admin-edit-menu button:disabled {
 
 body.admin-body #adminSettingsView .settings-panel {
   display: grid;
+  min-height: 0;
+  height: 100%;
+  align-content: stretch;
 }
 
 body.admin-body #adminSettingsView .settings-subview {
   display: grid;
   gap: 14px;
   align-content: start;
+  min-height: 0;
+  height: 100%;
+}
+
+#adminPage #adminSettingsView > .settings-card.admin-settings-card {
+  min-height: calc(100vh - var(--general-header-height, 71px) - 110px);
+  height: calc(100vh - var(--general-header-height, 71px) - 110px);
 }
 
 body.admin-body #adminSettingsView .settings-subnav {
@@ -3197,6 +3235,53 @@ body.admin-body #adminSettingsView .settings-contact-copy p {
   margin: 0;
 }
 
+body.admin-body #adminPage .settings-profile > div {
+  display: grid;
+  gap: 6px;
+}
+
+body.admin-body #adminPage .admin-account-section > div {
+  display: block;
+}
+
+body.admin-body #adminPage .admin-name-row {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  column-gap: 12px;
+  align-items: baseline;
+  width: 100%;
+  min-width: 0;
+}
+
+body.admin-body #adminPage .admin-name-row strong {
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: normal;
+  white-space: nowrap;
+}
+
+body.admin-body #adminPage .admin-name-row span {
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+  min-width: 0;
+}
+
+body.admin-body #adminPage #adminSettingsPhone,
+body.admin-body #adminPage #adminSettingsUsername,
+body.admin-body #adminPage #adminSettingsEmail,
+body.admin-body #adminPage #adminSettingsAddress {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+
 body.admin-body #adminSettingsView .settings-contact-list {
   display: grid;
   gap: 12px;
@@ -3221,6 +3306,7 @@ body.admin-body #adminSettingsView .settings-contact-copy {
   align-items: center;
   gap: 12px;
   min-width: 0;
+  flex: 1 1 auto;
 }
 
 body.admin-body #adminSettingsView .settings-contact-label {
@@ -3243,13 +3329,13 @@ body.admin-body #adminSettingsView .settings-contact-label::after {
 body.admin-body #adminSettingsView .settings-contact-copy p {
   margin: 0;
   color: #ffffff;
-  flex: 1 1 auto;
   font-size: 1.05rem;
   line-height: 1.35;
   min-width: 0;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: visible;
+  text-overflow: clip;
+  flex: 1 1 auto;
 }
 
 body.admin-body #adminSettingsView .settings-contact-actions {

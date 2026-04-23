@@ -192,6 +192,9 @@ const normalizeAddressPayload = (payload) => {
   const text = String(payload || "").trim();
   if (!text) return null;
   const parts = text.split(",").map((part) => String(part || "").trim()).filter(Boolean);
+  while (parts.length > 1 && /^gb$/i.test(parts[parts.length - 1]) && /^gb$/i.test(parts[parts.length - 2])) {
+    parts.pop();
+  }
   if (parts.length >= 4) {
     return {
       line1: parts.slice(0, Math.max(1, parts.length - 3)).join(", "),

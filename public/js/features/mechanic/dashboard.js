@@ -99,6 +99,9 @@ if (mechanicDashboard) {
   const mechanicProfileReviewsPagination = document.getElementById("mechanicProfileReviewsPagination");
   const mechanicEditProfileView = document.getElementById("mechanicEditProfileView");
   const mechanicEditYears = document.getElementById("mechanicEditYears");
+  const mechanicWorkHistoryView = document.getElementById("mechanicWorkHistoryView");
+  const mechanicWorkHistoryText = document.getElementById("mechanicWorkHistoryText");
+  const mechanicWorkHistoryEditBtn = document.getElementById("mechanicWorkHistoryEditBtn");
   const mechanicEditWorkHistory = document.getElementById("mechanicEditWorkHistory");
   const mechanicEditContactLine1 = document.getElementById("mechanicEditContactLine1");
   const mechanicEditContactLine2 = document.getElementById("mechanicEditContactLine2");
@@ -337,6 +340,16 @@ if (mechanicDashboard) {
         page === mechanicProfileReviewsPage ? " is-active" : ""
       }" data-mechanic-profile-reviews-page="${page}" aria-label="Go to review page ${page}"></button>`;
     }).join("");
+  };
+
+  const syncMechanicWorkHistoryDisplay = () => {
+    const value = String(mechanicEditWorkHistory?.value || "").trim();
+    const hasHistory = Boolean(value);
+    if (mechanicWorkHistoryText) {
+      mechanicWorkHistoryText.textContent = value || "No work history added yet.";
+    }
+    mechanicWorkHistoryView?.classList.toggle("is-hidden", !hasHistory);
+    mechanicEditWorkHistory?.classList.toggle("is-hidden", hasHistory);
   };
 
   const setMechanicAccountStatus = (el, value) => {
@@ -1699,6 +1712,7 @@ if (mechanicDashboard) {
       renderMechanicProfileReviews(profileData.reviews || []);
       if (mechanicEditYears) mechanicEditYears.value = profileData.years_experience || "";
       if (mechanicEditWorkHistory) mechanicEditWorkHistory.value = profileData.work_history || "";
+      syncMechanicWorkHistoryDisplay();
       if (mechanicEditContactLine1) mechanicEditContactLine1.value = profileData.address?.line1 || "";
       if (mechanicEditContactLine2) mechanicEditContactLine2.value = profileData.address?.line2 || "";
       if (mechanicEditContactCity) mechanicEditContactCity.value = profileData.address?.city || "";
@@ -3044,6 +3058,12 @@ if (mechanicDashboard) {
     if (mechanicEditPremisesPostcode) mechanicEditPremisesPostcode.value = mechanicEditContactPostcode?.value || "";
   });
 
+  mechanicWorkHistoryEditBtn?.addEventListener("click", () => {
+    mechanicWorkHistoryView?.classList.add("is-hidden");
+    mechanicEditWorkHistory?.classList.remove("is-hidden");
+    mechanicEditWorkHistory?.focus();
+  });
+
   mechanicEditProfileForm?.addEventListener("submit", (event) => {
     event.preventDefault();
     if (!mechanicToken) return;
@@ -3083,6 +3103,7 @@ if (mechanicDashboard) {
         latestMechanicProfile = profileData;
         if (mechanicEditProfileError) mechanicEditProfileError.textContent = "Profile updated.";
         syncMechanicProfile();
+        syncMechanicWorkHistoryDisplay();
       })
       .catch((err) => {
         if (mechanicEditProfileError) {

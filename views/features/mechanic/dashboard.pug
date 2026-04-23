@@ -288,7 +288,6 @@ block content
                         .mechanic-resolution-compose
                           textarea#mechanicResolutionMessageInput(placeholder="Add a new message here")
                           .mechanic-resolution-compose-actions
-                            button.mechanic-resolution-back#mechanicResolutionCaseBackBtn(type="button") Back
                             .mechanic-resolution-compose-actions-right
                               button.primary#mechanicResolutionSendBtn(type="button") Send message
                               label.secondary#mechanicResolutionCaseAttachBtn(for="mechanicResolutionCaseAttachmentInput") Attach file(s)
@@ -318,9 +317,9 @@ block content
                           .mechanic-resolution-sidebar-row
                             strong Total Price
                             span#mechanicResolutionSidebarTotal -
+                    button.mechanic-resolution-back#mechanicResolutionCaseBackBtn(type="button") Back
                 .mechanic-resolution-detail.is-hidden#mechanicResolutionMessageView
                   .mechanic-resolution-detail-head
-                    button.mechanic-resolution-back(type="button" id="mechanicResolutionBackBtn") Back
                     h3#mechanicResolutionDetailTitle Message customer regarding Booking #16334274
                   .mechanic-resolution-card
                     .mechanic-resolution-card-body
@@ -341,6 +340,7 @@ block content
                           span Updated at
                           span Subject
                           span
+                  button.mechanic-resolution-back(type="button" id="mechanicResolutionBackBtn") Back
             section.mechanic-content.is-hidden#mechanicProcedureView
               .settings-card.mechanic-dashboard-card
                 .settings-header
@@ -444,8 +444,11 @@ block content
                   label
                     span Years as a mechanic
                     input#mechanicEditYears(type="number" min="0")
-                  label
-                    span Work history
+                  .mechanic-work-history-section
+                    span.mechanic-edit-profile-section-label Work history
+                    .mechanic-work-history-view.is-hidden#mechanicWorkHistoryView
+                      p#mechanicWorkHistoryText
+                      button.secondary.mechanic-work-history-edit#mechanicWorkHistoryEditBtn(type="button") Edit
                     textarea#mechanicEditWorkHistory(rows="5")
     
                 .mechanic-edit-profile-card.mechanic-edit-profile-card--coverage

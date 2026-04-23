@@ -665,27 +665,29 @@ block content
             section.admin-view.is-hidden#adminProfileView
               .settings-card.admin-account-card
                 .admin-account-layout
-                  .admin-account-avatar-row
-                    .admin-profile-avatar#adminProfileAvatar AU
-                  .settings-divider
-                  .admin-account-section
-                    h4 Full Name
-                    p#adminSettingsName Admin User
-                  .settings-divider
-                  .admin-account-section
-                    h4 Contacts
-                    p#adminSettingsPhone -
-                    p#adminSettingsUsername Username: -
-                    p#adminSettingsEmail admin@smartworkshop.local
-                    p#adminSettingsAddress Address: -
-                  .settings-divider
-                  .admin-account-section
-                    h4 Role
-                    p#adminSettingsRole Administrator
-                  .settings-divider
-                  .admin-account-section
-                    h4 Integration
-                    p No integrations connected
+                  .admin-account-panel
+                    .admin-account-avatar-row
+                      .admin-profile-avatar#adminProfileAvatar AU
+                    .settings-divider
+                    .admin-account-section
+                      h4 Full Name
+                      div#adminSettingsName Admin User
+                    .settings-divider
+                    .admin-account-section
+                      h4 Contacts Details
+                      div#adminSettingsPhone -
+                      div#adminSettingsUsername Username: -
+                      div#adminSettingsEmail admin@smartworkshop.local
+                      div#adminSettingsAddress Address: -
+                    .settings-divider
+                    .admin-account-section
+                      h4 Role
+                      p#adminSettingsRole Administrator
+                    .settings-divider
+                    .admin-account-section
+                      h4 Integration
+                      p No integrations connected
+                  .admin-account-panel-head
 
             section.admin-view.is-hidden#adminSettingsView
               .settings-card.admin-settings-card
@@ -709,7 +711,7 @@ block content
                       .settings-profile
                         .settings-meta
                           h4 Full name
-                          p#adminSettingsViewName Admin User
+                          div#adminSettingsViewName Admin User
                         button.secondary(type="button" data-admin-settings-field="full_name") Update
 
                       .settings-divider

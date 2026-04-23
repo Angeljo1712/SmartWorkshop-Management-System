@@ -340,9 +340,58 @@ if (adminPage) {
     return collapseRepeatedNameParts(user?.display_name || user?.full_name || joined || user?.email || fallback);
   };
 
+  const getNameParts = (user, fallback = "Admin") => {
+    const fullName = collapseRepeatedNameParts(buildDisplayName(user, fallback));
+    const nameParts = fullName ? fullName.split(/\s+/).filter(Boolean) : [];
+    const firstName = String(user?.name || nameParts[0] || "").trim();
+    const middleName = String(user?.middle_name || "").trim() || (nameParts.length > 2 ? nameParts.slice(1, -1).join(" ") : "");
+    const firstNamePattern = firstName ? new RegExp(`^${firstName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*`, "i") : null;
+    let remainder = fullName;
+    if (firstNamePattern) {
+      remainder = remainder.replace(firstNamePattern, "").trim();
+    }
+    if (middleName) {
+      const middlePattern = new RegExp(`^(${middleName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})(?:\\s+\\1)+\\s*`, "i");
+      remainder = remainder.replace(middlePattern, "").trim();
+      const repeatedMiddlePattern = new RegExp(`^${middleName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*`, "i");
+      while (remainder && repeatedMiddlePattern.test(remainder)) {
+        remainder = remainder.replace(repeatedMiddlePattern, "").trim();
+      }
+    }
+    const fallbackLastName = nameParts.length > 1 ? nameParts.slice(1 + (middleName ? 1 : 0)).join(" ") : "";
+    const lastName = String(remainder || fallbackLastName || user?.lastname || "").trim();
+    return {
+      firstName: firstName || "-",
+      middleName: middleName || "-",
+      lastName: lastName || "-"
+    };
+  };
+
   const formatAddressText = (value) => {
     if (value === null || value === undefined) return "";
-    if (typeof value === "string") return value.trim();
+    if (typeof value === "string") {
+      const parts = value
+        .split(",")
+        .map((part) => String(part || "").trim())
+        .filter(Boolean);
+      if (!parts.length) return "";
+      const normalizedParts = [];
+      for (const part of parts) {
+        const last = normalizedParts[normalizedParts.length - 1];
+        if (last && last.toLowerCase() === part.toLowerCase()) continue;
+        normalizedParts.push(part);
+      }
+      while (normalizedParts.length > 1) {
+        const last = normalizedParts[normalizedParts.length - 1];
+        const prev = normalizedParts[normalizedParts.length - 2];
+        if (/^g[b]$/i.test(last) && /^g[b]$/i.test(prev)) {
+          normalizedParts.pop();
+          continue;
+        }
+        break;
+      }
+      return normalizedParts.join(", ");
+    }
     if (typeof value === "object") {
       const parts = [
         value.line1,
@@ -353,7 +402,25 @@ if (adminPage) {
       ]
         .map((part) => String(part || "").trim())
         .filter(Boolean);
-      if (parts.length) return parts.join(", ");
+      if (parts.length) {
+        const normalizedParts = [];
+        parts.forEach((part) => {
+          const last = normalizedParts[normalizedParts.length - 1];
+          if (!last || last.toLowerCase() !== part.toLowerCase()) {
+            normalizedParts.push(part);
+          }
+        });
+        while (normalizedParts.length > 1) {
+          const last = normalizedParts[normalizedParts.length - 1];
+          const prev = normalizedParts[normalizedParts.length - 2];
+          if (/^g[b]$/i.test(last) && /^g[b]$/i.test(prev)) {
+            normalizedParts.pop();
+            continue;
+          }
+          break;
+        }
+        return normalizedParts.join(", ");
+      }
       if (value.address) return String(value.address).trim();
       if (value.formatted_address) return String(value.formatted_address).trim();
     }
@@ -411,7 +478,14 @@ if (adminPage) {
     setAdminAvatar(adminDashboardHeroAvatar, initials, user?.avatar_url);
     if (adminProfileRole) adminProfileRole.textContent = role;
     setAdminAvatar(adminSettingsAvatar, initials, user?.avatar_url);
-    if (adminSettingsName) adminSettingsName.textContent = displayName;
+    if (adminSettingsName) {
+      const nameParts = getNameParts(user, "Admin");
+      adminSettingsName.innerHTML = `
+        <div class="admin-name-row"><strong>First name:</strong><span>${escapeHtml(nameParts.firstName)}</span></div>
+        <div class="admin-name-row"><strong>Middle name:</strong><span>${escapeHtml(nameParts.middleName)}</span></div>
+        <div class="admin-name-row"><strong>Last name:</strong><span>${escapeHtml(nameParts.lastName)}</span></div>
+      `;
+    }
     if (adminMobileMenuName) adminMobileMenuName.textContent = heroDisplayName.toUpperCase();
     if (adminSettingsEmail) setAdminLabeledText(adminSettingsEmail, "Email:", user?.email || "admin@smartworkshop.local");
     if (adminSettingsEmailDetail) {
@@ -423,7 +497,14 @@ if (adminPage) {
     if (adminSettingsAddress) setAdminLabeledText(adminSettingsAddress, "Address:", addressText);
     if (adminSettingsWelcomeName) adminSettingsWelcomeName.textContent = heroDisplayName;
     setAdminAvatar(adminSettingsViewAvatar, initials, user?.avatar_url);
-    if (adminSettingsViewName) adminSettingsViewName.textContent = heroDisplayName;
+    if (adminSettingsViewName) {
+      const nameParts = getNameParts(user, "Admin");
+      adminSettingsViewName.innerHTML = `
+        <div class="admin-name-row"><strong>First name:</strong><span>${escapeHtml(nameParts.firstName)}</span></div>
+        <div class="admin-name-row"><strong>Middle name:</strong><span>${escapeHtml(nameParts.middleName)}</span></div>
+        <div class="admin-name-row"><strong>Last name:</strong><span>${escapeHtml(nameParts.lastName)}</span></div>
+      `;
+    }
     if (adminSettingsViewPhone) adminSettingsViewPhone.textContent = user?.phone || "-";
     if (adminSettingsViewUsername) adminSettingsViewUsername.textContent = user?.username || "-";
     if (adminSettingsViewEmail) adminSettingsViewEmail.textContent = user?.email || "admin@smartworkshop.local";
@@ -1435,14 +1516,25 @@ if (adminPage) {
       if (adminSettingsEditInput?.parentElement) adminSettingsEditInput.parentElement.classList.add("is-hidden");
       adminSettingsEditSelectField?.classList.add("is-hidden");
       adminSettingsEditNameGrid?.classList.remove("is-hidden");
-      const fullName = String(user.display_name || user.full_name || config.getValue(user) || "").trim();
+      const fullName = collapseRepeatedNameParts(String(user.display_name || user.full_name || config.getValue(user) || "").trim());
       const nameParts = fullName ? fullName.split(/\s+/).filter(Boolean) : [];
       const firstName = String(user.name || nameParts[0] || "").trim();
+      const firstNamePattern = firstName ? new RegExp(`^${firstName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*`, "i") : null;
       const middleName = String(user.middle_name || "").trim() || (nameParts.length > 2 ? nameParts.slice(1, -1).join(" ") : "");
-      const derivedLastName = nameParts.length > 1
-        ? (middleName ? nameParts.slice(1 + (user.middle_name ? 1 : 0)).join(" ") : nameParts.slice(1).join(" "))
-        : "";
-      const lastName = String(derivedLastName || user.lastname || "").trim();
+      let remainder = fullName;
+      if (firstNamePattern) {
+        remainder = remainder.replace(firstNamePattern, "").trim();
+      }
+      if (middleName) {
+        const middlePattern = new RegExp(`^(${middleName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})(?:\\s+\\1)+\\s*`, "i");
+        remainder = remainder.replace(middlePattern, "").trim();
+        const repeatedMiddlePattern = new RegExp(`^${middleName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*`, "i");
+        while (remainder && repeatedMiddlePattern.test(remainder)) {
+          remainder = remainder.replace(repeatedMiddlePattern, "").trim();
+        }
+      }
+      const fallbackLastName = nameParts.length > 1 ? nameParts.slice(1 + (middleName ? 1 : 0)).join(" ") : "";
+      const lastName = String(remainder || fallbackLastName || user.lastname || "").trim();
       if (adminSettingsEditFirstName) adminSettingsEditFirstName.value = firstName;
       if (adminSettingsEditMiddleName) adminSettingsEditMiddleName.value = middleName;
       if (adminSettingsEditLastName) adminSettingsEditLastName.value = lastName;

@@ -2135,6 +2135,15 @@ body.mechanic-body .mechanic-resolution-detail {
   gap: 22px;
 }
 
+body.mechanic-body .mechanic-resolution-detail-head {
+  display: flex;
+  align-items: center;
+}
+
+body.mechanic-body .mechanic-resolution-detail-head h3 {
+  margin: 0 0 0 24px;
+}
+
 body.mechanic-body .settings-card.mechanic-caseView {
   display: grid;
   gap: 22px;
@@ -3768,6 +3777,39 @@ body.mechanic-body .mechanic-edit-profile-card--skills {
 body.mechanic-body .mechanic-edit-profile-card--skills label {
   display: grid;
   gap: 16px;
+}
+
+body.mechanic-body .mechanic-work-history-section {
+  display: grid;
+  gap: 12px;
+}
+
+body.mechanic-body .mechanic-work-history-view {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(20, 27, 41, 0.72);
+}
+
+body.mechanic-body .mechanic-work-history-view p {
+  margin: 0;
+  color: #ffffff;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+body.mechanic-body .mechanic-work-history-edit {
+  justify-self: start;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  background: #5a6f90;
+  color: #ffffff;
+  font: inherit;
+  cursor: pointer;
 }
 
 body.mechanic-body .mechanic-edit-profile-card--coverage {
