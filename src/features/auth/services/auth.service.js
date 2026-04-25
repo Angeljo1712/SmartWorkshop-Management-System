@@ -128,6 +128,22 @@ const issueAuthResult = async (userId) => {
   return { user, token };
 };
 
+const getTwoFactorReauthWindowHours = (role) => {
+  const label = roleToLabel(role);
+  if (label === "ADMIN") return 0;
+  return Math.max(1, Number(env.twoFactorReauthHours || 24) || 24);
+};
+
+const hasRecentLogin = (lastLoginAt, role) => {
+  if (!lastLoginAt) return false;
+  const lastLoginTime = new Date(lastLoginAt).getTime();
+  if (!Number.isFinite(lastLoginTime)) return false;
+  const reauthHours = getTwoFactorReauthWindowHours(role);
+  if (reauthHours <= 0) return false;
+  const reauthWindowMs = reauthHours * 60 * 60 * 1000;
+  return Date.now() - lastLoginTime < reauthWindowMs;
+};
+
 const sortRoles = (roles) => {
   const priority = ["ADMIN", "MECHANIC", "CUSTOMER"];
   const unique = Array.from(new Set(roles));
@@ -229,6 +245,14 @@ const login = async ({ email, username, identifier, password }) => {
   }
 
   if (Boolean(user.two_factor_email_enabled)) {
+    if (hasRecentLogin(user.last_login_at, user.role)) {
+      const { user: sessionUser, token } = await issueAuthResult(user.id);
+      return {
+        user: sessionUser,
+        token
+      };
+    }
+
     const challenge = await createLoginTwoFactorChallenge(user.id);
     try {
       await sendLoginTwoFactorEmail({

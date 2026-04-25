@@ -1,6 +1,7 @@
 const path = require("path");
 const express = require("express");
 const { registerRoutes } = require("./routes/register");
+const { env } = require("./shared/config/env");
 const { errorHandler } = require("./shared/middleware/error");
 const { cors } = require("./shared/middleware/cors");
 
@@ -9,7 +10,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors);
-app.use("/uploads", express.static(path.join(__dirname, "shared", "uploads")));
+app.use("/uploads", express.static(env.uploadsDir));
 app.use(
   "/.well-known",
   express.static(path.join(__dirname, "..", "public", ".well-known"), {

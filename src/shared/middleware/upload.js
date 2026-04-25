@@ -1,9 +1,10 @@
 const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
+const { env } = require("../config/env");
 const { AppError } = require("../utils/appError");
 
-const uploadsRoot = path.join(__dirname, "../uploads");
+const uploadsRoot = env.uploadsDir;
 const uploadRoot = path.join(uploadsRoot, "avatars");
 const documentsUploadRoot = path.join(uploadsRoot, "mechanic-documents");
 const bookingCompletionUploadRoot = path.join(uploadsRoot, "booking-completion");

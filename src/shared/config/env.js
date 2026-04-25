@@ -1,4 +1,6 @@
+const path = require("path");
 const dotenv = require("dotenv");
+const { validateEnv } = require("./validateEnv");
 
 dotenv.config();
 
@@ -6,6 +8,7 @@ const env = {
   apiPort: process.env.API_PORT || 3000,
   jwtSecret: process.env.JWT_SECRET || "dev_jwt_secret",
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "5m",
+  twoFactorReauthHours: Math.max(1, Number(process.env.TWO_FACTOR_REAUTH_HOURS || 24) || 24),
   corsOrigin: process.env.CORS_ORIGIN || "http://localhost:5173",
   dvla: {
     baseUrl: process.env.DVLA_BASE_URL || "https://uat.driver-vehicle-licensing.api.gov.uk/vehicle-enquiry",
@@ -45,8 +48,11 @@ const env = {
     apiKey: process.env.GEOAPIFY_API_KEY || "",
     mapStyle: process.env.GEOAPIFY_MAP_STYLE || "osm-carto"
   },
+  uploadsDir: process.env.UPLOADS_DIR || path.join(__dirname, "../../../storage/uploads"),
   appBaseUrl: process.env.APP_BASE_URL || "http://localhost:3000",
   seedOnStart: process.env.SEED_ON_START === "true"
 };
+
+validateEnv(env);
 
 module.exports = { env };

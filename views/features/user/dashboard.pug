@@ -35,6 +35,7 @@ block content
             button.user-mobile-menu-link.user-nav-link(type="button" data-view="vehicle") Vehicle
             button.user-mobile-menu-link.user-nav-link(type="button" data-view="resolution") Support
             button.user-mobile-menu-link.user-nav-link(type="button" data-view="settings") Settings
+          button.user-mobile-back-btn#userMobileRoleBackBtn(type="button" data-role-back="true" hidden) Back
           button.user-mobile-signout#userMobileLogoutBtn(type="button") Logout
         aside.mainRail.rail-base
           .rail-brand
@@ -83,7 +84,16 @@ block content
                   path(d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 0 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.2a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3h.1a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8v.1a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.5 1z")
               span.rail-text Settings
           .rail-footer
-            button.admin-signout#userLogoutBtn(type="button") Sign out
+            button.rail-nav-link.rail-item#userRailRoleBackBtn(type="button" data-role-back="true" hidden)
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  path(d="M15 18l-6-6 6-6")
+              span.rail-text Back
+            button.rail-nav-link.rail-item#userLogoutBtn(type="button")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  path(d="M15 18l-6-6 6-6")
+              span.rail-text Sign out
         button.user-rail-toggle#userRailToggle(type="button" aria-label="Collapse sidebar" aria-expanded="true")
           svg(viewBox="0 0 24 24" aria-hidden="true")
             rect(x="4" y="4" width="6" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6")

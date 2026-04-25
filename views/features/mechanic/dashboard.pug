@@ -158,7 +158,11 @@ block content
                 svg(viewBox="0 0 24 24")
                   path(d="M15 18l-6-6 6-6")
               span.rail-text Back
-            button.admin-signout#mechanicLogoutBtn(type="button") Sign out
+            button.rail-nav-link.rail-item#mechanicLogoutBtn(type="button")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  path(d="M15 18l-6-6 6-6")
+              span.rail-text Sign out
         button.mechanic-rail-toggle#mechanicRailToggle(type="button" aria-label="Collapse sidebar" aria-expanded="true")
           svg(viewBox="0 0 24 24" aria-hidden="true")
             rect(x="4" y="4" width="6" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6")

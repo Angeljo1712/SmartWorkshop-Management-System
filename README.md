@@ -100,6 +100,15 @@ Use `./scripts/staging/start-staging-v1.ps1` or `./scripts/staging/start-staging
 Use `./scripts/staging/start-staging-dev.ps1` when you want staging on `db_data_staging_v2` with `nodemon` watching code changes.
 Staging bootstrap also seeds 10 extra London mechanic test accounts for booking and search flows.
 
+Environment validation rules:
+
+- `development` can start with placeholder values and only emits warnings.
+- `staging` is validated strictly and must use real values for required secrets and database settings.
+- `STRICT_ENV_VALIDATION=true` forces strict validation in any environment.
+- Keep `.env.staging` aligned with the staging stack so it does not rely on placeholder secrets.
+- `TWO_FACTOR_REAUTH_HOURS` controls how long a successful login stays exempt from a new 2FA code. Default: `24`.
+- Admin accounts always require 2FA on login when 2FA is enabled; customer and mechanic accounts use the reauth window above.
+
 Smoke test plan for this stage: [docs/staging-smoke-test-plan.md](docs/staging-smoke-test-plan.md)
 Smoke test report template: [docs/staging-smoke-test-report-template.md](docs/staging-smoke-test-report-template.md)
 Plain text report template: [docs/staging-smoke-test-report-template.txt](docs/staging-smoke-test-report-template.txt)

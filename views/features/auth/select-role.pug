@@ -4,6 +4,9 @@ block vars
   - var title = "SmartWorkshop - Select Role"
   - var bodyClass = "auth-body"
 
+block head
+  link(rel="stylesheet", href="/css/features/auth/auth-shell.css")
+
 block content
   main.primari-shell
     .page-shell-content
@@ -26,3 +29,6 @@ block content
               p Manage jobs, profile and workshop settings.
 
   include ../../partials/general-footer
+
+append scripts
+  script(src="/js/features/auth/auth-pages.js")

@@ -147,6 +147,8 @@ if (userPage) {
   const userNavLinks = document.querySelectorAll(".user-nav-link");
   const userRail = document.querySelector("#userPage .mainRail");
   const userRailToggle = document.getElementById("userRailToggle");
+  const userRailRoleBackBtn = document.getElementById("userRailRoleBackBtn");
+  const userMobileRoleBackBtn = document.getElementById("userMobileRoleBackBtn");
   const userDashboardView = document.getElementById("userDashboardView");
   const userDashboardName = document.getElementById("userDashboardName");
   const userWelcomeNames = document.querySelectorAll(".user-welcome-name");
@@ -321,6 +323,27 @@ if (userPage) {
     setUserRailState(false);
   };
 
+  const setRoleBackButtonVisibility = (roles, activeRole) => {
+    const normalizedRoles = (Array.isArray(roles) ? roles : [])
+      .map((role) => String(role || "").toUpperCase());
+    const normalizedActiveRole = String(activeRole || "").toUpperCase();
+    const canReturnToRoleSelect =
+      normalizedActiveRole === "CUSTOMER" &&
+      normalizedRoles.length > 1;
+
+    [userRailRoleBackBtn, userMobileRoleBackBtn].forEach((button) => {
+      if (!button) return;
+      button.hidden = !canReturnToRoleSelect;
+      button.setAttribute("aria-hidden", canReturnToRoleSelect ? "false" : "true");
+    });
+    if (userRailRoleBackBtn) {
+      userRailRoleBackBtn.classList.toggle("is-hidden", !canReturnToRoleSelect);
+    }
+    if (userMobileRoleBackBtn) {
+      userMobileRoleBackBtn.classList.toggle("is-hidden", !canReturnToRoleSelect);
+    }
+  };
+
   const setUserHeader = (user) => {
     const joinedName = [user?.name, user?.middle_name, user?.lastname].filter(Boolean).join(" ").trim();
     const displayName = user?.full_name || joinedName || user?.email || "User";
@@ -362,6 +385,7 @@ if (userPage) {
     if (userSecurity2faEmail) userSecurity2faEmail.checked = Boolean(user?.two_factor_email_enabled);
     if (userSecurity2faSms) userSecurity2faSms.checked = false;
     syncSecurity2faButton();
+    setRoleBackButtonVisibility(roles, activeRole);
     if (userDashboardName) userDashboardName.textContent = displayName;
     userWelcomeNames.forEach((element) => {
       element.textContent = displayName;
@@ -2094,6 +2118,11 @@ if (userPage) {
   userMobileMenuToggle?.addEventListener("click", openUserMobileMenu);
   userMobileMenuClose?.addEventListener("click", closeUserMobileMenu);
   userMobileMenuBackdrop?.addEventListener("click", closeUserMobileMenu);
+  [userRailRoleBackBtn, userMobileRoleBackBtn].forEach((button) => {
+    button?.addEventListener("click", () => {
+      window.location.href = "/auth/select-role";
+    });
+  });
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") closeUserMobileMenu();
   });

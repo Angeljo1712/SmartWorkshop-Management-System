@@ -274,7 +274,7 @@ body.user-body .main-header.general-header {
   display: grid;
   justify-items: stretch;
   padding-top: 10px;
-  border-top: 1px dashed rgba(15, 23, 42, 0.12);
+  gap: 12px;
 }
 
 #userPage .mainRail .rail-item {
@@ -323,41 +323,6 @@ body.user-body .main-header.general-header {
   flex: 0 0 20px;
 }
 
-#userPage .mainRail .admin-signout {
-  width: 100%;
-  min-width: 0;
-  height: 48px;
-  padding: 0 14px 0 40px;
-  border-radius: 14px;
-  overflow: hidden;
-  color: #334155;
-  font-size: 0.88rem;
-  font-weight: 600;
-  background: rgba(15, 23, 42, 0.04);
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  position: relative;
-  display: grid;
-  place-items: center start;
-}
-
-#userPage .mainRail .admin-signout::before {
-  content: "←";
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  color: #334155;
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 1;
-  z-index: 1;
-}
-
-#userPage .mainRail .admin-signout::before {
-  inset: 0 auto 0 14px;
-  width: 18px;
-}
-
 #userPage .mainRail.is-collapsed {
   width: 70px;
   min-width: 70px;
@@ -400,18 +365,12 @@ body.user-body .main-header.general-header {
   justify-items: center;
 }
 
-#userPage .mainRail.is-collapsed .admin-signout {
-  width: 48px;
-  min-width: 48px;
-  padding: 0;
-  color: transparent;
-  font-size: 0;
-  justify-content: center;
-  place-items: center;
+#userPage .mainRail .rail-item#userRailRoleBackBtn {
+  line-height: 1;
 }
 
-#userPage .mainRail.is-collapsed .admin-signout::before {
-  inset: 0;
+#userPage .mainRail .rail-item#userRailRoleBackBtn .rail-text {
+  line-height: 1;
 }
 
 #userPage.mainLayout .settings-card {
@@ -1844,7 +1803,7 @@ body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-
 }
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message-meta {
-  color: rgba(234, 240, 251, 0.62);
+  /* color: rgba(234, 240, 251, 0.62); */
   font-size: 0.85rem;
 }
 
@@ -2158,7 +2117,9 @@ body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-res
 }
 
 body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-message.is-customer .mechanic-resolution-message-content {
-  align-items: flex-end;
+  justify-items: start;
+  align-items: flex-start;
+  text-align: left;
 }
 
 body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose {
@@ -3968,6 +3929,12 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
   .user-mobile-signout {
     border-top: 1px solid rgba(15, 23, 42, 0.12);
     color: #0f172a;
+  }
+
+  .user-mobile-back-btn {
+    margin-top: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: #eef2f7;
   }
 
   #userPage .mainSection {
