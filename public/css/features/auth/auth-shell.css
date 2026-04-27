@@ -249,10 +249,37 @@
   font-size: 14px;
 }
 
-.auth-vehicle-form .primary,
-.auth-vehicle-cta {
+.auth-content--create .auth-vehicle-form .auth-vehicle-cta,
+.auth-content--create .auth-vehicle-form .primary.auth-vehicle-cta {
   width: 100%;
   margin-top: 6px;
+  min-height: 46px;
+  border-radius: 999px;
+  border: 1px solid #d5dae3 !important;
+  background: #ffffff !important;
+  color: #3e434d !important;
+  box-shadow: none;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.auth-content--create .auth-vehicle-form .auth-vehicle-cta:hover,
+.auth-content--create .auth-vehicle-form .auth-vehicle-cta:focus-visible,
+.auth-content--create .auth-vehicle-form .primary.auth-vehicle-cta:hover,
+.auth-content--create .auth-vehicle-form .primary.auth-vehicle-cta:focus-visible {
+  background: #5a6f90 !important;
+  border-color: #5a6f90 !important;
+  color: #ffffff !important;
+}
+
+.auth-content--create .auth-vehicle-form .auth-vehicle-cta:focus-visible,
+.auth-content--create .auth-vehicle-form .primary.auth-vehicle-cta:focus-visible {
+  outline: none;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
 }
 
 .auth-form {
@@ -353,7 +380,7 @@
   max-width: 360px;
   margin: 18px auto 0;
   display: grid;
-  gap: 12px;
+  gap: 9px;
   text-align: center;
 }
 
@@ -383,6 +410,68 @@
 .auth-two-factor .auth-link {
   margin: 0;
   width: auto;
+}
+
+.auth-two-factor-btn {
+  width: 100%;
+  margin-top: 0;
+  min-height: 35px;
+  border-radius: 999px;
+  border: 1px solid #d5dae3;
+  background: #f3f4f6;
+  color: #3e434d;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  padding: 0 14px;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.auth-two-factor-btn:hover,
+.auth-two-factor-btn:focus-visible {
+  background: #5a6f90;
+  color: #ffffff;
+  border-color: #5a6f90;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
+}
+
+.auth-two-factor-btn:focus-visible {
+  outline: none;
+}
+
+.auth-two-factor .auth-submit.auth-two-factor-btn {
+  background: #f3f4f6;
+  color: #3e434d;
+  border: 1px solid #d5dae3;
+}
+
+.auth-two-factor .auth-submit.auth-two-factor-btn:hover,
+.auth-two-factor .auth-submit.auth-two-factor-btn:focus-visible {
+  background: #5a6f90;
+  color: #ffffff;
+  border: 1px solid #5a6f90;
+}
+
+.auth-two-factor .auth-link.auth-two-factor-btn {
+  background: #f3f4f6;
+  border-color: #d5dae3;
+  color: #3e434d;
+}
+
+.auth-two-factor .auth-link.auth-two-factor-btn:hover,
+.auth-two-factor .auth-link.auth-two-factor-btn:focus-visible {
+  background: #5a6f90;
+  border-color: #5a6f90;
+  color: #ffffff;
+}
+
+#twoFactorBack {
+  margin-top: 10px;
 }
 
 .auth-remember {

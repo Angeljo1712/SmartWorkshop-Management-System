@@ -10,6 +10,7 @@
     const twoFactorError = document.getElementById("twoFactorError");
     const twoFactorMessage = document.getElementById("twoFactorMessage");
     const twoFactorBack = document.getElementById("twoFactorBack");
+    const twoFactorResend = document.getElementById("twoFactorResend");
 
     let pendingChallengeToken = "";
     let pendingLoginIdentifier = "";
@@ -112,6 +113,38 @@
 
     twoFactorBack?.addEventListener("click", () => {
       hideTwoFactorPanel();
+    });
+
+    twoFactorResend?.addEventListener("click", async () => {
+      if (twoFactorError) twoFactorError.textContent = "";
+      if (!pendingChallengeToken) {
+        if (twoFactorError) twoFactorError.textContent = "No active verification session. Please sign in again.";
+        return;
+      }
+
+      twoFactorResend.disabled = true;
+      try {
+        const response = await fetch("/api/auth/login/resend-2fa", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            challenge_token: pendingChallengeToken
+          })
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw result;
+        }
+
+        pendingChallengeToken = String(result.challenge_token || pendingChallengeToken);
+        if (twoFactorMessage) {
+          twoFactorMessage.textContent = result?.message || "A new verification code was sent to your email.";
+        }
+      } catch (err) {
+        if (twoFactorError) twoFactorError.textContent = resolveApiErrorMessage(err, "Unable to resend code.");
+      } finally {
+        twoFactorResend.disabled = false;
+      }
     });
 
     twoFactorForm?.addEventListener("submit", async (event) => {

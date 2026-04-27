@@ -279,6 +279,60 @@ const login = async ({ email, username, identifier, password }) => {
   };
 };
 
+const resendTwoFactorLoginCode = async ({ challenge_token }) => {
+  await ensureTwoFactorTables();
+
+  const normalizedToken = String(challenge_token || "").trim();
+  if (!normalizedToken) {
+    throw new AppError("VALIDATION_ERROR", "challenge_token is required", 400);
+  }
+
+  const [challengeRows] = await pool.query(
+    `SELECT id, user_id
+     FROM login_two_factor_challenges
+     WHERE challenge_token = ?
+     LIMIT 1`,
+    [normalizedToken]
+  );
+  const challenge = challengeRows[0];
+  if (!challenge) {
+    throw new AppError("INVALID_2FA_CHALLENGE", "Invalid or expired verification code", 400);
+  }
+
+  const [userRows] = await pool.query(
+    `SELECT email
+     FROM users
+     WHERE id = ?
+     LIMIT 1`,
+    [challenge.user_id]
+  );
+  const user = userRows[0];
+  if (!user) {
+    throw new AppError("NOT_FOUND", "User not found", 404);
+  }
+
+  const newChallenge = await createLoginTwoFactorChallenge(challenge.user_id);
+  try {
+    await sendLoginTwoFactorEmail({
+      to: user.email,
+      code: newChallenge.code,
+      expiresMinutes: 10
+    });
+  } catch (error) {
+    await clearLoginTwoFactorChallenge(newChallenge.challengeToken);
+    throw new AppError("EMAIL_FAILED", "Unable to send verification email. Please try again.", 502);
+  }
+
+  await clearLoginTwoFactorChallenge(normalizedToken);
+
+  return {
+    requires_2fa: true,
+    challenge_token: newChallenge.challengeToken,
+    delivery: "email",
+    message: "A new verification code has been sent to your email."
+  };
+};
+
 const verifyTwoFactorLogin = async ({ challenge_token, code }) => {
   const result = await verifyLoginTwoFactorChallenge({ challengeToken: challenge_token, code });
   return issueAuthResult(result.user_id);
@@ -355,6 +409,7 @@ const resetPassword = async ({ token, password }) => {
 module.exports = {
   register,
   login,
+  resendTwoFactorLoginCode,
   verifyTwoFactorLogin,
   requestPasswordReset,
   resetPassword,

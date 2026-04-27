@@ -11,6 +11,12 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+const resolveFromAddress = () => {
+  const fromAddress = env.smtp.from || "no-reply@smartworkshop.local";
+  const fromName = String(env.smtp.fromName || "").trim();
+  return fromName ? `"${fromName}" <${fromAddress}>` : fromAddress;
+};
+
 const renderEmailLayout = ({ title, intro, ctaLabel, ctaUrl, footerNote }) => `
   <!DOCTYPE html>
   <html lang="en">
@@ -78,7 +84,7 @@ const renderEmailLayout = ({ title, intro, ctaLabel, ctaUrl, footerNote }) => `
 `;
 
 const sendEmailChangeConfirmation = async ({ to, confirmUrl }) => {
-  const from = env.smtp.from || "no-reply@smartworkshop.local";
+  const from = resolveFromAddress();
   const subject = "Confirm your new email";
   const text = [
     "We received a request to update your SmartWorkshop email address.",
@@ -106,11 +112,11 @@ const sendEmailChangeConfirmation = async ({ to, confirmUrl }) => {
     `
   });
 
-  await transporter.sendMail({ from, to, subject, text, html });
+  await transporter.sendMail({ from, to, subject, text, html, replyTo: from });
 };
 
 const sendPasswordResetEmail = async ({ to, resetUrl }) => {
-  const from = env.smtp.from || "no-reply@smartworkshop.local";
+  const from = resolveFromAddress();
   const subject = "Reset your password";
   const text = `Reset your password by visiting: ${resetUrl}`;
   const html = renderEmailLayout({
@@ -132,11 +138,11 @@ const sendPasswordResetEmail = async ({ to, resetUrl }) => {
     `
   });
 
-  await transporter.sendMail({ from, to, subject, text, html });
+  await transporter.sendMail({ from, to, subject, text, html, replyTo: from });
 };
 
 const sendLoginTwoFactorEmail = async ({ to, code, expiresMinutes = 10 }) => {
-  const from = env.smtp.from || "no-reply@smartworkshop.local";
+  const from = resolveFromAddress();
   const subject = "Your SmartWorkshop sign-in code";
   const text = `Your SmartWorkshop verification code is ${code}. It expires in ${expiresMinutes} minutes.`;
   const html = `
@@ -156,11 +162,18 @@ const sendLoginTwoFactorEmail = async ({ to, code, expiresMinutes = 10 }) => {
     </div>
   `;
 
-  await transporter.sendMail({ from, to, subject, text, html });
+  console.info("[email] sending login 2fa code", { to, subject, smtpHost: env.smtp.host });
+  const info = await transporter.sendMail({ from, to, subject, text, html, replyTo: from });
+  console.info("[email] login 2fa code sent", {
+    to,
+    subject,
+    messageId: info?.messageId,
+    response: info?.response
+  });
 };
 
 const sendMechanicAccountReadyEmail = async ({ to, homeUrl }) => {
-  const from = env.smtp.from || "no-reply@smartworkshop.local";
+  const from = resolveFromAddress();
   const subject = "Your SmartWorkshop mechanic account is ready";
   const safeHomeUrl = homeUrl || `${env.appBaseUrl || "http://localhost:3000"}/`;
   const text = [
@@ -189,7 +202,7 @@ const sendMechanicAccountReadyEmail = async ({ to, homeUrl }) => {
     `
   });
 
-  const info = await transporter.sendMail({ from, to, subject, text, html });
+  const info = await transporter.sendMail({ from, to, subject, text, html, replyTo: from });
   console.info("[email] mechanic account ready email sent", {
     to,
     subject,
@@ -199,7 +212,7 @@ const sendMechanicAccountReadyEmail = async ({ to, homeUrl }) => {
 };
 
 const sendMechanicSetupCodeEmail = async ({ to, code, expiresMinutes = 10 }) => {
-  const from = env.smtp.from || "no-reply@smartworkshop.local";
+  const from = resolveFromAddress();
   const subject = "Your SmartWorkshop setup verification code";
   const text = `Your SmartWorkshop verification code is ${code}. It expires in ${expiresMinutes} minutes.`;
   console.info("[email] sending mechanic setup code", { to, subject, smtpHost: env.smtp.host });
@@ -220,7 +233,7 @@ const sendMechanicSetupCodeEmail = async ({ to, code, expiresMinutes = 10 }) => 
     </div>
   `;
 
-  const info = await transporter.sendMail({ from, to, subject, text, html });
+  const info = await transporter.sendMail({ from, to, subject, text, html, replyTo: from });
   console.info("[email] mechanic setup code sent", {
     to,
     subject,
@@ -230,7 +243,7 @@ const sendMechanicSetupCodeEmail = async ({ to, code, expiresMinutes = 10 }) => 
 };
 
 const sendAccountChangeNotification = async ({ to, title, changes = [] }) => {
-  const from = env.smtp.from || "no-reply@smartworkshop.local";
+  const from = resolveFromAddress();
   const safeChanges = Array.isArray(changes) ? changes.filter(Boolean) : [];
   const subject = title || "Your SmartWorkshop account was updated";
   const normalizedChanges = safeChanges.map((line) => String(line).toLowerCase());
@@ -318,7 +331,7 @@ const sendAccountChangeNotification = async ({ to, title, changes = [] }) => {
       `
   });
 
-  await transporter.sendMail({ from, to, subject: subjectByType, text, html });
+  await transporter.sendMail({ from, to, subject: subjectByType, text, html, replyTo: from });
 };
 
 module.exports = {
