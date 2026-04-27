@@ -4,11 +4,15 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+if (Get-Variable -Name PSNativeCommandUseErrorActionPreference -ErrorAction SilentlyContinue) {
+  $PSNativeCommandUseErrorActionPreference = $false
+}
 
 $RepoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $stagingEnvFile = Join-Path -Path $RepoRoot -ChildPath ".env.staging"
 $container = "smartworkshop_staging_db"
 $backupDir = Join-Path -Path $RepoRoot -ChildPath "database"
+$stackScript = Join-Path -Path $PSScriptRoot -ChildPath "stack-staging.ps1"
 
 function Get-EnvValue([string]$Key, [string]$Default = "") {
   if (-not (Test-Path $stagingEnvFile)) {
@@ -50,6 +54,68 @@ function Get-LatestBackupFile {
   return $null
 }
 
+function Ensure-StagingDbContainerRunning {
+  if (-not (Get-Command "docker" -ErrorAction SilentlyContinue)) {
+    throw "Docker command not found in PATH."
+  }
+
+  $runningInspect = (& docker inspect -f "{{.State.Running}}" $container 2>$null)
+  $inspectExitCode = $LASTEXITCODE
+  $running = ($runningInspect | Select-Object -First 1)
+  if ($inspectExitCode -eq 0 -and $running.Trim().ToLowerInvariant() -eq "true") {
+    return
+  }
+
+  if ($inspectExitCode -eq 0) {
+    Write-Host "Container '$container' is stopped. Starting it..."
+    docker start $container | Out-Host
+    if ($LASTEXITCODE -ne 0) {
+      throw "Failed to start container '$container' (exit code $LASTEXITCODE)."
+    }
+  }
+  else {
+    if (-not (Test-Path $stackScript)) {
+      throw "Staging stack script not found: $stackScript"
+    }
+
+    Write-Host "Container '$container' does not exist. Starting staging stack..."
+    & $stackScript -Action start | Out-Host
+    if ($LASTEXITCODE -ne 0) {
+      throw "Failed to start staging stack (exit code $LASTEXITCODE)."
+    }
+  }
+
+  $runningAfterStartInspect = (& docker inspect -f "{{.State.Running}}" $container 2>$null)
+  $inspectAfterStartExitCode = $LASTEXITCODE
+  $runningAfterStart = ($runningAfterStartInspect | Select-Object -First 1)
+  if ($inspectAfterStartExitCode -ne 0 -or $runningAfterStart.Trim().ToLowerInvariant() -ne "true") {
+    throw "Container '$container' is not running after startup."
+  }
+}
+
+function Wait-ForMysqlReady {
+  param(
+    [int]$MaxAttempts = 30,
+    [int]$DelaySeconds = 2
+  )
+
+  for ($i = 1; $i -le $MaxAttempts; $i++) {
+    docker exec -e MYSQL_PWD=$dbPass $container mysqladmin ping -h localhost -u $dbUser --silent 2>$null | Out-Null
+    if ($LASTEXITCODE -eq 0) {
+      return
+    }
+
+    docker exec -e MYSQL_PWD=$rootPass $container mysqladmin ping -h localhost -u root --silent 2>$null | Out-Null
+    if ($LASTEXITCODE -eq 0) {
+      return
+    }
+
+    Start-Sleep -Seconds $DelaySeconds
+  }
+
+  throw "MySQL in container '$container' did not become ready after $($MaxAttempts * $DelaySeconds) seconds."
+}
+
 function Invoke-DockerMysqlRestore {
   param(
     [string]$User,
@@ -80,13 +146,19 @@ function Invoke-DockerMysqlRestore {
   $process.StartInfo = $psi
   [void]$process.Start()
 
+  $copyException = $null
   $fileStream = [System.IO.File]::OpenRead($inFile)
   try {
     $fileStream.CopyTo($process.StandardInput.BaseStream)
   }
+  catch [System.IO.IOException] {
+    # The child process may exit early (auth/db errors), which closes stdin.
+    # Capture this but continue to read stderr/stdout for the real cause.
+    $copyException = $_.Exception
+  }
   finally {
     $fileStream.Dispose()
-    $process.StandardInput.Close()
+    try { $process.StandardInput.Close() } catch {}
   }
 
   $stdout = $process.StandardOutput.ReadToEnd()
@@ -95,6 +167,11 @@ function Invoke-DockerMysqlRestore {
 
   if ($stdout) { Write-Host $stdout.TrimEnd() }
   if ($stderr) { Write-Host $stderr.TrimEnd() }
+
+  if ($copyException -and $process.ExitCode -eq 0) {
+    Write-Host "Restore input stream interrupted: $($copyException.Message)"
+    return 1
+  }
 
   return $process.ExitCode
 }
@@ -119,6 +196,9 @@ else {
 if (-not $inFile) {
   throw "Backup file not found in $backupDir"
 }
+
+Ensure-StagingDbContainerRunning
+Wait-ForMysqlReady
 
 Write-Host "Restoring staging database '$dbName' from $inFile"
 
