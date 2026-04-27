@@ -310,7 +310,7 @@ const buildCustomerHeaderMenuMarkup = () => `
       <button class="customer-header-menu-item" type="button" data-view="account">Account</button>
       <button class="customer-header-menu-item" type="button" data-view="bookings">Bookings</button>
       <button class="customer-header-menu-item" type="button" data-view="vehicle">Vehicle</button>
-      <button class="customer-header-menu-item" type="button" data-view="resolution">Support</button>
+      <button class="customer-header-menu-item" type="button" data-view="resolution">Resolution center</button>
       <button class="customer-header-menu-item" type="button" data-view="settings">Settings</button>
       <button class="customer-header-menu-item" type="button" data-action="logout">Logout</button>
     </div>
