@@ -232,7 +232,7 @@ body.user-body .main-header.general-header {
 #userPage .mainRail {
   padding: 14px 12px 16px;
   justify-items: stretch;
-  gap: 10px;
+  gap: 11px;
 }
 
 #userPage .mainRail:hover {
