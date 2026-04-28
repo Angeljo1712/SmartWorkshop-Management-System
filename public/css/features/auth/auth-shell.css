@@ -339,7 +339,7 @@
   margin: 12px 0 8px;
   width: 100%;
   text-align: center;
-  font-size: 14px;
+  font-size: 15px;
   color: #6b7280;
 }
 
@@ -350,7 +350,7 @@
 
 .auth-content--sign-in .auth-submit {
   width: 180px;
-  margin: 8px auto 0;
+  margin: 15px auto 0;
   padding: 12px 18px;
   border-radius: 999px;
   text-transform: uppercase;
@@ -833,9 +833,9 @@
 
 .auth-content--forgot .auth-submit {
   width: 100%;
-  margin-top: 10px;
+  margin-top: 15px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #7b28ff, #1f7aec);
+  background: linear-gradient(90deg, #3e434df7);
   border: none;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -848,7 +848,8 @@
 }
 
 .auth-content--forgot .auth-footnote a {
-  color: var(--brand-blue);
+  color: #6b7280;
+  font-size: 15px;
 }
 
 @media (max-width: 860px) {

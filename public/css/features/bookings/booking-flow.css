@@ -98,7 +98,7 @@
   background: #344154;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
-  padding: 30px;
+  padding: 25px;
 }
 
 .work-layout1 > .work-layout2 {
@@ -274,7 +274,7 @@
   gap: 0;
   align-items: start;
   position: relative;
-  padding: 22px 28px 18px;
+  padding: 20px 20px 20px;
   border-radius: 22px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(243, 247, 255, 0.92) 100%);
   border: 1px solid rgba(76, 120, 255, 0.16);
@@ -359,14 +359,12 @@
   display: grid;
   gap: 4px;
   font-weight: 700;
+  font-size: 20px;
   color: #111827;
 }
 
 .step-label::after {
-  content: "Explain your step here.";
-  font-size: 12px;
-  font-weight: 400;
-  color: #6b7280;
+  content: "";
 }
 
 .booking-vehicle-notice {
@@ -393,6 +391,7 @@
 .step.is-active .step-label,
 .step.is-complete .step-label {
   color: #0f172a;
+  font-size: 20px;
 }
 
 .bookings-headline h1 {
@@ -472,6 +471,39 @@
   box-shadow: inset 2px 0 0 #ffffff, inset -2px 0 0 #ffffff, 0 18px 34px rgba(0, 0, 0, 0.24);
 }
 
+@media (max-width: 1100px) and (min-width: 901px) {
+  .bookings-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .bookings-card-link {
+    border-right-width: 1px;
+  }
+
+  .bookings-card {
+    padding: 22px 14px;
+  }
+
+  .bookings-card h3 {
+    margin: 12px 0 6px;
+    font-size: 16px;
+  }
+
+  .bookings-card p {
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  .bookings-icon {
+    width: 52px;
+    height: 52px;
+  }
+
+  .bookings-icon svg {
+    width: 26px;
+    height: 26px;
+  }
+}
 
 /* Work */
 
@@ -1858,20 +1890,6 @@
 
 /* Responsive */
 
-@media (max-width: 1024px) {
-  .work-type-layout-1 > .work-type-layout-2 {
-    grid-template-areas:
-      "tabs"
-      "main"
-      "summary";
-    grid-template-columns: 1fr;
-  }
-
-  .work-summary {
-    position: static;
-  }
-}
-
 @media (max-width: 980px) {
   .details-layout2,
   .payment-layout2,
@@ -1895,19 +1913,52 @@
   }
 }
 
-@media (max-width: 900px) {
+@media (min-width: 769px) and (max-width: 900px) {
   .work-tabs {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .stepper {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px 12px;
-    padding: 18px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    padding: 16px 12px 12px;
+  }
+
+  .stepper.stepper--progress-0 {
+    width: 100%;
+    justify-self: center;
   }
 
   .stepper::before {
-    display: none;
+    left: 10%;
+    right: 10%;
+    top: 34px;
+  }
+
+  .stepper::after {
+    left: 10%;
+    top: 34px;
+  }
+
+  .step {
+    justify-items: center;
+    text-align: center;
+    padding: 0 8px;
+    width: 100%;
+    max-width: none;
+  }
+
+  .step-dot {
+    margin: 0 auto;
+  }
+
+  .step-label {
+    font-size: 18px;
+  }
+
+  .step.is-active .step-label,
+  .step.is-complete .step-label {
+    font-size: 18px;
   }
 
   .bookings-card {
@@ -1926,6 +1977,93 @@
   }
 
   .stepper {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .stepper.stepper--progress-0 {
+    width: 100%;
+    /* max-width: 100px; */
+  }
+}
+
+@media (max-width: 768px) {
+  .work-type-layout-1 > .work-type-layout-2 {
+    grid-template-areas:
+      "tabs"
+      "summary"
+      "main";
     grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 20px;
+    width: 100%;
+  }
+
+  .work-summary {
+    position: static;
+    top: auto;
+    width: 100%;
+  }
+
+  .work-type-layout-1 > .work-type-layout-2 > .bookings-work,
+  .work-type-layout-1 > .work-type-layout-2 > .work-summary {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .work-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .work-tab {
+    min-height: 56px;
+    padding: 14px 12px;
+    font-size: 11px;
+    border-right: none;
+    border-bottom: 1px solid #ffffff;
+  }
+
+  .work-tab:not(:first-child) {
+    border-left: none;
+  }
+
+  .work-tab:last-child {
+    border-bottom: none;
+  }
+
+  .bookings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bookings-card-link {
+    border-right: none;
+    border-bottom: 1px solid #ffffff;
+  }
+
+  .bookings-card-link:last-child {
+    border-bottom: none;
+  }
+
+  .bookings-card {
+    padding: 20px 16px;
+  }
+
+  .bookings-card h3 {
+    font-size: 16px;
+    margin: 12px 0 6px;
+  }
+
+  .bookings-card p {
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
+  .bookings-icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .bookings-icon svg {
+    width: 24px;
+    height: 24px;
   }
 }

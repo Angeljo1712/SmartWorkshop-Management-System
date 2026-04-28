@@ -181,7 +181,7 @@
   z-index: 90;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  width: min(82vw, 360px);
+  width: min(82vw, 230px);
   padding: 18px;
   background: #ffffff;
   color: #0f172a;
@@ -589,6 +589,7 @@
 .home-hero .hero-card p {
   color: rgba(230, 235, 245, 0.7);
   margin-bottom: 16px;
+  margin-top: 16px;
 }
 
 .home-hero .hero-card .primary {
@@ -1820,6 +1821,12 @@
   }
 
   .home-hero .lead {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .how-promise-cta {
+    display: flex;
     margin-left: auto;
     margin-right: auto;
   }
