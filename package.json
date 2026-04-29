@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
+    "tunnel": "powershell -ExecutionPolicy Bypass -File scripts/dev/tunnel.ps1",
+    "tunnel:named": "powershell -ExecutionPolicy Bypass -File scripts/dev/tunnel.ps1 -TunnelName smartworkshop-dev -ConfigPath .cloudflared/tunnel.yml",
+    "tunnel:fixed": "powershell -ExecutionPolicy Bypass -File scripts/dev/tunnel-fixed.ps1",
     "smoke": "node scripts/smoke-test.js",
     "test": "node scripts/smoke-test.js"
   },

@@ -37,6 +37,57 @@ Dev scripts live in `scripts/dev/`:
 - `./scripts/dev/recreate.ps1`
 - `./scripts/dev/backup-db.ps1`
 - `./scripts/dev/restore-db.ps1`
+- `./scripts/dev/tunnel.ps1`
+
+## Cloudflare Tunnel
+
+Use Cloudflare Tunnel when you want to open the local app from a tablet or phone on any network, including places where the devices cannot see each other directly.
+
+1. Start the app locally as usual:
+
+```powershell
+./scripts/dev/start.ps1
+```
+
+2. In a second terminal, open the tunnel:
+
+```powershell
+./scripts/dev/tunnel.ps1
+```
+
+By default the tunnel points to `http://localhost:3000`.
+
+If you need public links and redirects to point at the tunnel URL, set these values in `.env` before starting the app:
+
+- `APP_BASE_URL`
+- `CORS_ORIGIN`
+
+If `cloudflared` is not installed yet, download it from the official Cloudflare docs and make sure it is available in your `PATH`.
+
+### Fixed tunnel name
+
+If you want the tunnel to keep the same name/host each time, create a local config based on:
+
+- [`docs/cloudflared-tunnel.example.yml`](/C:/Users/LianGel2DPro/SmartWorkshop-Management-System/docs/cloudflared-tunnel.example.yml)
+
+Then run:
+
+```powershell
+./scripts/dev/tunnel.ps1 -TunnelName smartworkshop-dev -ConfigPath .cloudflared/tunnel.yml
+```
+
+Or run the helper that prints the exact setup steps:
+
+```powershell
+npm run tunnel:fixed
+```
+
+You still need to create the tunnel and download the credentials file in Cloudflare first. After that, update:
+
+- `APP_BASE_URL`
+- `CORS_ORIGIN`
+
+to your public hostname so redirects and generated links use the tunnel URL.
 
 ## Staging Stack
 
