@@ -87,7 +87,7 @@ npm run tunnel:fixed
 If you need to expose the staging stack instead of local dev, run the staging tunnel helper. It points to `http://localhost:3001` by default.
 
 ```powershell
-npm run tunnel:staging
+npm run tunnel:staging:named
 ```
 
 For a fixed staging hostname on this domain, use this example:
@@ -104,6 +104,12 @@ You still need to create the tunnel and download the credentials file in Cloudfl
 - `CORS_ORIGIN`
 
 to your public hostname so redirects and generated links use the tunnel URL.
+
+If you want one command to open both windows, use:
+
+```powershell
+npm run staging:all
+```
 
 ## Staging Stack
 
