@@ -3380,6 +3380,10 @@ body.admin-body #adminSettingsView .settings-contact-actions .secondary {
   width: 100%;
 }
 
+body.admin-body #adminSettingsView .settings-contact-action-mobile {
+  display: none;
+}
+
 body.admin-body #adminSettingsSecurity {
   gap: 26px;
 }
@@ -3939,16 +3943,205 @@ body.admin-body #adminSettingsNotifications .notifications-check {
     padding: 10px;
   }
 
+  #adminPage #adminSettingsView,
+  #adminPage #adminSettingsView > .settings-card.admin-settings-card,
+  #adminPage .admin-settings-card,
+  #adminPage .admin-settings-layout,
+  body.admin-body #adminSettingsView .settings-panel,
+  body.admin-body #adminSettingsView .settings-subview {
+    height: auto;
+    min-height: 0;
+  }
+
+  #adminPage #adminSettingsView > .settings-card.admin-settings-card {
+    overflow: visible;
+  }
+
+  body.admin-body #adminSettingsView .settings-panel {
+    align-content: start;
+  }
+
+  body.admin-body #adminSettingsView .settings-panel {
+    gap: 12px;
+  }
+
+  body.admin-body #adminSettingsView .settings-subnav {
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    padding: 6px;
+  }
+
+  body.admin-body #adminSettingsView .settings-subnav-link {
+    width: 100%;
+    min-height: 34px;
+    padding: 0 14px;
+    text-align: center;
+  }
+
+  body.admin-body #adminSettingsView .settings-photo-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  body.admin-body #adminSettingsView .settings-photo-row .ghost {
+    width: min(200px, 100%);
+    justify-self: center;
+  }
+
+  body.admin-body #adminSettingsView .settings-avatar {
+    width: 118px;
+    height: 118px;
+    border-radius: 50%;
+  }
+
+  body.admin-body #adminSettingsView .settings-profile,
+  body.admin-body #adminSettingsView .settings-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  body.admin-body #adminSettingsView .settings-profile h4,
+  body.admin-body #adminSettingsView .settings-row h4 {
+    font-size: 1.3rem;
+    margin-bottom: 4px;
+  }
+
+  body.admin-body #adminSettingsView .settings-profile p,
+  body.admin-body #adminSettingsView .settings-row p {
+    font-size: 0.92rem;
+  }
+
+  body.admin-body #adminSettingsView .settings-profile .secondary {
+    width: min(200px, 100%);
+    justify-self: center;
+    margin-top: 10px;
+    margin-bottom: 8px;
+  }
+
+  body.admin-body #adminSettingsView .settings-profile .settings-meta,
+  body.admin-body #adminSettingsView .settings-row .settings-contact-list {
+    width: 100%;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-heading {
+    font-size: 1.3rem;
+    margin-bottom: 4px;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-list {
+    gap: 12px;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-item {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+    min-height: 0;
+    justify-items: stretch;
+    width: 100%;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-copy {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2px;
+    align-items: start;
+    width: 100%;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-label {
+    width: auto;
+    flex: none;
+    padding-right: 0;
+    margin-right: 0;
+    border-right: 0;
+    white-space: normal;
+    font-size: 0.92rem;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-copy p {
+    font-size: 0.9rem;
+    white-space: normal;
+    overflow: visible;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-actions {
+    display: none;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-actions .secondary {
+    width: min(200px, 100%);
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-actions {
+    display: none;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-item {
+    gap: 10px;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-action-mobile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: min(200px, 100%);
+    min-height: 40px;
+    justify-self: center;
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+
+  body.admin-body #adminSettingsView .settings-divider {
+    margin: 14px 0;
+  }
+
   #adminPage #adminCatalogView .admin-table-layout {
     row-gap: 12px;
   }
 
   #adminPage #adminCatalogView .admin-table-head {
-    gap: 8px;
+    gap: 6px;
+  }
+
+  #adminPage #adminCatalogView .admin-table-head-filters {
+    flex-direction: column;
+    width: 100%;
+    gap: 6px;
+  }
+
+  #adminPage #adminCatalogView .admin-head-control {
+    flex: 0 0 auto;
+    width: 100%;
+    min-height: 0;
+  }
+
+  #adminPage #adminCatalogView .admin-head-control--search,
+  #adminPage #adminCatalogView .admin-head-control--role,
+  #adminPage #adminCatalogView .admin-head-control--status {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  #adminPage #adminCatalogView .admin-head-control input,
+  #adminPage #adminCatalogView .admin-head-control select {
+    min-height: 38px;
+    padding: 0 14px 0 38px;
   }
 
   #adminPage #adminCatalogView .admin-table-head-actions {
-    gap: 8px;
+    gap: 6px;
+    margin-top: 0;
   }
 
   #adminPage #adminCatalogView .admin-table-wrap {
