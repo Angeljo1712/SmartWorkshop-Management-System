@@ -550,6 +550,11 @@ if (adminPage) {
   };
 
   const initializeAdminRail = () => {
+    const isMobileViewport = window.matchMedia("(max-width: 768px)").matches;
+    if (!isMobileViewport) {
+      adminRail?.classList.remove("is-collapsed");
+      adminPage?.classList.remove("is-rail-collapsed");
+    }
     setAdminRailState(false);
   };
 

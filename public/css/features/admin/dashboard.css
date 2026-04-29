@@ -107,7 +107,7 @@ body.admin-body .primari-shell {
 #adminPage .mainRail {
   padding: 14px 12px 16px;
   justify-items: stretch;
-  gap: 10px;
+  gap: 1px;
 }
 
 #adminPage .mainRail:hover {
@@ -138,7 +138,7 @@ body.admin-body .primari-shell {
   align-self: start;
   justify-items: stretch;
   gap: 20px;
-  padding-top: 3px;
+  padding-top: 12px;
 }
 
 #adminPage .mainRail .rail-item {
@@ -153,6 +153,7 @@ body.admin-body .primari-shell {
   background: transparent;
   color: #334155;
   gap: 10px;
+  position: relative;
   transition: max-width 0.22s ease, width 0.22s ease, padding 0.22s ease, justify-content 0.22s ease, background 0.18s ease;
 }
 
@@ -251,12 +252,12 @@ body.admin-body .primari-shell {
   min-width: 70px;
   padding: 14px 10px 16px;
   justify-items: center;
-  gap: 20px;
+  gap: 5px;
 }
 
 #adminPage .mainRail.is-collapsed .rail-brand {
   justify-content: center;
-  padding-bottom: 8px;
+  padding-bottom: 13px;
 }
 
 #adminPage .mainRail.is-collapsed .rail-brand .logo {
@@ -274,6 +275,29 @@ body.admin-body .primari-shell {
   justify-content: center;
   padding: 0;
   gap: 0;
+}
+
+#adminPage .mainRail.is-collapsed .rail-item.active {
+  width: 48px;
+  max-width: 48px;
+  margin-right: 0;
+  background: transparent;
+  overflow: visible;
+  z-index: 1;
+}
+
+#adminPage .mainRail.is-collapsed .rail-item.active::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: -20px;
+  background: linear-gradient(90deg, #090d15 0%, #090d15 calc(100% + 20px), transparent calc(100% + 20px));
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-radius: 14px 0 0 14px;
+  z-index: -1;
 }
 
 #adminPage .mainRail.is-collapsed .rail-text {
@@ -3466,35 +3490,41 @@ body.admin-body #adminSettingsNotifications .notifications-check {
 
 @media (max-width: 1024px) {
   #adminPage.mainLayout {
-    grid-template-columns: 70px minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr);
   }
 
   #adminPage .rail-base {
-    width: 70px;
-    min-width: 70px;
+    width: 180px;
+    min-width: 180px;
     min-height: auto;
     grid-template-rows: auto 1fr auto;
   }
 
   #adminPage .mainRail {
-    width: 70px;
-    padding: 8px 10px 12px;
-    justify-items: start;
+    width: 180px;
+    padding: 14px 12px 16px;
+    justify-items: stretch;
     align-content: start;
   }
 
   #adminPage .mainRail:hover {
-    width: 70px;
+    width: 180px;
   }
 
   #adminPage .mainRail .rail-brand {
     width: 100%;
-    justify-self: start;
-    padding: 0;
-    margin: 0;
+    justify-self: center;
+    padding: 4px 0 17px;
     display: grid;
-    justify-items: start;
-    align-items: start;
+    justify-items: center;
+    align-items: center;
+    margin-bottom: 9px;
+  }
+
+  #adminPage .mainRail.is-collapsed .rail-brand {
+    justify-content: center;
+    padding-bottom: 8px;
+    margin-bottom: 9px;
   }
 
   #adminPage .mainRail .rail-nav {
@@ -3507,7 +3537,7 @@ body.admin-body #adminSettingsNotifications .notifications-check {
     gap: 10px;
     overflow: visible;
     padding: 8px 0 0;
-    justify-items: center;
+    justify-items: stretch;
   }
 
   #adminPage .mainRail .rail-item {
@@ -3517,6 +3547,10 @@ body.admin-body #adminSettingsNotifications .notifications-check {
     border-radius: 12px;
   }
 
+  #adminPage .mainRail .rail-item.active {
+    margin-top: -8px;
+  }
+
   #adminPage .mainRail .rail-footer {
     display: grid;
   }
@@ -3524,19 +3558,42 @@ body.admin-body #adminSettingsNotifications .notifications-check {
   #adminPage .mainRail:hover .rail-item {
     width: 100%;
     max-width: 100%;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    gap: 0;
+    gap: 10px;
     min-height: 48px;
     height: 48px;
-    padding: 0;
+    padding: 10px 14px;
   }
 
   #adminPage .mainRail:hover .rail-item.active {
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    border-radius: 12px;
+    width: calc(100% + 36px);
+    max-width: none;
+    margin-right: -36px;
+    border-radius: 14px 0 0 14px;
+  }
+
+  #adminPage .mainRail.is-collapsed .rail-item.active {
+    width: 48px;
+    max-width: 48px;
+    margin-right: 0;
+    margin-top: 0;
+    background: transparent;
+    overflow: visible;
+  }
+
+  #adminPage .mainRail.is-collapsed .rail-item.active::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: -20px;
+    background: linear-gradient(90deg, #090d15 0%, #090d15 calc(100% + 20px), transparent calc(100% + 20px));
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-radius: 14px 0 0 14px;
+    z-index: -1;
   }
 
   #adminPage .mainRail:hover .rail-text {
@@ -3550,10 +3607,10 @@ body.admin-body #adminSettingsNotifications .notifications-check {
 
   #adminPage .mainRail:hover .admin-signout {
     width: 100%;
-    min-width: 100%;
-    color: transparent;
-    font-size: 0;
-    padding: 0;
+    min-width: 0;
+    color: #334155;
+    font-size: 0.88rem;
+    padding: 0 14px 0 40px;
     justify-content: center;
   }
 
@@ -3861,5 +3918,125 @@ body.admin-body #adminSettingsNotifications .notifications-check {
   #adminPage .admin-table-actions {
     flex-direction: column;
     align-items: stretch;
+  }
+}
+
+@media (max-width: 468px) {
+  #adminPage .admin-content {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  #adminPage .admin-content {
+    padding: 10px;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 425px) {
+  #adminPage .admin-content {
+    padding: 10px;
+  }
+
+  #adminPage #adminCatalogView .admin-table-layout {
+    row-gap: 12px;
+  }
+
+  #adminPage #adminCatalogView .admin-table-head {
+    gap: 8px;
+  }
+
+  #adminPage #adminCatalogView .admin-table-head-actions {
+    gap: 8px;
+  }
+
+  #adminPage #adminCatalogView .admin-table-wrap {
+    min-height: 0;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-list {
+    min-height: 0;
+    height: auto;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-group-header {
+    padding: 14px 12px;
+    gap: 12px;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-group-title {
+    gap: 12px;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-group-title h4 {
+    font-size: 1.15rem;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-open-btn {
+    min-height: 36px;
+    padding: 0 14px;
+    font-size: 0.85rem;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-subgroups {
+    padding: 0 12px 14px;
+    gap: 10px;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-subgroup-header {
+    padding: 12px 12px;
+    gap: 12px;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-subgroup-header h5 {
+    font-size: 0.95rem;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-subgroup-header span {
+    font-size: 0.84rem;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-service {
+    gap: 10px;
+    padding: 10px 12px;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-service-main strong {
+    font-size: 0.92rem;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-service-main span,
+  #adminPage #adminCatalogView .admin-catalog-service-meta {
+    font-size: 0.82rem;
+  }
+
+  #adminPage #adminBookingsView .admin-table-head-filters {
+    gap: 8px;
+  }
+
+  #adminPage #adminBookingsView .admin-head-control {
+    flex: 0 0 auto;
+    width: 100%;
+    min-height: 0;
+  }
+
+  #adminPage #adminBookingsView .admin-head-control--search,
+  #adminPage #adminBookingsView .admin-head-control--role,
+  #adminPage #adminBookingsView .admin-head-control--status,
+  #adminPage #adminBookingsView .admin-head-control--date {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  #adminPage #adminBookingsView .admin-head-control input,
+  #adminPage #adminBookingsView .admin-head-control select {
+    min-height: 38px;
+    padding: 0 14px 0 38px;
+  }
+
+  #adminPage #adminBookingsView .admin-table-head-actions {
+    gap: 8px;
   }
 }

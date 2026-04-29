@@ -91,7 +91,7 @@
 
         if (roles.includes("ADMIN")) {
           setStoredAuthValue("activeRole", "ADMIN");
-          window.location.href = "/admin";
+          window.location.href = "/admin/dashboard";
           return;
         }
         if (hasMechanicRole && hasCustomerRole) {
@@ -181,7 +181,7 @@
 
         if (roles.includes("ADMIN")) {
           setStoredAuthValue("activeRole", "ADMIN");
-          window.location.href = "/admin";
+          window.location.href = "/admin/dashboard";
           return;
         }
         if (hasMechanicRole && hasCustomerRole) {

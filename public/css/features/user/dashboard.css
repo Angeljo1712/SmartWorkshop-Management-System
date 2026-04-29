@@ -4266,6 +4266,57 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
     padding: 12px;
   }
 
+  body.user-body #userBookingsView .user-bookings-layout {
+    gap: 12px;
+  }
+
+  body.user-body #userBookingsView .user-table-layout {
+    padding: 12px;
+    row-gap: 16px;
+  }
+
+  body.user-body #userBookingsView .user-table-head-filters {
+    gap: 8px;
+  }
+
+  body.user-body #userBookingsView .user-head-control input,
+  body.user-body #userBookingsView .user-head-control select,
+  body.user-body #userBookingsView .user-bookings-export {
+    min-height: 38px;
+    font-size: 0.9rem;
+  }
+
+  body.user-body #userBookingsView .user-head-control input,
+  body.user-body #userBookingsView .user-head-control select {
+    padding-left: 38px;
+    padding-right: 12px;
+  }
+
+  body.user-body #userBookingsView .user-table {
+    min-width: 560px;
+  }
+
+  body.user-body #userBookingsView .user-table th,
+  body.user-body #userBookingsView .user-table td {
+    padding: 12px 10px;
+    font-size: 0.88rem;
+  }
+
+  body.user-body #userBookingsView .user-table-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  body.user-body #userBookingsView .user-table-footer-meta {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  body.user-body #userBookingsView .user-pagination {
+    flex-wrap: wrap;
+  }
+
   .dashboard-section--add-form,
   #userDashboardView .car-panel > .dashboard-section--quote .user-quick-quote label {
     width: 100%;

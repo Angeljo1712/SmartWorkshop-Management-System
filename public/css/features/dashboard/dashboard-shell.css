@@ -72,6 +72,6 @@ body.admin-body .page-shell-content {
   body.user-body .page-shell-content,
   body.mechanic-body .page-shell-content,
   body.admin-body .page-shell-content {
-    padding: 16px;
+    padding: px;
   }
 }
