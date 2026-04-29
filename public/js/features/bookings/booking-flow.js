@@ -826,6 +826,7 @@ if (bookingDetailsForm) {
   const detailsAuthTwoFactorCode = document.getElementById("detailsAuthTwoFactorCode");
   const detailsAuthTwoFactorMessage = document.getElementById("detailsAuthTwoFactorMessage");
   const detailsAuthTwoFactorError = document.getElementById("detailsAuthTwoFactorError");
+  const detailsAuthResendCode = document.getElementById("detailsAuthResendCode");
   const detailsAuthBackToLogin = document.getElementById("detailsAuthBackToLogin");
   const vehicleDrivableNotice = document.getElementById("bookingVehicleDrivableNotice");
   let pendingDetailsChallengeToken = "";
@@ -848,6 +849,11 @@ if (bookingDetailsForm) {
   minimumAvailabilityDate.setDate(minimumAvailabilityDate.getDate() + 1);
   let currentAvailabilityStartDate = new Date(minimumAvailabilityDate);
   const availabilitySelections = new Map();
+  const getAvailabilityDayCount = () => {
+    if (window.matchMedia("(max-width: 480px)").matches) return 1;
+    if (window.matchMedia("(min-width: 1440px)").matches) return 5;
+    return 3;
+  };
 
   const applyBookingDetailsUserData = (user) => {
     if (!user) return;
@@ -1002,7 +1008,7 @@ if (bookingDetailsForm) {
     if (!availabilityGrid || !availabilityMonthLabel) return;
     availabilityMonthLabel.textContent = monthFormatter.format(startDate);
 
-    const daysMarkup = Array.from({ length: 5 }, (_, index) => {
+    const daysMarkup = Array.from({ length: getAvailabilityDayCount() }, (_, index) => {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + index);
       const isoDate = date.toISOString().slice(0, 10);
@@ -1185,6 +1191,45 @@ if (bookingDetailsForm) {
     }
   });
 
+  detailsAuthResendCode?.addEventListener("click", async () => {
+    if (!pendingDetailsChallengeToken) {
+      if (detailsAuthTwoFactorError) {
+        detailsAuthTwoFactorError.textContent = "No active verification session. Please sign in again.";
+        detailsAuthTwoFactorError.classList.remove("is-hidden");
+      }
+      return;
+    }
+
+    detailsAuthResendCode.disabled = true;
+    if (detailsAuthTwoFactorError) {
+      detailsAuthTwoFactorError.textContent = "";
+      detailsAuthTwoFactorError.classList.add("is-hidden");
+    }
+
+    try {
+      const response = await api("/api/auth/login/resend-2fa", {
+        method: "POST",
+        body: JSON.stringify({
+          challenge_token: pendingDetailsChallengeToken
+        })
+      });
+
+      pendingDetailsChallengeToken = String(response.challenge_token || pendingDetailsChallengeToken);
+      if (detailsAuthTwoFactorMessage) {
+        detailsAuthTwoFactorMessage.textContent =
+          response?.message || "A new verification code has been sent to your email.";
+      }
+    } catch (err) {
+      if (detailsAuthTwoFactorError) {
+        detailsAuthTwoFactorError.textContent =
+          err?.error?.message || err?.message || "Unable to resend code.";
+        detailsAuthTwoFactorError.classList.remove("is-hidden");
+      }
+    } finally {
+      detailsAuthResendCode.disabled = false;
+    }
+  });
+
   const bookingSession = getStoredUserSession();
   if (bookingSession?.activeRole === "CUSTOMER") {
     applyBookingDetailsUserData(bookingSession.user);
@@ -1242,6 +1287,10 @@ if (bookingDetailsForm) {
       renderAvailabilityCalendar(currentAvailabilityStartDate);
     });
   }
+
+  window.addEventListener("resize", () => {
+    renderAvailabilityCalendar(currentAvailabilityStartDate);
+  });
 
   if (availabilityPrevMonth) {
     availabilityPrevMonth.addEventListener("click", () => {

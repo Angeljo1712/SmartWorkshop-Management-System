@@ -128,6 +128,12 @@ const issueAuthResult = async (userId) => {
   return { user, token };
 };
 
+const sortRoles = (roles) => {
+  const priority = ["ADMIN", "MECHANIC", "CUSTOMER"];
+  const unique = Array.from(new Set(roles));
+  return unique.sort((a, b) => priority.indexOf(a) - priority.indexOf(b));
+};
+
 const getTwoFactorReauthWindowHours = (role) => {
   const label = roleToLabel(role);
   if (label === "ADMIN") return 0;
@@ -142,12 +148,6 @@ const hasRecentLogin = (lastLoginAt, role) => {
   if (reauthHours <= 0) return false;
   const reauthWindowMs = reauthHours * 60 * 60 * 1000;
   return Date.now() - lastLoginTime < reauthWindowMs;
-};
-
-const sortRoles = (roles) => {
-  const priority = ["ADMIN", "MECHANIC", "CUSTOMER"];
-  const unique = Array.from(new Set(roles));
-  return unique.sort((a, b) => priority.indexOf(a) - priority.indexOf(b));
 };
 
 const splitFullName = (value) => {

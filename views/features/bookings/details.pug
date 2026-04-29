@@ -142,6 +142,7 @@ block content
                 | Verification code
                 input#detailsAuthTwoFactorCode(type="text" inputmode="numeric" autocomplete="one-time-code" required)
               button.primary(type="submit") Verify code
+            button.details-auth-modal__back(type="button" id="detailsAuthResendCode") Resend code
             button.details-auth-modal__back(type="button" id="detailsAuthBackToLogin") Back to sign in
   include ../../partials/general-footer
 

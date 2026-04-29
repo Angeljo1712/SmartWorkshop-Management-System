@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 const resolveFromAddress = () => {
   const fromAddress = env.smtp.from || "no-reply@smartworkshop.local";
   const fromName = String(env.smtp.fromName || "").trim();
-  return fromName ? `"${fromName}" <${fromAddress}>` : fromAddress;
+  return fromName ? { name: fromName, address: fromAddress } : fromAddress;
 };
 
 const renderEmailLayout = ({ title, intro, ctaLabel, ctaUrl, footerNote }) => `
@@ -162,11 +162,12 @@ const sendLoginTwoFactorEmail = async ({ to, code, expiresMinutes = 10 }) => {
     </div>
   `;
 
-  console.info("[email] sending login 2fa code", { to, subject, smtpHost: env.smtp.host });
+  console.info("[email] sending login 2fa code", { to, subject, from, smtpHost: env.smtp.host });
   const info = await transporter.sendMail({ from, to, subject, text, html, replyTo: from });
   console.info("[email] login 2fa code sent", {
     to,
     subject,
+    from,
     messageId: info?.messageId,
     response: info?.response
   });
@@ -181,7 +182,7 @@ const sendMechanicAccountReadyEmail = async ({ to, homeUrl }) => {
     "You can return to the home page to continue with your setup and start using the platform.",
     `Home: ${safeHomeUrl}`
   ].join("\n");
-  console.info("[email] sending mechanic account ready email", { to, subject, smtpHost: env.smtp.host });
+  console.info("[email] sending mechanic account ready email", { to, subject, from, smtpHost: env.smtp.host });
   const html = renderEmailLayout({
     title: "Account Ready",
     intro: `
@@ -206,6 +207,7 @@ const sendMechanicAccountReadyEmail = async ({ to, homeUrl }) => {
   console.info("[email] mechanic account ready email sent", {
     to,
     subject,
+    from,
     messageId: info?.messageId,
     response: info?.response
   });
@@ -215,7 +217,7 @@ const sendMechanicSetupCodeEmail = async ({ to, code, expiresMinutes = 10 }) => 
   const from = resolveFromAddress();
   const subject = "Your SmartWorkshop setup verification code";
   const text = `Your SmartWorkshop verification code is ${code}. It expires in ${expiresMinutes} minutes.`;
-  console.info("[email] sending mechanic setup code", { to, subject, smtpHost: env.smtp.host });
+  console.info("[email] sending mechanic setup code", { to, subject, from, smtpHost: env.smtp.host });
   const html = `
     <div style="margin:0; padding:32px; background:#232326; color:#e9eef6; font-family:Arial, Helvetica, sans-serif;">
       <div style="max-width:680px; margin:0 auto; background:#1b1d22; border:1px solid #3b4049; border-radius:12px; padding:32px;">
@@ -237,6 +239,7 @@ const sendMechanicSetupCodeEmail = async ({ to, code, expiresMinutes = 10 }) => 
   console.info("[email] mechanic setup code sent", {
     to,
     subject,
+    from,
     messageId: info?.messageId,
     response: info?.response
   });
