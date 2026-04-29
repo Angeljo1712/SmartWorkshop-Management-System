@@ -1,13 +1,14 @@
 param(
   [string]$TunnelName = "smartworkshop-staging",
-  [string]$ConfigPath = ""
+  [string]$ConfigPath = "",
+  [string]$ProfilePrefix = "Laptop"
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-function Info($msg) { Write-Host "[INFO] $msg" }
-function Ok($msg)   { Write-Host "[ OK ] $msg" }
+function Info($msg) { Write-Host "[INFO][$ProfilePrefix] $msg" }
+function Ok($msg)   { Write-Host "[ OK ][$ProfilePrefix] $msg" }
 
 function Resolve-CredentialPathInConfig([string]$Path) {
   $raw = Get-Content -LiteralPath $Path -Raw
@@ -33,7 +34,7 @@ function Resolve-CredentialPathInConfig([string]$Path) {
     return @{ Path = $Path; Changed = $false }
   }
 
-  $tempConfigPath = Join-Path $env:TEMP "cloudflared-staging-$([Guid]::NewGuid().ToString('N')).yml"
+  $tempConfigPath = Join-Path $env:TEMP "$($ProfilePrefix.ToLower())-cloudflared-staging-$([Guid]::NewGuid().ToString('N')).yml"
   Set-Content -LiteralPath $tempConfigPath -Value $fixedConfig -Encoding UTF8
   Info "credentials-file path adjusted for this user profile: $candidatePath"
   return @{ Path = $tempConfigPath; Changed = $true }
