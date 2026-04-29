@@ -240,6 +240,7 @@ body.user-body .main-header.general-header {
   min-width: 180px;
   padding: 14px 12px 16px;
   justify-items: stretch;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   align-content: start;
   gap: 10px;
 }
@@ -288,6 +289,7 @@ body.user-body .main-header.general-header {
   display: grid;
   justify-items: stretch;
   padding-top: 10px;
+  margin-top: auto;
   gap: 12px;
 }
 
@@ -342,6 +344,7 @@ body.user-body .main-header.general-header {
   min-width: 70px;
   padding: 14px 10px 16px;
   justify-items: center;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   gap: 5px;
 }
 
