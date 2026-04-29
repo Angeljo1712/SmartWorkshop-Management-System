@@ -115,10 +115,16 @@ router.post("/mechanic/documents/complete", (req, res, next) => {
 
 router.get("/mechanic/welcome/:id", (req, res, next) => {
   const mechanicId = Number(req.params.id);
-  mechanicService
-    .getProfile(mechanicId)
-    .then((profile) => res.render("features/mechanic/onboarding-complete", { profile }))
-    .catch(next);
+  if (!Number.isFinite(mechanicId)) {
+    return next(new Error("Invalid mechanic id"));
+  }
+
+  // The welcome screen is informational and does not require a full profile lookup.
+  // Rendering it directly avoids a hard failure if the profile query is temporarily unavailable.
+  return res.render("features/mechanic/onboarding-complete", {
+    mechanicId,
+    profile: null
+  });
 });
 
 router.post("/mechanic/set-password", (req, res, next) => {

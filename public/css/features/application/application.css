@@ -290,6 +290,8 @@ label.radio {
   font-weight: 500;
   line-height: 1.35;
   font-size: 16px;
+  min-width: 0;
+  white-space: normal;
 }
 
 label.checkbox input,
@@ -326,10 +328,83 @@ label.radio input {
   }
 
   .application-join-layout {
-    padding: 24px;
+    padding: 20px;
   }
 
   .application-grid {
     grid-template-columns: 1fr;
+  }
+
+  .application-form-layout {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .application-form-layout h2 {
+    font-size: 28px;
+  }
+
+  .form-section {
+    padding: 16px;
+  }
+
+  .form-certification,
+  .form-memberships {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  label.checkbox,
+  label.radio {
+    font-size: 14px;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.25;
+  }
+
+  .form-section input,
+  .form-section select {
+    padding: 11px 12px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .application-join-layout {
+    padding: 16px;
+  }
+
+  .application-join-layout h1 {
+    font-size: 2rem;
+  }
+
+  .application-form-layout {
+    padding: 16px;
+  }
+
+  .application-form-layout h2 {
+    font-size: 24px;
+  }
+
+  .application-form-layout h3 {
+    font-size: 16px;
+  }
+
+  .form-certification,
+  .form-memberships {
+    grid-template-columns: 1fr;
+  }
+
+  .form-section {
+    padding: 14px;
+  }
+
+  .form-section label {
+    font-size: 14px;
+  }
+
+  label.checkbox,
+  label.radio {
+    font-size: 13px;
   }
 }

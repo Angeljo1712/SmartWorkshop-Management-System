@@ -518,6 +518,10 @@ if (workSummary) {
   const expiryInput = document.getElementById("paymentExpiry");
   const cvcInput = document.getElementById("paymentCvc");
   const paymentFormError = document.getElementById("paymentFormError");
+  const setExpiryFieldValidity = (message = "") => {
+    if (!expiryInput) return;
+    expiryInput.setCustomValidity(message);
+  };
 
   cardNumberInput?.addEventListener("input", () => {
     const digitsOnly = String(cardNumberInput.value || "").replace(/\D+/g, "").slice(0, 16);
@@ -549,25 +553,31 @@ if (workSummary) {
     const digitsOnly = String(expiryInput.value || "").replace(/\D+/g, "").slice(0, 4);
     if (digitsOnly.length <= 2) {
       expiryInput.value = digitsOnly;
+      setExpiryFieldValidity("");
       return;
     }
     expiryInput.value = `${digitsOnly.slice(0, 2)} / ${digitsOnly.slice(2)}`;
+    setExpiryFieldValidity("");
   });
 
   expiryInput?.addEventListener("blur", () => {
     const value = String(expiryInput.value || "").trim();
     if (!value) {
       setFieldHint(paymentExpiryHint, "Enter a future expiry date", false);
+      setExpiryFieldValidity("");
       return;
     }
     if (!/^\d{2}\s*\/\s*\d{2}$/.test(value)) {
       setFieldHint(paymentExpiryHint, "Use MM / YY format", true);
+      setExpiryFieldValidity("Use MM / YY format");
       return;
     }
     if (isExpiryInPast(value)) {
       setFieldHint(paymentExpiryHint, "Expiry date cannot be in the past", true);
+      setExpiryFieldValidity("Expiry date cannot be in the past");
       return;
     }
+    setExpiryFieldValidity("");
     setFieldHint(paymentExpiryHint, "Looks good", false);
   });
 
@@ -622,6 +632,7 @@ if (workSummary) {
     if (!/^\d{2}\s*\/\s*\d{2}$/.test(expiry)) {
       if (paymentFormError) paymentFormError.textContent = "Please enter expiry date as MM / YY.";
       setFieldHint(paymentExpiryHint, "Use MM / YY format", true);
+      setExpiryFieldValidity("Use MM / YY format");
       return;
     }
 
@@ -629,12 +640,14 @@ if (workSummary) {
     const month = Number(monthText);
     if (!Number.isInteger(month) || month < 1 || month > 12) {
       if (paymentFormError) paymentFormError.textContent = "Please enter a valid expiry month.";
+      setExpiryFieldValidity("Please enter a valid expiry month.");
       return;
     }
 
     if (isExpiryInPast(expiry)) {
       if (paymentFormError) paymentFormError.textContent = "Please enter a card expiry date that is not in the past.";
       setFieldHint(paymentExpiryHint, "Expiry date cannot be in the past", true);
+      setExpiryFieldValidity("Expiry date cannot be in the past");
       return;
     }
 
@@ -648,6 +661,7 @@ if (workSummary) {
     }
 
     try {
+      setExpiryFieldValidity("");
       const paymentMethod = detectCardBrand(cardNumber);
       const cardLast4 = cardNumber.slice(-4);
       const result = await api("/api/bookings/draft/pay", {
