@@ -342,7 +342,7 @@ body.user-body .main-header.general-header {
   min-width: 70px;
   padding: 14px 10px 16px;
   justify-items: center;
-  gap: 7px;
+  gap: 5px;
 }
 
 #userPage .mainRail.is-collapsed .rail-brand {
@@ -366,6 +366,29 @@ body.user-body .main-header.general-header {
   justify-content: center;
   padding: 0;
   gap: 0;
+}
+
+#userPage .mainRail.is-collapsed .rail-item.active {
+  width: 48px;
+  max-width: 48px;
+  margin-right: 0;
+  background: transparent;
+  overflow: visible;
+  z-index: 1;
+}
+
+#userPage .mainRail.is-collapsed .rail-item.active::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: -22px;
+  background: linear-gradient(90deg, #090d15 0%, #090d15 calc(100% + 20px), transparent calc(100% + 20px));
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-radius: 14px;
+  z-index: -1;
 }
 
 #userPage .mainRail.is-collapsed .rail-text {
