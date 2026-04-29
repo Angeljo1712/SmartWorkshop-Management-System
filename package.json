@@ -9,6 +9,7 @@
     "tunnel": "powershell -ExecutionPolicy Bypass -File scripts/dev/tunnel.ps1",
     "tunnel:named": "powershell -ExecutionPolicy Bypass -File scripts/dev/tunnel.ps1 -TunnelName smartworkshop-dev -ConfigPath .cloudflared/tunnel.yml",
     "tunnel:fixed": "powershell -ExecutionPolicy Bypass -File scripts/dev/tunnel-fixed.ps1",
+    "tunnel:staging": "powershell -ExecutionPolicy Bypass -File scripts/staging/tunnel-staging.ps1",
     "smoke": "node scripts/smoke-test.js",
     "test": "node scripts/smoke-test.js"
   },

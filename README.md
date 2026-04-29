@@ -82,6 +82,14 @@ Or run the helper that prints the exact setup steps:
 npm run tunnel:fixed
 ```
 
+## Staging Tunnel
+
+If you need to expose the staging stack instead of local dev, run the staging tunnel helper. It points to `http://localhost:3001` by default.
+
+```powershell
+npm run tunnel:staging
+```
+
 You still need to create the tunnel and download the credentials file in Cloudflare first. After that, update:
 
 - `APP_BASE_URL`
