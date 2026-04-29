@@ -90,6 +90,14 @@ If you need to expose the staging stack instead of local dev, run the staging tu
 npm run tunnel:staging
 ```
 
+For a fixed staging hostname on this domain, use this example:
+
+- [`docs/cloudflared-staging.example.yml`](/C:/Users/LianGel2DPro/SmartWorkshop-Management-System/docs/cloudflared-staging.example.yml)
+
+The suggested public URL is:
+
+- `https://staging.smartworkshop.me`
+
 You still need to create the tunnel and download the credentials file in Cloudflare first. After that, update:
 
 - `APP_BASE_URL`

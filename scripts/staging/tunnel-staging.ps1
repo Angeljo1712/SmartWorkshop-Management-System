@@ -1,7 +1,8 @@
 param(
   [string]$Url = "http://localhost:3001",
   [string]$TunnelName = "",
-  [string]$ConfigPath = ""
+  [string]$ConfigPath = "",
+  [string]$Hostname = "staging.smartworkshop.me"
 )
 
 Set-StrictMode -Version Latest
@@ -28,11 +29,17 @@ try {
     Info "Opening named Cloudflare Tunnel for staging: $TunnelName"
     Info "Config: $ConfigPath"
     Info "Local staging URL: $Url"
+    if ($Hostname) {
+      Info "Public hostname: $Hostname"
+    }
 
     & cloudflared tunnel --config $ConfigPath run $TunnelName
   } else {
     Info "Opening Cloudflare Tunnel to staging at $Url"
     Info "Keep the staging stack running before starting the tunnel."
+    if ($Hostname) {
+      Info "Recommended public hostname for staging: $Hostname"
+    }
 
     & cloudflared tunnel --url $Url --no-autoupdate
   }
