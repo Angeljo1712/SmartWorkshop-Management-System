@@ -469,7 +469,7 @@ body.user-body #userBookingsView .settings-card {
   grid-area: card;
 }
 
-body.user-body #userSettingsView .settings-card {
+body.user-body #userSettingsView {
   gap: 0;
   background: #3e434df7;
   height: 100%;
@@ -490,7 +490,7 @@ body.user-body #userSettingsView:not(.is-hidden) {
   display: grid;
 }
 
-.user-settings-card {
+body.user-body #userSettingsView.user-view {
   display: grid;
   min-height: 100%;
   height: auto;
@@ -696,7 +696,7 @@ body.user-body.user-light-mode #userPage .mainSection {
   background: #eef2f7;
 }
 
-body.user-body.user-light-mode #userSettingsView .settings-card.user-settings-card {
+body.user-body.user-light-mode #userSettingsView {
   background: #f7f9fc;
   border-color: rgba(71, 85, 105, 0.28);
   box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
@@ -4034,10 +4034,11 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
   body.user-body #userSettingsView .user-settings-panel-head {
     display: grid;
     grid-template-columns: 1fr;
+    justify-items: center;
   }
 
   body.user-body #userSettingsView .user-settings-tabs {
-    justify-self: start;
+    justify-self: center;
     flex-wrap: wrap;
   }
 
@@ -4452,12 +4453,13 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
 
   body.user-body #userSettingsView .user-settings-panel-head {
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
     gap: 10px;
   }
 
   body.user-body #userSettingsPanelTitle {
-    font-size: 1.6rem;
+    font-size: 2rem;
+    text-align: center;
   }
 
   body.user-body #userSettingsView .user-settings-tabs {
@@ -4478,8 +4480,8 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
   }
 
   body.user-body #userSettingsView .settings-avatar-lg {
-    width: 120px;
-    height: 120px;
+    width: 170px;
+    height: 170px;
   }
 
   body.user-body #userSettingsView .user-settings-photo-row .ghost,
@@ -4495,28 +4497,35 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
     gap: 12px;
   }
 
+  body.user-body #userSettingsView .user-settings-row > div {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+  }
+
   body.user-body #userSettingsView .user-settings-contact-list {
     gap: 12px;
   }
 
   body.user-body #userSettingsView .user-settings-contact-item {
     grid-template-columns: 1fr;
-    justify-items: stretch;
+    justify-items: center;
     gap: 8px;
   }
 
   body.user-body #userSettingsView .user-settings-contact-copy {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 6px;
+    text-align: center;
   }
 
   body.user-body #userSettingsView .user-settings-contact-action {
-    justify-items: start;
+    justify-items: center;
   }
 
   body.user-body #userSettingsView .user-settings-contact-action .secondary {
-    width: min(220px, 100%);
+    width: min(220px);
     justify-self: center;
   }
 
@@ -4527,23 +4536,27 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
     padding-right: 0;
     border-right: 0;
     white-space: normal;
+    text-align: center;
+    font-size: 1.8rem;
   }
 
   body.user-body #userSettingsView .user-settings-contact-copy p {
     white-space: normal;
     overflow: visible;
     text-overflow: clip;
+    text-align: center;
   }
 
   body.user-body #userSettingsView .user-settings-contact-action {
-    justify-items: start;
+    justify-items: center;
   }
 
   body.user-body #userSettingsView .account-section h4,
   body.user-body #userSettingsView .settings-meta h4,
   body.user-body #userSettingsView .user-settings-profile h4,
   body.user-body #userSettingsView .user-settings-row h4 {
-    font-size: 1rem;
+    font-size: 1.8rem;
+    text-align: center;
   }
 
   body.user-body #userSettingsView .account-section p,
@@ -4551,8 +4564,9 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
   body.user-body #userSettingsView .user-settings-profile p,
   body.user-body #userSettingsView .user-settings-row p,
 body.user-body #userSettingsView .user-settings-contact-copy p {
-    font-size: 0.92rem;
+    font-size: 1rem;
     line-height: 1.35;
+    color: #c8d4e8;
   }
 }
 

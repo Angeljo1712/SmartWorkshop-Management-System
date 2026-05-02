@@ -1847,7 +1847,7 @@ body.mechanic-body #mechanicSettingsView .mechanic-settings-panel-head {
 body.mechanic-body #mechanicSettingsPanelTitle {
   margin: 0;
   color: #ffffff;
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 700;
 }
 
@@ -2912,7 +2912,7 @@ body.mechanic-body .mechanic-resolution-booking .primary {
 
   #mechanicPage .mainSection {
     border-left: 2px solid #ffffff;
-    /* border-radius: 0; */
+    border-radius: 0;
   }
 
   #mechanicPage .mechanicContent {
@@ -4163,8 +4163,8 @@ body.mechanic-body #mechanicProfileMap .map-placeholder--overlay {
   body.mechanic-body #mechanicSettingsView .mechanic-settings-photo-row .ghost,
   body.mechanic-body #mechanicSettingsView .mechanic-settings-profile > .secondary,
   body.mechanic-body #mechanicSettingsView .mechanic-settings-row > .secondary {
-    width: 100%;
-    justify-self: stretch;
+    width: min(220px, 100%);
+    justify-self: center;
   }
 
   body.mechanic-body #mechanicSettingsView .mechanic-settings-profile,
@@ -4226,13 +4226,15 @@ body.mechanic-body #mechanicProfileMap .map-placeholder--overlay {
   body.mechanic-body #mechanicSettingsView .mechanic-settings-profile h4,
   body.mechanic-body #mechanicSettingsView .mechanic-settings-row h4,
   body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-label {
-    font-size: 1.05rem;
+    font-size: 1.8rem;
+    text-align: center;
   }
 
   body.mechanic-body #mechanicSettingsView .mechanic-settings-profile p,
   body.mechanic-body #mechanicSettingsView .mechanic-settings-row p,
   body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-copy p {
-    font-size: 1.05rem;
+    font-size: 1.rem;
+    color: #c8d4e8;
   }
 
   body.mechanic-body #mechanicAccountView .settings-row > div {
