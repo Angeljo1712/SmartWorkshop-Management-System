@@ -4557,6 +4557,7 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
   body.user-body #userSettingsView .user-settings-row h4 {
     font-size: 1.8rem;
     text-align: center;
+    margin-bottom: 15px;
   }
 
   body.user-body #userSettingsView .account-section p,
