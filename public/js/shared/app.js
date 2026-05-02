@@ -684,7 +684,16 @@ if (homeHeader && homeHero) {
       .join("");
   };
 
+  const focusHomeMobileMenuToggle = () => {
+    homeHeaderMenuToggle?.focus?.();
+  };
+
   const closeHomeMobileMenu = () => {
+    if (homeMobileMenu?.contains(document.activeElement)) {
+      focusHomeMobileMenuToggle();
+    }
+    if (homeMobileMenu) homeMobileMenu.inert = true;
+    if (homeMobileMenuBackdrop) homeMobileMenuBackdrop.inert = true;
     homeMobileMenu?.classList.remove("is-open");
     homeMobileMenuBackdrop?.classList.remove("is-open");
     homeHeaderMenuToggle?.setAttribute("aria-expanded", "false");
@@ -693,6 +702,8 @@ if (homeHeader && homeHero) {
   };
 
   const openHomeMobileMenu = () => {
+    if (homeMobileMenu) homeMobileMenu.inert = false;
+    if (homeMobileMenuBackdrop) homeMobileMenuBackdrop.inert = false;
     homeMobileMenu?.classList.add("is-open");
     homeMobileMenuBackdrop?.classList.add("is-open");
     homeHeaderMenuToggle?.setAttribute("aria-expanded", "true");

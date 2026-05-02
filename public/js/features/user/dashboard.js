@@ -570,7 +570,16 @@ if (userPage) {
     userNavLinks.forEach((btn) => btn.classList.toggle("active", btn.dataset.view === view));
   };
 
+  const focusUserMobileMenuToggle = () => {
+    (userHeaderMobileMenuToggle || userMobileMenuToggle)?.focus?.();
+  };
+
   const closeUserMobileMenu = () => {
+    if (userMobileMenu?.contains(document.activeElement)) {
+      focusUserMobileMenuToggle();
+    }
+    if (userMobileMenu) userMobileMenu.inert = true;
+    if (userMobileMenuBackdrop) userMobileMenuBackdrop.inert = true;
     userMobileMenu?.classList.remove("is-open");
     userMobileMenuBackdrop?.classList.remove("is-open");
     document.body.classList.remove("user-mobile-menu-open");
@@ -580,6 +589,8 @@ if (userPage) {
   };
 
   const openUserMobileMenu = () => {
+    if (userMobileMenu) userMobileMenu.inert = false;
+    if (userMobileMenuBackdrop) userMobileMenuBackdrop.inert = false;
     userMobileMenu?.classList.add("is-open");
     userMobileMenuBackdrop?.classList.add("is-open");
     document.body.classList.add("user-mobile-menu-open");

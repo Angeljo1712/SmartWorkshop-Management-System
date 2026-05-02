@@ -158,6 +158,15 @@ body.user-body .page-shell-content {
   text-align: right;
 }
 
+#userDashboardView .user-panel-head h2,
+#userDashboardView .user-panel-head p {
+  color: #ffffff;
+}
+
+#userDashboardView .user-panel-head p {
+  color: #c8d4e8;
+}
+
 #userPage #userDashboardHeroName {
   margin: 0;
   color: #1b2430;
@@ -464,6 +473,21 @@ body.user-body #userSettingsView .settings-card {
   gap: 0;
   background: #3e434df7;
   height: 100%;
+}
+
+body.user-body #userSettingsView {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  min-height: 0;
+}
+
+body.user-body #userSettingsView.is-hidden {
+  display: none !important;
+}
+
+body.user-body #userSettingsView:not(.is-hidden) {
+  display: grid;
 }
 
 .user-settings-card {
@@ -2746,7 +2770,7 @@ body.user-body #userDashboardView .user-panel-head h2 {
 
 body.user-body #userDashboardView .user-panel-head p {
   text-align: right;
-  color: #ffffff;
+  color: #c8d4e8;
 }
 
 #userDashboardView .user-welcome-corner {
@@ -4609,6 +4633,11 @@ body.user-body #userSettingsView .user-settings-contact-copy p {
     margin-left: 0;
     text-align: center;
     width: 100%;
+    color: #ffffff;
+  }
+
+  body.user-body #userDashboardView .user-panel-head p {
+    color: #c8d4e8;
   }
 
   #userPage .user-dashboard-layout,

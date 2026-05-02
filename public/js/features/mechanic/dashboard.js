@@ -808,7 +808,16 @@ if (mechanicDashboard) {
     window.location.replace("/");
   });
 
+  const focusMechanicMobileMenuToggle = () => {
+    mechanicHeaderMobileMenuToggle?.focus?.();
+  };
+
   const closeMechanicMobileMenu = () => {
+    if (mechanicMobileMenu?.contains(document.activeElement)) {
+      focusMechanicMobileMenuToggle();
+    }
+    if (mechanicMobileMenu) mechanicMobileMenu.inert = true;
+    if (mechanicMobileMenuBackdrop) mechanicMobileMenuBackdrop.inert = true;
     document.body.classList.remove("mechanic-mobile-menu-open");
     mechanicMobileMenu?.classList.remove("is-open");
     mechanicMobileMenuBackdrop?.classList.remove("is-open");
@@ -817,6 +826,8 @@ if (mechanicDashboard) {
   };
 
   const openMechanicMobileMenu = () => {
+    if (mechanicMobileMenu) mechanicMobileMenu.inert = false;
+    if (mechanicMobileMenuBackdrop) mechanicMobileMenuBackdrop.inert = false;
     document.body.classList.add("mechanic-mobile-menu-open");
     mechanicMobileMenu?.classList.add("is-open");
     mechanicMobileMenuBackdrop?.classList.add("is-open");
