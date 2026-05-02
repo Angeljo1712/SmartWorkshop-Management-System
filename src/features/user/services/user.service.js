@@ -2,6 +2,8 @@ const { pool } = require("../../../shared/config/pool");
 const { env } = require("../../../shared/config/env");
 const { AppError } = require("../../../shared/utils/appError");
 const { issueInvoiceForBooking } = require("../../invoices/services/invoices.service");
+const fs = require("fs");
+const path = require("path");
 const {
   ensureBookingCompletionTables,
   saveBookingCompletionArtifacts,
@@ -483,12 +485,30 @@ const updateUserProfile = async (userId, { name, middle_name, lastname, full_nam
 };
 
 const updateUserAvatar = async (userId, avatarUrl) => {
+  const [rows] = await pool.query(
+    "SELECT avatar_url FROM user_profiles WHERE user_id = ? LIMIT 1",
+    [userId]
+  );
+  const previousAvatarUrl = String(rows[0]?.avatar_url || "").trim();
   await pool.query(
     `INSERT INTO user_profiles (user_id, name, lastname, avatar_url)
      VALUES (?, '-', '-', ?)
      ON DUPLICATE KEY UPDATE avatar_url = VALUES(avatar_url)`,
     [userId, avatarUrl]
   );
+  const nextAvatarUrl = String(avatarUrl || "").trim();
+  if (
+    previousAvatarUrl &&
+    previousAvatarUrl !== nextAvatarUrl &&
+    previousAvatarUrl.startsWith("/uploads/avatars/")
+  ) {
+    const previousAvatarPath = path.join(env.uploadsDir, previousAvatarUrl.replace(/^\/uploads\//, ""));
+    try {
+      fs.unlinkSync(previousAvatarPath);
+    } catch (_error) {
+      // Ignore missing files or permission errors.
+    }
+  }
   return getUserById(userId);
 };
 

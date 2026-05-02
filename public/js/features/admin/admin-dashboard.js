@@ -2648,51 +2648,65 @@ if (adminPage) {
       const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : String(user.lastname || "").trim();
       const displayName = fullName;
       const userId = String(user.user_id || user.id || `${index}`);
+      const userIdHtml = escapeHtml(userId);
+      const displayNameHtml = escapeHtml(displayName);
+      const fullNameHtml = escapeHtml(fullName);
+      const emailHtml = escapeHtml(user.email || `ID ${user.user_id}`);
+      const usernameHtml = escapeHtml(user.username || "-");
+      const statusHtml = escapeHtml(status);
+      const roleHtml = escapeHtml(role);
+      const experienceHtml = escapeHtml(experience);
+      const joinedDateHtml = escapeHtml(joinedDate);
+      const lastActiveHtml = escapeHtml(lastActive);
+      const statusClassHtml = escapeHtml(statusClass);
+      const canEditRoleTitle = escapeHtml(canEditRole ? "Edit role" : "Admin role cannot be changed here");
+      const canEditUserTitle = escapeHtml(canEditUser ? "Edit options" : "Admin users cannot be edited here");
+      const canDeleteUserTitle = escapeHtml(canDeleteUser ? `Delete ${displayName}` : "Admin users cannot be deleted");
       const isChecked = selectedAdminUsers.has(userId);
       row.innerHTML = `
         <td class="table-check">
-          <input type="checkbox" aria-label="Select ${displayName}" data-user-select="${userId}" ${isChecked ? "checked" : ""} />
+          <input type="checkbox" aria-label="Select ${displayNameHtml}" data-user-select="${userIdHtml}" ${isChecked ? "checked" : ""} />
         </td>
         <td>
           <div class="user-cell">
             <div class="avatar">
-              ${avatarUrl ? `<img src="${avatarUrl}" alt="" />` : escapeHtml(getInitials(displayName))}
+              ${avatarUrl ? `<img src="${escapeHtml(avatarUrl)}" alt="" />` : escapeHtml(getInitials(displayName))}
             </div>
             <div class="user-meta">
-              <strong>${fullName}</strong>
+              <strong>${fullNameHtml}</strong>
             </div>
           </div>
         </td>
-        <td>${user.email || `ID ${user.user_id}`}</td>
-        <td>${user.username || "-"}</td>
-        <td><span class="admin-status-badge admin-status-badge--${statusClass}">${status}</span></td>
-        <td>${role}</td>
-        <td>${experience}</td>
-        <td>${joinedDate}</td>
-        <td>${lastActive}</td>
+        <td>${emailHtml}</td>
+        <td>${usernameHtml}</td>
+        <td><span class="admin-status-badge admin-status-badge--${statusClassHtml}">${statusHtml}</span></td>
+        <td>${roleHtml}</td>
+        <td>${experienceHtml}</td>
+        <td>${joinedDateHtml}</td>
+        <td>${lastActiveHtml}</td>
         <td class="table-actions">
           <div class="admin-actions-cell">
-            <button class="icon-btn" type="button" title="${canEditUser ? "Edit options" : "Admin users cannot be edited here"}" data-admin-edit-toggle="${userId}" ${canEditUser ? "" : "disabled"}>
+            <button class="icon-btn" type="button" title="${canEditUserTitle}" data-admin-edit-toggle="${userIdHtml}" ${canEditUser ? "" : "disabled"}>
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 20h9"></path>
                 <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
               </svg>
             </button>
-            <div class="admin-edit-menu is-hidden" data-admin-edit-menu="${userId}">
-              <button type="button" data-admin-edit-field="full_name" data-admin-edit-user="${userId}">Full name</button>
-              <button type="button" data-admin-edit-field="phone" data-admin-edit-user="${userId}">Phone</button>
-              <button type="button" data-admin-edit-field="username" data-admin-edit-user="${userId}">Username</button>
-              <button type="button" data-admin-edit-field="address" data-admin-edit-user="${userId}">Address</button>
-              <button type="button" data-admin-edit-field="role" data-admin-edit-user="${userId}" title="${canEditRole ? "Edit role" : "Admin role cannot be changed here"}" ${canEditRole ? "" : "disabled"}>Role</button>
-              <button type="button" data-admin-edit-field="status" data-admin-edit-user="${userId}">Status</button>
+            <div class="admin-edit-menu is-hidden" data-admin-edit-menu="${userIdHtml}">
+              <button type="button" data-admin-edit-field="full_name" data-admin-edit-user="${userIdHtml}">Full name</button>
+              <button type="button" data-admin-edit-field="phone" data-admin-edit-user="${userIdHtml}">Phone</button>
+              <button type="button" data-admin-edit-field="username" data-admin-edit-user="${userIdHtml}">Username</button>
+              <button type="button" data-admin-edit-field="address" data-admin-edit-user="${userIdHtml}">Address</button>
+              <button type="button" data-admin-edit-field="role" data-admin-edit-user="${userIdHtml}" title="${canEditRoleTitle}" ${canEditRole ? "" : "disabled"}>Role</button>
+              <button type="button" data-admin-edit-field="status" data-admin-edit-user="${userIdHtml}">Status</button>
             </div>
             <button
               class="icon-btn danger"
               type="button"
-              title="${canDeleteUser ? `Delete ${displayName}` : "Admin users cannot be deleted"}"
-              data-admin-delete-user="${userId}"
-              data-admin-delete-name="${escapeHtml(displayName)}"
-              data-admin-delete-role="${escapeHtml(role)}"
+              title="${canDeleteUserTitle}"
+              data-admin-delete-user="${userIdHtml}"
+              data-admin-delete-name="${displayNameHtml}"
+              data-admin-delete-role="${roleHtml}"
               ${canDeleteUser ? "" : "disabled"}
             >
               <svg viewBox="0 0 24 24" aria-hidden="true">

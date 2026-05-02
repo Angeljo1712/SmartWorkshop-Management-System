@@ -1237,13 +1237,13 @@ if (mechanicDashboard) {
       .join("");
   };
 
-    const buildMechanicBookingDetailCard = (entry) => {
+  const buildMechanicBookingDetailCard = (entry) => {
     const itemsMarkup = (entry.items || [])
       .map(
         (item) => `
           <div class="mechanic-booking-item">
-            <strong>${item.name}</strong>
-            <span>${formatMechanicLabour(item.labour_minutes || item.base_labour_minutes)}</span>
+            <strong>${escapeHtml(String(item.name || "-"))}</strong>
+            <span>${escapeHtml(formatMechanicLabour(item.labour_minutes || item.base_labour_minutes))}</span>
           </div>
         `
       )
@@ -1741,7 +1741,7 @@ if (mechanicDashboard) {
       if (mechanicProfileAvatar) {
         const profileAvatarUrl = getMechanicFallbackAvatarUrl(profileData);
         if (profileAvatarUrl) {
-          mechanicProfileAvatar.innerHTML = `<img src="${profileAvatarUrl}" alt="Profile photo">`;
+          mechanicProfileAvatar.innerHTML = `<img src="${escapeHtml(profileAvatarUrl)}" alt="Profile photo">`;
         } else {
           const initials = String(profileData.name || "ME")
             .split(/\s+/)
@@ -1809,9 +1809,9 @@ if (mechanicDashboard) {
       summary.innerHTML = `
         <span class="mechanic-types-row-left">
           <span class="mechanic-types-check">
-            <input type="checkbox" ${groupSelected ? "checked" : ""} data-group-key="${group.key}">
+            <input type="checkbox" ${groupSelected ? "checked" : ""} data-group-key="${escapeHtml(String(group.key || ""))}">
           </span>
-          <span>${group.label}</span>
+          <span>${escapeHtml(String(group.label || ""))}</span>
         </span>
         <span class="mechanic-types-arrow">›</span>
       `;
@@ -1835,9 +1835,10 @@ if (mechanicDashboard) {
         (subcategory.services || []).forEach((service) => {
           const row = document.createElement("label");
           row.className = "mechanic-types-service";
+          const serviceId = escapeHtml(String(service.id || ""));
           row.innerHTML = `
-            <input type="checkbox" data-service-id="${service.id}" ${service.selected ? "checked" : ""}>
-            <span>${service.name}</span>
+            <input type="checkbox" data-service-id="${serviceId}" ${service.selected ? "checked" : ""}>
+            <span>${escapeHtml(String(service.name || ""))}</span>
           `;
           subWrap.appendChild(row);
         });

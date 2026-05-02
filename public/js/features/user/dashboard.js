@@ -825,9 +825,13 @@ if (userPage) {
 
     const buildVehicleCard = (vehicle) => {
       const reg = vehicle.registrationNumber || "-";
+      const regHtml = escapeHtml(reg);
       const make = String(vehicle.make || "").trim();
       const model = String(vehicle.model || "").trim();
       const fuel = String(vehicle.fuelType || vehicle.fuel || "").trim() || "-";
+      const makeHtml = escapeHtml(make || reg);
+      const modelHtml = escapeHtml(model || "Vehicle details loaded");
+      const fuelHtml = escapeHtml(fuel);
       const year = Number(vehicle.yearOfManufacture);
       const age = Number.isFinite(year) ? `${Math.max(new Date().getFullYear() - year, 0)} years old` : "-";
       const rawMileage = vehicle.mileage ?? vehicle.odometerValue ?? vehicle.odometer_value ?? "-";
@@ -835,40 +839,43 @@ if (userPage) {
         typeof rawMileage === "number"
           ? `${rawMileage.toLocaleString()} miles`
           : String(rawMileage || "-").trim();
+      const mileageHtml = escapeHtml(mileage);
+      const motStatusHtml = escapeHtml(vehicle.motStatus || "MOT status not available");
+      const taxStatusHtml = escapeHtml(vehicle.taxStatus || "Tax status not available");
 
       const card = document.createElement("div");
       card.className = "user-car-summary";
       card.innerHTML = `
         <div class="user-car-top">
           <div class="user-car-headline">
-            <span class="user-reg-badge">${reg}</span>
+            <span class="user-reg-badge">${regHtml}</span>
             <div class="user-car-title-block">
-              <strong>${make || reg}</strong>
-              <span>${model || "Vehicle details loaded"}</span>
+              <strong>${makeHtml}</strong>
+              <span>${modelHtml}</span>
             </div>
           </div>
           <div class="user-car-actions">
-            <button class="user-car-star${vehicle.favorite ? " is-favorite" : ""}" type="button" data-action="favorite" data-reg="${reg}" aria-label="Toggle favourite">★</button>
+            <button class="user-car-star${vehicle.favorite ? " is-favorite" : ""}" type="button" data-action="favorite" data-reg="${regHtml}" aria-label="Toggle favourite">★</button>
             <div class="user-car-menu-wrap">
-              <button class="user-car-menu" type="button" data-action="menu" data-reg="${reg}" aria-label="Open vehicle menu">⋮</button>
-              <div class="user-car-menu-panel is-hidden" data-menu-for="${reg}">
-                <button type="button" data-action="edit" data-reg="${reg}">Edit</button>
-                <button type="button" data-action="remove" data-reg="${reg}" class="danger">Remove</button>
+              <button class="user-car-menu" type="button" data-action="menu" data-reg="${regHtml}" aria-label="Open vehicle menu">⋮</button>
+              <div class="user-car-menu-panel is-hidden" data-menu-for="${regHtml}">
+                <button type="button" data-action="edit" data-reg="${regHtml}">Edit</button>
+                <button type="button" data-action="remove" data-reg="${regHtml}" class="danger">Remove</button>
               </div>
             </div>
           </div>
         </div>
         <div class="user-car-meta">
-          <span><i aria-hidden="true">⛽</i>${fuel}</span>
-          <span><i aria-hidden="true">🗓</i>${age}</span>
-          <span><i aria-hidden="true">◉</i>${mileage}</span>
+          <span><i aria-hidden="true">⛽</i>${fuelHtml}</span>
+          <span><i aria-hidden="true">🗓</i>${escapeHtml(age)}</span>
+          <span><i aria-hidden="true">◉</i>${mileageHtml}</span>
         </div>
         <div class="user-car-status">
           <div class="user-car-status-item">
             <span class="user-car-status-icon">△</span>
             <div>
               <strong>Your MOT is valid</strong>
-              <p>${vehicle.motStatus || "MOT status not available"}</p>
+              <p>${motStatusHtml}</p>
             </div>
             <span class="user-car-status-arrow">›</span>
           </div>
@@ -876,7 +883,7 @@ if (userPage) {
             <span class="user-car-status-icon">✓</span>
             <div>
               <strong>Taxed</strong>
-              <p>${vehicle.taxStatus || "Tax status not available"}</p>
+              <p>${taxStatusHtml}</p>
             </div>
             <span class="user-car-status-arrow">›</span>
           </div>
@@ -928,13 +935,15 @@ if (userPage) {
 
     vehicles.forEach((vehicle) => {
       if (selectedVehicle && vehicle.registrationNumber === selectedVehicle.registrationNumber) return;
+      const registrationHtml = escapeHtml(vehicle.registrationNumber || "-");
+      const vehicleTitleHtml = escapeHtml([vehicle.make, vehicle.model].filter(Boolean).join(" ") || vehicle.registrationNumber || "-");
       const item = document.createElement("button");
       item.type = "button";
       item.className = "user-vehicle-dropdown-item";
-      item.dataset.reg = vehicle.registrationNumber;
+      item.dataset.reg = String(vehicle.registrationNumber || "");
       item.innerHTML = `
-        <span class="user-vehicle-dropdown-title">${[vehicle.make, vehicle.model].filter(Boolean).join(" ") || vehicle.registrationNumber}</span>
-        <span class="user-reg-badge">${vehicle.registrationNumber}</span>
+        <span class="user-vehicle-dropdown-title">${vehicleTitleHtml}</span>
+        <span class="user-reg-badge">${registrationHtml}</span>
       `;
       userVehicleDropdownMenu.appendChild(item);
     });
@@ -1055,9 +1064,10 @@ if (userPage) {
   };
 
   const buildUserBookingDetailCard = (booking, user) => {
-    const addressLines = [booking.address?.line1, booking.address?.line2, booking.address?.city, booking.address?.postal_code].filter(Boolean);
-    const mechanicName = booking.mechanic || "Unassigned";
-    const vehicleLabel = [booking.vehicle?.make, booking.vehicle?.model, booking.vehicle?.yearOfManufacture].filter(Boolean).join(" ");
+    const escape = (value) => escapeHtml(String(value ?? ""));
+    const addressLines = [booking.address?.line1, booking.address?.line2, booking.address?.city, booking.address?.postal_code].filter(Boolean).map(escape);
+    const mechanicName = escape(booking.mechanic || "Unassigned");
+    const vehicleLabel = escape([booking.vehicle?.make, booking.vehicle?.model, booking.vehicle?.yearOfManufacture].filter(Boolean).join(" "));
     const parts = booking.items.flatMap((item) => (Array.isArray(item.parts) ? item.parts : []));
     const invoiceParts = Array.isArray(booking.invoice?.totals?.completion?.added_parts)
       ? booking.invoice.totals.completion.added_parts
@@ -1079,12 +1089,12 @@ if (userPage) {
     return `
       <article class="user-booking-card">
         <div class="user-booking-toolbar">
-          <span class="user-booking-status user-booking-status--${getBookingStatusClass(booking)}">${formatBookingStatus(booking.status, booking.payment?.status, cancellationReason)}</span>
-          <strong class="user-booking-reference">Reference: ${booking.reference}</strong>
+          <span class="user-booking-status user-booking-status--${escape(getBookingStatusClass(booking))}">${escape(formatBookingStatus(booking.status, booking.payment?.status, cancellationReason))}</span>
+          <strong class="user-booking-reference">Reference: ${escape(booking.reference)}</strong>
           <div class="user-booking-actions-wrap">
-            <button class="primary user-booking-actions" type="button" data-booking-actions-toggle="${booking.id}">Actions</button>
+            <button class="primary user-booking-actions" type="button" data-booking-actions-toggle="${escape(booking.id)}">Actions</button>
             <div class="user-booking-actions-panel is-hidden">
-              <button class="user-booking-actions-item" type="button" data-user-resolution-message="${booking.id}">
+              <button class="user-booking-actions-item" type="button" data-user-resolution-message="${escape(booking.id)}">
                 Resolution center
               </button>
               ${
@@ -1100,18 +1110,18 @@ if (userPage) {
         <div class="user-booking-grid">
           <div class="user-booking-column">
             <h4>Date & Time</h4>
-            <p>${formatBookingDateTime(booking.slot, booking.assigned_at)}</p>
+            <p>${escape(formatBookingDateTime(booking.slot, booking.assigned_at))}</p>
             <h4>Location</h4>
             ${addressLines.map((line) => `<p>${line}</p>`).join("") || "<p>Address not available</p>"}
             <h4>Contact Details</h4>
-            <p>${[user.name, user.lastname].filter(Boolean).join(" ") || user.email || "-"}</p>
-            <p>${user.email || "-"}</p>
-            <p>${user.phone || "-"}</p>
+            <p>${escape([user.name, user.lastname].filter(Boolean).join(" ") || user.email || "-")}</p>
+            <p>${escape(user.email || "-")}</p>
+            <p>${escape(user.phone || "-")}</p>
           </div>
           <div class="user-booking-column">
             <h4>Vehicle</h4>
-            <p>${vehicleLabel || booking.vehicle?.registrationNumber || "-"}</p>
-            <p>${booking.vehicle?.registrationNumber || "-"}</p>
+            <p>${vehicleLabel || escape(booking.vehicle?.registrationNumber || "-")}</p>
+            <p>${escape(booking.vehicle?.registrationNumber || "-")}</p>
             <h4>Mechanic</h4>
             <p>${mechanicName}</p>
             ${
@@ -1120,19 +1130,19 @@ if (userPage) {
                 : ""
             }
             <h4>Total Price</h4>
-            <p class="user-booking-price">${formatCurrency(booking.totals?.total_eur, booking.payment?.currency)}</p>
+            <p class="user-booking-price">${escape(formatCurrency(booking.totals?.total_eur, booking.payment?.currency))}</p>
             <h4>Amount Paid</h4>
-            <p class="user-booking-price">${formatCurrency(booking.payment?.amount_eur ?? booking.totals?.total_eur, booking.payment?.currency)}</p>
+            <p class="user-booking-price">${escape(formatCurrency(booking.payment?.amount_eur ?? booking.totals?.total_eur, booking.payment?.currency))}</p>
           </div>
           <div class="user-booking-column">
             <h4>Services</h4>
-            <ul>${booking.items.map((item) => `<li>${item.name}</li>`).join("") || "<li>No services attached</li>"}</ul>
+            <ul>${booking.items.map((item) => `<li>${escapeHtml(item.name)}</li>`).join("") || "<li>No services attached</li>"}</ul>
             <h4>Parts</h4>
             <ul>${allParts.map((part) => `<li>${escapeHtml(part)}</li>`).join("") || "<li>No parts recorded</li>"}</ul>
             <h4>Documents</h4>
             ${
               invoiceNumber
-                ? `<button class="user-booking-receipt-link" type="button" data-user-booking-invoice="${booking.id}">View receipt</button>`
+                ? `<button class="user-booking-receipt-link" type="button" data-user-booking-invoice="${escape(booking.id)}">View receipt</button>`
                 : "<p>No documents available</p>"
             }
           </div>
@@ -1434,17 +1444,17 @@ if (userPage) {
     activeUserBookingId = selectedId;
 
     pageBookings.forEach((booking) => {
-      const vehicleLabel = [booking.vehicle?.make, booking.vehicle?.model, booking.vehicle?.registrationNumber].filter(Boolean).join(" · ") || "-";
-      const mechanicLabel = booking.mechanic || "Unassigned";
+      const vehicleLabel = escapeHtml([booking.vehicle?.make, booking.vehicle?.model, booking.vehicle?.registrationNumber].filter(Boolean).join(" · ") || "-");
+      const mechanicLabel = escapeHtml(booking.mechanic || "Unassigned");
       const item = document.createElement("tr");
       item.className = `user-booking-summary-card${booking.id === selectedId ? " is-active" : ""}`;
       item.dataset.bookingSummaryId = booking.id;
       item.innerHTML = `
-        <td><strong class="user-booking-summary-reference">${booking.reference}</strong></td>
-        <td><span class="user-booking-status user-booking-status--${getBookingStatusClass(booking)}">${formatBookingStatus(booking.status, booking.payment?.status, getBookingCancellationReason(booking))}</span></td>
+        <td><strong class="user-booking-summary-reference">${escapeHtml(String(booking.reference || "-"))}</strong></td>
+        <td><span class="user-booking-status user-booking-status--${escapeHtml(getBookingStatusClass(booking))}">${escapeHtml(formatBookingStatus(booking.status, booking.payment?.status, getBookingCancellationReason(booking)))}</span></td>
         <td><span class="user-booking-summary-vehicle">${vehicleLabel}</span></td>
         <td><span class="user-booking-summary-mechanic">${mechanicLabel}</span></td>
-        <td><span class="user-booking-summary-date">${formatDate(booking.created_at)}</span></td>
+        <td><span class="user-booking-summary-date">${escapeHtml(formatDate(booking.created_at))}</span></td>
       `;
       userBookingsList.appendChild(item);
     });
@@ -1701,10 +1711,10 @@ if (userPage) {
       row.className = "mechanic-resolution-table-row";
       row.innerHTML = `
         <span class="mechanic-resolution-status ${caseType === "complaint" ? "is-complaint" : "is-general"}">${statusLabel}</span>
-        <span>${formatResolutionReference(entry.reference, entry.booking_id)}</span>
-        <span>${formatUserResolutionDateTime(entry.updated_at)}</span>
-        <span>${entry.subject || "-"}</span>
-        <button class="mechanic-resolution-link" type="button" data-user-resolution-case-id="${entry.id}" data-user-resolution-case-type="${String(entry.type || entry.case_type || "general").toLowerCase()}">View</button>
+        <span>${escapeHtml(formatResolutionReference(entry.reference, entry.booking_id))}</span>
+        <span>${escapeHtml(formatUserResolutionDateTime(entry.updated_at))}</span>
+        <span>${escapeHtml(entry.subject || "-")}</span>
+        <button class="mechanic-resolution-link" type="button" data-user-resolution-case-id="${escapeHtml(String(entry.id || ""))}" data-user-resolution-case-type="${escapeHtml(String(entry.type || entry.case_type || "general").toLowerCase())}">View</button>
       `;
       target.appendChild(row);
     });
@@ -1826,9 +1836,9 @@ if (userPage) {
           ? (avatarUrl.startsWith("/uploads") ? avatarUrl : avatarUrl)
           : "";
         const avatarMarkup = resolvedAvatarUrl
-          ? `<img src="${resolvedAvatarUrl}" alt="" />`
+          ? `<img src="${escapeHtml(resolvedAvatarUrl)}" alt="" />`
           : initials;
-        const bodyText = String(message.body || "").trim();
+        const bodyText = escapeHtml(String(message.body || "").trim());
         const attachments = Array.isArray(message.attachments) ? message.attachments : [];
         const attachmentsMarkup = attachments.length
           ? `
@@ -1842,13 +1852,13 @@ if (userPage) {
                   const resolvedUrl = fileUrl.startsWith("/uploads") ? fileUrl : fileUrl;
                   return isImage
                     ? `
-                      <a class="mechanic-resolution-message-attachment" href="${resolvedUrl}" target="_blank" rel="noopener noreferrer">
-                        <img src="${resolvedUrl}" alt="${escapeHtml(originalName)}" />
+                      <a class="mechanic-resolution-message-attachment" href="${escapeHtml(resolvedUrl)}" target="_blank" rel="noopener noreferrer">
+                        <img src="${escapeHtml(resolvedUrl)}" alt="${escapeHtml(originalName)}" />
                         <span>${escapeHtml(originalName)}</span>
                       </a>
                     `
                     : `
-                      <a class="mechanic-resolution-message-attachment" href="${resolvedUrl}" target="_blank" rel="noopener noreferrer">
+                      <a class="mechanic-resolution-message-attachment" href="${escapeHtml(resolvedUrl)}" target="_blank" rel="noopener noreferrer">
                         <span>${escapeHtml(originalName)}</span>
                       </a>
                     `;
@@ -1863,9 +1873,9 @@ if (userPage) {
           <div class="mechanic-resolution-message-row">
             <div class="mechanic-resolution-message-avatar" aria-hidden="true">${avatarMarkup}</div>
             <div class="mechanic-resolution-message-content">
-              ${bodyText ? `<div class="mechanic-resolution-bubble">${bodyText.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>")}</div>` : ""}
+              ${bodyText ? `<div class="mechanic-resolution-bubble">${bodyText.replace(/\n/g, "<br>")}</div>` : ""}
               ${attachmentsMarkup}
-              <span class="mechanic-resolution-message-meta">${senderName}, ${formatUserResolutionDateTime(message.created_at)}</span>
+              <span class="mechanic-resolution-message-meta">${escapeHtml(senderName)}, ${escapeHtml(formatUserResolutionDateTime(message.created_at))}</span>
             </div>
           </div>
         `;
