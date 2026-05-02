@@ -1,74 +1,134 @@
 # SmartWorkshop / Smart Vehicle Service Marketplace
 
-Working prototype built with Node.js + Express + MySQL + phpMyAdmin (Docker). No Directus.
+Working prototype built with Node.js + Express + MySQL + phpMyAdmin, containerized with Docker. Directus is intentionally not used.
 
-## Prerequisites
+## At a Glance
 
-- Windows 10/11
-- Docker Desktop (with Compose)
-- Node.js 18+ (only needed if running the app locally outside Docker)
+| Item | Value |
+|---|---|
+| App | Express UI + API |
+| Local URL | `http://localhost:3000` |
+| Health check | `http://localhost:3000/health` |
+| API base | `http://localhost:3000/api` |
+| Database | MySQL |
+| DB admin | phpMyAdmin |
+| Main stack | Docker Compose |
 
-## Quick Start (Docker)
+## What It Does
+
+- Customer booking flow from vehicle details to service request and quotation acceptance
+- Mechanic dashboard for assigned bookings, quotations, jobs, and resolution cases
+- Admin workspace for users, workshops, catalog, payments, and resolution oversight
+- Built-in authentication, role-based access control, 2FA, and email workflows
+- Local Docker stack plus staging stack with separate data and tunnel support
+
+## Highlights
+
+| Feature | What you get |
+|---|---|
+| Fast setup | Local Docker stack with one command |
+| Multi-role access | Customer, Mechanic, and Admin flows |
+| Real workflows | Requests, quotations, jobs, invoices, and resolution cases |
+| Secure access | JWT auth, RBAC, 2FA, and protected APIs |
+| Staging support | Separate staging stack, data volume, and tunnel support |
+| Friendly ops | phpMyAdmin, backup/restore scripts, and smoke tests |
+
+## Screenshots
+
+Replace these placeholders with your actual captures:
+
+| View | Preview |
+|---|---|
+| Home | `docs/screenshots/home.png` |
+| Customer dashboard | `docs/screenshots/customer-dashboard.png` |
+| Mechanic dashboard | `docs/screenshots/mechanic-dashboard.png` |
+| Admin dashboard | `docs/screenshots/admin-dashboard.png` |
+| Resolution center | `docs/screenshots/resolution-center.png` |
+
+## Role Flow
+
+```text
+Customer
+  └─ creates service request
+      └─ mechanic reviews and sends quotation
+          └─ customer accepts quotation
+              └─ job is created and tracked
+                  └─ admin monitors users, workshops, and support cases
+```
+
+## Requirements
+
+| Requirement | Notes |
+|---|---|
+| Windows | Windows 10/11 |
+| Docker | Docker Desktop with Compose |
+| Node.js | 18+ only if you run outside Docker |
+
+## Quick Start
 
 1. Copy `.env.example` to `.env` in the repo root and adjust values if needed.
-2. Run from the repo root (recommended):
+2. Start the stack from the repo root:
 
 ```bash
 docker compose -f docker-compose.yml up --build -d
 ```
 
-If you run the command from a subfolder, pass the env file explicitly:
+If you run from a subfolder, pass the env file explicitly:
 
 ```bash
 docker compose --env-file ../.env -f ../docker-compose.yml up --build -d
 ```
 
-This starts:
+### Default Local Services
 
-- MySQL on `localhost:3306`
-- App (API + UI) on `localhost:3000`
-- phpMyAdmin on `localhost:8081`
+| Service | URL / Port |
+|---|---|
+| MySQL | `localhost:3306` |
+| App | `http://localhost:3000` |
+| phpMyAdmin | `http://localhost:8081` |
 
-Dev scripts live in `scripts/dev/`:
+### Dev Scripts
 
-- `./scripts/dev/start.ps1`
-- `./scripts/dev/build.ps1`
-- `./scripts/dev/stop.ps1`
-- `./scripts/dev/recreate.ps1`
-- `./scripts/dev/backup-db.ps1`
-- `./scripts/dev/restore-db.ps1`
-- `./scripts/dev/tunnel.ps1`
+| Script | Purpose |
+|---|---|
+| `./scripts/dev/start.ps1` | Start the local stack |
+| `./scripts/dev/build.ps1` | Rebuild the local stack |
+| `./scripts/dev/stop.ps1` | Stop the local stack |
+| `./scripts/dev/recreate.ps1` | Recreate the local stack |
+| `./scripts/dev/backup-db.ps1` | Back up the local DB |
+| `./scripts/dev/restore-db.ps1` | Restore the local DB |
+| `./scripts/dev/tunnel.ps1` | Open a Cloudflare tunnel |
 
 ## Cloudflare Tunnel
 
-Use Cloudflare Tunnel when you want to open the local app from a tablet or phone on any network, including places where the devices cannot see each other directly.
+Use Cloudflare Tunnel when you want to open the app from a phone or tablet on another network.
 
-1. Start the app locally as usual:
+1. Start the app locally:
 
 ```powershell
 ./scripts/dev/start.ps1
 ```
 
-2. In a second terminal, open the tunnel:
+2. Open the tunnel in a second terminal:
 
 ```powershell
 ./scripts/dev/tunnel.ps1
 ```
 
-By default the tunnel points to `http://localhost:3000`.
+The tunnel points to `http://localhost:3000` by default.
 
-If you need public links and redirects to point at the tunnel URL, set these values in `.env` before starting the app:
+If you want public links and redirects to use the tunnel URL, set these in `.env` before starting the app:
 
 - `APP_BASE_URL`
 - `CORS_ORIGIN`
 
-If `cloudflared` is not installed yet, download it from the official Cloudflare docs and make sure it is available in your `PATH`.
+If `cloudflared` is not installed yet, install it from the official Cloudflare docs and add it to `PATH`.
 
-### Fixed tunnel name
+### Fixed Tunnel Name
 
-If you want the tunnel to keep the same name/host each time, create a local config based on:
+If you want the same tunnel name and host each time, create a local config based on:
 
-- [`docs/cloudflared-tunnel.example.yml`](/C:/Users/LianGel2DPro/SmartWorkshop-Management-System/docs/cloudflared-tunnel.example.yml)
+- [`docs/cloudflared-tunnel.example.yml`](docs/cloudflared-tunnel.example.yml)
 
 Then run:
 
@@ -76,7 +136,7 @@ Then run:
 ./scripts/dev/tunnel.ps1 -TunnelName smartworkshop-dev -ConfigPath .cloudflared/tunnel.yml
 ```
 
-Or run the helper that prints the exact setup steps:
+Or use the helper:
 
 ```powershell
 npm run tunnel:fixed
@@ -84,28 +144,30 @@ npm run tunnel:fixed
 
 ## Staging Tunnel
 
-If you need to expose the staging stack instead of local dev, run the staging tunnel helper. It points to `http://localhost:3001` by default.
+The staging tunnel exposes the staging stack instead of local development.
 
 ```powershell
 npm run tunnel:staging:named
 ```
 
-For a fixed staging hostname on this domain, use this example:
+Default staging origin:
 
-- [`docs/cloudflared-staging.example.yml`](/C:/Users/LianGel2DPro/SmartWorkshop-Management-System/docs/cloudflared-staging.example.yml)
+- `http://localhost:3001`
 
-The suggested public URL is:
+Suggested public URL:
 
 - `https://staging.smartworkshop.me`
 
-You still need to create the tunnel and download the credentials file in Cloudflare first. After that, update:
+If you use a fixed staging hostname, start from:
+
+- [`docs/cloudflared-staging.example.yml`](docs/cloudflared-staging.example.yml)
+
+After you create the tunnel and download the Cloudflare credentials, update:
 
 - `APP_BASE_URL`
 - `CORS_ORIGIN`
 
-to your public hostname so redirects and generated links use the tunnel URL.
-
-If you want one command to open both windows, use:
+If you want one command to start both windows, use:
 
 ```powershell
 npm run staging:all
@@ -113,100 +175,100 @@ npm run staging:all
 
 ## Staging Stack
 
-Use a separate staging environment to validate the app before the final domain cutover.
+Use staging to validate the app before final cutover.
 
 1. Copy `.env.staging.example` to `.env.staging`.
 2. Set staging-specific values:
-   - staging database name and credentials
-   - staging SMTP credentials
+   - database name and credentials
+   - SMTP credentials
    - staging base URL
-3. Start the staging stack:
+3. Start the stack:
 
 ```powershell
 ./scripts/staging/stack-staging.ps1 start
 ```
 
-To rebuild staging:
+### Staging Commands
 
-```powershell
-./scripts/staging/rebuild-staging.ps1
-```
+| Script | Purpose |
+|---|---|
+| `./scripts/staging/rebuild-staging.ps1` | Rebuild staging |
+| `./scripts/staging/reset-staging.ps1` | Reset staging from scratch |
+| `./scripts/staging/start-staging-v1.ps1` | Start a specific saved volume |
+| `./scripts/staging/start-staging-v2.ps1` | Start a specific saved volume |
+| `./scripts/staging/start-staging-dev.ps1` | Start staging with nodemon |
+| `./scripts/staging/backup-staging-db.ps1` | Back up staging DB |
+| `./scripts/staging/restore-staging-db.ps1` | Restore staging DB |
+| `./scripts/staging/migrate-staging-volume.ps1` | Move preserved data to a new volume |
 
-To reset staging from scratch:
+### Staging Ports
 
-```powershell
-./scripts/staging/reset-staging.ps1
-```
+| Service | URL / Port |
+|---|---|
+| App | `http://localhost:3001` |
+| MySQL | `localhost:3307` |
+| phpMyAdmin | `http://localhost:8082` |
 
-To start staging on a specific volume:
+### Staging Notes
 
-```powershell
-./scripts/staging/start-staging-v1.ps1
-./scripts/staging/start-staging-v2.ps1
-./scripts/staging/start-staging-dev.ps1
-```
+- Staging uses its own MySQL volume and stays isolated from local development.
+- The staging backend runs with `nodemon`, so code changes in `src/`, `views/`, and `public/` reload after the stack restarts.
+- You can override the staging volume name with `STAGING_DB_VOLUME`.
+- The staging bootstrap seeds 10 extra London mechanic test accounts for booking and search flows.
 
-To back up or restore the staging database:
+## Environment Validation
 
-```powershell
-./scripts/staging/backup-staging-db.ps1
-./scripts/staging/restore-staging-db.ps1
-```
+| Mode | Behavior |
+|---|---|
+| Development | Placeholder values are allowed and only emit warnings |
+| Staging | Strict validation is enforced |
+| Any mode | Set `STRICT_ENV_VALIDATION=true` to force strict validation |
 
-To migrate preserved staging data to a new volume:
+Other rules:
 
-```powershell
-./scripts/staging/migrate-staging-volume.ps1
-```
-
-Ports used by default:
-
-- App: `http://localhost:3001`
-- MySQL: `localhost:3307`
-- phpMyAdmin: `http://localhost:8082`
-
-The staging stack runs against its own MySQL volume, so it stays isolated from local development.
-The staging backend now runs with `nodemon`, so code changes in `src/`, `views/`, and `public/` reload automatically after the stack restarts.
-You can override the staging volume name with `STAGING_DB_VOLUME` if you need to point staging at a different persistent volume.
-Use `./scripts/staging/migrate-staging-volume.ps1` when you want to move the preserved admin/mechanic/catalog data into a new staging volume.
-Use `./scripts/staging/start-staging-v1.ps1` or `./scripts/staging/start-staging-v2.ps1` when you want to start staging against a specific saved volume without changing `.env.staging`.
-Use `./scripts/staging/start-staging-dev.ps1` when you want staging on `db_data_staging_v2` with `nodemon` watching code changes.
-Staging bootstrap also seeds 10 extra London mechanic test accounts for booking and search flows.
-
-Environment validation rules:
-
-- `development` can start with placeholder values and only emits warnings.
-- `staging` is validated strictly and must use real values for required secrets and database settings.
-- `STRICT_ENV_VALIDATION=true` forces strict validation in any environment.
-- Keep `.env.staging` aligned with the staging stack so it does not rely on placeholder secrets.
 - `TWO_FACTOR_REAUTH_HOURS` controls how long a successful login stays exempt from a new 2FA code. Default: `24`.
-- Admin accounts always require 2FA on login when 2FA is enabled; customer and mechanic accounts use the reauth window above.
+- Admin accounts always require 2FA on login when 2FA is enabled.
+- Customer and mechanic accounts use the reauth window above.
+- Keep `.env.staging` aligned with the staging stack and do not rely on placeholder secrets.
 
-Smoke test plan for this stage: [docs/staging-smoke-test-plan.md](docs/staging-smoke-test-plan.md)
-Smoke test report template: [docs/staging-smoke-test-report-template.md](docs/staging-smoke-test-report-template.md)
-Plain text report template: [docs/staging-smoke-test-report-template.txt](docs/staging-smoke-test-report-template.txt)
-Plain text plan: [docs/staging-smoke-test-plan.txt](docs/staging-smoke-test-plan.txt)
+Smoke test references:
 
-The database schema is created automatically from `database/schema.sql`. Seed data is inserted automatically when the app starts.
-For staging, the database is now intentionally isolated and boots with a clean dataset plus the default admin and mechanic demo accounts only.
+- [docs/staging-smoke-test-plan.md](docs/staging-smoke-test-plan.md)
+- [docs/staging-smoke-test-report-template.md](docs/staging-smoke-test-report-template.md)
+- [docs/staging-smoke-test-report-template.txt](docs/staging-smoke-test-report-template.txt)
+- [docs/staging-smoke-test-plan.txt](docs/staging-smoke-test-plan.txt)
 
-## Default Seed Accounts
+## Database
 
-- Admin: `admin@smartworkshop.local` / `Admin123!`
-- Mechanic: `mechanic@smartworkshop.local` / `Mechanic123!`
-- Customer: `customer@smartworkshop.local` / `Customer123!`
+The database schema is created automatically from `database/schema.sql`.
+
+Seed data is inserted automatically when the app starts.
+
+For staging, the database is intentionally isolated and boots with a clean dataset plus the default admin and mechanic demo accounts only.
+
+### Default Seed Accounts
+
+| Role | Credentials |
+|---|---|
+| Admin | `admin@smartworkshop.local` / `Admin123!` |
+| Mechanic | `mechanic@smartworkshop.local` / `Mechanic123!` |
+| Customer | `customer@smartworkshop.local` / `Customer123!` |
 
 ## phpMyAdmin
 
-- URL: `http://localhost:8081`
-- Server: `db` (inside Docker) or `localhost` (from host)
-- User: `DB_USER` in `.env`
-- Password: `DB_PASSWORD` in `.env`
+| Field | Value |
+|---|---|
+| URL | `http://localhost:8081` |
+| Server | `db` inside Docker, or `localhost` from host |
+| User | `DB_USER` in `.env` |
+| Password | `DB_PASSWORD` in `.env` |
 
 ## App Access
 
-- Health check: `http://localhost:3000/health`
-- API base URL: `http://localhost:3000/api`
+| Item | URL |
+|---|---|
+| Health check | `http://localhost:3000/health` |
+| API base | `http://localhost:3000/api` |
 
 Example login:
 
@@ -216,37 +278,37 @@ curl -X POST http://localhost:3000/api/auth/login \
   -d "{\"email\":\"customer@smartworkshop.local\",\"password\":\"Customer123!\"}"
 ```
 
-## UI (Pug)
+## UI
 
-The UI is served directly by Express at `http://localhost:3000/` (no separate frontend server).
+The UI is served directly by Express at `http://localhost:3000/` with no separate frontend server.
 
-## API Endpoints (Minimum Viable)
+## API Endpoints
 
-Auth
+### Auth
 
 - `POST /api/auth/register`
 - `POST /api/auth/login`
 
-Service Requests
+### Service Requests
 
-- `POST /api/service-requests` (Customer)
-- `GET /api/service-requests/me` (Customer)
-- `GET /api/service-requests/:id` (Customer own or Admin)
-- `GET /api/service-requests/available` (Mechanic/Admin)
+- `POST /api/service-requests` - Customer
+- `GET /api/service-requests/me` - Customer
+- `GET /api/service-requests/:id` - Customer own or Admin
+- `GET /api/service-requests/available` - Mechanic/Admin
 
-Quotations
+### Quotations
 
-- `POST /api/quotations` (Mechanic)
-- `GET /api/quotations/request/:requestId` (Customer owner/Mechanic/Admin)
-- `POST /api/quotations/:quotationId/accept` (Customer)
+- `POST /api/quotations` - Mechanic
+- `GET /api/quotations/request/:requestId` - Customer owner/Mechanic/Admin
+- `POST /api/quotations/:quotationId/accept` - Customer
 
-Jobs
+### Jobs
 
-- `GET /api/jobs/me` (Customer/Mechanic/Admin)
-- `PATCH /api/jobs/:jobId/status` (Mechanic/Admin)
-- `GET /api/jobs/:jobId/history` (Authorized)
+- `GET /api/jobs/me` - Customer/Mechanic/Admin
+- `PATCH /api/jobs/:jobId/status` - Mechanic/Admin
+- `GET /api/jobs/:jobId/history` - Authorized
 
-Admin (Workshops + Users)
+### Admin
 
 - `GET /api/admin/workshops`
 - `POST /api/admin/workshops`
@@ -254,31 +316,28 @@ Admin (Workshops + Users)
 - `DELETE /api/admin/workshops/:workshopId`
 - `GET /api/admin/users`
 
-## Demo Script (PowerShell)
+## Demo Script
 
-A Windows-friendly demo script is provided:
+A Windows-friendly demo script is available:
 
 ```powershell
 ./scripts/demo.ps1
 ```
 
-It logs in as the seeded customer/mechanic, creates a service request, submits a quotation, accepts it, and updates job status.
+It logs in as the seeded customer and mechanic, creates a service request, submits a quotation, accepts it, and updates job status.
 
-## Running Locally (optional)
-
-If you want to run the app outside Docker:
+## Running Locally Without Docker
 
 ```bash
-cd server
 npm install
 npm run dev
 ```
 
-Ensure MySQL is running and `.env` points to your DB.
+Make sure MySQL is running and `.env` points to your database.
 
-## Notes on Architecture
+## Architecture Notes
 
-- Directus is intentionally not used to keep the prototype lightweight and aligned with the requirement.
+- Directus is intentionally not used to keep the prototype lightweight and aligned with the project requirement.
 - RBAC is enforced in middleware for Customer, Mechanic, and Admin roles.
 - Job creation is transactional and only occurs when a quotation is accepted.
 
@@ -289,9 +348,9 @@ docker compose -f docker-compose.yml down -v
 docker compose -f docker-compose.yml up --build -d
 ```
 
-This removes containers/volumes and recreates the stack from scratch.
+This removes containers and volumes and recreates the stack from scratch.
 
-## Start/Stop Stack (PowerShell)
+## Start / Stop Stack
 
 ```powershell
 ./scripts/dev/start.ps1
@@ -299,5 +358,3 @@ This removes containers/volumes and recreates the stack from scratch.
 ./scripts/dev/stop.ps1
 ./scripts/dev/recreate.ps1
 ```
-
-Host - <http://localhost:3000/>
