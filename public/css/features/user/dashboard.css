@@ -2493,8 +2493,14 @@ body.user-body #userAccountView {
   min-height: auto;
 }
 
+body.user-body #userAccountView > .settings-card.user-account-card {
+  min-height: calc(100dvh - var(--general-header-height, 72px) - 140px);
+  height: calc(100dvh - var(--general-header-height, 72px) - 140px);
+}
+
 body.user-body #userAccountView .user-account-layout {
-  min-height: auto;
+  min-height: 100%;
+  height: 100%;
   padding: 20px;
 }
 
@@ -2503,7 +2509,7 @@ body.user-body #userAccountView .user-account-layout {
   grid-template-rows: auto minmax(0, 1fr);
   gap: 20px;
   align-items: start;
-  align-content: start;
+  align-content: stretch;
 }
 
 body.user-body #userAccountView .user-settings-panel-head {
@@ -2513,8 +2519,9 @@ body.user-body #userAccountView .user-settings-panel-head {
 body.user-body #userAccountView .user-settings-panel {
   display: grid;
   gap: 22px;
-  align-content: start;
+  align-content: stretch;
   align-items: start;
+  min-height: 100%;
 }
 
 body.user-body #userAccountView .user-settings-panel-head .account-section--welcome {
@@ -2665,7 +2672,12 @@ body.user-body #userAccountView .settings-avatar-lg {
 }
 
 @media (max-width: 980px) {
-body.user-body #userAccountView .settings-card {
+  body.user-body #userAccountView > .settings-card.user-account-card {
+    min-height: auto;
+    height: auto;
+  }
+
+  body.user-body #userAccountView .settings-card {
     padding: 20px;
   }
 }

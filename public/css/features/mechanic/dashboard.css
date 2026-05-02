@@ -1980,6 +1980,7 @@ body.mechanic-body #mechanicSettingsView .mechanic-full-name-grid {
   display: grid;
   gap: 4px;
   min-width: 0;
+  color: #ffffff;
 }
 
 body.mechanic-body #mechanicAccountView .mechanic-full-name-row,
@@ -2911,7 +2912,7 @@ body.mechanic-body .mechanic-resolution-booking .primary {
 
   #mechanicPage .mainSection {
     border-left: 2px solid #ffffff;
-    border-radius: 0;
+    /* border-radius: 0; */
   }
 
   #mechanicPage .mechanicContent {
@@ -4072,6 +4073,42 @@ body.mechanic-body #mechanicProfileMap .map-placeholder--overlay {
     gap: 10px;
   }
 
+  body.mechanic-body .mechanic-profile-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  body.mechanic-body .mechanic-profile-main {
+    display: contents;
+  }
+
+  body.mechanic-body .mechanic-profile-main > #mechanicProfileHeading {
+    order: 0;
+    text-align: center;
+    margin: 0;
+  }
+
+  body.mechanic-body .mechanic-profile-sidebar {
+    order: 1;
+  }
+
+  body.mechanic-body .mechanic-profile-main > .mechanic-profile-tabs {
+    order: 2;
+  }
+
+  body.mechanic-body .mechanic-profile-main > .mechanic-profile-coverage {
+    order: 3;
+  }
+
+  body.mechanic-body .mechanic-profile-main > .mechanic-profile-map {
+    order: 4;
+  }
+
+  body.mechanic-body .mechanic-profile-main > .mechanic-profile-reviews-card {
+    order: 5;
+  }
+
   body.mechanic-body .mechanic-table-actions {
     flex-direction: column;
     align-items: stretch;
@@ -4157,11 +4194,28 @@ body.mechanic-body #mechanicProfileMap .map-placeholder--overlay {
     padding-right: 0;
     border-right: 0;
     white-space: normal;
+    text-align: center;
   }
 
   body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-item {
     grid-template-columns: 1fr;
     justify-items: stretch;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-copy {
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-copy p {
+    width: 100%;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    text-align: center;
   }
 
   body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-item .secondary {
@@ -4179,6 +4233,116 @@ body.mechanic-body #mechanicProfileMap .map-placeholder--overlay {
   body.mechanic-body #mechanicSettingsView .mechanic-settings-row p,
   body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-copy p {
     font-size: 1.05rem;
+  }
+
+  body.mechanic-body #mechanicAccountView .settings-row > div {
+    justify-items: center;
+    text-align: center;
+    gap: 10px;
+  }
+
+  body.mechanic-body #mechanicAccountView .settings-profile {
+    justify-items: center;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicAccountView .settings-profile h4,
+  body.mechanic-body #mechanicAccountView .settings-meta h4 {
+    width: 100%;
+    margin: 0;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicAccountView .user-account-panel > .settings-photo-row,
+  body.mechanic-body #mechanicAccountView .settings-photo-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    padding-bottom: 4px;
+  }
+
+  body.mechanic-body #mechanicAccountView .user-account-panel > .settings-photo-row .settings-avatar-lg,
+  body.mechanic-body #mechanicAccountView .settings-photo-row .settings-avatar-lg {
+    display: grid !important;
+    place-items: center !important;
+    align-self: center !important;
+    justify-self: center !important;
+    margin-inline: auto !important;
+    color: #ffffff !important;
+    background: #cfd6fb;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicAccountAvatarSecondary,
+  body.mechanic-body #mechanicAccountAvatarSecondary * {
+    color: #ffffff !important;
+  }
+
+  body.mechanic-body #mechanicAccountView .mechanic-account-label,
+  body.mechanic-body #mechanicAccountView .mechanic-account-value {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-right: 0;
+    white-space: normal;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicAccountView .mechanic-account-label {
+    margin-bottom: 2px;
+  }
+
+  body.mechanic-body #mechanicAccountView .mechanic-account-value {
+    font-size: 1.02rem;
+    line-height: 1.35;
+    margin-bottom: 6px;
+  }
+
+  body.mechanic-body #mechanicAccountView .settings-row > div p {
+    margin-bottom: 6px;
+  }
+
+  body.mechanic-body #mechanicResolutionCenterView .mechanic-resolution-card-body {
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicResolutionCenterView .mechanic-resolution-table-head,
+  body.mechanic-body #mechanicResolutionCenterView .mechanic-resolution-table-row {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicResolutionCenterView .mechanic-resolution-status,
+  body.mechanic-body #mechanicResolutionCenterView .mechanic-resolution-link {
+    justify-self: center;
+  }
+
+  body.mechanic-body #mechanicResolutionCenterView .mechanic-resolution-link {
+    width: fit-content;
+  }
+
+  body.mechanic-body #mechanicResolutionCenterView #mechanicResolutionBookings {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  body.mechanic-body #mechanicResolutionCenterView .mechanic-resolution-booking {
+    width: min(100%, 420px);
+    margin-inline: auto;
+  }
+
+  body.mechanic-body #mechanicResolutionCenterView .mechanic-resolution-booking-row {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicResolutionCenterView .mechanic-resolution-booking .primary {
+    margin-inline: auto;
   }
 }
 

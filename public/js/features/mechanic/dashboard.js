@@ -747,8 +747,7 @@ if (mechanicDashboard) {
       syncMechanicSecurity2faButton();
       if (mechanicSecurityUsername) mechanicSecurityUsername.value = user?.email || user?.username || "";
       if (mechanicProfileHeading) {
-        const location = user?.address_details?.city || formatMechanicAddressText(user?.address || user?.contact_address || "") || "Surrey";
-        mechanicProfileHeading.textContent = `${name}, ${location}`;
+        mechanicProfileHeading.textContent = name;
       }
       if (mechanicProfileRatings) mechanicProfileRatings.textContent = "(0 ratings)";
       if (mechanicProfileExperience) mechanicProfileExperience.textContent = "5 years professional experience";
@@ -1666,7 +1665,7 @@ if (mechanicDashboard) {
       const profileData = await apiAuth("/api/users/me/mechanic-profile", mechanicToken);
       latestMechanicProfile = profileData;
       if (mechanicProfileHeading) {
-        mechanicProfileHeading.textContent = `${profileData.name || "Mechanic"}, ${profileData.location || "Surrey"}`;
+        mechanicProfileHeading.textContent = profileData.name || "Mechanic";
       }
       if (mechanicProfileRatings) {
         const rating = Number(profileData.rating || 0);
@@ -2607,7 +2606,7 @@ if (mechanicDashboard) {
           memberships: profileData.memberships
         });
         if (mechanicProfileHeading) {
-          mechanicProfileHeading.textContent = `${profileData.name || "Mechanic"}, ${profileData.location || "Surrey"}`;
+          mechanicProfileHeading.textContent = profileData.name || "Mechanic";
         }
       }
       setMechanicCertStatus("Certifications updated.", "success");
