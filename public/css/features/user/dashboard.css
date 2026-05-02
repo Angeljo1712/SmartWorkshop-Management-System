@@ -1691,7 +1691,7 @@ body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-
   min-height: 42px;
   font-weight: 700;
   cursor: pointer;
-  justify-self: end;
+  justify-self: center;
 }
 
 body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-detail,
@@ -4088,6 +4088,58 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
 }
 
 @media (max-width: 768px) {
+  body.user-body #userResolutionView .user-resolution-layout {
+    gap: 16px;
+  }
+
+  body.user-body #userResolutionView > .user-resolution-card {
+    width: min(100%, 720px);
+    margin-inline: auto;
+    justify-self: center;
+  }
+
+  body.user-body .user-resolution-card h3 {
+    text-align: center;
+  }
+
+  body.user-body .user-resolution-card .user-resolution-card-body {
+    justify-items: center;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-table {
+    width: 100%;
+    justify-items: center;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-table {
+    width: 100%;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-tabs {
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+    width: min(100%, 620px);
+    justify-self: center;
+    margin-inline: auto;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-tab {
+    width: 100%;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-table-head,
+  body.user-body .user-resolution-card .mechanic-resolution-table-row {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-status,
+  body.user-body .user-resolution-card .mechanic-resolution-link {
+    justify-self: center;
+  }
+
   .user-settings-layout {
     grid-template-columns: 1fr;
   }
@@ -4263,6 +4315,75 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
 }
 
 @media (max-width: 425px) {
+  body.user-body #userResolutionView .user-resolution-layout {
+    gap: 14px;
+  }
+
+  body.user-body #userResolutionView > .user-resolution-card {
+    width: min(100%, 680px);
+    margin-inline: auto;
+    justify-self: center;
+  }
+
+  body.user-body .user-resolution-card h3 {
+    text-align: center;
+  }
+
+  body.user-body .user-resolution-card .user-resolution-card-body {
+    padding: 14px;
+    justify-items: center;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-table {
+    width: 100%;
+    justify-items: center;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-table {
+    width: 100%;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-tabs {
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+    gap: 10px;
+    width: 100%;
+    justify-self: center;
+    margin-inline: auto;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-tab {
+    width: 100%;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-table-head,
+  body.user-body .user-resolution-card .mechanic-resolution-table-row {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-table-row {
+    padding-top: 16px;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-table-row > * {
+    justify-self: center;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-status,
+  body.user-body .user-resolution-card .mechanic-resolution-link {
+    justify-self: center;
+    text-align: center;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-link {
+    display: block;
+    margin: 0 auto;
+  }
+
   body.user-body .main-header.general-header {
     padding: 12px;
   }
@@ -4299,52 +4420,56 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
   }
 
   #userPage .user-dashboard-hero {
-    padding: 10px;
+    padding: 8px 10px;
   }
 
   #userPage .user-dashboard-hero .settings-header {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 10px;
   }
 
   #userPage .user-dashboard-hero .settings-header .settings-header-aside {
+    align-self: flex-end;
     justify-content: flex-end;
     text-align: right;
     width: auto;
     min-width: 0;
-    max-width: 48%;
+    max-width: 100%;
   }
 
   #userPage .user-dashboard-hero-copy {
     width: auto;
     justify-content: flex-end;
-    gap: 10px;
+    gap: 6px;
   }
 
   #userPage .user-dashboard-hero .settings-header-copy {
     min-width: 0;
+    width: 100%;
   }
 
   #userPage .user-dashboard-hero .settings-header-copy h3 {
-    font-size: 1rem;
+    font-size: 0.88rem;
+    line-height: 1.05;
   }
 
   #userPage .user-dashboard-hero .settings-header-copy p {
-    font-size: 0.92rem;
+    font-size: 0.8rem;
+    line-height: 1.05;
   }
 
   #userPage .user-dashboard-hero .settings-header .settings-header-aside h2,
   #userPage .user-dashboard-hero #userDashboardHeroName,
   #userPage .user-dashboard-hero #userDashboardHeroRole {
-    white-space: normal;
+    white-space: nowrap;
   }
 
   #userPage .user-dashboard-hero .admin-profile-avatar {
-    width: 42px;
-    height: 42px;
-    flex: 0 0 42px;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
   }
 
   #userPage .user-dashboard-hero .settings-header-copy {
@@ -4785,9 +4910,9 @@ body.user-body #userSettingsView .user-settings-contact-copy p {
   }
 
   #userPage .user-dashboard-hero .settings-header {
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    justify-content: space-between;
     gap: 8px;
   }
 
@@ -4799,6 +4924,8 @@ body.user-body #userSettingsView .user-settings-contact-copy p {
   }
 
   #userPage .user-dashboard-hero .settings-header .settings-header-aside {
+    justify-self: end;
+    align-self: center;
     justify-content: flex-end;
     text-align: right;
   }
@@ -4814,7 +4941,9 @@ body.user-body #userSettingsView .user-settings-contact-copy p {
   }
 
   #userPage .user-dashboard-hero .settings-header-copy p {
-    font-size: 0.85rem;
+    font-size: 0.78rem;
+    line-height: 1.15;
+    white-space: normal;
   }
 
   #userPage .user-dashboard-hero .admin-profile-avatar {
