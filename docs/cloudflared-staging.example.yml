@@ -1,0 +1,7 @@
+tunnel: smartworkshop-staging
+credentials-file: C:\Users\YOUR_USER\.cloudflared\smartworkshop-staging.json
+
+ingress:
+  - hostname: staging.smartworkshop.me
+    service: http://localhost:3001
+  - service: http_status:404

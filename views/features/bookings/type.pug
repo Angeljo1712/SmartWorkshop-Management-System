@@ -1,0 +1,30 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Repair Type"
+  - var bodyClass = "bookings-body app-shell-body"
+
+block head
+  link(rel="stylesheet", href="/css/features/bookings/booking-flow.css")
+
+block content
+  header.main-header.basic-header
+    .body-content
+      a.main-brand(href="/")
+        span.main-logo SW
+        div
+          strong SmartWorkshop
+          span Vehicle Service Marketplace
+      a.bookings-header-help(href="#") Need help?
+  main.primari-shell
+    .page-shell-content
+      h1 Repair Type
+      p This is the new page for the Repairs flow.
+  include ../../partials/general-footer
+
+append scripts
+  script(src="/js/features/bookings/booking-flow.js")
+
+
+
+

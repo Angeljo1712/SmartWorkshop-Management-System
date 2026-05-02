@@ -1,0 +1,82 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Sign in"
+  - var bodyClass = "auth-body"
+
+block head
+  link(rel="stylesheet", href="/css/features/auth/auth-shell.css")
+
+block content
+  main.auth-shell
+    a.auth-mini-brand(href="/")
+      span.logo SW
+      span SmartWorkshop
+    section.auth-panel
+      .auth-content.auth-content--sign-in
+        h1 Sign in
+        .auth-social-row
+          button.auth-social-icon.auth-social-icon--facebook(type="button" aria-label="Sign in with Facebook")
+          button.auth-social-icon.auth-social-icon--google(type="button" aria-label="Sign in with Google")
+        p.auth-or or use your account
+        form.auth-form#signInForm(autocomplete="off")
+          label
+            input#signInEmail(
+              type="text"
+              name="no_autofill_email"
+              placeholder="Email"
+              autocomplete="off"
+              autocapitalize="none"
+              spellcheck="false"
+            )
+          label
+            input#signInPassword(
+              type="password"
+              name="no_autofill_password"
+              placeholder="Password"
+              autocomplete="new-password"
+            )
+          a.auth-link(href="/auth/forgot-password") Forgot your password
+          p.form-error#signInError(role="alert" aria-live="polite")
+          button.primary.auth-submit(type="submit") Sign in
+        .auth-two-factor.is-hidden#twoFactorPanel
+          h2 Verify your email
+          p.auth-two-factor-copy#twoFactorMessage We sent a verification code to your email.
+          form.auth-form#twoFactorForm(autocomplete="off")
+            label
+              input#twoFactorCode(
+                type="text"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                placeholder="6-digit code"
+                maxlength="6"
+              )
+            p.form-error#twoFactorError(role="alert" aria-live="polite")
+            button.primary.auth-submit.auth-two-factor-btn(type="submit") Verify code
+          button.auth-link.auth-two-factor-btn#twoFactorResend(type="button") Resend code
+          button.auth-link.auth-two-factor-btn#twoFactorBack(type="button") Back to sign in
+      .auth-content.auth-content--create
+        .auth-vehicle-card
+          h2 Let’s go!
+          p Start a new service request in under a minute.
+          form.auth-vehicle-form#authVehicleForm
+            label
+              | Vehicle registration
+              input#authVehicleReg(type="text" placeholder="AB12CDE" autocomplete="off")
+            label
+              | Postcode
+              input#authVehiclePostcode(type="text" placeholder="SW1A 1AA" autocomplete="postal-code")
+            p.form-error#authVehicleError(role="alert" aria-live="polite")
+            button.primary.auth-vehicle-cta(type="submit") Get my instant price
+      .auth-aside
+        .auth-aside-copy.auth-aside--sign-in
+          h2 Hello, Friend!
+          p If you do not have an account with us, you can request your quote now.
+          button.auth-ghost(type="button" data-auth-toggle="create") Get started
+        .auth-aside-copy.auth-aside--create
+          h2 Welcome Back!
+          p If you already have an account with us, you can access your account.
+          button.auth-ghost(type="button" data-auth-toggle="sign-in") Sign in
+
+append scripts
+  script(src="/js/features/auth/auth-pages.js")

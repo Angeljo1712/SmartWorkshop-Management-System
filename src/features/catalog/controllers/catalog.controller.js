@@ -1,0 +1,16 @@
+const catalogService = require("../services/catalog.service");
+
+const listServicesHandler = async (req, res) => {
+  const category = String(req.query.category || "").trim().toLowerCase();
+  const region = String(req.query.region || "UK-default").trim();
+  const services = await catalogService.listServices({ category, region });
+  res.json(services);
+};
+
+const listServiceTreeHandler = async (req, res) => {
+  const region = String(req.query.region || "UK-default").trim();
+  const services = await catalogService.listServiceTree({ region });
+  res.json(services);
+};
+
+module.exports = { listServicesHandler, listServiceTreeHandler };

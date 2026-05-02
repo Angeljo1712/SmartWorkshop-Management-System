@@ -1,0 +1,73 @@
+const jobService = require("../services/job.service");
+const { pool } = require("../../../shared/config/pool");
+const { AppError } = require("../../../shared/utils/appError");
+const { getWorkshopIdForMechanic } = require("../../quotations/services/quotation.service");
+
+const getJobsMeHandler = async (req, res) => {
+  const roles = Array.isArray(req.user.roles) ? req.user.roles : [req.user.role];
+  if (roles.includes("CUSTOMER")) {
+    const jobs = await jobService.getJobsForCustomer(req.user.userId);
+    return res.json(jobs);
+  }
+
+  if (roles.includes("MECHANIC")) {
+    const workshopId = await getWorkshopIdForMechanic(req.user.userId);
+    if (!workshopId) {
+      throw new AppError("WORKSHOP_REQUIRED", "Mechanic must belong to a workshop", 403);
+    }
+    const jobs = await jobService.getJobsForWorkshop(workshopId);
+    return res.json(jobs);
+  }
+
+  const [rows] = await pool.query("SELECT * FROM jobs ORDER BY job_id DESC");
+  return res.json(rows);
+};
+
+const updateJobStatusHandler = async (req, res) => {
+  const { status, comment } = req.body;
+  const roles = Array.isArray(req.user.roles) ? req.user.roles : [req.user.role];
+  const primaryRole = roles.includes("MECHANIC") ? "MECHANIC" : req.user.role;
+  const updated = await jobService.updateJobStatus({
+    jobId: Number(req.params.jobId),
+    userId: req.user.userId,
+    role: primaryRole,
+    status,
+    comment
+  });
+  res.json(updated);
+};
+
+const getJobHistoryHandler = async (req, res) => {
+  const jobId = Number(req.params.jobId);
+  const [rows] = await pool.query(
+    `SELECT j.*, r.customer_id
+     FROM jobs j
+     JOIN service_requests r ON j.request_id = r.request_id
+     WHERE j.job_id = ?`,
+    [jobId]
+  );
+  const job = rows[0];
+  if (!job) {
+    throw new AppError("JOB_NOT_FOUND", "Job not found", 404);
+  }
+
+  const roles = Array.isArray(req.user.roles) ? req.user.roles : [req.user.role];
+  if (roles.includes("CUSTOMER") && job.customer_id !== req.user.userId) {
+    throw new AppError("FORBIDDEN", "Access denied", 403);
+  }
+
+  if (roles.includes("MECHANIC")) {
+    const workshopId = await getWorkshopIdForMechanic(req.user.userId);
+    if (!workshopId || workshopId !== job.workshop_id) {
+      throw new AppError("FORBIDDEN", "Access denied", 403);
+    }
+  }
+
+  const history = await jobService.getJobHistory(jobId);
+  res.json(history);
+};
+
+module.exports = { getJobsMeHandler, updateJobStatusHandler, getJobHistoryHandler };
+
+
+

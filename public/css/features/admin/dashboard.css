@@ -1,0 +1,4235 @@
+body.admin-body .admin-ui {
+  min-height: 100vh;
+  padding: 18px;
+  background: transparent;
+  color: #dbe3f0;
+}
+
+body.admin-body .page-shell-content {
+  min-height: 0;
+  height: auto;
+}
+
+body.admin-body .primari-shell {
+  min-height: 0;
+}
+
+#adminPage.mainLayout {
+      position: relative;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 0;
+      align-items: stretch;
+      border-radius: 15px 15px 0 0;
+      overflow: visible;
+}
+
+#adminPage .mainSection {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  height: auto;
+  align-self: stretch;
+  background: #0d1220;
+  border: 2px solid #ffffff;
+  border-left: 0;
+  border-bottom: 0;
+  border-radius: 0 15px 0 0;
+}
+
+#adminPage .mainSection > .admin-dashboard-hero {
+  padding: 5px 10px;
+  background: #ffffff;
+  border-radius: 0 12px 0 0;
+}
+
+#adminPage .admin-content {
+  display: grid;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 33px;
+  overflow: visible;
+  min-height: 0;
+  height: 100%;
+  align-self: stretch;
+  color: #ffffff;
+}
+
+#adminPage .admin-content * {
+  color: #ffffff;
+}
+
+#adminPage .admin-content > .admin-view {
+  min-height: 0;
+  height: 100%;
+}
+
+#adminPage .admin-content > .admin-view:not(.is-hidden) {
+  display: grid;
+}
+
+#adminPage .admin-content > .admin-view > .admin-account-layout,
+#adminPage .admin-content > .admin-view > .admin-account-card,
+#adminPage .admin-content > .admin-view > .admin-settings-card,
+#adminPage .admin-content > .admin-view > .admin-user-layout,
+#adminPage .admin-content > .admin-view > .admin-dashboard-layout {
+  width: 100%;
+  min-height: 100%;
+  height: 100%;
+}
+
+#adminPage #adminProfileView,
+#adminPage #adminSettingsView {
+  display: grid;
+  min-height: 100%;
+  height: 100%;
+  align-self: stretch;
+}
+
+#adminPage .rail-base {
+  position: static;
+  width: 180px;
+  min-width: 180px;
+  min-height: auto;
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 0;
+  border-bottom: 0;
+  border-radius: 15px 0 0 0;
+  color: #1b2430;
+  overflow: visible;
+  transition: width 0.22s ease;
+}
+
+#adminPage .mainRail {
+  padding: 14px 12px 16px;
+  justify-items: stretch;
+  gap: 1px;
+}
+
+#adminPage .mainRail:hover {
+  width: 180px;
+}
+
+#adminPage .mainRail .rail-brand {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 4px 0 14px;
+}
+
+#adminPage .mainRail .rail-brand .logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #eef2f7;
+  color: #1b2430;
+}
+
+#adminPage .mainRail .rail-nav {
+  position: sticky;
+  top: var(--general-header-height, 71px);
+  width: 100%;
+  align-self: start;
+  justify-items: stretch;
+  gap: 20px;
+  padding-top: 12px;
+}
+
+#adminPage .mainRail .rail-item {
+  width: 100%;
+  max-width: none;
+  height: auto;
+  min-height: 48px;
+  justify-content: flex-start;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #334155;
+  gap: 10px;
+  position: relative;
+  transition: max-width 0.22s ease, width 0.22s ease, padding 0.22s ease, justify-content 0.22s ease, background 0.18s ease;
+}
+
+#adminPage .mainRail .rail-item:hover {
+  background: transparent;
+}
+
+#adminPage .mainRail .rail-item.active:hover {
+  background: linear-gradient(90deg, #090d15 0%, #090d15 calc(100% + 20px), transparent calc(100% + 20px));
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+#adminPage .mainRail .rail-item.active {
+  background: linear-gradient(90deg, #090d15 0%, #090d15 calc(100% + 20px), transparent calc(100% + 20px));
+  border-color: rgba(15, 23, 42, 0.08);
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  width: calc(100% + 36px);
+  margin-right: -36px;
+  z-index: 2;
+}
+
+#adminPage .mainRail .rail-text {
+  width: auto;
+  opacity: 1;
+  overflow: visible;
+  white-space: normal;
+  line-height: 1.2;
+  transition: opacity 0.18s ease;
+}
+
+#adminPage .mainRail .rail-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+}
+
+#adminPage .mainRail .rail-footer {
+  width: 100%;
+  display: grid;
+  justify-items: stretch;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(15, 23, 42, 0.12);
+}
+
+#adminPage .mainRail .admin-signout {
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  padding: 0 14px 0 40px;
+  border-radius: 14px;
+  overflow: hidden;
+  color: #334155;
+  font-size: 0.88rem;
+  font-weight: 600;
+  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  position: relative;
+  display: grid;
+  place-items: center start;
+}
+
+#adminPage .mainRail .admin-signout::before {
+  content: "←";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #334155;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  z-index: 1;
+}
+
+#adminPage .mainRail:hover .rail-item:not(.active) {
+  width: 100%;
+  max-width: 100%;
+  justify-content: flex-start;
+  gap: 10px;
+  height: auto;
+  min-height: 48px;
+  align-items: center;
+  padding: 10px 14px;
+}
+
+#adminPage .mainRail.is-collapsed:hover {
+  width: 70px;
+}
+
+#adminPage .mainRail.is-collapsed {
+  width: 70px;
+  min-width: 70px;
+  padding: 14px 10px 16px;
+  justify-items: center;
+  gap: 5px;
+}
+
+#adminPage .mainRail.is-collapsed .rail-brand {
+  justify-content: center;
+  padding-bottom: 13px;
+}
+
+#adminPage .mainRail.is-collapsed .rail-brand .logo {
+  display: inline-grid;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  margin: 0 auto;
+}
+
+#adminPage .mainRail.is-collapsed .rail-item {
+  width: 48px;
+  max-width: 48px;
+  justify-content: center;
+  padding: 0;
+  gap: 0;
+}
+
+#adminPage .mainRail.is-collapsed .rail-item.active {
+  width: 48px;
+  max-width: 48px;
+  margin-right: 0;
+  background: transparent;
+  overflow: visible;
+  z-index: 1;
+}
+
+#adminPage .mainRail.is-collapsed .rail-item.active::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: -20px;
+  background: linear-gradient(90deg, #090d15 0%, #090d15 calc(100% + 20px), transparent calc(100% + 20px));
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-radius: 14px 0 0 14px;
+  z-index: -1;
+}
+
+#adminPage .mainRail.is-collapsed .rail-text {
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#adminPage .mainRail.is-collapsed .rail-footer {
+  justify-items: center;
+}
+
+#adminPage .mainRail.is-collapsed .admin-signout {
+  width: 48px;
+  min-width: 48px;
+  padding: 0;
+  color: transparent;
+  font-size: 0;
+  justify-content: center;
+  place-items: center;
+}
+
+#adminPage .mainRail.is-collapsed .admin-signout::before {
+  inset: 0;
+}
+
+#adminPage .admin-rail-toggle {
+  position: absolute;
+  top: 118px;
+  left: 156px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: #3e434df7;
+  color: #ffffff;
+  cursor: pointer;
+  z-index: 6;
+  box-shadow: 0 8px 18px rgba(8, 15, 31, 0.24);
+}
+
+#adminPage .admin-rail-toggle svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+#adminPage.is-rail-collapsed .admin-rail-toggle {
+  left: 54px;
+}
+
+body.admin-body .admin-header-menu-toggle,
+body.admin-body .admin-mobile-menu,
+body.admin-body .admin-mobile-menu-backdrop {
+  display: none;
+}
+
+
+#adminPage .admin-feedback {
+  margin: 8px auto 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #2f7d4f;
+  color: #eaf7ee;
+  font-size: 0.92rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: start;
+  width: fit-content;
+  max-width: min(640px, calc(100% - 24px));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+  text-align: center;
+}
+
+#adminPage .admin-feedback.is-error {
+  background: rgba(98, 40, 48, 0.92);
+  color: #ffe7ea;
+}
+
+#adminPage .admin-dashboard-layout {
+  display: grid;
+  gap: 14px;
+  color: #ffffff;
+}
+
+#adminPage .admin-dashboard-layout h1,
+#adminPage .admin-dashboard-layout h2,
+#adminPage .admin-dashboard-layout h3,
+#adminPage .admin-dashboard-layout h4,
+#adminPage .admin-dashboard-layout p,
+#adminPage .admin-dashboard-layout span,
+#adminPage .admin-dashboard-layout strong,
+#adminPage .admin-dashboard-layout label,
+#adminPage .admin-dashboard-layout li,
+#adminPage .admin-dashboard-layout button {
+  color: #ffffff;
+}
+
+#adminPage .admin-dashboard-layout .label,
+#adminPage .admin-dashboard-layout .subtle,
+#adminPage .admin-dashboard-layout [class*="subtitle"],
+#adminPage .admin-dashboard-layout [class*="meta"] {
+  color: #ffffff !important;
+}
+
+#adminPage .admin-dashboard-hero,
+#adminPage .admin-dashboard-metrics {
+  display: grid;
+  gap: 12px;
+}
+
+#adminPage .admin-dashboard-hero .settings-header {
+  margin: 0;
+  padding: 0 0 0px;
+  max-height: none;
+}
+
+#adminPage .admin-dashboard-hero-copy {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#adminPage .admin-dashboard-hero .settings-header h2,
+#adminPage .admin-dashboard-hero .settings-header h3 {
+  color: #1b2430;
+  font-size: 1.45rem;
+  line-height: 1.15;
+}
+
+#adminPage .admin-dashboard-hero .settings-header p {
+  color: #475569;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+#adminPage .admin-dashboard-hero .settings-header .settings-header-aside {
+  text-align: right;
+}
+
+#adminPage .admin-dashboard-hero .settings-header .settings-header-aside h2 {
+  margin: 0 0 2px;
+  color: #1b2430;
+  font-size: 1.17em;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+#adminPage #adminDashboardHeroName {
+  margin: 0;
+  color: #1b2430;
+  font-size: 1.17em;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+#adminPage #adminDashboardHeroRole {
+  margin: 2px 0 0;
+  color: #1b2430;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+#adminPage .admin-dashboard-metrics {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+#adminPage .admin-dashboard-metric-card,
+#adminPage .admin-queue-item,
+#adminPage .admin-dashboard-list-item {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: #3e434df7;
+}
+
+#adminPage .admin-dashboard-metric-card {
+  padding: 14px;
+  display: grid;
+  gap: 6px;
+  text-align: center;
+  justify-items: center;
+}
+
+#adminPage .admin-queue-item {
+  text-align: center;
+  justify-items: center;
+}
+
+#adminPage .admin-dashboard-metric-card h3,
+#adminPage .admin-queue-item h3,
+#adminPage .admin-dashboard-metric-card strong {
+  color: #ffffff;
+}
+
+#adminPage .admin-dashboard-metric-card strong {
+  font-size: 1.8rem;
+}
+
+#adminPage .admin-queue-item strong {
+  color: #ffffff;
+}
+
+#adminPage .admin-dashboard-metric-card p {
+  margin: 0;
+  color: #ffffff;
+}
+
+#adminPage .admin-dashboard-metric-card span:last-child {
+  color: #ffffff;
+  font-size: 0.9rem;
+}
+
+#adminPage .admin-dashboard-queues {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+#adminPage .admin-queue-item {
+  padding: 14px;
+  display: grid;
+  gap: 6px;
+}
+
+#adminPage .admin-queue-item strong {
+  font-size: 1.55rem;
+  color: #eef3fc;
+}
+
+#adminPage .admin-dashboard-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+#adminPage .admin-dashboard-list-item {
+  padding: 14px;
+  display: grid;
+  gap: 4px;
+}
+
+#adminPage .admin-dashboard-list-item strong {
+  color: #eef3fc;
+  font-size: 0.98rem;
+}
+
+#adminPage .admin-dashboard-list-item span {
+  color: #ffffff;
+  font-size: 0.88rem;
+}
+
+#adminPage .admin-dashboard-list-item .label {
+  color: #b9c6d8;
+  font-size: 0.8rem;
+}
+
+#adminPage .admin-dashboard-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+#adminPage .admin-dashboard-actions .ghost {
+  border-radius: 10px;
+  min-height: 44px;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: #3e434df7;
+}
+
+#adminPage .admin-section-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 10px;
+}
+
+#adminPage .admin-section-head h3 {
+  color: #f4f7fd;
+  margin: 0;
+}
+
+#adminPage .admin-section-head p {
+  color: #ffffff;
+  font-size: 0.92rem;
+  margin: 0;
+}
+
+#adminPage .admin-section-note-right {
+  justify-self: end;
+  text-align: right;
+}
+
+#adminPage .admin-content .admin-user-layout {
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) !important;
+      grid-template-rows: minmax(0, 1fr) !important;
+      gap: 10px;
+      background: transparent;
+      border: none;
+      padding: 0;
+      min-height: 0;
+      height: 100%;
+      align-self: stretch;
+    }
+
+#adminPage .admin-table-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr) auto auto;
+      row-gap: 30px;
+      column-gap: 0;
+      min-height: 0;
+      height: 100%;
+      /* padding: 15px; */
+    }
+
+#adminPage .admin-table-layout > .admin-table-head {
+    grid-row: 1;
+  }
+
+#adminPage .admin-table-layout > .admin-table-wrap {
+    grid-row: 2;
+  }
+
+#adminPage .admin-table-layout > .admin-table-footer {
+    grid-row: 3;
+    margin-top: 0;
+  }
+
+#adminPage .admin-table-layout > .admin-application-detail-card {
+    grid-row: 4;
+  }
+
+#adminPage .admin-table-layout > .admin-resolution-detail-card {
+    grid-row: 4;
+  }
+
+#adminPage .admin-table-layout > .admin-table-head,
+#adminPage .admin-table-layout > .admin-table-wrap,
+#adminPage .admin-table-layout > .admin-table-footer,
+#adminPage .admin-table-layout > .admin-application-detail-card,
+#adminPage .admin-table-layout > .admin-resolution-detail-card {
+    position: relative;
+    background: #3e434df7;
+  }
+#adminPage .admin-table-layout > .admin-table-footer {
+    background: #0d1220;
+}
+
+#adminPage .admin-table-layout > .admin-table-head::after,
+#adminPage .admin-table-layout > .admin-table-footer::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #ffffff;
+    }
+
+#adminPage .admin-table-layout > .admin-table-head::after {
+      bottom: -15px;
+    }
+
+#adminPage .admin-table-layout > .admin-table-footer::before {
+      top: -15px;
+    }
+
+#adminPage .admin-user-layout > * {
+    min-width: 0;
+  }
+
+#adminPage .admin-table-layout > * {
+    min-width: 0;
+  }
+
+#adminPage .admin-table-head {
+  display: none;
+}
+
+#adminPage #adminUsersView .admin-table-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0;
+      padding: 0;
+      background: transparent;
+    }
+
+#adminPage #adminApplicationsView .admin-table-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0;
+      padding: 0;
+      background: transparent;
+    }
+
+#adminPage #adminCatalogView .admin-table-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0;
+      padding: 0;
+    }
+
+#adminPage #adminBookingsView .admin-table-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0;
+      padding: 0;
+    }
+
+#adminPage .admin-table-head h3 {
+  color: #eef3fc;
+  font-size: 1.7rem;
+  font-weight: 600;
+}
+
+#adminPage .admin-table-head p,
+#adminPage #adminRowsMeta {
+  color: #9fabbe;
+}
+
+#adminPage .admin-table-actions {
+  gap: 8px;
+}
+
+#adminPage .admin-table-actions #adminSearch {
+  min-width: 220px;
+}
+
+#adminPage #adminUsersView .admin-table-head-filters,
+#adminPage #adminApplicationsView .admin-table-head-filters,
+#adminPage #adminBookingsView .admin-table-head-filters,
+#adminPage #adminCatalogView .admin-table-head-filters,
+#adminPage #adminResolutionView .admin-table-head-filters,
+#adminPage #adminPaymentsView .admin-table-head-filters {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: nowrap;
+  }
+
+#adminPage #adminUsersView .admin-head-control,
+#adminPage #adminApplicationsView .admin-head-control,
+#adminPage #adminBookingsView .admin-head-control,
+#adminPage #adminCatalogView .admin-head-control,
+#adminPage #adminResolutionView .admin-head-control,
+#adminPage #adminPaymentsView .admin-head-control {
+    min-width: 0;
+    position: relative;
+  }
+
+#adminPage #adminUsersView .admin-head-label,
+#adminPage #adminApplicationsView .admin-head-label,
+#adminPage #adminBookingsView .admin-head-label,
+#adminPage #adminCatalogView .admin-head-label,
+#adminPage #adminResolutionView .admin-head-label,
+#adminPage #adminPaymentsView .admin-head-label {
+  display: none;
+}
+
+#adminPage #adminUsersView .admin-head-control input,
+#adminPage #adminUsersView .admin-head-control select,
+#adminPage #adminApplicationsView .admin-head-control input,
+#adminPage #adminApplicationsView .admin-head-control select,
+#adminPage #adminBookingsView .admin-head-control input,
+#adminPage #adminBookingsView .admin-head-control select,
+#adminPage #adminCatalogView .admin-head-control input,
+#adminPage #adminCatalogView .admin-head-control select,
+#adminPage #adminResolutionView .admin-head-control input,
+#adminPage #adminResolutionView .admin-head-control select,
+#adminPage #adminPaymentsView .admin-head-control input,
+#adminPage #adminPaymentsView .admin-head-control select {
+    min-height: 42px;
+    border-radius: 999px;
+    border: 1px solid rgba(160, 180, 205, 0.7);
+    background: #ffffff;
+    color: #1f2f43;
+    padding: 0 16px 0 44px;
+    font-weight: 600;
+  }
+
+#adminPage #adminUsersView .admin-head-control input::placeholder,
+#adminPage #adminApplicationsView .admin-head-control input::placeholder,
+#adminPage #adminBookingsView .admin-head-control input::placeholder,
+#adminPage #adminCatalogView .admin-head-control input::placeholder,
+#adminPage #adminResolutionView .admin-head-control input::placeholder,
+#adminPage #adminPaymentsView .admin-head-control input::placeholder {
+    color: #607289;
+  }
+
+#adminPage #adminUsersView .admin-head-control::before,
+#adminPage #adminApplicationsView .admin-head-control::before,
+#adminPage #adminBookingsView .admin-head-control::before,
+#adminPage #adminCatalogView .admin-head-control::before,
+#adminPage #adminResolutionView .admin-head-control::before,
+#adminPage #adminPaymentsView .admin-head-control::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 16px;
+    width: 16px;
+    height: 16px;
+    transform: translateY(-50%);
+    opacity: 0.8;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
+
+#adminPage #adminUsersView .admin-head-control--search::before,
+#adminPage #adminApplicationsView .admin-head-control--search::before,
+#adminPage #adminBookingsView .admin-head-control--search::before,
+#adminPage #adminCatalogView .admin-head-control--search::before,
+#adminPage #adminResolutionView .admin-head-control--search::before,
+#adminPage #adminPaymentsView .admin-head-control--search::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23607289' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");
+  }
+
+#adminPage #adminUsersView .admin-head-control--role::before,
+#adminPage #adminApplicationsView .admin-head-control--role::before,
+#adminPage #adminBookingsView .admin-head-control--role::before,
+#adminPage #adminCatalogView .admin-head-control--role::before,
+#adminPage #adminResolutionView .admin-head-control--role::before,
+#adminPage #adminPaymentsView .admin-head-control--role::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23607289' stroke-width='2'%3E%3Cpath d='M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='8.5' cy='7' r='4'/%3E%3Cpath d='M20 8v6'/%3E%3Cpath d='M23 11h-6'/%3E%3C/svg%3E");
+  }
+
+#adminPage #adminUsersView .admin-head-control--status::before,
+#adminPage #adminApplicationsView .admin-head-control--status::before,
+#adminPage #adminBookingsView .admin-head-control--status::before,
+#adminPage #adminCatalogView .admin-head-control--status::before,
+#adminPage #adminResolutionView .admin-head-control--status::before,
+#adminPage #adminPaymentsView .admin-head-control--status::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23607289' stroke-width='2'%3E%3Cpath d='M12 3l7 4v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V7l7-4Z'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E");
+  }
+
+#adminPage #adminUsersView .admin-head-control--date::before,
+#adminPage #adminApplicationsView .admin-head-control--date::before,
+#adminPage #adminBookingsView .admin-head-control--date::before,
+#adminPage #adminCatalogView .admin-head-control--date::before,
+#adminPage #adminResolutionView .admin-head-control--date::before,
+#adminPage #adminPaymentsView .admin-head-control--date::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23607289' stroke-width='2'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M16 3v4M8 3v4M3 10h18'/%3E%3C/svg%3E");
+  }
+
+#adminPage #adminUsersView .admin-head-control select,
+#adminPage #adminApplicationsView .admin-head-control select,
+#adminPage #adminBookingsView .admin-head-control select,
+#adminPage #adminCatalogView .admin-head-control select,
+#adminPage #adminResolutionView .admin-head-control select,
+#adminPage #adminPaymentsView .admin-head-control select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 36px;
+    background-image: linear-gradient(45deg, transparent 50%, #607289 50%), linear-gradient(135deg, #607289 50%, transparent 50%);
+    background-position: calc(100% - 18px) calc(50% - 3px), calc(100% - 12px) calc(50% - 3px);
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+  }
+
+#adminPage #adminUsersView .admin-head-control select option,
+#adminPage #adminApplicationsView .admin-head-control select option,
+#adminPage #adminBookingsView .admin-head-control select option,
+#adminPage #adminCatalogView .admin-head-control select option,
+#adminPage #adminResolutionView .admin-head-control select option,
+#adminPage #adminPaymentsView .admin-head-control select option {
+    color: #1f2f43;
+    background: #ffffff;
+  }
+
+#adminPage #adminUsersView #adminSearch,
+#adminPage #adminApplicationsView #adminApplicationsSearch,
+#adminPage #adminBookingsView #adminBookingsSearch,
+#adminPage #adminCatalogView #adminCatalogSearch,
+#adminPage #adminResolutionView #adminResolutionSearch,
+#adminPage #adminPaymentsView #adminPaymentsSearch {
+    min-width: 220px;
+  }
+
+#adminPage #adminUsersView .admin-table-head-actions,
+#adminPage #adminApplicationsView .admin-table-head-actions,
+#adminPage #adminBookingsView .admin-table-head-actions,
+#adminPage #adminCatalogView .admin-table-head-actions,
+#adminPage #adminResolutionView .admin-table-head-actions,
+#adminPage #adminPaymentsView .admin-table-head-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+    flex: 0 0 auto;
+  }
+
+#adminPage #adminBookingsView .admin-table-head {
+    flex-wrap: nowrap;
+    background: transparent;
+  }
+
+#adminPage #adminCatalogView .admin-table-head {
+    flex-wrap: nowrap;
+    background: transparent;
+  }
+
+#adminPage #adminBookingsView .admin-table-head-filters {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+#adminPage #adminCatalogView .admin-table-head-filters {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+#adminPage #adminBookingsView .admin-head-control--search {
+    flex: 1 1 300px;
+  }
+
+#adminPage #adminCatalogView .admin-head-control--search {
+    flex: 0 1 220px;
+  }
+
+#adminPage #adminBookingsView .admin-head-control--role {
+    flex: 0 1 260px;
+  }
+
+#adminPage #adminCatalogView .admin-head-control--role {
+    flex: 0 1 220px;
+  }
+
+#adminPage #adminBookingsView .admin-head-control--status,
+#adminPage #adminBookingsView .admin-head-control--date {
+    flex: 0 1 190px;
+  }
+
+#adminPage #adminCatalogView .admin-head-control--status {
+    flex: 0 1 220px;
+  }
+
+#adminPage #adminUsersView .admin-table-head-actions .ghost,
+#adminPage #adminUsersView .admin-table-head-actions .primary,
+#adminPage #adminApplicationsView .admin-table-head-actions .ghost,
+#adminPage #adminApplicationsView .admin-table-head-actions .primary,
+#adminPage #adminBookingsView .admin-table-head-actions .ghost,
+#adminPage #adminBookingsView .admin-table-head-actions .primary,
+#adminPage #adminCatalogView .admin-table-head-actions .ghost,
+#adminPage #adminCatalogView .admin-table-head-actions .primary,
+#adminPage #adminResolutionView .admin-table-head-actions .ghost,
+#adminPage #adminResolutionView .admin-table-head-actions .primary,
+#adminPage #adminPaymentsView .admin-table-head-actions .ghost,
+#adminPage #adminPaymentsView .admin-table-head-actions .primary {
+      min-height: 42px;
+      border-radius: 999px;
+      padding: 0 20px;
+      font-weight: 700;
+      box-shadow: none;
+      background: var(--dashboard-action-bg);
+      border-color: var(--dashboard-action-bg);
+      color: #ffffff;
+    }
+
+#adminPage #adminExportBtn,
+#adminPage #adminApplicationsExportBtn,
+#adminPage #adminBookingsExportBtn,
+#adminPage #adminCatalogExportBtn,
+#adminPage #adminResolutionExportBtn,
+#adminPage #adminPaymentsExportBtn {
+      background: var(--dashboard-action-bg);
+      border: 1px solid var(--dashboard-action-bg);
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+#adminPage #adminExportBtn,
+#adminPage #adminExportBtn span,
+#adminPage #adminApplicationsExportBtn,
+#adminPage #adminApplicationsExportBtn span,
+#adminPage #adminBookingsExportBtn,
+#adminPage #adminBookingsExportBtn span,
+#adminPage #adminCatalogExportBtn,
+#adminPage #adminCatalogExportBtn span,
+#adminPage #adminResolutionExportBtn,
+#adminPage #adminResolutionExportBtn span,
+#adminPage #adminPaymentsExportBtn,
+#adminPage #adminPaymentsExportBtn span {
+      color: #ffffff !important;
+    }
+
+#adminPage #adminExportBtn .admin-button-icon,
+#adminPage #adminApplicationsExportBtn .admin-button-icon,
+#adminPage #adminBookingsExportBtn .admin-button-icon,
+#adminPage #adminCatalogExportBtn .admin-button-icon,
+#adminPage #adminResolutionExportBtn .admin-button-icon,
+#adminPage #adminPaymentsExportBtn .admin-button-icon {
+      width: 16px;
+      height: 16px;
+      stroke: #ffffff;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex: 0 0 16px;
+    }
+
+#adminPage #adminAddUserBtn {
+      background: #364c67;
+      border: 1px solid #364c67;
+      color: #ffffff;
+    }
+
+#adminPage .admin-table-wrap {
+    grid-column: 1;
+    grid-row: 1;
+    margin-top: 0;
+    overflow: auto;
+    border-radius: 15px;
+    border: 1px solid #ffffff;
+    background: rgba(14, 19, 28, 0.9);
+  }
+
+#adminPage #adminUsersView .admin-table-wrap {
+      padding: 0;
+      background: #3e434df7;
+    }
+
+#adminPage #adminBookingsView .admin-table-wrap {
+      padding: 0;
+      background: #3e434df7;
+    }
+
+#adminPage #adminApplicationsView .admin-table-wrap {
+      padding: 0;
+      background: #3e434df7;
+    }
+
+#adminPage #adminCatalogView .admin-table-wrap {
+      padding: 0;
+      display: grid;
+      min-height: 100%;
+      align-self: stretch;
+    }
+
+#adminPage #adminCatalogView .admin-catalog-list {
+      display: grid;
+      gap: 0;
+      min-height: 100%;
+      height: 100%;
+      align-content: start;
+    }
+
+#adminPage #adminCatalogView .admin-catalog-group {
+      /* background: rgba(14, 19, 28, 0.9); */
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+#adminPage #adminCatalogView .admin-catalog-group--overview {
+      width: 100%;
+      border: 0;
+    }
+
+#adminPage #adminCatalogView .admin-catalog-group:last-child {
+      border-bottom: 0;
+    }
+
+#adminPage #adminCatalogView .admin-catalog-group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 20px 24px;
+    }
+
+#adminPage #adminCatalogView .admin-catalog-group-title {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 0;
+    }
+
+#adminPage #adminCatalogView .admin-catalog-group-title h4 {
+      margin: 0;
+      color: #ffffff;
+      font-size: 1.35rem;
+      font-weight: 700;
+    }
+
+#adminPage #adminCatalogView .admin-catalog-open-btn {
+      min-height: 40px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      padding: 0 18px;
+      font-weight: 700;
+    }
+
+#adminPage #adminCatalogView .admin-catalog-open-btn:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+#adminPage #adminCatalogView .admin-catalog-group--overview .admin-actions-cell .icon-btn {
+      width: auto;
+      min-width: 72px;
+      padding: 0 14px;
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 0.78rem;
+      background: #ffffff;
+      border-color: rgba(255, 255, 255, 0.8);
+    }
+
+#adminPage #adminCatalogView .admin-catalog-group--overview .admin-actions-cell .icon-btn[data-catalog-group-action="suspend"] {
+      background: #64748b;
+      border-color: #64748b;
+      color: #ffffff;
+    }
+
+#adminPage #adminCatalogView .admin-catalog-group--overview .admin-actions-cell .icon-btn[data-catalog-group-action="delete"] {
+      background: #ef4444;
+      border-color: #ef4444;
+      color: #ffffff;
+    }
+
+#adminPage #adminCatalogView .admin-catalog-subgroups {
+      display: grid;
+      gap: 14px;
+      padding: 0 24px 24px;
+    }
+
+#adminPage #adminCatalogView .admin-catalog-subgroup {
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(34, 43, 58, 0.96);
+      overflow: hidden;
+    }
+
+#adminPage #adminCatalogView .admin-catalog-subgroup-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+#adminPage #adminCatalogView .admin-catalog-subgroup-header h5 {
+      margin: 0;
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+#adminPage #adminCatalogView .admin-catalog-subgroup-header span {
+      color: #9fabbe;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+#adminPage #adminCatalogView .admin-catalog-services {
+      display: grid;
+    }
+
+#adminPage #adminCatalogView .admin-catalog-service {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+#adminPage #adminCatalogView .admin-catalog-service:first-child {
+      border-top: 0;
+    }
+
+#adminPage #adminCatalogView .admin-catalog-service-main {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+
+#adminPage #adminCatalogView .admin-catalog-service-main strong {
+      color: #ffffff;
+      font-size: 0.98rem;
+      font-weight: 700;
+    }
+
+#adminPage #adminCatalogView .admin-catalog-service-main span {
+      color: #9fabbe;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+#adminPage #adminCatalogView .admin-catalog-service-meta {
+      display: grid;
+      gap: 4px;
+      justify-items: end;
+      color: #eef3fc;
+      font-size: 0.92rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+#adminPage .admin-table-footer {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+#adminPage #adminUsersView .admin-table-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0;
+      background: transparent;
+    }
+
+#adminPage #adminBookingsView .admin-table-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0;
+      background: transparent;
+    }
+
+#adminPage #adminCatalogView .admin-table-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0;
+      background: transparent;
+    }
+
+#adminPage #adminResolutionView .admin-table-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0;
+      padding: 0;
+      background: transparent;
+    }
+
+#adminPage #adminPaymentsView .admin-table-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin: 0;
+      padding: 0;
+      background: transparent;
+    }
+
+#adminPage #adminResolutionView .admin-table-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0;
+      background: transparent;
+    }
+
+#adminPage #adminPaymentsView .admin-table-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0;
+      background: transparent;
+    }
+
+#adminPage #adminUsersView .admin-table-footer-meta,
+#adminPage #adminBookingsView .admin-table-footer-meta,
+#adminPage #adminApplicationsView .admin-table-footer-meta,
+#adminPage #adminCatalogView .admin-table-footer-meta,
+#adminPage #adminResolutionView .admin-table-footer-meta,
+#adminPage #adminPaymentsView .admin-table-footer-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #1f2f43;
+    }
+
+#adminPage #adminUsersView .admin-table-footer-meta select,
+#adminPage #adminBookingsView .admin-table-footer-meta select,
+#adminPage #adminApplicationsView .admin-table-footer-meta select,
+#adminPage #adminCatalogView .admin-table-footer-meta select,
+#adminPage #adminResolutionView .admin-table-footer-meta select,
+#adminPage #adminPaymentsView .admin-table-footer-meta select {
+      min-height: 36px;
+      border-radius: 999px;
+      border: 1px solid var(--dashboard-control-border);
+      background: var(--dashboard-control-bg);
+      color: var(--dashboard-control-text);
+      padding: 0 12px;
+    }
+
+#adminPage #adminUsersView .admin-table-footer-meta select option,
+#adminPage #adminBookingsView .admin-table-footer-meta select option,
+#adminPage #adminApplicationsView .admin-table-footer-meta select option,
+#adminPage #adminCatalogView .admin-table-footer-meta select option,
+#adminPage #adminResolutionView .admin-table-footer-meta select option,
+#adminPage #adminPaymentsView .admin-table-footer-meta select option {
+      color: var(--dashboard-control-text);
+      background: var(--dashboard-control-bg);
+    }
+
+#adminPage #adminUsersView .admin-pagination,
+#adminPage #adminBookingsView .admin-pagination,
+#adminPage #adminApplicationsView .admin-pagination,
+#adminPage #adminCatalogView .admin-pagination,
+#adminPage #adminResolutionView .admin-pagination,
+#adminPage #adminPaymentsView .admin-pagination {
+    display: flex;
+    align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+#adminPage #adminUsersView .admin-pagination button,
+#adminPage #adminBookingsView .admin-pagination button,
+#adminPage #adminApplicationsView .admin-pagination button,
+#adminPage #adminCatalogView .admin-pagination button,
+#adminPage #adminResolutionView .admin-pagination button,
+#adminPage #adminPaymentsView .admin-pagination button {
+    min-width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    border: 1px solid var(--dashboard-pagination-border);
+    background: var(--dashboard-pagination-bg);
+    color: #ffffff;
+  }
+
+#adminPage #adminUsersView .admin-pagination button.active,
+#adminPage #adminBookingsView .admin-pagination button.active,
+#adminPage #adminApplicationsView .admin-pagination button.active,
+#adminPage #adminCatalogView .admin-pagination button.active,
+#adminPage #adminResolutionView .admin-pagination button.active,
+#adminPage #adminPaymentsView .admin-pagination button.active {
+    background: var(--dashboard-pagination-active);
+    border-color: var(--dashboard-pagination-active);
+  }
+
+#adminPage #adminBookingsView .admin-table tbody tr:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+#adminPage #adminBookingsView .admin-table tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+#adminPage #adminBookingsView .admin-sortable {
+    cursor: pointer;
+  }
+
+#adminPage #adminBookingsView .admin-sort-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    background: transparent;
+    color: #1f2f43;
+    font: inherit;
+    font-weight: 700;
+    padding: 0;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+#adminPage #adminBookingsView .admin-sort-button span:first-child {
+    display: inline-block;
+    color: #1f2f43;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+#adminPage #adminBookingsView .admin-sort-icon::before {
+    content: "↕";
+    color: #1f2f43;
+    font-size: 0.75rem;
+    line-height: 1;
+  }
+
+#adminPage #adminBookingsView .admin-sortable[data-sort-direction="asc"] .admin-sort-icon::before {
+    content: "↑";
+  }
+
+#adminPage #adminBookingsView .admin-sortable[data-sort-direction="desc"] .admin-sort-icon::before {
+    content: "↓";
+  }
+
+#adminPage #adminApplicationsView .admin-table tbody tr:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+#adminPage #adminApplicationsView .admin-table tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+#adminPage #adminApplicationsView .admin-sortable {
+    cursor: pointer;
+  }
+
+#adminPage #adminApplicationsView .admin-sort-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    background: transparent;
+    color: #1f2f43;
+    font: inherit;
+    font-weight: 700;
+    padding: 0;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+#adminPage #adminApplicationsView .admin-sort-button span:first-child {
+    display: inline-block;
+    color: #1f2f43;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+#adminPage #adminApplicationsView .admin-sort-icon::before {
+    content: "↕";
+    color: #1f2f43;
+    font-size: 0.75rem;
+    line-height: 1;
+  }
+
+#adminPage #adminApplicationsView .admin-sortable[data-sort-direction="asc"] .admin-sort-icon::before {
+    content: "↑";
+  }
+
+#adminPage #adminApplicationsView .admin-sortable[data-sort-direction="desc"] .admin-sort-icon::before {
+    content: "↓";
+  }
+
+#adminPage .admin-table th,
+#adminPage .admin-table td {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.87rem;
+      color: #d5deed;
+      padding: 11px 10px;
+      white-space: nowrap;
+    }
+
+#adminPage .admin-status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 78px;
+    min-height: 28px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #ffffff;
+  }
+
+#adminPage .admin-status-badge--active {
+    background: var(--dashboard-badge-green);
+  }
+
+#adminPage .admin-status-badge--approved,
+#adminPage .admin-status-badge--resolved,
+#adminPage .admin-status-badge--completed {
+    background: var(--dashboard-badge-green);
+  }
+
+#adminPage .admin-status-badge--inactive {
+    background: #9ca3af;
+  }
+
+#adminPage .admin-status-badge--unknown {
+    background: #9ca3af;
+  }
+
+#adminPage .admin-status-badge--read {
+    background: #7b879d;
+  }
+
+#adminPage .admin-status-badge--banned {
+    background: var(--dashboard-badge-red);
+  }
+
+#adminPage .admin-status-badge--rejected,
+#adminPage .admin-status-badge--cancelled,
+#adminPage .admin-status-badge--refunded {
+    background: var(--dashboard-badge-red);
+  }
+
+#adminPage .admin-status-badge--pending {
+    background: var(--dashboard-badge-blue);
+  }
+
+#adminPage .admin-status-badge--new,
+#adminPage .admin-status-badge--in-review,
+#adminPage .admin-status-badge--under-review,
+#adminPage .admin-status-badge--requested,
+#adminPage .admin-status-badge--accepted,
+#adminPage .admin-status-badge--in-progress,
+#adminPage .admin-status-badge--in_progress {
+    background: var(--dashboard-badge-blue);
+  }
+
+#adminPage .admin-status-badge--suspended {
+    background: #ff7a1a;
+  }
+
+body.admin-body .admin-delete-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: grid;
+    place-items: center;
+  }
+
+body.admin-body .admin-delete-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(4, 8, 16, 0.72);
+    backdrop-filter: blur(6px);
+  }
+
+body.admin-body .admin-delete-dialog {
+    position: relative;
+    z-index: 1;
+    width: min(420px, calc(100vw - 32px));
+    display: grid;
+    gap: 16px;
+    padding: 24px;
+    border: 2px solid #ffffff;
+    border-radius: 18px;
+    background: #101722;
+    box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
+  }
+
+body.admin-body .admin-delete-head h3,
+body.admin-body .admin-delete-dialog p {
+    margin: 0;
+    color: #ffffff;
+    text-align: center;
+  }
+
+body.admin-body .admin-delete-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding-top: 4px;
+  }
+
+body.admin-body .admin-delete-actions .ghost,
+body.admin-body .admin-delete-actions .primary {
+    min-width: 108px;
+    min-height: 40px;
+    border-radius: 999px;
+  }
+
+body.admin-body .settings-edit-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: grid;
+    place-items: center;
+  }
+
+body.admin-body .settings-edit-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(4, 8, 16, 0.72);
+    backdrop-filter: blur(6px);
+  }
+
+body.admin-body .settings-edit-dialog {
+    position: relative;
+    z-index: 1;
+    width: min(680px, calc(100vw - 32px));
+    display: grid;
+    gap: 18px;
+    padding: 24px;
+    border: 2px solid #ffffff;
+    border-radius: 18px;
+    background: #101722;
+    box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
+  }
+
+body.admin-body .settings-edit-head {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+body.admin-body .settings-edit-head h3,
+body.admin-body .settings-edit-dialog p,
+body.admin-body .settings-edit-field span {
+    color: #ffffff;
+    margin: 0;
+  }
+
+body.admin-body .settings-edit-field {
+    display: grid;
+    gap: 8px;
+  }
+
+body.admin-body .settings-edit-name-grid .settings-edit-field span {
+    text-align: center;
+  }
+
+body.admin-body .settings-edit-field.is-hidden,
+body.admin-body .settings-edit-name-grid.is-hidden,
+body.admin-body .settings-edit-address-grid.is-hidden {
+    display: none !important;
+  }
+
+body.admin-body .settings-edit-name-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+body.admin-body .settings-edit-address-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+body.admin-body .settings-edit-field input,
+body.admin-body .settings-edit-field select {
+    width: 100%;
+    min-height: 42px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: #ffffff;
+    color: #1f2f43;
+    padding: 0 14px;
+  }
+
+body.admin-body .settings-edit-field input,
+body.admin-body .settings-edit-name-grid input,
+body.admin-body .settings-edit-address-grid input {
+    color: #1f2f43 !important;
+    -webkit-text-fill-color: #1f2f43;
+  }
+
+body.admin-body .settings-edit-field input::placeholder,
+body.admin-body .settings-edit-name-grid input::placeholder,
+body.admin-body .settings-edit-address-grid input::placeholder {
+    color: #64748b;
+    opacity: 1;
+  }
+
+body.admin-body #adminSettingsEditSelect,
+body.admin-body #adminSettingsEditSelect option,
+body.admin-body #adminSettingsEditSelect optgroup {
+    color: #1f2f43 !important;
+  }
+
+body.admin-body .settings-edit-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+  }
+
+body.admin-body .admin-application-note-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+}
+
+body.admin-body .admin-application-note-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 8, 16, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+body.admin-body .admin-application-note-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(760px, calc(100vw - 32px));
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+  border: 2px solid #ffffff;
+  border-radius: 18px;
+  background: #101722;
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
+}
+
+body.admin-body .admin-application-note-head h3,
+body.admin-body .admin-application-note-head p,
+body.admin-body .admin-application-note-field span {
+  color: #ffffff;
+  margin: 0;
+}
+
+body.admin-body .admin-application-note-head {
+  display: grid;
+  gap: 8px;
+  padding-right: 48px;
+}
+
+body.admin-body .admin-application-note-head h3 {
+  font-size: 2.05rem;
+  font-weight: 700;
+}
+
+body.admin-body .admin-application-note-head p {
+  font-size: 1rem;
+  color: rgba(219, 227, 240, 0.82);
+}
+
+body.admin-body .admin-application-note-field {
+  display: grid;
+  gap: 8px;
+}
+
+body.admin-body .admin-application-note-field textarea {
+  width: 100%;
+  min-height: 120px;
+  resize: vertical;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: #ffffff;
+  color: #1f2f43;
+  -webkit-text-fill-color: #1f2f43;
+  padding: 14px;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+body.admin-body .admin-application-note-field textarea,
+body.admin-body .admin-application-note-field textarea:focus {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+body.admin-body .admin-application-note-field textarea::placeholder {
+  color: #64748b;
+  opacity: 1;
+}
+
+body.admin-body .admin-application-note-message {
+  margin: 0;
+}
+
+body.admin-body .admin-application-note-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+body.admin-body .admin-catalog-edit-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+}
+
+body.admin-body .admin-catalog-edit-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 8, 16, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+body.admin-body .admin-catalog-edit-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(760px, calc(100vw - 32px));
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+  border: 2px solid #ffffff;
+  border-radius: 18px;
+  background: #101722;
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
+}
+
+body.admin-body .admin-catalog-edit-head h3,
+body.admin-body .admin-catalog-edit-field span {
+  color: #ffffff;
+  margin: 0;
+}
+
+body.admin-body .admin-catalog-edit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 16px;
+}
+
+body.admin-body .admin-catalog-edit-field {
+  display: grid;
+  gap: 8px;
+}
+
+body.admin-body .admin-catalog-edit-field.is-hidden {
+  display: none !important;
+}
+
+body.admin-body .admin-catalog-edit-field--full {
+  grid-column: 1 / -1;
+}
+
+body.admin-body .admin-catalog-edit-field input,
+body.admin-body .admin-catalog-edit-field textarea {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: #ffffff;
+  color: #000000;
+  -webkit-text-fill-color: #000000;
+  padding: 10px 14px;
+}
+
+body.admin-body .admin-catalog-edit-field textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+body.admin-body .admin-catalog-edit-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+body.admin-body .admin-payment-detail-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+}
+
+body.admin-body .admin-payment-detail-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 8, 16, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+body.admin-body .admin-payment-detail-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(760px, calc(100vw - 32px));
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+  border: 2px solid #ffffff;
+  border-radius: 18px;
+  background: #101722;
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
+}
+
+body.admin-body .admin-payment-detail-head h3,
+body.admin-body .admin-payment-notes h4 {
+  margin: 0;
+  color: #ffffff;
+}
+
+body.admin-body .admin-payment-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
+}
+
+body.admin-body .admin-payment-detail-grid p {
+  margin: 0;
+  display: grid;
+  gap: 4px;
+  color: #dbe5f6;
+}
+
+body.admin-body .admin-payment-detail-grid strong {
+  color: #ffffff;
+}
+
+body.admin-body .admin-payment-notes {
+  display: grid;
+  gap: 10px;
+}
+
+body.admin-body .admin-payment-notes-list {
+  display: grid;
+  gap: 8px;
+  max-height: 180px;
+  overflow: auto;
+}
+
+body.admin-body .admin-payment-note-item {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+body.admin-body .admin-payment-note-item small {
+  display: block;
+  margin-top: 4px;
+  color: #cbd5e1;
+}
+
+body.admin-body #adminPaymentNoteInput {
+  width: 100%;
+  min-height: 88px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: #ffffff;
+  color: #000000;
+  -webkit-text-fill-color: #000000;
+  padding: 10px 14px;
+  resize: vertical;
+}
+
+body.admin-body .admin-payment-detail-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  body.admin-body .settings-edit-name-grid,
+  body.admin-body .settings-edit-address-grid,
+  body.admin-body .admin-catalog-edit-grid,
+  body.admin-body .admin-payment-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+body.admin-body .admin-actions-cell {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+body.admin-body .admin-edit-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 20;
+    min-width: 128px;
+    display: grid;
+    gap: 0;
+    padding: 4px;
+    border-radius: 6px;
+    border: 1px solid #ffffff;
+    background: #0b1020;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
+  }
+
+body.admin-body .admin-edit-menu::before {
+    content: "";
+    position: absolute;
+    top: -7px;
+    right: 44px;
+    width: 12px;
+    height: 12px;
+    background: #0b1020;
+    border-top: 1px solid #ffffff;
+    border-left: 1px solid #ffffff;
+    transform: rotate(45deg);
+  }
+
+body.admin-body .admin-edit-menu.is-hidden {
+    display: none;
+  }
+
+body.admin-body .admin-edit-menu button {
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+    text-align: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 7px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+body.admin-body .admin-edit-menu button:not(:disabled):hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+body.admin-body .admin-edit-menu button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+#adminPage .admin-table th {
+    color: #1f2f43;
+    font-weight: 700;
+    font-size: 0.8rem;
+    background: #ffffff;
+  }
+
+
+#adminPage #adminUsersView .admin-sortable {
+    padding: 0;
+  }
+
+#adminPage #adminUsersView .admin-sort-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    border: 0;
+    background: transparent;
+    color: #1f2f43;
+    font: inherit;
+    font-weight: inherit;
+    padding: 11px 10px;
+    cursor: pointer;
+    text-align: left;
+  }
+
+#adminPage #adminUsersView .admin-sort-button span:first-child {
+    display: inline-block;
+    color: #1f2f43;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+#adminPage #adminUsersView .admin-sort-icon {
+    position: relative;
+    width: 10px;
+    height: 14px;
+    flex: 0 0 auto;
+  }
+
+#adminPage #adminUsersView .admin-sort-icon::before,
+#adminPage #adminUsersView .admin-sort-icon::after {
+    content: "";
+    position: absolute;
+    left: 1px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    opacity: 0.5;
+  }
+
+#adminPage #adminUsersView .admin-sort-icon::before {
+    top: 1px;
+    border-bottom: 5px solid #1f2f43;
+  }
+
+#adminPage #adminUsersView .admin-sort-icon::after {
+    bottom: 1px;
+    border-top: 5px solid #1f2f43;
+  }
+
+#adminPage #adminUsersView .admin-sortable.is-active[data-sort-direction="asc"] .admin-sort-icon::before,
+#adminPage #adminUsersView .admin-sortable.is-active[data-sort-direction="desc"] .admin-sort-icon::after {
+    opacity: 1;
+  }
+
+#adminPage .admin-table tbody tr:hover {
+    background: rgba(120, 138, 174, 0.08);
+  }
+
+#adminPage #adminUsersView .admin-table tbody tr:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+#adminPage #adminUsersView .admin-table tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+#adminPage .user-cell .avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #2f3a4d;
+  color: #f2f6fd;
+  display: grid;
+  place-items: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+#adminPage .user-cell {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+#adminPage .user-meta strong {
+  display: block;
+  color: #edf3ff;
+  font-size: 0.87rem;
+}
+
+#adminPage .user-meta span {
+  color: #9aa8c0;
+  font-size: 0.78rem;
+}
+
+#adminPage .score-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: rgba(140, 109, 221, 0.3);
+  border: 1px solid rgba(181, 159, 237, 0.38);
+  color: #ded0ff;
+  font-weight: 600;
+}
+
+#adminPage .admin-actions-cell .icon-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    background: #ffffff;
+  }
+
+#adminPage .admin-actions-cell .icon-btn svg {
+    width: 13px;
+    height: 13px;
+    stroke: #0f172a;
+  }
+
+#adminPage .admin-actions-cell .icon-btn.danger {
+    border-color: #ef4444;
+    background: #ef4444;
+  }
+
+#adminPage .admin-actions-cell .icon-btn.danger svg {
+    stroke: #0f172a;
+  }
+
+#adminPage #adminApplicationsView .admin-actions-cell .icon-btn {
+    width: auto;
+    min-width: 60px;
+    padding: 0 10px;
+    color: #0f172a;
+    font-weight: 700;
+    font-size: 0.78rem;
+    background: #ffffff;
+    border-color: rgba(255, 255, 255, 0.75);
+  }
+
+#adminPage #adminApplicationsView .admin-actions-cell .icon-btn[data-application-action="approve"] {
+    background: #35b55c;
+    border-color: #35b55c;
+    color: #ffffff;
+  }
+
+#adminPage #adminApplicationsView .admin-actions-cell .icon-btn[data-application-action="request_info"] {
+    background: #ffffff;
+    border-color: rgba(255, 255, 255, 0.8);
+    color: #0f172a;
+  }
+
+#adminPage #adminApplicationsView .admin-actions-cell .icon-btn[data-application-action="reject"] {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
+  }
+
+#adminPage #adminApplicationsView .admin-actions-cell {
+  position: relative;
+  justify-content: center;
+  overflow: visible;
+}
+
+#adminPage #adminApplicationsView .admin-application-actions-trigger {
+  min-width: 96px;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: #5a6f90;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#adminPage #adminApplicationsView .admin-application-actions-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  z-index: 30;
+  min-width: 170px;
+  display: grid;
+  gap: 0;
+  padding: 8px;
+  border-radius: 14px;
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+}
+
+#adminPage #adminApplicationsView .admin-application-actions-menu.is-hidden {
+  display: none;
+}
+
+#adminPage #adminApplicationsView .admin-application-actions-menu button {
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #ffffff;
+  text-align: left;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#adminPage #adminApplicationsView .admin-application-actions-menu button:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+#adminPage #adminApplicationsView .admin-application-actions-menu button.danger {
+  color: #ff8f99;
+}
+
+#adminPage #adminResolutionView .admin-actions-cell {
+  position: relative;
+  justify-content: center;
+  overflow: visible;
+}
+
+#adminPage #adminResolutionView .admin-resolution-actions-trigger {
+  min-width: 96px;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: #5a6f90;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#adminPage #adminResolutionView .admin-resolution-actions-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  z-index: 30;
+  min-width: 190px;
+  display: grid;
+  gap: 0;
+  padding: 8px;
+  border-radius: 14px;
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+}
+
+#adminPage #adminResolutionView .admin-resolution-actions-menu.is-hidden {
+  display: none;
+}
+
+#adminPage #adminResolutionView .admin-resolution-actions-menu button {
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #ffffff;
+  text-align: left;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#adminPage #adminResolutionView .admin-resolution-actions-menu button:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+#adminPage #adminResolutionView .admin-resolution-detail-card {
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 16px;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+#adminPage #adminResolutionView .admin-resolution-detail-card.is-hidden {
+  display: none;
+}
+
+#adminPage #adminResolutionView .admin-resolution-detail-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+#adminPage #adminResolutionView .admin-detail-eyebrow {
+  display: block;
+  margin-bottom: 4px;
+  color: #cbd5e1;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+#adminPage #adminResolutionView .admin-resolution-detail-card h3,
+#adminPage #adminResolutionView .admin-resolution-detail-card h4 {
+  margin: 0;
+  color: #ffffff;
+}
+
+#adminPage #adminResolutionView .admin-resolution-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px 36px;
+}
+
+#adminPage #adminResolutionView .admin-resolution-detail-grid section {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
+}
+
+#adminPage #adminResolutionView .admin-resolution-detail-grid p {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 12px;
+  margin: 0;
+  color: #e5edf8;
+}
+
+#adminPage #adminResolutionView .admin-resolution-detail-grid strong {
+  color: #ffffff;
+}
+
+#adminPage #adminResolutionView .admin-resolution-conversation {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+  gap: 24px;
+  align-items: start;
+}
+
+#adminPage #adminResolutionView .admin-resolution-chat {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+#adminPage #adminResolutionView .admin-resolution-thread-copy {
+  margin: 0;
+  color: #ffffff;
+  line-height: 1.5;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message-list {
+  display: grid;
+  gap: 16px;
+}
+
+#adminPage #adminResolutionView .admin-resolution-chat-empty {
+  margin: 0;
+  color: #dbeafe;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message.is-admin {
+  grid-template-columns: minmax(0, 1fr) 42px;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message.is-admin .admin-resolution-message-avatar {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message.is-admin .admin-resolution-message-main {
+  grid-column: 1;
+  grid-row: 1;
+  justify-items: end;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message-avatar {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #5a6f90;
+  color: #ffffff;
+  font-weight: 800;
+  overflow: hidden;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message-main {
+  display: grid;
+  gap: 6px;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message-bubble {
+  width: min(100%, 620px);
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #111827;
+  line-height: 1.5;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message-meta {
+  color: #cbd5e1;
+  font-size: 0.86rem;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message-attachment {
+  display: inline-grid;
+  place-items: center;
+  min-height: 36px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(90, 111, 144, 0.24);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+#adminPage #adminResolutionView .admin-resolution-message-attachment img {
+  width: 84px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+#adminPage #adminResolutionView .admin-resolution-compose {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+#adminPage #adminResolutionView .admin-resolution-compose textarea {
+  min-height: 130px;
+  border: 0;
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: #ffffff;
+  color: #111827;
+  resize: vertical;
+}
+
+#adminPage #adminResolutionView .admin-resolution-status-card {
+  display: grid;
+  gap: 14px;
+  padding: 22px;
+  background: #0b1020;
+  color: #ffffff;
+}
+
+#adminPage #adminResolutionView .admin-resolution-status-card p {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+}
+
+#adminPage #adminResolutionView .admin-resolution-status-card span {
+  color: #ffffff;
+}
+
+@media (max-width: 900px) {
+  #adminPage #adminResolutionView .admin-resolution-detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #adminPage #adminResolutionView .admin-resolution-conversation,
+  #adminPage #adminResolutionView .admin-resolution-compose {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+#adminPage #adminApplicationsView .admin-application-detail-card {
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 16px;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+#adminPage #adminApplicationsView .admin-application-detail-card.is-hidden {
+  display: none;
+}
+
+#adminPage #adminApplicationsView .admin-application-detail-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+#adminPage #adminApplicationsView .admin-detail-eyebrow {
+  display: block;
+  margin-bottom: 4px;
+  color: #cbd5e1;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+#adminPage #adminApplicationsView .admin-application-detail-card h3,
+#adminPage #adminApplicationsView .admin-application-detail-card h4 {
+  margin: 0;
+  color: #ffffff;
+}
+
+#adminPage #adminApplicationsView .admin-application-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px 36px;
+}
+
+#adminPage #adminApplicationsView .admin-application-detail-grid section {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
+}
+
+#adminPage #adminApplicationsView .admin-application-detail-grid p {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 12px;
+  margin: 0;
+  color: #e5edf8;
+}
+
+#adminPage #adminApplicationsView .admin-application-detail-grid strong {
+  color: #ffffff;
+}
+
+#adminPage #adminApplicationsView .admin-application-detail-documents {
+  grid-column: 1 / -1;
+}
+
+#adminPage #adminApplicationsView .admin-application-documents {
+  display: grid;
+  gap: 8px;
+}
+
+#adminPage #adminApplicationsView .admin-application-document-link {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(90, 111, 144, 0.3);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+#adminPage #adminApplicationsView .admin-application-document-link:hover {
+  background: rgba(90, 111, 144, 0.5);
+}
+
+#adminPage #adminApplicationsView .admin-application-document-link small {
+  color: #cbd5e1;
+}
+
+@media (max-width: 900px) {
+  #adminPage #adminApplicationsView .admin-application-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+#adminPage #adminBookingsView .admin-actions-cell .icon-btn {
+  display: none;
+}
+
+#adminPage #adminPaymentsView .admin-actions-cell {
+  position: relative;
+  justify-content: center;
+  overflow: visible;
+}
+
+#adminPage #adminPaymentsView .admin-payment-actions-trigger {
+  min-width: 96px;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: #5a6f90;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#adminPage #adminPaymentsView .admin-payment-actions-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  z-index: 30;
+  min-width: 170px;
+  display: grid;
+  gap: 0;
+  padding: 8px;
+  border-radius: 14px;
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+}
+
+#adminPage #adminPaymentsView .admin-payment-actions-menu.is-hidden {
+  display: none;
+}
+
+#adminPage #adminPaymentsView .admin-payment-actions-menu button {
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #ffffff;
+  text-align: left;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#adminPage #adminPaymentsView .admin-payment-actions-menu button:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+#adminPage #adminBookingsView .admin-actions-cell {
+  position: relative;
+  justify-content: center;
+  overflow: visible;
+}
+
+#adminPage #adminBookingsView .admin-booking-actions-trigger {
+  min-width: 96px;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: #5a6f90;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#adminPage #adminBookingsView .admin-booking-actions-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  z-index: 30;
+  min-width: 170px;
+  display: grid;
+  gap: 0;
+  padding: 8px;
+  border-radius: 14px;
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+}
+
+#adminPage #adminBookingsView .admin-booking-actions-menu.is-hidden {
+  display: none;
+}
+
+#adminPage #adminBookingsView .admin-booking-actions-menu button {
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #ffffff;
+  text-align: left;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#adminPage #adminBookingsView .admin-booking-actions-menu button:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+#adminPage #adminBookingsView .admin-booking-actions-menu button.danger {
+  color: #ff8f99;
+}
+
+#adminPage #adminBookingsView .admin-booking-detail-card {
+  display: grid;
+  gap: 18px;
+  /* margin-top: 18px; */
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 16px;
+  color: #ffffff;
+  box-shadow: none;
+  background: #3e434df7;
+}
+
+#adminPage #adminBookingsView .admin-booking-detail-card.is-hidden {
+  display: none;
+}
+
+#adminPage #adminBookingsView .admin-booking-detail-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+#adminPage #adminBookingsView .admin-detail-eyebrow {
+  display: block;
+  margin-bottom: 4px;
+  color: #cbd5e1;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+#adminPage #adminBookingsView .admin-booking-detail-card h3,
+#adminPage #adminBookingsView .admin-booking-detail-card h4 {
+  margin: 0;
+  color: #ffffff;
+}
+
+#adminPage #adminBookingsView .admin-booking-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px 36px;
+}
+
+#adminPage #adminBookingsView .admin-booking-detail-grid p {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 12px;
+  margin: 0;
+  color: #e5edf8;
+}
+
+#adminPage #adminBookingsView .admin-booking-detail-grid strong {
+  color: #ffffff;
+}
+
+@media (max-width: 900px) {
+  #adminPage #adminBookingsView .admin-booking-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+#adminPage #adminContactMessagesView .admin-actions-cell {
+  position: relative;
+  justify-content: center;
+  overflow: visible;
+}
+
+#adminPage #adminContactMessagesView .admin-contact-message-actions-trigger {
+  min-width: 96px;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: #5a6f90;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#adminPage #adminContactMessagesView .admin-contact-message-actions-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  z-index: 30;
+  min-width: 190px;
+  display: grid;
+  gap: 0;
+  padding: 8px;
+  border-radius: 14px;
+  background: #111827;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+}
+
+#adminPage #adminContactMessagesView .admin-contact-message-actions-menu.is-hidden {
+  display: none;
+}
+
+#adminPage #adminContactMessagesView .admin-contact-message-actions-menu button {
+  display: block;
+  width: 100%;
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #ffffff;
+  text-align: left;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#adminPage #adminContactMessagesView .admin-contact-message-actions-menu button:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+#adminPage #adminBookingsView .admin-booking-status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 92px;
+    min-height: 32px;
+    padding: 4px 14px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+    color: #ffffff;
+  }
+
+#adminPage #adminBookingsView .admin-booking-status-badge.status-requested,
+#adminPage #adminBookingsView .admin-booking-status-badge.status-pending {
+    background: var(--dashboard-badge-blue);
+  }
+
+#adminPage #adminBookingsView .admin-booking-status-badge.status-accepted,
+#adminPage #adminBookingsView .admin-booking-status-badge.status-approved,
+#adminPage #adminBookingsView .admin-booking-status-badge.status-in-progress,
+#adminPage #adminBookingsView .admin-booking-status-badge.status-in_progress,
+#adminPage #adminBookingsView .admin-booking-status-badge.status-completed {
+    background: var(--dashboard-badge-green);
+  }
+
+#adminPage #adminBookingsView .admin-booking-status-badge.status-cancelled,
+#adminPage #adminBookingsView .admin-booking-status-badge.status-rejected,
+#adminPage #adminBookingsView .admin-booking-status-badge.status-refunded {
+    background: var(--dashboard-badge-red);
+  }
+
+#adminPage #adminBookingsView .admin-booking-status-badge.status-unknown {
+    background: #9ca3af;
+  }
+
+#adminPage #adminCatalogView .admin-actions-cell .icon-btn {
+    width: auto;
+    min-width: 72px;
+    padding: 0 14px;
+    color: #0f172a;
+    font-weight: 700;
+    font-size: 0.78rem;
+    background: #ffffff;
+    border-color: rgba(255, 255, 255, 0.8);
+  }
+
+#adminPage #adminCatalogView .admin-actions-cell .icon-btn[data-catalog-action="edit"] {
+    background: #ffffff;
+    border-color: rgba(255, 255, 255, 0.8);
+    color: #0f172a;
+  }
+
+#adminPage #adminCatalogView .admin-actions-cell .icon-btn[data-catalog-action="suspend"] {
+    background: #64748b;
+    border-color: #64748b;
+    color: #ffffff;
+  }
+
+#adminPage #adminCatalogView .admin-actions-cell .icon-btn[data-catalog-action="delete"] {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
+  }
+
+#adminPage .admin-empty {
+  padding: 14px;
+}
+
+#adminPage .admin-profile-card {
+  display: grid;
+  gap: 10px;
+  background: var(--dashboard-panel-bg);
+  border: 1px solid var(--dashboard-panel-border);
+  border-radius: var(--dashboard-panel-radius);
+  box-shadow: var(--dashboard-panel-shadow);
+  padding: 16px;
+}
+
+#adminPage .admin-panel {
+  display: grid;
+  gap: 10px;
+  background: transparent;
+  border: 0;
+  border-radius: var(--dashboard-panel-radius);
+  box-shadow: none;
+  padding: 1px;
+}
+
+#adminPage .admin-account-card,
+#adminPage .admin-settings-card {
+  display: grid;
+  width: 100%;
+  background: #3e434df7;
+  border: 1px solid var(--dashboard-panel-border);
+  border-radius: var(--dashboard-panel-radius);
+  box-shadow: var(--dashboard-panel-shadow);
+  padding: 24px;
+  color: #ffffff;
+  align-content: start;
+  align-self: stretch;
+  overflow: hidden;
+}
+
+#adminPage .admin-account-layout {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 18px;
+  color: #ffffff;
+  min-height: calc(100vh - var(--general-header-height, 71px) - 140px);
+  height: 100%;
+  align-content: stretch;
+}
+
+#adminPage .admin-account-panel {
+  display: grid;
+  gap: 18px;
+  align-self: start;
+}
+
+#adminPage .admin-account-panel-head {
+  min-height: 0;
+  height: 100%;
+}
+
+#adminPage #adminProfileView {
+  min-height: 100%;
+}
+
+#adminPage #adminProfileView > .settings-card.admin-account-card {
+  min-height: calc(100vh - var(--general-header-height, 71px) - 140px);
+}
+
+#adminPage .admin-account-avatar-row {
+  display: grid;
+  justify-items: start;
+  padding: 0;
+}
+
+#adminPage .admin-account-layout .admin-profile-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 36px;
+  background: #cfd6fb;
+  color: #44528d;
+  font-size: 2rem;
+  font-weight: 700;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+#adminPage .admin-account-layout .admin-profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+#adminPage .admin-account-layout .settings-divider {
+  width: 100%;
+  height: 3px;
+  background: #ffffff;
+}
+
+#adminPage .admin-account-section {
+  display: grid;
+  gap: 20px;
+}
+
+#adminPage .admin-account-section h4,
+#adminPage .admin-account-section p {
+  margin: 0;
+  color: #ffffff;
+}
+
+#adminPage .admin-account-section h4 {
+  font-size: 1.7rem;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: normal;
+  opacity: 1;
+}
+
+#adminPage .admin-account-section p {
+  font-size: 1.2rem;
+  font-weight: 500;
+  line-height: 1.5;
+  opacity: 0.92;
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 12px;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+#adminPage .account-field-label,
+#adminPage .account-field-value {
+  display: inline-block;
+  vertical-align: top;
+  font-size: 1.2rem;
+}
+
+#adminPage .account-field-label {
+  width: 110px;
+  padding-right: 12px;
+  margin-right: 12px;
+  border-right: 2px solid rgba(255, 255, 255, 0.72);
+}
+
+#adminPage .account-field-value {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+#adminPage .admin-settings-card {
+  min-height: calc(100vh - var(--general-header-height, 71px) - 110px);
+  height: calc(100vh - var(--general-header-height, 71px) - 110px);
+  align-items: start;
+  align-content: start;
+}
+
+#adminPage .admin-settings-layout {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  align-content: start;
+  min-height: 100%;
+  height: 100%;
+}
+
+#adminPage .admin-settings-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+#adminPage .admin-settings-topbar h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.9rem;
+  font-weight: 700;
+}
+
+body.admin-body #adminSettingsView .settings-panel {
+  display: grid;
+  min-height: 0;
+  height: 100%;
+  align-content: stretch;
+}
+
+body.admin-body #adminSettingsView .settings-subview {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  min-height: 0;
+  height: 100%;
+}
+
+#adminPage #adminSettingsView > .settings-card.admin-settings-card {
+  min-height: calc(100vh - var(--general-header-height, 71px) - 110px);
+  height: calc(100vh - var(--general-header-height, 71px) - 110px);
+}
+
+body.admin-body #adminSettingsView .settings-subnav {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  max-width: 100%;
+  margin-left: auto;
+  padding: 6px;
+  background: rgba(18, 24, 34, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+body.admin-body #adminSettingsView .settings-subnav-link {
+  color: #e8edf6;
+  min-height: 40px;
+  padding: 0 18px;
+  border-radius: 14px;
+  font-weight: 700;
+  background: transparent;
+  border: 0;
+}
+
+body.admin-body #adminSettingsView .settings-subnav-link:hover {
+  background: rgba(111, 130, 157, 0.18);
+}
+
+body.admin-body #adminSettingsView .settings-subnav-link.active {
+  background: rgba(79, 98, 123, 0.55);
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+body.admin-body #adminSettingsView .settings-divider {
+  background: #ffffff;
+  opacity: 1;
+  width: 100%;
+  height: 3px;
+}
+
+body.admin-body #adminSettingsView .settings-header h2,
+body.admin-body #adminSettingsView .settings-header p,
+body.admin-body #adminSettingsView .user-welcome-corner,
+body.admin-body #adminSettingsView .user-welcome-corner-subtitle,
+body.admin-body #adminSettingsView .user-welcome-name {
+  color: #ffffff;
+}
+
+body.admin-body #adminSettingsView .settings-photo-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 16px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+}
+
+body.admin-body #adminSettingsView .settings-photo-row .ghost,
+body.admin-body #adminSettingsView .secondary {
+  justify-self: end;
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
+}
+
+body.admin-body #adminSettingsView .settings-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 66px;
+  background: #cfd6fb;
+  color: #44528d;
+  font-size: 2rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+body.admin-body #adminSettingsView .settings-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+body.admin-body #adminSettingsView .settings-profile,
+body.admin-body #adminSettingsView .settings-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: center;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+}
+
+body.admin-body #adminSettingsView .settings-meta,
+body.admin-body #adminSettingsView .settings-profile h4,
+body.admin-body #adminSettingsView .settings-profile p,
+body.admin-body #adminSettingsView .settings-row h4,
+body.admin-body #adminSettingsView .settings-row p {
+  color: #ffffff;
+  font-weight: 500;
+}
+
+body.admin-body #adminSettingsView .settings-meta h4,
+body.admin-body #adminSettingsView .settings-profile h4 {
+  margin: 0 0 10px;
+  font-size: 1.7rem;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+body.admin-body #adminSettingsView .settings-meta p,
+body.admin-body #adminSettingsView .settings-profile p,
+body.admin-body #adminSettingsView .settings-contact-copy p {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+body.admin-body #adminPage .settings-profile > div {
+  display: grid;
+  gap: 6px;
+}
+
+body.admin-body #adminPage .admin-account-section > div {
+  display: block;
+}
+
+body.admin-body #adminPage .admin-name-row {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  column-gap: 12px;
+  align-items: baseline;
+  width: 100%;
+  min-width: 0;
+}
+
+body.admin-body #adminPage .admin-name-row strong {
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: normal;
+  white-space: nowrap;
+}
+
+body.admin-body #adminPage .admin-name-row span {
+  color: #ffffff;
+  font-size: 1.2rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+  min-width: 0;
+}
+
+body.admin-body #adminPage #adminSettingsPhone,
+body.admin-body #adminPage #adminSettingsUsername,
+body.admin-body #adminPage #adminSettingsEmail,
+body.admin-body #adminPage #adminSettingsAddress {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+
+body.admin-body #adminSettingsView .settings-contact-list {
+  display: grid;
+  gap: 12px;
+}
+
+body.admin-body #adminSettingsView .settings-contact-heading {
+  margin: 0 0 8px;
+  color: #ffffff;
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
+body.admin-body #adminSettingsView .settings-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+}
+
+body.admin-body #adminSettingsView .settings-contact-copy {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+body.admin-body #adminSettingsView .settings-contact-label {
+  color: #ffffff;
+  font-weight: 600;
+  width: 110px;
+  flex: 0 0 110px;
+  padding-right: 12px;
+  margin-right: 12px;
+  border-right: 2px solid rgba(255, 255, 255, 0.72);
+  font-size: 1.2rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+body.admin-body #adminSettingsView .settings-contact-label::after {
+  content: ":";
+}
+
+body.admin-body #adminSettingsView .settings-contact-copy p {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.2rem;
+  line-height: 1.35;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: clip;
+  flex: 1 1 auto;
+}
+
+body.admin-body #adminSettingsView .settings-contact-actions {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  justify-items: end;
+  width: 104px;
+  align-self: start;
+  justify-self: end;
+  padding-top: 50px;
+}
+
+body.admin-body #adminSettingsView .settings-contact-actions .secondary {
+  min-height: 44px;
+  width: 100%;
+}
+
+body.admin-body #adminSettingsView .settings-contact-action-mobile {
+  display: none;
+}
+
+body.admin-body #adminSettingsSecurity {
+  gap: 26px;
+}
+
+body.admin-body #adminSettingsSecurity .security-card {
+  display: grid;
+  gap: 26px;
+  padding: 24px;
+  border: 2px solid #ffffff;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  background: rgba(34, 43, 58, 0.96);
+}
+
+body.admin-body #adminSettingsSecurity .security-card-head h3,
+body.admin-body #adminSettingsNotifications .notifications-card-head h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.25rem;
+}
+
+body.admin-body #adminSettingsSecurity .security-form {
+  width: min(500px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 18px;
+}
+
+body.admin-body #adminSettingsSecurity .security-field {
+  display: grid;
+  gap: 8px;
+}
+
+body.admin-body #adminSettingsSecurity .security-field span,
+body.admin-body #adminSettingsSecurity .security-check,
+body.admin-body #adminSettingsNotifications .notifications-check {
+  color: #ffffff;
+}
+
+body.admin-body #adminSettingsSecurity .security-field input {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+body.admin-body #adminSettingsSecurity .security-actions,
+body.admin-body #adminSettingsNotifications .notifications-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+body.admin-body #adminSettingsSecurity .security-actions .ghost,
+body.admin-body #adminSettingsNotifications .notifications-actions .ghost,
+body.admin-body #adminSecurity2faEnable {
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
+}
+
+body.admin-body #adminSettingsSecurity .security-2fa-grid {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+}
+
+body.admin-body #adminSettingsSecurity .security-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1rem;
+}
+
+body.admin-body #adminSettingsSecurity .security-check input,
+body.admin-body #adminSettingsNotifications .notifications-check input {
+  width: 20px;
+  height: 20px;
+}
+
+body.admin-body #adminSettingsNotifications .notifications-card {
+  display: grid;
+  gap: 28px;
+  padding: 24px;
+  border: 2px solid #ffffff;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  background: rgba(34, 43, 58, 0.96);
+}
+
+body.admin-body #adminSettingsNotifications .notifications-check {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 14px;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+#adminPage .side-section .side-section-body {
+  max-height: 140px;
+  opacity: 1;
+  transform: translateY(0);
+  overflow: hidden;
+  transition: max-height 0.22s ease, opacity 0.18s ease, transform 0.18s ease;
+}
+
+@media (max-width: 1024px) {
+  #adminPage.mainLayout {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  #adminPage .rail-base {
+    width: 180px;
+    min-width: 180px;
+    min-height: auto;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  #adminPage .mainRail {
+    width: 180px;
+    padding: 14px 12px 16px;
+    justify-items: stretch;
+    align-content: start;
+  }
+
+  #adminPage .mainRail:hover {
+    width: 180px;
+  }
+
+  #adminPage .mainRail .rail-brand {
+    width: 100%;
+    justify-self: center;
+    padding: 4px 0 17px;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    margin-bottom: 9px;
+  }
+
+  #adminPage .mainRail.is-collapsed .rail-brand {
+    justify-content: center;
+    padding-bottom: 8px;
+    margin-bottom: 9px;
+  }
+
+  #adminPage .mainRail .rail-nav {
+    position: static;
+    top: auto;
+    grid-auto-flow: row;
+    grid-auto-columns: unset;
+    grid-template-columns: 1fr;
+    align-content: start;
+    gap: 10px;
+    overflow: visible;
+    padding: 8px 0 0;
+    justify-items: stretch;
+  }
+
+  #adminPage .mainRail .rail-item {
+    width: 100%;
+    height: 48px;
+    min-height: 48px;
+    border-radius: 12px;
+  }
+
+  #adminPage .mainRail .rail-item.active {
+    margin-top: -8px;
+  }
+
+  #adminPage .mainRail .rail-footer {
+    display: grid;
+  }
+
+  #adminPage .mainRail:hover .rail-item {
+    width: 100%;
+    max-width: 100%;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    height: 48px;
+    padding: 10px 14px;
+  }
+
+  #adminPage .mainRail:hover .rail-item.active {
+    width: calc(100% + 36px);
+    max-width: none;
+    margin-right: -36px;
+    border-radius: 14px 0 0 14px;
+  }
+
+  #adminPage .mainRail.is-collapsed .rail-item.active {
+    width: 48px;
+    max-width: 48px;
+    margin-right: 0;
+    margin-top: 0;
+    background: transparent;
+    overflow: visible;
+  }
+
+  #adminPage .mainRail.is-collapsed .rail-item.active::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: -20px;
+    background: linear-gradient(90deg, #090d15 0%, #090d15 calc(100% + 20px), transparent calc(100% + 20px));
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-radius: 14px 0 0 14px;
+    z-index: -1;
+  }
+
+  #adminPage .mainRail:hover .rail-text {
+    width: 0;
+    opacity: 0;
+  }
+
+  #adminPage .mainRail:hover .rail-footer {
+    justify-items: center;
+  }
+
+  #adminPage .mainRail:hover .admin-signout {
+    width: 100%;
+    min-width: 0;
+    color: #334155;
+    font-size: 0.88rem;
+    padding: 0 14px 0 40px;
+    justify-content: center;
+  }
+
+  #adminPage .mainRail:hover .admin-signout::before {
+    inset: 0;
+    width: auto;
+  }
+
+  #adminPage .mainSection {
+    border-left: 2px solid #ffffff;
+    border-radius: 0 0 14px 14px;
+  }
+
+  #adminPage .admin-dashboard-metrics,
+  #adminPage .admin-dashboard-queues {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #adminPage .admin-dashboard-list,
+  #adminPage .admin-dashboard-actions {
+    grid-template-columns: 1fr;
+  }
+
+
+  #adminPage .admin-table-actions {
+    flex-wrap: wrap;
+  }
+
+  #adminPage .admin-table-actions #adminSearch {
+    min-width: 180px;
+    flex: 1;
+  }
+}
+
+@media (max-width: 700px) {
+  #adminPage .admin-settings-topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  body.admin-body #adminSettingsView .settings-subnav {
+    margin-left: 0;
+  }
+
+  #adminPage .admin-dashboard-metrics,
+  #adminPage .admin-dashboard-queues {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  body.admin-body .main-header.general-header .main-brand {
+    gap: 10px;
+    align-items: center;
+  }
+
+  body.admin-body .main-header.general-header .main-brand > span.main-logo {
+    display: inline-grid;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    flex: 0 0 40px;
+  }
+
+  body.admin-body .main-header.general-header .main-brand > div {
+    display: grid;
+    gap: 0;
+  }
+
+  body.admin-body .main-header.general-header .main-brand > div strong {
+    font-size: 1rem;
+    line-height: 1.1;
+  }
+
+  body.admin-body .main-header.general-header .main-brand > div span {
+    display: block;
+    font-size: 0.86rem;
+    line-height: 1.1;
+  }
+
+  body.admin-body .main-header.general-header .admin-header-menu-toggle {
+    display: inline-grid !important;
+    gap: 5px;
+    width: 42px;
+    height: 42px;
+    place-content: center;
+    margin-left: auto;
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+    cursor: pointer;
+  }
+
+  body.admin-body .main-header.general-header .admin-header-menu {
+    display: none !important;
+  }
+
+  body.admin-body .admin-header-menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+  }
+
+  body.admin-body.admin-mobile-menu-open {
+    overflow: hidden;
+  }
+
+  body.admin-body .page-shell-content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  #adminPage.mainLayout {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  #adminPage .rail-base {
+    display: none !important;
+  }
+
+  #adminPage .admin-rail-toggle {
+    display: none !important;
+  }
+
+  #adminPage .mainSection {
+    border-left: 2px solid #ffffff;
+    border-radius: 0 0 14px 14px;
+  }
+
+  body.admin-body .admin-mobile-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    display: block !important;
+    opacity: 0;
+    pointer-events: none;
+    background: rgba(7, 12, 21, 0.55);
+    z-index: 80;
+    transition: opacity 0.2s ease;
+  }
+
+  body.admin-body .admin-mobile-menu-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  body.admin-body .admin-mobile-menu {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 90;
+    display: grid !important;
+    grid-template-rows: auto 1fr auto;
+    width: min(82vw, 360px);
+    padding: 18px;
+    background: #ffffff;
+    color: #0f172a;
+    transform: translateX(-104%);
+    transition: transform 0.22s ease;
+    box-shadow: 24px 0 60px rgba(0, 0, 0, 0.24);
+  }
+
+  body.admin-body .admin-mobile-menu.is-open {
+    transform: translateX(0);
+  }
+
+  body.admin-body .admin-mobile-menu-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 22px;
+  }
+
+  body.admin-body .admin-mobile-name {
+    display: inline-flex;
+    align-items: center;
+    color: #0f172a;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 1rem;
+  }
+
+  body.admin-body .admin-mobile-menu-nav {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+  }
+
+  body.admin-body .admin-mobile-menu-link,
+  body.admin-body .admin-mobile-signout {
+    appearance: none;
+    border: 0;
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 14px;
+    background: transparent;
+    color: #0f172a;
+    text-align: left;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  body.admin-body .admin-mobile-menu-link.active {
+    background: #111827;
+    color: #ffffff;
+    border-radius: 8px;
+  }
+
+  body.admin-body .admin-mobile-signout {
+    border-top: 1px solid rgba(15, 23, 42, 0.12);
+    color: #0f172a;
+  }
+
+  #adminPage .admin-dashboard-metrics,
+  #adminPage .admin-dashboard-queues {
+    grid-template-columns: 1fr;
+  }
+
+  #adminPage .admin-dashboard-list,
+  #adminPage .admin-dashboard-actions {
+    grid-template-columns: 1fr;
+  }
+
+  #adminPage #adminBookingsView .admin-head-control--role {
+    display: none;
+  }
+}
+
+@media (max-width: 425px) {
+  #adminPage #adminUsersView .admin-table-head,
+  #adminPage #adminApplicationsView .admin-table-head,
+  #adminPage #adminBookingsView .admin-table-head,
+  #adminPage #adminCatalogView .admin-table-head,
+  #adminPage #adminResolutionView .admin-table-head,
+  #adminPage #adminPaymentsView .admin-table-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  #adminPage #adminUsersView .admin-table-head-filters,
+  #adminPage #adminApplicationsView .admin-table-head-filters,
+  #adminPage #adminBookingsView .admin-table-head-filters,
+  #adminPage #adminCatalogView .admin-table-head-filters,
+  #adminPage #adminResolutionView .admin-table-head-filters,
+  #adminPage #adminPaymentsView .admin-table-head-filters {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  #adminPage #adminUsersView .admin-head-control,
+  #adminPage #adminApplicationsView .admin-head-control,
+  #adminPage #adminBookingsView .admin-head-control,
+  #adminPage #adminCatalogView .admin-head-control,
+  #adminPage #adminResolutionView .admin-head-control,
+  #adminPage #adminPaymentsView .admin-head-control {
+    width: 100%;
+  }
+
+  #adminPage #adminUsersView .admin-head-control input,
+  #adminPage #adminUsersView .admin-head-control select,
+  #adminPage #adminApplicationsView .admin-head-control input,
+  #adminPage #adminApplicationsView .admin-head-control select,
+  #adminPage #adminBookingsView .admin-head-control input,
+  #adminPage #adminBookingsView .admin-head-control select,
+  #adminPage #adminCatalogView .admin-head-control input,
+  #adminPage #adminCatalogView .admin-head-control select,
+  #adminPage #adminResolutionView .admin-head-control input,
+  #adminPage #adminResolutionView .admin-head-control select,
+  #adminPage #adminPaymentsView .admin-head-control input,
+  #adminPage #adminPaymentsView .admin-head-control select,
+  #adminPage .admin-table-actions #adminSearch {
+    width: 100%;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  #adminPage #adminUsersView .admin-table-head-actions,
+  #adminPage #adminApplicationsView .admin-table-head-actions,
+  #adminPage #adminBookingsView .admin-table-head-actions,
+  #adminPage #adminCatalogView .admin-table-head-actions,
+  #adminPage #adminResolutionView .admin-table-head-actions,
+  #adminPage #adminPaymentsView .admin-table-head-actions {
+    width: 100%;
+    margin-left: 0;
+    justify-content: stretch;
+    flex-wrap: wrap;
+  }
+
+  #adminPage #adminUsersView .admin-table-head-actions > *,
+  #adminPage #adminApplicationsView .admin-table-head-actions > *,
+  #adminPage #adminBookingsView .admin-table-head-actions > *,
+  #adminPage #adminCatalogView .admin-table-head-actions > *,
+  #adminPage #adminResolutionView .admin-table-head-actions > *,
+  #adminPage #adminPaymentsView .admin-table-head-actions > * {
+    width: 100%;
+  }
+
+  #adminPage .admin-table-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 468px) {
+  #adminPage .admin-content {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  #adminPage .admin-content {
+    padding: 10px;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 425px) {
+  #adminPage .admin-content {
+    padding: 10px;
+  }
+
+  #adminPage #adminSettingsView,
+  #adminPage #adminSettingsView > .settings-card.admin-settings-card,
+  #adminPage .admin-settings-card,
+  #adminPage .admin-settings-layout,
+  body.admin-body #adminSettingsView .settings-panel,
+  body.admin-body #adminSettingsView .settings-subview {
+    height: auto;
+    min-height: 0;
+  }
+
+  #adminPage #adminSettingsView > .settings-card.admin-settings-card {
+    overflow: visible;
+  }
+
+  body.admin-body #adminSettingsView .settings-panel {
+    align-content: start;
+  }
+
+  body.admin-body #adminSettingsView .settings-panel {
+    gap: 12px;
+  }
+
+  body.admin-body #adminSettingsView .settings-subnav {
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    padding: 6px;
+  }
+
+  body.admin-body #adminSettingsView .settings-subnav-link {
+    width: 100%;
+    min-height: 34px;
+    padding: 0 14px;
+    text-align: center;
+  }
+
+  body.admin-body #adminSettingsView .settings-photo-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  body.admin-body #adminSettingsView .settings-photo-row .ghost {
+    width: min(200px, 100%);
+    justify-self: center;
+  }
+
+  body.admin-body #adminSettingsView .settings-avatar {
+    width: 118px;
+    height: 118px;
+    border-radius: 50%;
+  }
+
+  body.admin-body #adminSettingsView .settings-profile,
+  body.admin-body #adminSettingsView .settings-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  body.admin-body #adminSettingsView .settings-profile h4,
+  body.admin-body #adminSettingsView .settings-row h4 {
+    font-size: 1.3rem;
+    margin-bottom: 4px;
+  }
+
+  body.admin-body #adminSettingsView .settings-profile p,
+  body.admin-body #adminSettingsView .settings-row p {
+    font-size: 0.92rem;
+  }
+
+  body.admin-body #adminSettingsView .settings-profile .secondary {
+    width: min(200px, 100%);
+    justify-self: center;
+    margin-top: 10px;
+    margin-bottom: 8px;
+  }
+
+  body.admin-body #adminSettingsView .settings-profile .settings-meta,
+  body.admin-body #adminSettingsView .settings-row .settings-contact-list {
+    width: 100%;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-heading {
+    font-size: 1.3rem;
+    margin-bottom: 4px;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-list {
+    gap: 12px;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-item {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+    min-height: 0;
+    justify-items: stretch;
+    width: 100%;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-copy {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2px;
+    align-items: start;
+    width: 100%;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-label {
+    width: auto;
+    flex: none;
+    padding-right: 0;
+    margin-right: 0;
+    border-right: 0;
+    white-space: normal;
+    font-size: 0.92rem;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-copy p {
+    font-size: 0.9rem;
+    white-space: normal;
+    overflow: visible;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-actions {
+    display: none;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-actions .secondary {
+    width: min(200px, 100%);
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-actions {
+    display: none;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-item {
+    gap: 10px;
+  }
+
+  body.admin-body #adminSettingsView .settings-contact-action-mobile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: min(200px, 100%);
+    min-height: 40px;
+    justify-self: center;
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+
+  body.admin-body #adminSettingsView .settings-divider {
+    margin: 14px 0;
+  }
+
+  #adminPage #adminCatalogView .admin-table-layout {
+    row-gap: 12px;
+  }
+
+  #adminPage #adminCatalogView .admin-table-head {
+    gap: 6px;
+  }
+
+  #adminPage #adminCatalogView .admin-table-head-filters {
+    flex-direction: column;
+    width: 100%;
+    gap: 6px;
+  }
+
+  #adminPage #adminCatalogView .admin-head-control {
+    flex: 0 0 auto;
+    width: 100%;
+    min-height: 0;
+  }
+
+  #adminPage #adminCatalogView .admin-head-control--search,
+  #adminPage #adminCatalogView .admin-head-control--role,
+  #adminPage #adminCatalogView .admin-head-control--status {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  #adminPage #adminCatalogView .admin-head-control input,
+  #adminPage #adminCatalogView .admin-head-control select {
+    min-height: 38px;
+    padding: 0 14px 0 38px;
+  }
+
+  #adminPage #adminCatalogView .admin-table-head-actions {
+    gap: 6px;
+    margin-top: 0;
+  }
+
+  #adminPage #adminCatalogView .admin-table-wrap {
+    min-height: 0;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-list {
+    min-height: 0;
+    height: auto;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-group-header {
+    padding: 14px 12px;
+    gap: 12px;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-group-title {
+    gap: 12px;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-group-title h4 {
+    font-size: 1.15rem;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-open-btn {
+    min-height: 36px;
+    padding: 0 14px;
+    font-size: 0.85rem;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-subgroups {
+    padding: 0 12px 14px;
+    gap: 10px;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-subgroup-header {
+    padding: 12px 12px;
+    gap: 12px;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-subgroup-header h5 {
+    font-size: 0.95rem;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-subgroup-header span {
+    font-size: 0.84rem;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-service {
+    gap: 10px;
+    padding: 10px 12px;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-service-main strong {
+    font-size: 0.92rem;
+  }
+
+  #adminPage #adminCatalogView .admin-catalog-service-main span,
+  #adminPage #adminCatalogView .admin-catalog-service-meta {
+    font-size: 0.82rem;
+  }
+
+  #adminPage #adminBookingsView .admin-table-head-filters {
+    gap: 8px;
+  }
+
+  #adminPage #adminBookingsView .admin-head-control {
+    flex: 0 0 auto;
+    width: 100%;
+    min-height: 0;
+  }
+
+  #adminPage #adminBookingsView .admin-head-control--search,
+  #adminPage #adminBookingsView .admin-head-control--role,
+  #adminPage #adminBookingsView .admin-head-control--status,
+  #adminPage #adminBookingsView .admin-head-control--date {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  #adminPage #adminBookingsView .admin-head-control input,
+  #adminPage #adminBookingsView .admin-head-control select {
+    min-height: 38px;
+    padding: 0 14px 0 38px;
+  }
+
+  #adminPage #adminBookingsView .admin-table-head-actions {
+    gap: 8px;
+  }
+}

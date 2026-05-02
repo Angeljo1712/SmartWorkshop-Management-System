@@ -1,0 +1,58 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Welcome"
+  - var bodyClass = "mechanic-welcome application-body app-shell-body"
+
+block head
+  link(rel="stylesheet" href="/css/features/mechanic/public-profile.css")
+  link(rel="stylesheet" href="/css/features/mechanic/application.css")
+  link(rel="stylesheet" href="/css/features/bookings/booking-flow.css")
+
+block content
+  header.main-header.basic-header
+    .body-content
+      a.main-brand(href="/")
+        span.main-logo SW
+        span
+          strong SmartWorkshop
+          span.main-brand-subtitle Vehicle Service Marketplace
+      a.bookings-header-help(href="/application/join") Need help?
+
+  main.primari-shell
+    .page-shell-content
+      section.welcome-layout1
+        h1 Application Accepted
+        p.subtle
+          | Good news! Based on the answers you provided on the previous page, it looks like you're a great match for the network.
+        p.subtle
+          | To get you approved and able to accept your first booking, you'll need to finish setting up your account and provide proof of insurance as part of the vetting process.
+        p.subtle
+          | The first step is to set a password to finish creating your account.
+        button.primary.ghost-link#mechanicWelcomeStartBtn(type="button") Get started
+        .welcome-password-card.is-hidden#mechanicSetPasswordCard
+          h2 Set your password
+          p.subtle Finish creating your mechanic account by setting a password.
+          p.password-hint Password must be: at least 8 characters, 1 capital letter, and 1 symbol.
+          form#setMechanicPasswordForm
+            input(type="text" name="username" id="mechanicPasswordEmail" autocomplete="username" hidden)
+            input(type="text" name="challenge_token" id="mechanicPasswordChallengeToken" hidden)
+            .field-grid
+              label
+                span New password
+                input(type="password" name="password" id="mechanicPasswordValue" placeholder="••••••••" autocomplete="new-password")
+              label
+                span Confirm password
+                input(type="password" name="confirm" id="mechanicPasswordConfirm" placeholder="••••••••" autocomplete="new-password")
+            .mechanic-verification-step.is-hidden#mechanicVerificationStep
+              label
+                span Verification code
+                input(type="text" name="code" id="mechanicPasswordCode" placeholder="123456" inputmode="numeric" autocomplete="one-time-code")
+              button.primary.ghost-link#mechanicResendCodeBtn(type="button") Resend code
+            p.form-error#mechanicPasswordError(role="alert" aria-live="polite")
+            button.primary#mechanicPasswordSubmit(type="submit") Save
+
+  include ../../partials/general-footer
+
+append scripts
+  script(src="/js/features/mechanic/onboarding-complete.js")

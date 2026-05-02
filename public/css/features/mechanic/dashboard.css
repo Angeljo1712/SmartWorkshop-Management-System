@@ -1,0 +1,4433 @@
+#mechanicPage.mechanic-layout {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: stretch;
+  column-gap: 0;
+  row-gap: 0;
+  border-radius: 15px 15px 0 0;
+  overflow: visible;
+}
+
+#mechanicPage.mainLayout {
+  grid-template-columns: auto minmax(0, 1fr) !important;
+}
+
+#mechanicPage.mechanic-layout > .mainRail,
+#mechanicPage .mainSection {
+  position: relative;
+  z-index: 1;
+}
+
+#mechanicPage.mechanic-layout > .mainRail {
+  align-self: stretch;
+  z-index: 3;
+}
+#mechanicPage .mainSection {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  align-self: stretch;
+  background: rgba(25, 31, 42, 0.96);
+  border: 2px solid #ffffff;
+  border-left: 0;
+  border-bottom: 0;
+  border-radius: 0 15px 0 0;
+}
+
+#mechanicPage .mechanicContent {
+  display: grid;
+  width: 100%;
+  align-self: stretch;
+  background: rgba(9, 13, 21, 0.96);
+  border: 0;
+  border-radius: 0;
+  padding: 33px;
+  overflow: hidden;
+  min-height: auto;
+  height: 100%;
+  color: #ffffff;
+}
+
+#mechanicPage .mechanic-dashboard-hero {
+  padding: 5px 10px;
+  background: #ffffff;
+  border-radius: 0 12px 0 0;
+  border: 2px solid #ffffff;
+  border-left: 0;
+  border-bottom: 0;
+}
+
+#mechanicPage .mechanic-dashboard-hero,
+#mechanicPage .mechanic-dashboard-hero .settings-header {
+  display: grid;
+  gap: 12px;
+}
+
+#mechanicPage .mechanic-dashboard-hero .settings-header {
+  margin: 0;
+  padding: 0;
+  max-height: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+#mechanicPage .mechanic-dashboard-hero .settings-header-copy {
+  display: grid;
+  gap: 4px;
+  justify-items: start;
+  text-align: left;
+}
+
+#mechanicPage .mechanic-dashboard-hero-copy {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#mechanicPage .mechanic-dashboard-hero .settings-header h2,
+#mechanicPage .mechanic-dashboard-hero .settings-header h3 {
+  color: #1b2430;
+  margin: 0;
+}
+
+#mechanicPage .mechanic-dashboard-hero .settings-header p {
+  color: #475569;
+  margin: 0;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+#mechanicPage .mechanic-dashboard-hero .settings-header .settings-header-aside {
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+}
+
+#mechanicPage .mechanic-dashboard-hero .settings-header .settings-header-aside h2 {
+  margin: 0 0 2px;
+  color: #1b2430;
+  font-size: 1.17em;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+#mechanicPage #mechanicDashboardHeroName {
+  margin: 0;
+  color: #1b2430;
+  font-size: 1.17em;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+#mechanicPage #mechanicDashboardHeroRole {
+  margin: 2px 0 0;
+  color: #1b2430;
+}
+
+#mechanicPage.mechanic-layout > .mainRail,
+#mechanicPage .mainSection {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+#mechanicPage .rail-base {
+  position: static;
+  width: 180px;
+  min-width: 180px;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 0;
+  border-bottom: 0;
+  border-radius: 15px 0 0 0;
+  color: #1b2430;
+  overflow: visible;
+  transition: width 0.22s ease;
+}
+
+#mechanicPage .mainRail {
+  width: 180px;
+  min-width: 180px;
+  height: 100%;
+  min-height: 100%;
+  display: grid;
+  padding: 14px 12px 16px;
+  justify-items: stretch;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  align-content: start;
+  gap: 12px;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  color: #1b2430;
+  overflow: visible;
+}
+
+#mechanicPage .mainRail .rail-brand {
+  width: 100%;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  justify-self: center;
+  gap: 0;
+  padding: 0;
+  margin-top: 10px;
+}
+
+#mechanicPage .mainRail .rail-brand .logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #eef2f7;
+  color: #1b2430;
+}
+
+#mechanicPage .mainRail .rail-nav {
+  position: sticky;
+  top: var(--general-header-height, 71px);
+  width: 100%;
+  align-self: start;
+  grid-auto-flow: row;
+  grid-auto-columns: minmax(0, 1fr);
+  justify-items: stretch;
+  gap: 10px;
+  overflow: visible;
+  padding: 8px 0 0;
+}
+
+#mechanicPage .mainRail .rail-item {
+  width: 100%;
+  max-width: none;
+  height: auto;
+  min-height: 48px;
+  justify-content: flex-start;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #334155;
+  gap: 10px;
+  position: relative;
+  transition: max-width 0.22s ease, width 0.22s ease, padding 0.22s ease, justify-content 0.22s ease, background 0.18s ease;
+}
+
+#mechanicPage .mainRail .rail-item:hover {
+  background: rgba(15, 23, 42, 0.06);
+}
+
+#mechanicPage .mainRail .rail-item.active:hover {
+  background: linear-gradient(90deg, #090d15 0%, #090d15 calc(100% + 20px), transparent calc(100% + 20px));
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+#mechanicPage .mainRail .rail-item.active {
+  background: linear-gradient(90deg, #090d15 0%, #090d15 calc(100% + 20px), transparent calc(100% + 20px));
+  border-color: rgba(15, 23, 42, 0.08);
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  width: calc(100% + 20px);
+  margin-right: -20px;
+}
+
+#mechanicPage .mainRail .rail-text {
+  width: auto;
+  opacity: 1;
+  overflow: visible;
+  white-space: normal;
+  line-height: 1.2;
+  transition: opacity 0.18s ease;
+}
+
+#mechanicPage .mainRail .rail-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+}
+
+#mechanicPage .mainRail .rail-footer {
+  width: 100%;
+  display: grid;
+  justify-items: stretch;
+  padding-top: 10px;
+}
+
+#mechanicPage .mainRail.is-collapsed {
+  width: 70px;
+  min-width: 70px;
+  height: 100%;
+  min-height: 100%;
+  display: grid;
+  padding: 14px 10px 16px;
+  justify-items: center;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 7px;
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
+#mechanicPage .mainRail.is-collapsed .rail-brand {
+  justify-content: center;
+  padding-bottom: 8px;
+}
+
+#mechanicPage .mainRail.is-collapsed .rail-brand .logo {
+  display: inline-grid;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  margin: 0 auto;
+}
+
+#mechanicPage .mainRail.is-collapsed .rail-item {
+  width: 48px;
+  max-width: 48px;
+  height: 48px;
+  min-height: 48px;
+  justify-content: center;
+  padding: 0;
+  gap: 0;
+}
+
+#mechanicPage .mainRail.is-collapsed .rail-item.active {
+  width: 48px;
+  max-width: 48px;
+  margin-right: 0;
+  background: transparent;
+  overflow: visible;
+  z-index: 1;
+}
+
+#mechanicPage .mainRail.is-collapsed .rail-item.active::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: -22px;
+  background: linear-gradient(90deg, #090d15 0%, #090d15 calc(100% + 20px), transparent calc(100% + 20px));
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-radius: 14px;
+  z-index: -1;
+}
+
+#mechanicPage .mainRail.is-collapsed .rail-text {
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#mechanicPage .mainRail.is-collapsed .rail-footer {
+  justify-items: center;
+}
+
+#mechanicPage .mechanic-rail-toggle {
+  position: absolute;
+  top: 115px;
+  left: 163px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 15px;
+  background: #3e434df7;
+  color: #ffffff;
+  cursor: pointer;
+  z-index: 6;
+  box-shadow: 0 8px 18px rgba(8, 15, 31, 0.24);
+}
+
+#mechanicPage .mechanic-rail-toggle svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+#mechanicPage.is-rail-collapsed .mechanic-rail-toggle {
+  left: 54px;
+}
+
+@media (max-width: 1100px) and (min-width: 769px) {
+  #mechanicPage.mechanic-layout {
+    grid-template-columns: auto minmax(0, 1fr) !important;
+  }
+
+  #mechanicPage.mainLayout {
+    grid-template-columns: auto minmax(0, 1fr) !important;
+  }
+
+  #mechanicPage .rail-base {
+    width: 180px;
+    min-width: 180px;
+    min-height: auto;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  #mechanicPage .mainRail {
+    width: 180px;
+    min-width: 180px;
+    height: 100%;
+    min-height: 100%;
+    display: grid;
+    padding: 14px 12px 16px;
+    justify-items: stretch;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    align-content: start;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+  }
+
+  #mechanicPage .mainRail:hover {
+    width: 180px;
+  }
+
+  #mechanicPage .mainRail .rail-brand {
+    width: 100%;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    justify-self: center;
+    justify-content: center;
+    padding: 0;
+    margin-top: 10px;
+  }
+
+  #mechanicPage .mainRail .rail-nav {
+    position: static;
+    top: auto;
+    grid-auto-flow: row;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: 10px;
+    overflow: visible;
+    padding: 8px 0 0;
+    justify-items: stretch;
+  }
+
+  #mechanicPage .mainRail .rail-item {
+    width: 100%;
+    height: 48px;
+    min-height: 48px;
+    border-radius: 12px;
+  }
+
+  #mechanicPage .mainRail .rail-footer {
+    display: grid;
+  }
+
+  #mechanicPage .mainRail.is-collapsed {
+    width: 70px;
+    min-width: 70px;
+    height: 100%;
+    min-height: 100%;
+    display: grid;
+    padding: 14px 10px 16px;
+    justify-items: center;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    align-content: start;
+    gap: 15px;
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+  }
+
+  #mechanicPage .mainRail.is-collapsed .rail-brand {
+    justify-content: center;
+    padding: 0;
+    margin-top: 10px;
+  }
+
+  #mechanicPage .mainRail.is-collapsed .rail-item {
+    width: 48px;
+    max-width: 48px;
+    height: 48px;
+    min-height: 48px;
+    justify-content: center;
+    padding: 0;
+    gap: 0;
+  }
+
+  #mechanicPage .mainRail.is-collapsed .rail-item.active {
+    width: 48px;
+    max-width: 48px;
+    margin-right: 0;
+  }
+
+  #mechanicPage .mainRail.is-collapsed .rail-text {
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  #mechanicPage .mainRail.is-collapsed .rail-footer {
+    justify-items: center;
+  }
+}
+
+body.mechanic-body .mechanic-content {
+  position: static;
+  z-index: auto;
+  width: 100%;
+  max-width: none;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 1fr;
+  background: rgba(9, 13, 21, 0.96);
+  /* padding: 15px; */
+  overflow: hidden;
+}
+
+body.mechanic-body #mechanicPaymentsView {
+  align-self: start;
+  height: auto;
+  min-height: 0;
+  align-content: start;
+}
+
+body.mechanic-body #mechanicPaymentsView .mechanic-table-layout {
+  align-self: start;
+}
+
+body.mechanic-body #mechanicPaymentsView #mechanicPaymentDetail.mechanic-booking-detail {
+  margin-top: 20px;
+  min-height: 320px;
+  padding: 0px;
+  display: block;
+}
+
+body.mechanic-body #mechanicPaymentsView #mechanicPaymentDetail .mechanic-booking-card {
+  min-height: 320px;
+}
+
+body.mechanic-body #mechanicSettingsView .settings-card {
+  gap: 0;
+  background: #3e434df7;
+  height: 100%;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-accordion {
+  display: grid;
+  gap: 0;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-accordion > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-accordion > summary::-webkit-details-marker {
+  display: none;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-accordion-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-accordion-summary h4 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: normal;
+  opacity: 1;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-accordion-content {
+  display: grid;
+  gap: 0;
+  padding-top: 12px;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-accordion:not([open]) .mechanic-settings-accordion-content {
+  display: none;
+}
+
+body.mechanic-body .mechanic-content .settings-card,
+body.mechanic-body .mechanic-cert-card,
+body.mechanic-body .mechanic-tax-card,
+body.mechanic-body .mechanic-documents-card,
+body.mechanic-body .mechanic-profile-avatar-card,
+body.mechanic-body .mechanic-profile-info-card,
+body.mechanic-body .mechanic-profile-map,
+body.mechanic-body .mechanic-resolution-card,
+body.mechanic-body .mechanic-resolution-sidebar-card {
+  background: var(--dashboard-panel-bg);
+  border: 1px solid var(--dashboard-panel-border);
+  border-radius: var(--dashboard-panel-radius);
+  box-shadow: var(--dashboard-panel-shadow);
+}
+
+body.mechanic-body #mechanicAccountView {
+  min-height: 100%;
+}
+
+body.mechanic-body #mechanicAccountView .settings-card.mechanic-account-card {
+  min-height: 100%;
+  height: 100%;
+  background: #3e434df7;
+  /* align-content: start; */
+  padding: 15px;
+}
+
+body.mechanic-body #mechanicAccountView .mechanic-account-layout {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 0;
+  width: 100%;
+  min-width: 0;
+}
+
+body.mechanic-body #mechanicAccountView .user-account-panel {
+  display: grid;
+  gap: 18px;
+  width: 100%;
+  min-width: 0;
+}
+
+body.mechanic-body #mechanicAccountView .user-settings-panel-head {
+  min-height: 0;
+}
+
+body.mechanic-body #mechanicAccountView .settings-avatar {
+  background: #cfd6fb;
+  color: #44528d;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+body.mechanic-body .settings-edit-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+body.mechanic-body .settings-edit-modal.is-hidden {
+  display: none;
+}
+
+body.mechanic-body .settings-edit-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 10, 18, 0.68);
+}
+
+body.mechanic-body .settings-edit-card {
+  position: relative;
+  z-index: 1;
+  width: min(720px, 100%);
+  display: grid;
+  gap: 16px;
+  padding: 28px;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: 24px;
+  background: #111722;
+  color: #ffffff;
+}
+
+body.mechanic-body .settings-edit-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+body.mechanic-body .settings-edit-header {
+  display: grid;
+  gap: 6px;
+}
+
+body.mechanic-body .settings-edit-header h3 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+body.mechanic-body .settings-edit-header p {
+  margin: 0;
+  color: rgba(230, 236, 255, 0.78);
+}
+
+body.mechanic-body .settings-edit-field,
+body.mechanic-body .settings-edit-name-grid,
+body.mechanic-body .settings-edit-address-grid {
+  display: grid;
+  gap: 12px;
+}
+
+body.mechanic-body .settings-edit-name-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+body.mechanic-body .settings-edit-address-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body.mechanic-body .settings-edit-field span {
+  font-weight: 600;
+}
+
+body.mechanic-body .settings-edit-field input {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  background: #ffffff;
+  color: #0f1726;
+}
+
+body.mechanic-body .settings-edit-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+body.mechanic-body .settings-edit-actions .secondary,
+body.mechanic-body .settings-edit-actions .ghost {
+  color: #ffffff;
+}
+
+body.mechanic-body #mechanicAccountView .settings-avatar-lg {
+  width: 170px;
+  height: 170px;
+  border-radius: 999px;
+}
+
+body.mechanic-body #mechanicAccountView .settings-divider {
+  height: 3px;
+  background: #ffffff;
+}
+
+body.mechanic-body #mechanicAccountView .settings-meta,
+body.mechanic-body #mechanicAccountView .settings-row > div {
+  display: grid;
+  gap: 10px;
+}
+
+body.mechanic-body #mechanicAccountView .settings-row > div p {
+  margin: 0;
+  /* padding-left: 0; */
+}
+
+body.mechanic-body #mechanicAccountView .settings-row > div p.is-hidden {
+  display: none;
+}
+
+body.mechanic-body #mechanicAccountView .mechanic-account-label,
+body.mechanic-body #mechanicAccountView .mechanic-account-value {
+  display: inline-block;
+  vertical-align: top;
+}
+
+body.mechanic-body #mechanicAccountView .mechanic-account-label {
+  width: 150px;
+  padding-right: 12px;
+  margin-right: 12px;
+  border-right: 2px solid rgba(255, 255, 255, 0.72);
+  white-space: nowrap;
+}
+
+body.mechanic-body #mechanicAccountView .mechanic-account-status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 6px 18px;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+  background: #5a6f90;
+  width: fit-content;
+}
+
+body.mechanic-body #mechanicAccountView .mechanic-account-status-pill[data-status="active"] {
+  background: var(--dashboard-badge-green);
+}
+
+body.mechanic-body #mechanicAccountView .mechanic-account-status-pill[data-status="pending"] {
+  background: #5a6f90;
+}
+
+body.mechanic-body #mechanicAccountView .mechanic-account-status-pill[data-status="inactive"],
+body.mechanic-body #mechanicAccountView .mechanic-account-status-pill[data-status="disabled"],
+body.mechanic-body #mechanicAccountView .mechanic-account-status-pill[data-status="suspended"] {
+  background: var(--dashboard-badge-red);
+}
+
+body.mechanic-body #mechanicDashboardView .mechanic-dashboard-info-note {
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #3e434df7;
+  color: #ffffff;
+  line-height: 1.5;
+}
+
+body.mechanic-body #mechanicDashboardView .mechanic-dashboard-info-note .mechanic-info-request-label,
+body.mechanic-body #mechanicDashboardView .mechanic-dashboard-info-note .mechanic-info-request-note {
+  display: block;
+}
+
+body.mechanic-body #mechanicDashboardView .mechanic-dashboard-info-note .mechanic-info-request-label {
+  margin-bottom: 4px;
+}
+
+body.mechanic-body #mechanicDashboardView .mechanic-dashboard-info-note .mechanic-info-request-note {
+  opacity: 0.95;
+}
+
+body.mechanic-body #mechanicDashboardView .mechanic-dashboard-info-note .mechanic-info-request-intro,
+body.mechanic-body #mechanicDashboardView .mechanic-dashboard-info-note .mechanic-info-request-label,
+body.mechanic-body #mechanicDashboardView .mechanic-dashboard-info-note .mechanic-info-request-note {
+  display: block;
+}
+
+body.mechanic-body #mechanicDashboardView .mechanic-dashboard-info-note .mechanic-info-request-intro {
+  margin-bottom: 4px;
+}
+
+body.mechanic-body #mechanicDashboardView .mechanic-dashboard-info-note .mechanic-info-request-label {
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+
+body.mechanic-body #mechanicDashboardView .mechanic-dashboard-info-note .mechanic-info-request-note {
+  opacity: 0.95;
+}
+
+body.mechanic-body #mechanicDocumentsView .mechanic-documents-request-note,
+body.mechanic-body .documents-request-note,
+body.documents-body .documents-request-note {
+  margin: 0 0 18px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #3e434df7;
+  color: #ffffff;
+}
+
+body.mechanic-body #mechanicDocumentsView .mechanic-documents-request-note h3,
+body.mechanic-body .documents-request-note h3,
+body.documents-body .documents-request-note h3 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+}
+
+body.mechanic-body #mechanicDocumentsView .mechanic-documents-request-note p,
+body.mechanic-body .documents-request-note p,
+body.documents-body .documents-request-note p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+body.mechanic-body #mechanicDocumentsView .mechanic-documents-request-note .mechanic-info-request-label,
+body.mechanic-body #mechanicDocumentsView .mechanic-documents-request-note .mechanic-info-request-intro,
+body.mechanic-body #mechanicDocumentsView .mechanic-documents-request-note .mechanic-info-request-note,
+body.mechanic-body .documents-request-note .mechanic-info-request-intro,
+body.mechanic-body .documents-request-note .mechanic-info-request-label,
+body.mechanic-body .documents-request-note .mechanic-info-request-note,
+body.documents-body .documents-request-note .mechanic-info-request-intro,
+body.documents-body .documents-request-note .mechanic-info-request-label,
+body.documents-body .documents-request-note .mechanic-info-request-note {
+  display: block;
+}
+
+body.mechanic-body #mechanicDocumentsView .mechanic-documents-request-note .mechanic-info-request-intro,
+body.mechanic-body .documents-request-note .mechanic-info-request-intro,
+body.documents-body .documents-request-note .mechanic-info-request-intro {
+  margin-bottom: 4px;
+}
+
+body.mechanic-body #mechanicDocumentsView .mechanic-documents-request-note .mechanic-info-request-label,
+body.mechanic-body .documents-request-note .mechanic-info-request-label,
+body.documents-body .documents-request-note .mechanic-info-request-label {
+  margin-bottom: 4px;
+}
+
+body.mechanic-body #mechanicDashboardView .mechanic-dashboard-info-note .mechanic-info-request-intro,
+body.mechanic-body #mechanicDashboardView .mechanic-dashboard-info-note .mechanic-info-request-note {
+  display: block;
+}
+
+body.mechanic-body #mechanicDashboardView .mechanic-dashboard-info-note .mechanic-info-request-intro {
+  margin-bottom: 4px;
+}
+
+body.mechanic-body #mechanicDocumentsView .mechanic-documents-request-note small,
+body.mechanic-body .documents-request-note small,
+body.documents-body .documents-request-note small {
+  display: block;
+  margin-top: 8px;
+  opacity: 0.82;
+}
+
+body.mechanic-body #mechanicAccountView .settings-profile,
+body.mechanic-body #mechanicAccountView .settings-row {
+  padding-bottom: 25px;
+  border-bottom: 3px solid #ffffff;
+}
+
+body.mechanic-body #mechanicAccountView .settings-profile {
+  padding-bottom: 0;
+  border-bottom: 0;
+  /* padding-top: 0; */
+}
+
+body.mechanic-body #mechanicAccountView .settings-row:last-of-type {
+  padding-bottom: 20px;
+  border-bottom: 0;
+}
+
+body.mechanic-body #mechanicAccountView .settings-meta h4,
+body.mechanic-body #mechanicAccountView .settings-row h4,
+body.mechanic-body #mechanicAccountView .settings-profile h4 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: normal;
+  opacity: 1;
+  color: #ffffff;
+}
+
+body.mechanic-body #mechanicAccountView .settings-meta p,
+body.mechanic-body #mechanicAccountView .settings-row p,
+body.mechanic-body #mechanicAccountView .settings-profile p {
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.4;
+  opacity: 0.92;
+  color: #ffffff;
+}
+
+#mechanicBookingInformationView > .settings-card > .settings-header,
+#mechanicResolutionCenterView > .settings-card > .settings-header,
+#mechanicProcedureView > .settings-card > .settings-header,
+#mechanicPaymentsView > .settings-card > .settings-header,
+#mechanicAccountView > .settings-card > .settings-header,
+#mechanicPictureView > .settings-card > .settings-header,
+#mechanicCertificationsView > .settings-card > .settings-header,
+#mechanicTaxView > .settings-card > .settings-header,
+#mechanicDocumentsView > .settings-card > .settings-header,
+#mechanicPreferencesView > .settings-card > .settings-header,
+#mechanicTypesView > .settings-card > .settings-header,
+#mechanicSettingsView .settings-section--welcome,
+#mechanicSettingsView .settings-section--divider,
+#mechanicBookingInformationView .mechanic-dashboard-layout > .settings-header {
+  display: none;
+}
+
+body.mechanic-body .mechanic-overview-layout,
+body.mechanic-body .mechanic-dashboard-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  align-content: start;
+  /* width: min(100%, 1040px); */
+  /* margin-inline: auto; */
+}
+
+body.mechanic-body .mechanic-status-note {
+  margin: -6px 0 0;
+  color: #f3b1b1;
+  font-size: 0.95rem;
+}
+
+body.mechanic-body #mechanicDashboardView .settings-divider {
+  height: 3px;
+  background: #ffffff;
+}
+
+body.mechanic-body .mechanic-panel {
+  display: grid;
+  gap: 14px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+body.mechanic-body .mechanic-panel-card {
+  display: grid;
+  gap: 16px;
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  padding: 0px;
+}
+
+body.mechanic-body .mechanic-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+body.mechanic-body .mechanic-panel-head h2,
+body.mechanic-body .mechanic-panel-head h3,
+body.mechanic-body .mechanic-panel-head p {
+  margin: 0;
+}
+
+body.mechanic-body .mechanic-panel-head h2,
+body.mechanic-body .mechanic-panel-head h3 {
+  font-size: 1.45rem;
+  line-height: 1.15;
+}
+
+body.mechanic-body .mechanic-panel-head p {
+  font-size: 1rem;
+  line-height: 1.5;
+  text-align: right;
+}
+
+body.mechanic-body .mechanic-overview-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+body.mechanic-body .mechanic-overview-metric {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: #3e434df7;
+}
+
+body.mechanic-body .mechanic-overview-metric h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+body.mechanic-body .mechanic-overview-metric strong {
+  font-size: clamp(2rem, 3vw, 2.6rem);
+  line-height: 1;
+}
+
+body.mechanic-body .mechanic-overview-metric p,
+body.mechanic-body .mechanic-overview-bookings .settings-header p,
+body.mechanic-body .mechanic-overview-booking-copy {
+  margin: 0;
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-overview-bookings {
+  display: grid;
+  gap: 18px;
+}
+
+body.mechanic-body .mechanic-overview-booking-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+body.mechanic-body .mechanic-overview-booking-card {
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  background: #3e434df7;
+}
+
+body.mechanic-body .mechanic-overview-booking-card strong {
+  font-size: 1.05rem;
+}
+
+body.mechanic-body .mechanic-overview-booking-meta {
+  color: rgba(245, 245, 255, 0.72);
+}
+
+body.mechanic-body .mechanic-overview-booking-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+body.mechanic-body .mechanic-overview-bookings > .mechanic-overview-action {
+  justify-self: end;
+}
+
+body.mechanic-body .mechanic-overview-empty {
+  margin: 0;
+  padding: 18px;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  color: rgba(245, 245, 255, 0.72);
+}
+
+body.mechanic-body .mechanic-table-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  row-gap: 30px;
+  min-height: 0;
+  padding: 15px;
+  background: #3e434df7;
+  border-radius: 14px;
+}
+
+body.mechanic-body .mechanic-table-layout.is-empty-state {
+  grid-template-rows: auto auto auto;
+  align-content: start;
+}
+
+body.mechanic-body .mechanic-table-layout > .mechanic-table-head,
+body.mechanic-body .mechanic-table-layout > .mechanic-table-wrap,
+body.mechanic-body .mechanic-table-layout > .mechanic-table-footer {
+  position: relative;
+  min-width: 0;
+}
+
+body.mechanic-body .mechanic-table-layout > .mechanic-table-head::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -15px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+body.mechanic-body .mechanic-table-layout > .mechanic-table-footer::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -15px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+body.mechanic-body .mechanic-table-head-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.95fr) minmax(0, 0.95fr) auto;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+body.mechanic-body .mechanic-head-control {
+  position: relative;
+}
+
+body.mechanic-body .mechanic-head-control input,
+body.mechanic-body .mechanic-head-control select,
+body.mechanic-body .mechanic-bookings-export {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid rgba(180, 194, 214, 0.9);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+}
+
+body.mechanic-body .mechanic-head-control input,
+body.mechanic-body .mechanic-head-control select {
+  padding: 0 14px 0 40px;
+}
+
+body.mechanic-body .mechanic-head-control::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  width: 16px;
+  height: 16px;
+  transform: translateY(-50%);
+  opacity: 0.75;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px 16px;
+}
+
+body.mechanic-body .mechanic-head-control--search::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23556b89' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");
+}
+
+body.mechanic-body .mechanic-head-control--status::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23556b89' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m12 2 7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4Z'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E");
+}
+
+body.mechanic-body .mechanic-head-control--date::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23556b89' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M16 2v4'/%3E%3Cpath d='M8 2v4'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
+}
+
+body.mechanic-body .mechanic-head-control select {
+  appearance: none;
+  padding-right: 36px;
+}
+
+body.mechanic-body .mechanic-head-control select option {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+body.mechanic-body .mechanic-bookings-export {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 120px;
+  padding: 0 18px;
+  color: #0f172a;
+}
+
+body.mechanic-body .mechanic-bookings-export::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px 16px;
+  background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23556b89' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12'/%3E%3Cpath d='m7 8 5-5 5 5'/%3E%3Cpath d='M5 21h14'/%3E%3C/svg%3E\");
+}
+
+body.mechanic-body .mechanic-table-wrap {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+body.mechanic-body .mechanic-table {
+  width: 100%;
+  min-width: 880px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(34, 43, 58, 0.96);
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+body.mechanic-body .mechanic-table th,
+body.mechanic-body .mechanic-table td {
+  padding: 14px;
+  text-align: center;
+  color: #c8d4e8;
+}
+
+body.mechanic-body .mechanic-table tbody td {
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-table thead th {
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+body.mechanic-body .mechanic-booking-summary-row {
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+body.mechanic-body .mechanic-booking-summary-row:hover,
+body.mechanic-body .mechanic-booking-summary-row.is-active {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+body.mechanic-body .mechanic-booking-summary-row td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+body.mechanic-body .mechanic-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+body.mechanic-body .mechanic-booking-summary-reference {
+  color: #eaf0fb;
+  font-weight: 700;
+}
+
+body.mechanic-body .mechanic-booking-summary-vehicle,
+body.mechanic-body .mechanic-booking-summary-customer {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body.mechanic-body .mechanic-booking-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  width: fit-content;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-booking-status--pending { background: var(--dashboard-badge-blue); }
+body.mechanic-body .mechanic-booking-status--accepted { background: var(--dashboard-badge-green); }
+body.mechanic-body .mechanic-booking-status--declined,
+body.mechanic-body .mechanic-booking-status--expired { background: var(--dashboard-badge-gray); }
+
+body.mechanic-body .mechanic-table-footer {
+  color: #c8d4e8;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+body.mechanic-body .mechanic-table-footer-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-table-footer-meta select {
+  min-height: 38px;
+  border: 1px solid var(--dashboard-control-border);
+  border-radius: 999px;
+  background: var(--dashboard-control-bg);
+  color: var(--dashboard-control-text);
+  padding: 0 14px;
+}
+
+body.mechanic-body .mechanic-pagination {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+body.mechanic-body .mechanic-pagination button {
+  min-width: 36px;
+  min-height: 36px;
+  border: 1px solid var(--dashboard-pagination-border);
+  border-radius: 999px;
+  background: var(--dashboard-pagination-bg);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+body.mechanic-body .mechanic-pagination button.active {
+  background: var(--dashboard-pagination-active);
+  border-color: var(--dashboard-pagination-active);
+}
+
+body.mechanic-body .mechanic-booking-detail {
+  border: 0;
+  border-radius: 0px;
+  /* background: #0d1220; */
+  /* padding-top: 16px; */
+}
+
+body.mechanic-body .mechanic-certifications-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+body.mechanic-body .mechanic-cert-card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  background: #3e434df7;
+  overflow: hidden;
+}
+
+body.mechanic-body .mechanic-cert-card h3 {
+  margin: 0;
+  padding: 18px 22px;
+  font-size: 1.05rem;
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.mechanic-body .mechanic-cert-card > h3 {
+  font-size: 1.5rem;
+}
+
+body.mechanic-body .mechanic-cert-copy,
+body.mechanic-body .mechanic-cert-empty {
+  margin: 0;
+  padding: 20px 22px 0;
+  color: #ffffff;
+  line-height: 1.6;
+}
+
+body.mechanic-body .mechanic-cert-list {
+  list-style: none;
+  margin: 18px 22px 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+body.mechanic-body .mechanic-cert-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(34, 43, 58, 0.96);
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-cert-chip--empty {
+  justify-content: flex-start;
+  background: transparent;
+  padding: 0;
+  color: #d6dfef;
+}
+
+body.mechanic-body .mechanic-cert-chip-remove {
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+body.mechanic-body .mechanic-profile-info-card .mechanic-cert-chip--profile {
+  display: block;
+  background: transparent;
+  border-radius: 0;
+  padding: 0 0 0 34px;
+}
+
+body.mechanic-body .mechanic-cert-entry {
+  margin: 18px 22px 0;
+  padding: 0 0 18px;
+  /* border-left: 4px solid #1e93f2; */
+}
+
+body.mechanic-body .mechanic-cert-entry label {
+  display: block;
+  margin: 0 0 8px 16px;
+  color: #d6dfef;
+  font-size: 0.95rem;
+}
+
+body.mechanic-body .mechanic-cert-entry-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 16px;
+  padding-right: 16px;
+  flex-wrap: wrap;
+}
+
+body.mechanic-body .mechanic-cert-entry-actions select,
+body.mechanic-body .mechanic-cert-entry-actions input {
+  display: block;
+  flex: 1 1 260px;
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #ffffff;
+  color: #111827;
+}
+
+body.mechanic-body .mechanic-cert-action {
+  flex: 0 0 auto;
+  min-width: 180px;
+}
+
+body.mechanic-body .mechanic-cert-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 4px 22px 18px;
+}
+
+body.mechanic-body .mechanic-cert-status {
+  margin: 0;
+  color: #d6dfef;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+body.mechanic-body .mechanic-cert-actions .primary {
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
+  min-width: 180px;
+}
+
+body.mechanic-body .mechanic-cert-status.is-success {
+  color: #4ade80;
+}
+
+body.mechanic-body .mechanic-cert-status.is-warning {
+  color: #fbbf24;
+}
+
+body.mechanic-body .mechanic-cert-status.is-error {
+  color: #f87171;
+}
+
+body.mechanic-body .mechanic-tax-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+body.mechanic-body .mechanic-tax-card {
+  /* border: 1px solid rgba(255, 255, 255, 0.08); */
+  /* border-radius: 22px; */
+  background: #3e434df7;
+  overflow: hidden;
+  align-self: start;
+}
+
+body.mechanic-body .mechanic-tax-card h3 {
+  margin: 0;
+  padding: 18px 22px;
+  font-size: 1.05rem;
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.mechanic-body .mechanic-tax-body {
+  padding: 22px;
+}
+
+body.mechanic-body .mechanic-tax-body label {
+  display: block;
+  margin: 0 0 8px;
+  color: #d6dfef;
+  font-size: 0.95rem;
+}
+
+body.mechanic-body .mechanic-tax-body input {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #ffffff;
+  color: #111827;
+}
+
+body.mechanic-body .mechanic-tax-status {
+  margin: 14px 0 0;
+  min-height: 1.2em;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #d6dfef;
+}
+
+body.mechanic-body .mechanic-tax-status.is-success {
+  color: #4ade80;
+}
+
+body.mechanic-body .mechanic-tax-status.is-warning {
+  color: #fbbf24;
+}
+
+body.mechanic-body .mechanic-tax-status.is-error {
+  color: #f87171;
+}
+
+body.mechanic-body .mechanic-tax-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 22px 22px;
+}
+
+body.mechanic-body .mechanic-tax-actions .primary {
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
+  min-width: 180px;
+}
+
+body.mechanic-body .mechanic-documents-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 25px;
+}
+
+body.mechanic-body .mechanic-documents-copy p {
+  /* margin: 0 0 20px; */
+  color: #ffffff;
+  line-height: 1.6;
+  font-size: 1.30rem;
+}
+
+body.mechanic-body .mechanic-documents-copy ul {
+  margin: 0;
+  padding-left: 22px;
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-documents-copy li + li {
+  margin-top: 16px;
+}
+
+body.mechanic-body .mechanic-documents-copy li {
+  color: #ffffff;
+  font-size: 1.18rem;
+  font-weight: 800;
+  line-height: 1.6;
+  margin-top: 20px;
+}
+
+body.mechanic-body .mechanic-documents-copy li::marker {
+  color: #1e93f2;
+}
+
+body.mechanic-body .mechanic-documents-card {
+  background: #3e434df7;
+  overflow: hidden;
+  align-self: start;
+}
+
+body.mechanic-body .mechanic-documents-card h3 {
+  margin: 0;
+  padding: 18px 22px;
+  font-size: 1.05rem;
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.mechanic-body .mechanic-documents-body {
+  padding: 22px;
+  display: grid;
+  gap: 18px;
+}
+
+body.mechanic-body .mechanic-documents-upload-list {
+  display: grid;
+  gap: 10px;
+}
+
+body.mechanic-body .mechanic-documents-upload-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  background: rgba(34, 43, 58, 0.96);
+}
+
+body.mechanic-body .mechanic-documents-upload-name {
+  min-width: 0;
+  color: #ffffff;
+  font-weight: 600;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.mechanic-body .mechanic-documents-upload-name:hover {
+  text-decoration: underline;
+}
+
+body.mechanic-body .mechanic-documents-upload-state {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+body.mechanic-body .mechanic-documents-upload-state.is-valid {
+  background: rgba(61, 187, 97, 0.18);
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-documents-upload-state.is-pending {
+  background: rgba(90, 111, 144, 0.22);
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-documents-upload-state.is-invalid {
+  background: rgba(213, 84, 84, 0.18);
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-documents-upload-status {
+  margin: 0;
+  color: #d6dfef;
+}
+
+body.mechanic-body .mechanic-documents-body input[type="file"] {
+  color: #d6dfef;
+}
+
+body.mechanic-body .mechanic-documents-body .primary {
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
+  min-width: 180px;
+}
+
+body.mechanic-body .mechanic-types-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+body.mechanic-body .mechanic-types-copy h3 {
+  margin: 0 0 24px;
+  font-size: 2rem;
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-types-copy p {
+  margin: 0 0 20px;
+  color: #ffffff;
+  line-height: 1.65;
+  max-width: 980px;
+}
+
+body.mechanic-body .mechanic-types-card {
+  display: grid;
+  gap: 0;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  background: #3e434df7;
+  overflow: hidden;
+}
+
+body.mechanic-body .mechanic-types-group + .mechanic-types-group {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.mechanic-body .mechanic-types-row {
+  width: 100%;
+  min-height: 74px;
+  padding: 0 18px;
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  cursor: pointer;
+}
+
+body.mechanic-body .mechanic-types-group > summary {
+  list-style: none;
+}
+
+body.mechanic-body .mechanic-types-group > summary::-webkit-details-marker {
+  display: none;
+}
+
+body.mechanic-body .mechanic-types-row-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+body.mechanic-body .mechanic-types-check {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body.mechanic-body .mechanic-types-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: rgba(34, 43, 58, 0.96);
+}
+
+body.mechanic-body .mechanic-types-arrow {
+  font-size: 2rem;
+  line-height: 1;
+  color: #ffffff;
+  transition: transform 160ms ease;
+}
+
+body.mechanic-body .mechanic-types-group[open] .mechanic-types-arrow {
+  transform: rotate(90deg);
+}
+
+body.mechanic-body .mechanic-types-group-body {
+  padding: 0 18px 14px 18px;
+  display: grid;
+  gap: 10px;
+}
+
+body.mechanic-body .mechanic-types-subcategory {
+  display: grid;
+  gap: 8px;
+}
+
+body.mechanic-body .mechanic-types-subtitle {
+  padding: 8px 10px 2px;
+  color: #d6dfef;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+body.mechanic-body .mechanic-types-service {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: rgba(34, 43, 58, 0.96);
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-types-service input {
+  width: 16px;
+  height: 16px;
+  accent-color: #ffffff;
+}
+
+body.mechanic-body .mechanic-types-service input:not(:checked) + span {
+  opacity: 0.72;
+}
+
+body.mechanic-body .mechanic-types-service:has(input:not(:checked)) {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body.mechanic-body .mechanic-types-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.mechanic-body #mechanicTypesStatus {
+  margin: 0;
+  color: #d6dfef;
+}
+
+body.mechanic-body .mechanic-types-actions .primary {
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
+  min-width: 220px;
+}
+
+.mechanic-settings-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 25px;
+  align-items: start;
+  align-content: start;
+  padding: 20px;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-panel {
+  display: grid;
+  gap: 20px;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-subview {
+  display: grid;
+  gap: 22px;
+  align-content: start;
+  align-items: start;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+body.mechanic-body #mechanicSettingsPanelTitle {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  background: rgba(14, 19, 28, 0.92);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-tab-link {
+  min-height: 34px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #dce5f3;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-tab-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-tab-link.active {
+  background: var(--dashboard-tab-active-bg);
+  border-color: var(--dashboard-tab-active-border);
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+body.mechanic-body #mechanicSettingsView .settings-divider {
+  background: #ffffff;
+  opacity: 1;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-photo-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 16px;
+}
+
+body.mechanic-body #mechanicSettingsView .settings-avatar {
+  background: #d5def7;
+  color: #334085;
+}
+
+body.mechanic-body #mechanicSettingsView .settings-avatar-lg {
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+body.mechanic-body #mechanicSettingsView .settings-avatar-lg img {
+  width: 170px;
+  height: 170px;
+  object-fit: cover;
+  object-position: center top;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-photo-row .ghost {
+  justify-self: end;
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
+  width: 104px;
+  align-self: center;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-profile,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 16px;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-profile h4,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-profile p,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-row h4,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-row p,
+body.mechanic-body #mechanicSettingsView .form-error {
+  color: #ffffff;
+}
+
+body.mechanic-body #mechanicSettingsView .secondary,
+body.mechanic-body #mechanicSettingsView .ghost {
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-profile h4,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-row h4,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-label {
+  font-size: 1.4rem;
+  text-transform: none;
+  letter-spacing: normal;
+  opacity: 1;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-profile p,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-row p,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-copy p {
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1.4;
+  opacity: 0.92;
+}
+
+body.mechanic-body #mechanicSettingsView .settings-meta,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-row > div,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-copy {
+  display: grid;
+  gap: 10px;
+}
+
+body.mechanic-body #mechanicAccountView .mechanic-full-name-grid,
+body.mechanic-body #mechanicSettingsView .mechanic-full-name-grid {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  color: #ffffff;
+}
+
+body.mechanic-body #mechanicAccountView .mechanic-full-name-row,
+body.mechanic-body #mechanicSettingsView .mechanic-full-name-row {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  column-gap: 14px;
+  align-items: baseline;
+  width: 100%;
+  min-width: 0;
+}
+
+body.mechanic-body #mechanicAccountView .mechanic-full-name-label,
+body.mechanic-body #mechanicAccountView .mechanic-full-name-value,
+body.mechanic-body #mechanicSettingsView .mechanic-full-name-label,
+body.mechanic-body #mechanicSettingsView .mechanic-full-name-value {
+  font-size: 1.2rem;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-list {
+  display: grid;
+  gap: 14px;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  min-height: 44px;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-copy {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-label,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-copy p {
+  color: #ffffff;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-label {
+  width: 110px;
+  flex: 0 0 110px;
+  padding-right: 12px;
+  margin-right: 12px;
+  border-right: 2px solid rgba(255, 255, 255, 0.72);
+  font-size: 1rem;
+  line-height: 1.2;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-label::after {
+  content: ":";
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-copy p {
+  margin: 0;
+  color: #ffffff;
+  flex: 1 1 auto;
+  font-size: 1.05rem;
+  line-height: 1.35;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body.mechanic-body #mechanicSettingsView .mechanic-settings-profile .secondary,
+body.mechanic-body #mechanicSettingsView .mechanic-settings-row > .secondary {
+  width: 104px;
+  align-self: center;
+}
+
+body.mechanic-body #mechanicSettingsNotifications .notifications-card {
+  display: grid;
+  gap: 28px;
+  padding: 24px;
+  border: 2px solid #ffffff;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  background: rgba(34, 43, 58, 0.96);
+}
+
+body.mechanic-body #mechanicSettingsNotifications {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: min-content;
+  height: auto;
+  min-height: 0;
+  align-self: start;
+  justify-self: stretch;
+  align-content: start;
+  justify-content: start;
+  align-items: start;
+  justify-items: stretch;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+body.mechanic-body #mechanicSettingsNotifications .notifications-card {
+  align-self: start;
+  justify-self: stretch;
+  width: 100%;
+  margin-top: 0;
+  min-height: 0;
+}
+
+body.mechanic-body #mechanicSettingsNotifications,
+body.mechanic-body #mechanicSettingsNotifications .notifications-card,
+body.mechanic-body #mechanicSettingsNotifications .notifications-card-head,
+body.mechanic-body #mechanicSettingsNotifications .notifications-check,
+body.mechanic-body #mechanicSettingsNotifications .notifications-actions {
+  height: auto;
+}
+
+body.mechanic-body #mechanicSettingsNotifications .notifications-card-head h3,
+body.mechanic-body #mechanicSettingsNotifications .notifications-check {
+  color: #ffffff;
+}
+
+body.mechanic-body #mechanicSettingsNotifications .notifications-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+body.mechanic-body #mechanicSettingsNotifications .notifications-check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  min-height: 18px;
+  margin-top: 2px;
+  accent-color: #5a6f90;
+  flex: 0 0 18px;
+}
+
+body.mechanic-body #mechanicSettingsNotifications .notifications-check span {
+  color: #ffffff !important;
+  font-size: 1.02rem;
+}
+
+body.mechanic-body #mechanicSettingsNotifications .notifications-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-self: stretch;
+  margin-top: 4px;
+}
+
+body.mechanic-body #mechanicSettingsSecurity {
+  gap: 26px;
+}
+
+body.mechanic-body #mechanicSettingsSecurity .security-card {
+  display: grid;
+  gap: 26px;
+  padding: 24px;
+  border: 2px solid #ffffff;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  background: rgba(34, 43, 58, 0.96);
+}
+
+body.mechanic-body #mechanicSettingsSecurity .security-card-head h3,
+body.mechanic-body #mechanicSettingsSecurity .security-field span,
+body.mechanic-body #mechanicSettingsSecurity .security-check {
+  color: #ffffff;
+}
+
+body.mechanic-body #mechanicSettingsSecurity .security-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1rem;
+}
+
+body.mechanic-body #mechanicSettingsSecurity .security-check input {
+  width: 20px;
+  height: 20px;
+}
+
+body.mechanic-body #mechanicSettingsSecurity .security-form {
+  width: min(500px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 18px;
+}
+
+body.mechanic-body #mechanicSettingsSecurity .security-field {
+  display: grid;
+  gap: 8px;
+}
+
+body.mechanic-body #mechanicSettingsSecurity .security-field input {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+body.mechanic-body #mechanicSettingsSecurity .security-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+body.mechanic-body #mechanicSettingsSecurity .security-2fa-grid {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+}
+
+body.mechanic-body #mechanicSecurity2faEnable {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.62);
+}
+
+body.mechanic-body #mechanicSecurity2faEnable.is-active {
+  background: #4f627b;
+  border-color: #4f627b;
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+body.mechanic-body .mechanic-resolution-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+body.mechanic-body .mechanic-resolution-detail {
+  display: grid;
+  gap: 22px;
+}
+
+body.mechanic-body .mechanic-resolution-detail-head {
+  display: flex;
+  align-items: center;
+}
+
+body.mechanic-body .mechanic-resolution-detail-head h3 {
+  margin: 0 0 0 24px;
+}
+
+body.mechanic-body .settings-card.mechanic-caseView {
+  display: grid;
+  gap: 22px;
+  background: #3e434df7;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+  margin-top: 6px;
+  padding: 20px;
+}
+
+body.mechanic-body #mechanicResolutionCaseView .mechanic-detail-card {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-areas: "card sidebar";
+  gap: 24px;
+  align-items: start;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+body.mechanic-body #mechanicResolutionCaseView .mechanic-resolution-thread {
+  grid-area: card;
+  display: grid;
+  gap: 18px;
+}
+
+body.mechanic-body #mechanicResolutionCaseView .mechanic-resolution-sidebar {
+  grid-area: sidebar;
+  background: #0d1220;
+}
+
+body.mechanic-body .mechanic-resolution-thread-title {
+  display: grid;
+  justify-items: center;
+}
+
+body.mechanic-body .mechanic-resolution-thread-title span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: #2f7d4f;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+body.mechanic-body .mechanic-resolution-back {
+  justify-self: start;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  background: #5a6f90;
+  color: #d6dfef;
+  font: inherit;
+  cursor: pointer;
+}
+
+body.mechanic-body .mechanic-resolution-card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 22px;
+  background: #3e434df7;
+  overflow: hidden;
+}
+
+body.mechanic-body .mechanic-resolution-card h3 {
+  margin: 0;
+  padding: 18px 22px;
+  font-size: 1.05rem;
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.mechanic-body .mechanic-resolution-card-body {
+  padding: 22px;
+  display: grid;
+  gap: 18px;
+}
+
+body.mechanic-body .mechanic-resolution-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+body.mechanic-body .mechanic-resolution-tab {
+  min-height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: var(--dashboard-tab-bg);
+  color: var(--dashboard-tab-text);
+  cursor: pointer;
+}
+
+body.mechanic-body .mechanic-resolution-tab.is-active {
+  background: rgba(34, 43, 58, 0.96);
+  color: #ffffff;
+  border-color: var(--dashboard-tab-active-border);
+}
+
+body.mechanic-body .mechanic-resolution-table {
+  display: grid;
+  gap: 12px;
+}
+
+body.mechanic-body .mechanic-resolution-table-head,
+body.mechanic-body .mechanic-resolution-table-row {
+  display: grid;
+  grid-template-columns: 150px 150px 160px minmax(0, 1fr) 80px;
+  gap: 16px;
+  align-items: center;
+}
+
+body.mechanic-body .mechanic-resolution-table-head {
+  color: #d6dfef;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+body.mechanic-body .mechanic-resolution-table-row {
+  min-height: 56px;
+  padding: 12px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-resolution-status {
+  justify-self: start;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: #2f7d4f;
+  color: #ffffff;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+body.mechanic-body .mechanic-resolution-link {
+  border: 0;
+  background: transparent;
+  color: #ffff;
+  font: inherit;
+  cursor: pointer;
+}
+
+body.mechanic-body .mechanic-resolution-copy {
+  margin: 0;
+  color: #d6dfef;
+  line-height: 1.6;
+}
+
+body.mechanic-body .mechanic-resolution-field {
+  display: grid;
+  gap: 10px;
+}
+
+body.mechanic-body .mechanic-resolution-field span {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+body.mechanic-body .mechanic-resolution-field select {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #ffffff;
+  color: #111827;
+}
+
+body.mechanic-body .mechanic-resolution-notice {
+  padding: 18px;
+  border-radius: 10px;
+  background: #5d4b12;
+  color: #f6e3a5;
+}
+
+body.mechanic-body .mechanic-resolution-case {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 0.9fr);
+  grid-template-areas: "thread sidebar";
+  gap: 24px;
+  align-items: start;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+body.mechanic-body .mechanic-resolution-thread {
+  grid-area: thread;
+  display: grid;
+  gap: 18px;
+}
+
+body.mechanic-body .mechanic-resolution-thread-copy {
+  margin: 0;
+  color: #d6dfef;
+  line-height: 1.6;
+}
+
+body.mechanic-body #mechanicResolutionMessages {
+  display: grid;
+  gap: 18px;
+}
+
+body.mechanic-body .mechanic-resolution-message {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+}
+
+body.mechanic-body .mechanic-resolution-message.is-customer {
+  justify-items: start;
+}
+
+body.mechanic-body .mechanic-resolution-message.is-mechanic {
+  justify-items: end;
+}
+
+body.mechanic-body .mechanic-resolution-message-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+body.mechanic-body .mechanic-resolution-message.is-customer .mechanic-resolution-message-row {
+  flex-direction: row-reverse;
+}
+
+body.mechanic-body .mechanic-resolution-message-avatar {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  background: #cfd8e8;
+  color: #1b1f28;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+body.mechanic-body .mechanic-resolution-message-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+body.mechanic-body .mechanic-resolution-message-content {
+  min-width: 0;
+  flex: 1 1 auto;
+  display: grid;
+  gap: 8px;
+}
+
+body.mechanic-body .mechanic-resolution-message.is-customer .mechanic-resolution-message-content {
+  align-items: flex-end;
+}
+
+body.mechanic-body .mechanic-resolution-bubble {
+  width: min(720px, 100%);
+  padding: 18px;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1b1f28;
+  line-height: 1.55;
+}
+
+body.mechanic-body .mechanic-resolution-bubble p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+body.mechanic-body .mechanic-resolution-message.is-mechanic .mechanic-resolution-bubble {
+  background: #eceff4;
+}
+
+body.mechanic-body .mechanic-resolution-message-meta {
+  color: #b8c5da;
+  font-size: 0.9rem;
+}
+
+body.mechanic-body .mechanic-resolution-compose {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  /* border: 1px solid rgba(255, 255, 255, 0.08); */
+  border-radius: 14px;
+  /* background: rgba(255, 255, 255, 0.03); */
+}
+
+body.mechanic-body .mechanic-resolution-compose textarea {
+  width: 100%;
+  min-height: 140px;
+  resize: vertical;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #ffffff;
+  color: #111827;
+}
+
+body.mechanic-body .mechanic-resolution-compose-actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+body.mechanic-body .mechanic-resolution-compose-actions-right {
+  display: grid;
+  justify-items: end;
+  gap: 10px;
+  margin-left: auto;
+}
+
+body.mechanic-body .mechanic-resolution-compose-actions-right .secondary,
+body.mechanic-body .mechanic-resolution-compose-actions-right .primary {
+  min-width: 150px;
+}
+
+body.mechanic-body .mechanic-resolution-compose-actions-right #mechanicResolutionCaseAttachBtn.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 8px 12px;
+  min-height: 36px;
+  border-radius: 8px;
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+body.mechanic-body .mechanic-resolution-compose-preview {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  max-width: 340px;
+}
+
+body.mechanic-body .mechanic-resolution-compose-preview.is-hidden {
+  display: none;
+}
+
+body.mechanic-body .mechanic-resolution-compose-file {
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 12px;
+  background: rgba(13, 18, 32, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #eaf0fb;
+}
+
+body.mechanic-body .mechanic-resolution-compose-file img {
+  width: 160px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+body.mechanic-body .mechanic-resolution-compose-file-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+body.mechanic-body .mechanic-resolution-message-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+body.mechanic-body .mechanic-resolution-message-attachment {
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 12px;
+  background: rgba(13, 18, 32, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #eaf0fb;
+  max-width: 180px;
+}
+
+body.mechanic-body .mechanic-resolution-message-attachment img {
+  width: 160px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+body.mechanic-body .mechanic-resolution-message-attachment a,
+body.mechanic-body .mechanic-resolution-message-attachment span {
+  color: #eaf0fb;
+  text-decoration: none;
+  word-break: break-word;
+}
+
+body.mechanic-body .mechanic-resolution-sidebar-card {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+body.mechanic-body .mechanic-resolution-sidebar-card h4 {
+  margin: 0;
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-resolution-sidebar {
+  grid-area: sidebar;
+  display: grid;
+  align-self: start;
+}
+
+body.mechanic-body .mechanic-resolution-sidebar-row {
+  display: grid;
+  gap: 6px;
+}
+
+body.mechanic-body .mechanic-resolution-sidebar-row strong {
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-resolution-sidebar-row span {
+  color: #d6dfef;
+  line-height: 1.5;
+}
+
+body.mechanic-body .mechanic-resolution-booking {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(34, 43, 58, 0.96);
+}
+
+body.mechanic-body #mechanicResolutionBookings {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+body.mechanic-body .mechanic-resolution-booking-head {
+  padding: 16px 18px;
+  color: #ffffff;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.mechanic-body .mechanic-resolution-booking-body {
+  padding: 18px;
+  display: grid;
+  gap: 16px;
+}
+
+body.mechanic-body .mechanic-resolution-booking-row {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+body.mechanic-body .mechanic-resolution-booking-row strong {
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-resolution-booking-row span {
+  color: #ffffff;
+  line-height: 1.5;
+}
+
+body.mechanic-body .mechanic-resolution-booking .primary {
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
+  margin: 0 18px 18px;
+}
+
+@media (max-width: 900px) {
+  body.mechanic-body #mechanicResolutionBookings {
+    grid-template-columns: 1fr;
+  }
+
+  body.mechanic-body .mechanic-overview-metrics,
+  body.mechanic-body .mechanic-overview-booking-list {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  body.mechanic-body .mechanic-resolution-table-head,
+  body.mechanic-body .mechanic-resolution-table-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  body.mechanic-body #mechanicResolutionCaseView .mechanic-detail-card {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "card"
+      "sidebar";
+  }
+}
+
+@media (max-width: 768px) {
+  body.mechanic-body .main-header.general-header .mechanic-header-menu {
+    display: none !important;
+  }
+
+  body.mechanic-body .mechanic-header-menu-toggle {
+    display: inline-grid !important;
+    gap: 5px;
+    width: 42px;
+    height: 42px;
+    place-content: center;
+    margin-left: auto;
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+    cursor: pointer;
+  }
+
+  body.mechanic-body .mechanic-header-menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+  }
+
+  body.mechanic-body.mechanic-mobile-menu-open {
+    overflow: hidden;
+  }
+
+  body.mechanic-body .page-shell-content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  #mechanicPage .rail-base {
+    display: none !important;
+  }
+
+  body.mechanic-body .mechanic-mobile-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    display: block !important;
+    opacity: 0;
+    pointer-events: none;
+    background: rgba(7, 12, 21, 0.55);
+    z-index: 80;
+    transition: opacity 0.2s ease;
+  }
+
+  body.mechanic-body .mechanic-mobile-menu-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  body.mechanic-body .mechanic-mobile-menu {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 90;
+    display: grid !important;
+    grid-template-rows: auto 1fr auto;
+    width: min(82vw, 360px);
+    padding: 18px;
+    background: #ffffff;
+    color: #0f172a;
+    transform: translateX(-104%);
+    transition: transform 0.22s ease;
+    box-shadow: 24px 0 60px rgba(0, 0, 0, 0.24);
+  }
+
+  body.mechanic-body .mechanic-mobile-menu.is-open {
+    transform: translateX(0);
+  }
+
+  body.mechanic-body .mechanic-mobile-menu-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 22px;
+  }
+
+  body.mechanic-body .mechanic-mobile-name {
+    display: inline-flex;
+    align-items: center;
+    color: #0f172a;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 1rem;
+  }
+
+  body.mechanic-body .mechanic-mobile-menu-nav {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+  }
+
+  body.mechanic-body .mechanic-mobile-menu-link,
+  body.mechanic-body .mechanic-mobile-signout {
+    appearance: none;
+    border: 0;
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 14px;
+    background: transparent;
+    color: #0f172a;
+    text-align: left;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  body.mechanic-body .mechanic-mobile-menu-link.active {
+    background: #111827;
+    color: #ffffff;
+    border-radius: 8px;
+  }
+
+  body.mechanic-body .mechanic-mobile-signout {
+    border-top: 1px solid rgba(15, 23, 42, 0.12);
+    color: #0f172a;
+  }
+
+  #mechanicPage.mechanic-layout {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  #mechanicPage.mainLayout {
+    grid-template-columns: 1fr !important;
+  }
+
+  #mechanicPage .mechanic-rail-toggle {
+    display: none !important;
+  }
+
+  #mechanicPage .mainSection {
+    border-left: 2px solid #ffffff;
+    border-radius: 0;
+  }
+
+  #mechanicPage .mechanicContent {
+    padding: 10px;
+  }
+
+  body.mechanic-body .mechanic-overview-metrics,
+  body.mechanic-body .mechanic-overview-booking-list {
+    grid-template-columns: 1fr;
+  }
+
+  body.mechanic-body .mechanic-panel-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #mechanicPage .mechanic-dashboard-hero .settings-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  #mechanicPage .mechanic-dashboard-hero .settings-header .settings-header-aside {
+    width: auto;
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  #mechanicPage .mechanic-dashboard-hero {
+    border-radius: 0;
+  }
+
+  .mechanic-settings-layout {
+    grid-template-columns: 1fr;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-panel-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-tabs {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-actions {
+    justify-items: stretch;
+  }
+}
+
+body.mechanic-body .mechanic-header-menu {
+  position: relative;
+}
+
+body.mechanic-body .mechanic-header-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: inherit;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+body.mechanic-body .mechanic-header-menu-btn:hover {
+  background: var(--brand-blue);
+  border-color: var(--brand-blue);
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-header-menu-arrow {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+body.mechanic-body .mechanic-header-menu-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 240px;
+  display: grid;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 18px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+  z-index: 30;
+  overflow: hidden;
+}
+
+body.mechanic-body .mechanic-header-menu-item {
+  border: none;
+  background: transparent;
+  text-align: center;
+  padding: 14px 18px;
+  color: #111827;
+  cursor: pointer;
+}
+
+body.mechanic-body .mechanic-header-menu-item:hover {
+  background: rgba(15, 23, 42, 0.06);
+}
+
+body.mechanic-body .mechanic-header-menu-toggle,
+body.mechanic-body .mechanic-mobile-menu,
+body.mechanic-body .mechanic-mobile-menu-backdrop {
+  display: none;
+}
+
+body.mechanic-body .mechanic-bookings-empty {
+  margin: 0;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  background: rgba(20, 27, 41, 0.72);
+  color: #d9e3f3;
+}
+
+body.mechanic-body .mechanic-booking-card {
+  display: grid;
+  gap: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  background: #3e434df7;
+  overflow: hidden;
+  height: stretch;
+}
+
+body.mechanic-body .mechanic-booking-topbar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+body.mechanic-body .mechanic-booking-topbar-status {
+  justify-self: start;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: #2f7d4f;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+body.mechanic-body .mechanic-booking-topbar-status[data-status="pending"] {
+  background: var(--dashboard-badge-blue);
+}
+
+body.mechanic-body .mechanic-booking-topbar-status[data-status="accepted"],
+body.mechanic-body .mechanic-booking-topbar-status[data-status="completed"] {
+  background: var(--dashboard-badge-green);
+}
+
+body.mechanic-body .mechanic-booking-topbar-status[data-status="accepted"] {
+  background: #5a6f90;
+}
+
+body.mechanic-body .mechanic-booking-card .mechanic-booking-topbar-status[data-status="completed"] {
+  background: var(--dashboard-badge-green) !important;
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-booking-topbar-status[data-status="declined"],
+body.mechanic-body .mechanic-booking-topbar-status[data-status="expired"],
+body.mechanic-body .mechanic-booking-topbar-status[data-status="cancelled"],
+body.mechanic-body .mechanic-booking-topbar-status[data-status="canceled"] {
+  background: var(--dashboard-badge-red);
+}
+
+body.mechanic-body .mechanic-booking-topbar-status[data-status="declined"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  width: fit-content;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-booking-topbar-reference {
+  justify-self: center;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+body.mechanic-body .mechanic-booking-topbar-date {
+  justify-self: end;
+  color: #a9b6cb;
+  font-size: 0.9rem;
+}
+
+body.mechanic-body .mechanic-booking-topbar-actions {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #1e93f2;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+body.mechanic-body .mechanic-booking-topbar-actions:hover {
+  background: #1678c9;
+}
+
+body.mechanic-body .mechanic-booking-topbar-menu {
+  position: relative;
+}
+
+body.mechanic-body .mechanic-booking-actions-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: #171c24;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.24);
+  z-index: 5;
+}
+
+body.mechanic-body .mechanic-booking-actions-item {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #ffffff;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+body.mechanic-body .mechanic-booking-actions-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body.mechanic-body .mechanic-booking-card-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 18px;
+}
+
+body.mechanic-body .mechanic-booking-card-head h4,
+body.mechanic-body .mechanic-booking-meta strong {
+  margin: 0;
+  color: #eef3fc;
+}
+
+body.mechanic-body .mechanic-booking-meta {
+  display: grid;
+  gap: 4px;
+  color: #b8c5da;
+}
+
+body.mechanic-body .mechanic-booking-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 96px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+body.mechanic-body .mechanic-booking-status[data-status="pending"] {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+}
+
+body.mechanic-body .mechanic-booking-status[data-status="accepted"] {
+  background: rgba(34, 197, 94, 0.18);
+  color: #5a6f90;
+}
+
+body.mechanic-body .mechanic-booking-status[data-status="declined"],
+body.mechanic-body .mechanic-booking-status[data-status="expired"] {
+  background: rgba(239, 68, 68, 0.18);
+  color: #f87171;
+}
+
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--pending {
+  background: var(--dashboard-badge-blue);
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--accepted {
+  background: #5a6f90;
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--completed {
+  background: var(--dashboard-badge-green);
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-table .mechanic-booking-status.mechanic-booking-status--accepted,
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--accepted {
+  background: #5a6f90;
+  color: #ffffff;
+}
+
+span.mechanic-booking-status.mechanic-booking-status--accepted {
+    background: #5a6f90;
+}
+
+body.mechanic-body .mechanic-table .mechanic-booking-status.mechanic-booking-status--completed {
+  background: var(--dashboard-badge-green);
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--paid {
+  background: var(--dashboard-badge-green);
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-offer-decision--success {
+  background: var(--dashboard-badge-green);
+  border-color: var(--dashboard-badge-green);
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--declined,
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--expired,
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--cancelled,
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--canceled,
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--failed,
+body.mechanic-body .mechanic-booking-status.mechanic-booking-status--refunded {
+  background: var(--dashboard-badge-red);
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-booking-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 18px;
+  color: #d9e3f3;
+  padding: 20px 18px;
+}
+
+body.mechanic-body .mechanic-booking-items {
+  display: grid;
+  gap: 8px;
+  padding: 0 18px;
+}
+
+body.mechanic-body .mechanic-booking-decision-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 0 18px 18px;
+}
+
+body.mechanic-body .mechanic-offer-state-copy {
+  margin: 0;
+  color: #a9b6cb;
+}
+
+body.mechanic-body .mechanic-booking-row-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+body.mechanic-body .mechanic-booking-row-state {
+  color: #a9b6cb;
+  font-size: 0.9rem;
+}
+
+body.mechanic-body .mechanic-offer-table-action,
+body.mechanic-body .mechanic-offer-decision {
+  min-width: 92px;
+}
+
+body.mechanic-body .mechanic-offer-table-action--danger,
+body.mechanic-body .mechanic-offer-decision--danger {
+  background: var(--dashboard-badge-red);
+  border-color: var(--dashboard-badge-red);
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-booking-item {
+  color: #d9e3f3;
+}
+
+body.mechanic-body .mechanic-completion-card {
+  display: grid;
+  gap: 14px;
+  margin: 0 18px 18px;
+  padding: 18px;
+  /* border: 1px solid rgba(255, 255, 255, 0.12); */
+  border-radius: 12px;
+  /* background: rgba(9, 13, 21, 0.42); */
+}
+
+body.mechanic-body .mechanic-cancel-card {
+  display: grid;
+  gap: 14px;
+  margin: 0 18px 18px;
+  padding: 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #0d1220;
+}
+
+body.mechanic-body .mechanic-completion-card-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+body.mechanic-body .mechanic-completion-card-head h4 {
+  margin: 0 0 6px;
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-completion-card-head p {
+  margin: 0;
+  color: #a9b6cb;
+}
+
+body.mechanic-body .mechanic-completion-field {
+  display: grid;
+  gap: 8px;
+  color: #eef3fc;
+  font-weight: 600;
+}
+
+body.mechanic-body .mechanic-completion-field--photos {
+  margin-bottom: 2px;
+}
+
+body.mechanic-body .mechanic-completion-field input[type="file"] {
+  color: #d9e3f3;
+}
+
+body.mechanic-body .mechanic-completion-file-picker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+body.mechanic-body .mechanic-completion-global-picker {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+body.mechanic-body .mechanic-completion-file-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 140px;
+  cursor: pointer;
+  background: #5a6f90;
+  border-color: #5a6f90;
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-completion-close,
+body.mechanic-body .mechanic-completion-add-part,
+body.mechanic-body .mechanic-completion-remove-part {
+  background: #5a6f90;
+  border-color: #5a6f90;
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-completion-actions .primary {
+  background: #5a6f90;
+  border-color: #5a6f90;
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-completion-file-summary {
+  color: #d9e3f3;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+body.mechanic-body .mechanic-completion-photos-preview {
+  display: grid;
+  gap: 14px;
+}
+
+body.mechanic-body .mechanic-completion-photos-preview.is-empty {
+  grid-template-columns: 1fr;
+}
+
+body.mechanic-body .mechanic-completion-photos-preview.is-empty p {
+  margin: 0;
+  color: #a9b6cb;
+}
+
+body.mechanic-body .mechanic-completion-photos-summary {
+  margin: 0;
+  color: #d9e3f3;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+body.mechanic-body .mechanic-completion-photos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 14px;
+}
+
+body.mechanic-body .mechanic-completion-photo-thumb {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+body.mechanic-body .mechanic-completion-photo-thumb img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(12, 18, 29, 0.92);
+}
+
+body.mechanic-body .mechanic-completion-photo-thumb figcaption {
+  color: #d9e3f3;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+body.mechanic-body .mechanic-completion-parts-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+body.mechanic-body .mechanic-completion-parts {
+  display: grid;
+  gap: 10px;
+}
+
+body.mechanic-body .mechanic-completion-part-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px auto;
+  gap: 10px;
+}
+
+body.mechanic-body .mechanic-completion-part-input {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1f2937;
+  font: inherit;
+}
+
+body.mechanic-body .mechanic-completion-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+body.mechanic-body .mechanic-offer-cancel-toggle {
+  background: var(--dashboard-badge-red);
+  border-color: var(--dashboard-badge-red);
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-booking-item span {
+  color: #b8c5da;
+}
+
+body.mechanic-body .mechanic-booking-actions {
+  display: flex;
+  gap: 10px;
+  padding: 0 18px 18px;
+}
+
+body.mechanic-body .mechanic-booking-actions button {
+  min-width: 120px;
+}
+
+body.mechanic-body .mechanic-dashboard-layout .settings-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+body.mechanic-body .mechanic-dashboard-layout .user-welcome-corner-wrap {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+}
+
+body.mechanic-body .mechanic-dashboard-layout .user-welcome-corner,
+body.mechanic-body .mechanic-dashboard-layout .user-welcome-corner-subtitle {
+  margin: 0;
+}
+
+body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-divider {
+  height: 2px;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+body.mechanic-body .mechanic-content .settings-card.mechanic-dashboard-card {
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+body.mechanic-body .mechanic-content .mechanic-dashboard-card .mechanic-settings-row {
+  /* border-bottom: 2px solid rgba(255, 255, 255, 0.24); */
+  /* padding-bottom: 14px; */
+}
+
+body.mechanic-body .mechanic-content .settings-header h2,
+body.mechanic-body .mechanic-content .mechanic-dashboard-card .mechanic-settings-row h4,
+body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-meta h4 {
+  color: #eaf0fb;
+}
+
+body.mechanic-body .mechanic-content .settings-header p,
+body.mechanic-body .mechanic-content .mechanic-dashboard-card .mechanic-settings-row p,
+body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-meta p,
+body.mechanic-body .mechanic-content .mechanic-note,
+body.mechanic-body .mechanic-content .subtle,
+body.mechanic-body .mechanic-content label span {
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-content .mechanic-id,
+body.mechanic-body .mechanic-content .mechanic-id span {
+  color: #eef3fc;
+}
+
+body.mechanic-body .mechanic-content form {
+  display: grid;
+  gap: 12px;
+  /* background: #3e434df7; */
+}
+
+body.mechanic-body .mechanic-content input[type="password"] {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(18, 25, 39, 0.95);
+  color: #eef3fc;
+  padding: 10px 12px;
+}
+
+body.mechanic-body .mechanic-content .mechanic-dashboard-card .settings-avatar {
+  background: #d5def7;
+  color: #334085;
+}
+
+body.mechanic-body .mechanic-profile-layout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 24px;
+}
+
+body.mechanic-body .mechanic-profile-sidebar {
+  display: grid;
+  gap: 16px;
+}
+
+body.mechanic-body .mechanic-profile-avatar-card,
+body.mechanic-body .mechanic-profile-info-card,
+body.mechanic-body .mechanic-profile-map {
+  background: #3e434df7;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+}
+
+body.mechanic-body .mechanic-profile-avatar-card {
+  min-height: 270px;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+body.mechanic-body .mechanic-profile-avatar {
+  width: 240px;
+  height: 240px;
+  border-radius: 24px;
+  display: grid;
+  place-items: center;
+  /* background: rgba(255, 255, 255, 0.08); */
+  /* color: #4da3ff; */
+  font-size: 56px;
+  overflow: hidden;
+}
+
+body.mechanic-body .mechanic-profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+body.mechanic-body .mechanic-profile-cta {
+  width: 100%;
+  min-height: 48px;
+}
+
+body.mechanic-body .mechanic-profile-info-card {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  /* color: #d7dfeb; */
+}
+
+body.mechanic-body .mechanic-profile-info-card h4 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.1rem;
+}
+
+body.mechanic-body .mechanic-profile-info-card ul {
+  list-style: none;
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+}
+
+body.mechanic-body .mechanic-profile-info-card li {
+  position: relative;
+  padding-left: 34px;
+  line-height: 1.45;
+}
+
+body.mechanic-body .mechanic-profile-info-card li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--brand-blue);
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+body.mechanic-body .mechanic-profile-main {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+}
+
+body.mechanic-body .mechanic-profile-main h1 {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(1.9rem, 3vw, 2.6rem);
+}
+
+body.mechanic-body .mechanic-profile-tabs {
+  background: #3e434df7;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+body.mechanic-body .mechanic-profile-tabs button {
+  border: none;
+  background: rgba(34, 43, 58, 0.96);
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 16px 32px;
+  border-radius: 12px;
+}
+
+body.mechanic-body .mechanic-profile-coverage {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+body.mechanic-body .mechanic-profile-coverage-item {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  background: #3e434df7;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  text-align: center;
+  justify-items: center;
+}
+
+body.mechanic-body .mechanic-profile-coverage-item strong {
+  color: #ffffff;
+  font-size: 0.9rem;
+}
+
+body.mechanic-body .mechanic-profile-coverage-item span {
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-profile-map {
+  min-height: 420px;
+  overflow: hidden;
+}
+
+body.mechanic-body .mechanic-profile-reviews-card {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  background: #3e434df7;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+}
+
+body.mechanic-body .mechanic-profile-reviews-card h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.2rem;
+}
+
+body.mechanic-body #mechanicProfileReviewsList {
+  display: grid;
+  gap: 12px;
+}
+
+body.mechanic-body .mechanic-profile-review-item {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(10, 17, 30, 0.45);
+}
+
+body.mechanic-body .mechanic-profile-review-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #cfd6fb;
+  color: #44528d;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+
+body.mechanic-body .mechanic-profile-review-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+body.mechanic-body .mechanic-profile-review-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+body.mechanic-body .mechanic-profile-review-name {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+body.mechanic-body .mechanic-profile-review-stars {
+  color: #ffd667;
+  letter-spacing: 0.08em;
+  font-size: 0.95rem;
+}
+
+body.mechanic-body .mechanic-profile-review-comment {
+  margin: 6px 0 0;
+  color: #e7eefb;
+  line-height: 1.45;
+}
+
+body.mechanic-body .mechanic-profile-review-date {
+  margin-top: 6px;
+  color: #a8b8d2;
+  font-size: 0.88rem;
+}
+
+body.mechanic-body .mechanic-profile-reviews-empty {
+  margin: 0;
+  color: #d9e3f3;
+}
+
+body.mechanic-body .mechanic-profile-reviews-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+body.mechanic-body .mechanic-profile-reviews-dot {
+  width: 10px;
+  height: 10px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  padding: 0;
+}
+
+body.mechanic-body .mechanic-profile-reviews-dot.is-active {
+  background: #ffffff;
+}
+
+body.mechanic-body .mechanic-edit-profile-layout {
+  display: grid;
+  grid-template-areas:
+    "skills"
+    "coverage"
+    "fulfilment"
+    "actions";
+  gap: 18px;
+}
+
+body.mechanic-body .mechanic-edit-profile-card {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  /* background: rgba(20, 27, 41, 0.72); */
+  /* border: 1px solid rgba(255, 255, 255, 0.16); */
+  border-radius: 16px;
+}
+
+body.mechanic-body .mechanic-edit-profile-card--skills {
+  grid-area: skills;
+  background: #3e434df7;
+}
+
+body.mechanic-body .mechanic-edit-profile-card--skills label {
+  display: grid;
+  gap: 16px;
+}
+
+body.mechanic-body .mechanic-work-history-section {
+  display: grid;
+  gap: 12px;
+}
+
+body.mechanic-body .mechanic-work-history-view {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(20, 27, 41, 0.72);
+}
+
+body.mechanic-body .mechanic-work-history-view p {
+  margin: 0;
+  color: #ffffff;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+body.mechanic-body .mechanic-work-history-edit {
+  justify-self: start;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  background: #5a6f90;
+  color: #ffffff;
+  font: inherit;
+  cursor: pointer;
+}
+
+body.mechanic-body .mechanic-edit-profile-card--coverage {
+  grid-area: coverage;
+  background: #3e434df7;
+}
+
+body.mechanic-body .mechanic-edit-profile-card--coverage label {
+  display: grid;
+  gap: 16px;
+}
+
+body.mechanic-body .mechanic-edit-inline-field {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+body.mechanic-body .mechanic-edit-inline-field span {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+body.mechanic-body .mechanic-edit-profile-card--fulfilment {
+  grid-area: fulfilment;
+  background: #3e434df7;
+}
+
+body.mechanic-body .mechanic-edit-profile-card h3 {
+  margin: 0;
+  color: #eef3fc;
+  font-size: 1.05rem;
+}
+
+body.mechanic-body .mechanic-edit-profile-card--skills > h3,
+body.mechanic-body .mechanic-edit-profile-card--coverage > h3,
+body.mechanic-body .mechanic-edit-profile-card--fulfilment > h3 {
+  font-size: 1.5rem;
+}
+
+body.mechanic-body .mechanic-edit-profile-card p,
+body.mechanic-body .mechanic-edit-profile-card label span,
+body.mechanic-body .mechanic-edit-profile-card a {
+  color: #ffffff;
+}
+
+body.mechanic-body .mechanic-edit-profile-card a {
+  text-decoration: underline;
+}
+
+body.mechanic-body .mechanic-edit-profile-card input,
+body.mechanic-body .mechanic-edit-profile-card textarea {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #ffffff;
+  color: #111827;
+  padding: 12px 14px;
+}
+
+body.mechanic-body .mechanic-edit-profile-card textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+body.mechanic-body .mechanic-edit-profile-section-label {
+  margin: 6px 0 0;
+  color: #ffffff;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.86rem;
+}
+
+body.mechanic-body .mechanic-edit-profile-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+body.mechanic-body .mechanic-edit-profile-checkbox input {
+  width: 16px;
+  height: 16px;
+}
+
+body.mechanic-body .mechanic-edit-premises-fields {
+  display: grid;
+  gap: 14px;
+}
+
+body.mechanic-body .mechanic-edit-profile-actions {
+  grid-area: actions;
+  display: grid;
+  gap: 12px;
+}
+
+body.mechanic-body .mechanic-edit-profile-submit {
+  min-height: 50px;
+}
+
+body.mechanic-body #mechanicProfileMap {
+  width: 100%;
+  min-height: 490px;
+  height: 100%;
+  position: relative;
+}
+
+body.mechanic-body #mechanicProfileMap .leaflet-control-attribution,
+body.mechanic-body #mechanicProfileMap .leaflet-control-zoom a {
+  color: #111827;
+}
+
+body.mechanic-body #mechanicProfileMap .map-placeholder--overlay {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 500;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(23, 28, 36, 0.86);
+  color: #ffffff;
+  text-align: center;
+}
+
+@media (max-width: 980px) {
+  body.mechanic-body .mechanic-profile-layout {
+    grid-template-columns: 1fr;
+  }
+
+  body.mechanic-body .mechanic-profile-coverage {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  body.mechanic-body .mechanic-profile-coverage {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 425px) {
+  #mechanicPage.mainLayout {
+    grid-template-columns: 1fr !important;
+  }
+
+  #mechanicPage .mechanic-rail-toggle {
+    display: none !important;
+  }
+
+  #mechanicPage .mechanicContent {
+    padding: 10px;
+  }
+
+  body.mechanic-body .mechanic-table-head-filters {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  body.mechanic-body .mechanic-profile-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  body.mechanic-body .mechanic-profile-main {
+    display: contents;
+  }
+
+  body.mechanic-body .mechanic-profile-main > #mechanicProfileHeading {
+    order: 0;
+    text-align: center;
+    margin: 0;
+  }
+
+  body.mechanic-body .mechanic-profile-sidebar {
+    order: 1;
+  }
+
+  body.mechanic-body .mechanic-profile-main > .mechanic-profile-tabs {
+    order: 2;
+  }
+
+  body.mechanic-body .mechanic-profile-main > .mechanic-profile-coverage {
+    order: 3;
+  }
+
+  body.mechanic-body .mechanic-profile-main > .mechanic-profile-map {
+    order: 4;
+  }
+
+  body.mechanic-body .mechanic-profile-main > .mechanic-profile-reviews-card {
+    order: 5;
+  }
+
+  #mechanicPage .mechanic-dashboard-hero {
+    border-radius: 0;
+  }
+
+  body.mechanic-body .mechanic-table-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  body.mechanic-body .mechanic-table-actions > * {
+    width: 100%;
+  }
+
+  body.mechanic-body .mechanic-head-control input,
+  body.mechanic-body .mechanic-head-control select,
+  body.mechanic-body .mechanic-bookings-export {
+    width: 100%;
+  }
+
+  .mechanic-settings-layout {
+    gap: 16px;
+    padding: 14px;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-panel-head {
+    gap: 10px;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-tabs {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-tab-link {
+    width: 100%;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-photo-row,
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-profile,
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-row {
+    grid-template-columns: 1fr;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-accordion-summary {
+    justify-content: center;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-accordion-summary h4 {
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-photo-row {
+    gap: 10px;
+    justify-items: stretch;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-photo-row .settings-avatar-lg {
+    justify-self: center;
+    margin-inline: auto;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-photo-row .ghost,
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-profile > .secondary,
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-row > .secondary {
+    width: min(220px, 100%);
+    justify-self: center;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-profile,
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-row {
+    gap: 12px;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-row > div {
+    min-width: 0;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-item {
+    align-items: stretch;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-copy {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    width: 100%;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-label {
+    width: auto;
+    flex: none;
+    margin-right: 0;
+    padding-right: 0;
+    border-right: 0;
+    white-space: normal;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-item {
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-copy {
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-copy p {
+    width: 100%;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-item .secondary {
+    width: min(220px, 100%);
+    justify-self: center;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-profile h4,
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-row h4,
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-label {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-profile p,
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-row p,
+  body.mechanic-body #mechanicSettingsView .mechanic-settings-contact-copy p {
+    font-size: 1rem;
+    color: #c8d4e8;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicAccountView .settings-row > div {
+    justify-items: center;
+    text-align: center;
+    gap: 10px;
+  }
+
+  body.mechanic-body #mechanicAccountView .settings-profile {
+    justify-items: center;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicAccountView .settings-profile h4,
+  body.mechanic-body #mechanicAccountView .settings-meta h4 {
+    width: 100%;
+    margin: 0;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicAccountView .user-account-panel > .settings-photo-row,
+  body.mechanic-body #mechanicAccountView .settings-photo-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    padding-bottom: 4px;
+  }
+
+  body.mechanic-body #mechanicAccountView .user-account-panel > .settings-photo-row .settings-avatar-lg,
+  body.mechanic-body #mechanicAccountView .settings-photo-row .settings-avatar-lg {
+    display: grid !important;
+    place-items: center !important;
+    align-self: center !important;
+    justify-self: center !important;
+    margin-inline: auto !important;
+    color: #ffffff !important;
+    background: #cfd6fb;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicAccountAvatarSecondary,
+  body.mechanic-body #mechanicAccountAvatarSecondary * {
+    color: #ffffff !important;
+  }
+
+  body.mechanic-body #mechanicAccountView .mechanic-account-label,
+  body.mechanic-body #mechanicAccountView .mechanic-account-value {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-right: 0;
+    white-space: normal;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicAccountView .mechanic-account-label {
+    margin-bottom: 2px;
+  }
+
+  body.mechanic-body #mechanicAccountView .mechanic-account-value {
+    font-size: 1.02rem;
+    line-height: 1.35;
+    margin-bottom: 6px;
+  }
+
+  body.mechanic-body #mechanicAccountView .settings-row > div p {
+    margin-bottom: 6px;
+  }
+
+  body.mechanic-body #mechanicResolutionCenterView .mechanic-resolution-card-body {
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicResolutionCenterView .mechanic-resolution-table-head,
+  body.mechanic-body #mechanicResolutionCenterView .mechanic-resolution-table-row {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicResolutionCenterView .mechanic-resolution-status,
+  body.mechanic-body #mechanicResolutionCenterView .mechanic-resolution-link {
+    justify-self: center;
+  }
+
+  body.mechanic-body #mechanicResolutionCenterView .mechanic-resolution-link {
+    width: fit-content;
+  }
+
+  body.mechanic-body #mechanicResolutionCenterView #mechanicResolutionBookings {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  body.mechanic-body #mechanicResolutionCenterView .mechanic-resolution-booking {
+    width: min(100%, 420px);
+    margin-inline: auto;
+  }
+
+  body.mechanic-body #mechanicResolutionCenterView .mechanic-resolution-booking-row {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  body.mechanic-body #mechanicResolutionCenterView .mechanic-resolution-booking .primary {
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  body.mechanic-body .mechanic-resolution-table-head {
+    display: none;
+  }
+
+  body.mechanic-body .mechanic-resolution-table-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 14px 0;
+  }
+
+  body.mechanic-body .mechanic-resolution-table-row > * {
+    min-width: 0;
+  }
+}
+
+
+
+
+

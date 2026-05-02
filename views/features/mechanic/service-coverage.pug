@@ -1,0 +1,42 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Types of Work Covered"
+  - var bodyClass = "mechanic-edit-body"
+  - var activePage = "types"
+
+block head
+  link(rel="stylesheet" href="/css/features/mechanic/edit.css")
+
+block content
+  header.main-header.general-header
+    .header-content
+      a.main-brand(href="/")
+        span.main-logo SW
+        div
+          strong SmartWorkshop
+          span Vehicle Service Marketplace
+
+  main.mechanic-edit-shell.primari-shell
+    include ./partials/edit-nav.pug
+
+    section.mechanic-edit-main
+      .edit-card
+        h3 Types of work covered
+        p.subtle Select the services you provide.
+        label.checkbox
+          input(type="checkbox")
+          | Repairs
+        label.checkbox
+          input(type="checkbox")
+          | Diagnostics
+        label.checkbox
+          input(type="checkbox")
+          | Servicing & MOT
+        label.checkbox
+          input(type="checkbox")
+          | Tyres
+        label.checkbox
+          input(type="checkbox")
+          | Pre-purchase inspections
+        button.primary(type="button") Save

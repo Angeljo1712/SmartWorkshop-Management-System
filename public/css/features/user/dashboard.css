@@ -1,0 +1,5197 @@
+#userPage.mainLayout {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: stretch;
+    gap: 0;
+    position: relative;
+    overflow: visible;
+}
+
+#userPage .user-rail-toggle {
+  position: absolute;
+  top: 115px;
+  left: 163px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 15px;
+  background: #3e434df7;
+  color: #ffffff;
+  cursor: pointer;
+  z-index: 6;
+  box-shadow: 0 8px 18px rgba(8, 15, 31, 0.24);
+}
+
+#userPage .user-rail-toggle svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+#userPage.is-rail-collapsed .user-rail-toggle {
+  left: 54px;
+}
+
+.user-mobile-topbar,
+.user-header-menu-toggle,
+.user-mobile-menu,
+.user-mobile-menu-backdrop {
+  display: none;
+}
+
+body.user-body .primari-shell {
+  min-height: 0;
+}
+
+body.user-body .page-shell-content {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: stretch;
+  gap: 0;
+  min-height: 0;
+  height: auto;
+}
+
+#userPage .mainSection {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  width: 100%;
+  min-height: 0;
+  min-width: 0;
+  height: auto;
+  align-self: stretch;
+  background: rgba(25, 31, 42, 0.96);
+  border: 2px solid #ffffff;
+  border-left: 0;
+  border-bottom: 0;
+  border-radius: 0 15px 0 0;
+}
+
+#userPage .mainSection > .user-dashboard-hero {
+  padding: 5px 10px;
+  background: #ffffff;
+  border-radius: 0 12px 0 0;
+}
+
+#userPage .user-dashboard-hero,
+#userPage .user-dashboard-hero .settings-header {
+  display: grid;
+  gap: 12px;
+}
+
+#userPage .user-dashboard-hero .settings-header {
+  margin: 0;
+  padding: 0;
+  max-height: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+#userPage .user-dashboard-hero-copy {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#userPage .user-dashboard-hero .settings-header-copy {
+  display: grid;
+  gap: 4px;
+  justify-items: start;
+  text-align: left;
+}
+
+#userPage .user-dashboard-hero .settings-header h2,
+#userPage .user-dashboard-hero .settings-header h3 {
+  color: #1b2430;
+  margin: 0;
+}
+
+#userPage .user-dashboard-hero .settings-header p {
+  color: #475569;
+  margin: 0;
+  font-weight: 700;
+}
+
+#userPage .user-dashboard-hero .settings-header .settings-header-aside {
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+}
+
+#userPage .user-dashboard-hero .settings-header .settings-header-aside h2 {
+  margin: 0 0 2px;
+  color: #1b2430;
+  font-size: 1.17em;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.user-panel-head {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.user-panel-head h2,
+.user-panel-head p {
+  margin: 0;
+}
+
+.user-panel-head h2 {
+  font-size: 1.45rem;
+  line-height: 1.15;
+  text-align: left;
+}
+
+.user-panel-head p {
+  font-size: 1rem;
+  line-height: 1.5;
+  white-space: nowrap;
+  text-align: right;
+}
+
+#userDashboardView .user-panel-head h2,
+#userDashboardView .user-panel-head p {
+  color: #ffffff;
+}
+
+#userDashboardView .user-panel-head p {
+  color: #c8d4e8;
+}
+
+#userPage #userDashboardHeroName {
+  margin: 0;
+  color: #1b2430;
+  font-size: 1.17em;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+#userPage #userDashboardHeroRole {
+  margin: 2px 0 0;
+  color: #1b2430;
+}
+
+@media (max-width: 768px) {
+  #userPage .user-dashboard-hero .settings-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  #userPage .user-dashboard-hero .settings-header .settings-header-aside {
+    width: auto;
+    justify-content: flex-end;
+    text-align: right;
+    order: 0;
+  }
+}
+
+#userPage .user-content {
+  display: grid;
+  width: 100%;
+  align-self: stretch;
+  background: #090d15;
+  border: 0;
+  border-radius: 0;
+  padding: 10px;
+  overflow: hidden;
+  min-height: auto;
+  height: auto;
+  color: #ffffff;
+}
+
+@media (min-width: 1024px) {
+  #userPage .user-content {
+    padding: 33px;
+  }
+}
+
+#userPage .user-content > .user-view {
+  min-height: auto;
+  height: auto;
+}
+
+#userDashboardView {
+  display: grid;
+}
+
+body.user-body .main-header.general-header {
+  display: block;
+}
+
+#userPage .rail-base {
+  position: static;
+  width: 180px;
+  min-width: 180px;
+  min-height: auto;
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 0;
+  border-bottom: 0;
+  border-radius: 15px 0 0 0;
+  color: #1b2430;
+  overflow: visible;
+  transition: width 0.22s ease;
+}
+
+#userPage .mainRail {
+  width: 180px;
+  min-width: 180px;
+  padding: 14px 12px 16px;
+  justify-items: stretch;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  align-content: start;
+  gap: 10px;
+}
+
+#userPage .mainRail:hover {
+  width: 180px;
+}
+
+#userPage .mainRail.is-collapsed:hover {
+  width: 70px;
+}
+
+#userPage .mainRail .rail-brand {
+  width: 100%;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  justify-self: center;
+  gap: 0;
+  padding: 0;
+  margin-top: 10px;
+}
+
+#userPage .mainRail .rail-brand .logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #eef2f7;
+  color: #1b2430;
+  margin: 0 auto;
+}
+
+#userPage .mainRail .rail-nav {
+  position: sticky;
+  top: var(--general-header-height, 72px);
+  width: 100%;
+  align-self: start;
+  justify-items: stretch;
+  gap: 10px;
+  padding: 8px 0 0;
+  overflow: visible;
+}
+
+#userPage .mainRail .rail-footer {
+  width: 100%;
+  display: grid;
+  justify-items: stretch;
+  padding-top: 10px;
+  margin-top: auto;
+  gap: 12px;
+}
+
+#userPage .mainRail .rail-item {
+  width: 100%;
+  max-width: none;
+  height: auto;
+  min-height: 48px;
+  justify-content: flex-start;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #334155;
+  gap: 10px;
+  position: relative;
+  transition: max-width 0.22s ease, width 0.22s ease, padding 0.22s ease, justify-content 0.22s ease, background 0.18s ease;
+}
+
+#userPage .mainRail .rail-item:hover {
+  background: rgba(15, 23, 42, 0.06);
+}
+
+#userPage .mainRail .rail-item.active {
+  background: linear-gradient(90deg, #090d15 0%, #090d15 calc(100% + 20px), transparent calc(100% + 20px));
+  border-color: rgba(15, 23, 42, 0.08);
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  width: calc(100% + 20px);
+  margin-right: -20px;
+}
+
+#userPage .mainRail .rail-text {
+  width: auto;
+  opacity: 1;
+  overflow: visible;
+  white-space: normal;
+  line-height: 1.2;
+  transition: opacity 0.18s ease;
+}
+
+#userPage .mainRail .rail-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+}
+
+#userPage .mainRail.is-collapsed {
+  width: 70px;
+  min-width: 70px;
+  padding: 14px 10px 16px;
+  justify-items: center;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 5px;
+}
+
+#userPage .mainRail.is-collapsed .rail-brand {
+  justify-content: center;
+  padding-bottom: 8px;
+  width: 100%;
+}
+
+#userPage .mainRail.is-collapsed .rail-brand .logo {
+  display: inline-grid;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  margin: 0 auto;
+}
+
+#userPage .mainRail.is-collapsed .rail-item {
+  width: 48px;
+  max-width: 48px;
+  justify-content: center;
+  padding: 0;
+  gap: 0;
+}
+
+#userPage .mainRail.is-collapsed .rail-item.active {
+  width: 48px;
+  max-width: 48px;
+  margin-right: 0;
+  background: transparent;
+  overflow: visible;
+  z-index: 1;
+}
+
+#userPage .mainRail.is-collapsed .rail-item.active::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: -22px;
+  background: linear-gradient(90deg, #090d15 0%, #090d15 calc(100% + 20px), transparent calc(100% + 20px));
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-radius: 14px;
+  z-index: -1;
+}
+
+#userPage .mainRail.is-collapsed .rail-text {
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#userPage .mainRail.is-collapsed .rail-footer {
+  justify-items: center;
+}
+
+#userPage .mainRail .rail-item#userRailRoleBackBtn {
+  line-height: 1;
+}
+
+#userPage .mainRail .rail-item#userRailRoleBackBtn .rail-text {
+  line-height: 1;
+}
+
+#userPage.mainLayout .settings-card {
+  height: auto;
+}
+
+body.user-body .user-content .settings-card,
+body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .user-resolution-card,
+body.user-body :is(#userResolutionView, #userResolutionCaseView) .mechanic-resolution-sidebar-card,
+body.user-body #userSettingsSecurity .security-card,
+body.user-body #userSettingsNotifications .notifications-card,
+body.user-body .user-car-summary,
+body.user-body .user-vehicle-info-card,
+body.user-body .user-verify-card {
+  background: var(--dashboard-panel-bg);
+  /* border: 1px solid var(--dashboard-panel-border); */
+  border-radius: var(--dashboard-panel-radius);
+  /* box-shadow: var(--dashboard-panel-shadow); */
+}
+
+body.user-body #userBookingsView .settings-card {
+  display: block;
+}
+
+.user-bookings-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.user-resolution-layout {
+  display: grid;
+  grid-template-rows: auto auto;
+  gap: 25px;
+}
+
+.resolution-section--welcome {
+  grid-area: welcome;
+}
+
+.resolution-section--divider {
+  grid-area: divider;
+}
+
+.resolution-section--card {
+  grid-area: card;
+}
+
+body.user-body #userSettingsView {
+  gap: 0;
+  background: #3e434df7;
+  height: 100%;
+}
+
+body.user-body #userSettingsView {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  min-height: 0;
+}
+
+body.user-body #userSettingsView.is-hidden {
+  display: none !important;
+}
+
+body.user-body #userSettingsView:not(.is-hidden) {
+  display: grid;
+}
+
+body.user-body #userSettingsView.user-view {
+  display: grid;
+  min-height: 100%;
+  height: auto;
+  border-radius: 15px;
+}
+
+.user-settings-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+  align-content: start;
+  padding: 20px;
+}
+
+body.user-body #userSettingsView .user-settings-panel {
+  display: grid;
+  gap: 22px;
+}
+
+body.user-body #userSettingsView .user-settings-subview {
+  display: grid;
+  gap: 22px;
+  align-content: start;
+  align-items: start;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+body.user-body #userSettingsView .user-settings-accordion {
+  display: grid;
+  gap: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+body.user-body #userSettingsView .user-settings-accordion > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+body.user-body #userSettingsView .user-settings-accordion > summary::-webkit-details-marker {
+  display: none;
+}
+
+body.user-body #userSettingsView .user-settings-accordion-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+body.user-body #userSettingsView .user-settings-accordion-summary h4 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: normal;
+  opacity: 1;
+}
+
+body.user-body #userSettingsView .user-settings-accordion-content {
+  display: grid;
+  gap: 0;
+  padding-top: 12px;
+}
+
+body.user-body #userSettingsView .user-settings-accordion:not([open]) .user-settings-accordion-content {
+  display: none;
+}
+
+body.user-body #userSettingsView .user-settings-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+body.user-body #userSettingsPanelTitle {
+  margin: 0;
+  color: #ffffff;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+body.user-body #userSettingsView .user-settings-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  background: rgba(14, 19, 28, 0.92);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+body.user-body #userSettingsView .user-settings-tab-link {
+  min-height: 34px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #dce5f3;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+body.user-body #userSettingsView .user-settings-tab-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body.user-body #userSettingsView .user-settings-tab-link.active {
+  background: var(--dashboard-tab-active-bg);
+  border-color: var(--dashboard-tab-active-border);
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+body.user-body #userSettingsView .user-settings-photo-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 16px;
+}
+
+body.user-body #userSettingsView .settings-avatar {
+  background: #d5def7;
+  color: #334085;
+}
+
+body.user-body #userSettingsView .settings-avatar-lg {
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+}
+
+body.user-body #userSettingsView .user-settings-photo-row .ghost {
+  justify-self: end;
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
+  width: 104px;
+}
+
+body.user-body #userSettingsView .user-settings-profile,
+body.user-body #userSettingsView .user-settings-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+body.user-body #userSettingsView .secondary {
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
+}
+
+body.user-body #userSettingsView .settings-field,
+body.user-body #userSettingsView .settings-field h4,
+body.user-body #userSettingsView .user-settings-row h4,
+body.user-body #userSettingsView .user-settings-profile h4,
+body.user-body #userSettingsView .user-settings-profile p,
+body.user-body #userSettingsView .user-settings-row p {
+  color: #ffffff;
+}
+
+body.user-body #userSettingsView .user-settings-profile h4,
+body.user-body #userSettingsView .user-settings-row h4,
+body.user-body #userSettingsView .user-settings-contact-label {
+  font-size: 1.4rem;
+  text-transform: none;
+  letter-spacing: normal;
+  opacity: 1;
+}
+
+body.user-body #userSettingsView .user-settings-profile p,
+body.user-body #userSettingsView .user-settings-row p,
+body.user-body #userSettingsView .user-settings-contact-copy p {
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1.4;
+  opacity: 0.92;
+}
+
+body.user-body #userSettingsView .settings-meta,
+body.user-body #userSettingsView .user-settings-row > div {
+  display: grid;
+  gap: 10px;
+}
+
+body.user-body #userSettingsView .user-settings-contact-list {
+  display: grid;
+  gap: 14px;
+}
+
+body.user-body #userSettingsView .user-settings-contact-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  min-height: 44px;
+}
+
+body.user-body #userSettingsView .user-settings-contact-copy {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+body.user-body #userSettingsView .user-settings-contact-action {
+  display: grid;
+  justify-items: end;
+  align-self: center;
+}
+
+body.user-body #userSettingsView .user-settings-contact-label {
+  color: #ffffff;
+  font-weight: 600;
+  width: 110px;
+  flex: 0 0 110px;
+  padding-right: 12px;
+  margin-right: 12px;
+  border-right: 2px solid rgba(255, 255, 255, 0.72);
+  font-size: 1rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+body.user-body #userSettingsView .user-settings-contact-label::after {
+  content: ":";
+}
+
+body.user-body #userSettingsView .user-settings-contact-copy p {
+  margin: 0;
+  color: #ffffff;
+  flex: 1 1 auto;
+  font-size: 1.05rem;
+  line-height: 1.35;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body.user-body.user-light-mode #userPage .mainSection {
+  background: #eef2f7;
+}
+
+body.user-body.user-light-mode #userSettingsView {
+  background: #f7f9fc;
+  border-color: rgba(71, 85, 105, 0.28);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+}
+
+body.user-body.user-light-mode #userSettingsView .settings-subnav {
+  background: #ffffff;
+  border-color: rgba(148, 163, 184, 0.35);
+}
+
+body.user-body.user-light-mode #userSettingsView .settings-subnav-link {
+  color: #0f172a;
+}
+
+body.user-body.user-light-mode #userSettingsView .settings-subnav-link.active {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+body.user-body.user-light-mode #userSettingsView :is(
+  h3,
+  h4,
+  p,
+  span,
+  label,
+  .user-settings-contact-label,
+  .user-settings-contact-copy p,
+  .notifications-check
+) {
+  color: #0f172a;
+}
+
+body.user-body.user-light-mode #userSettingsView .settings-divider {
+  background: rgba(71, 85, 105, 0.3);
+}
+
+body.user-body.user-light-mode #userSettingsView input,
+body.user-body.user-light-mode #userSettingsView textarea,
+body.user-body.user-light-mode #userSettingsView select {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: rgba(148, 163, 184, 0.45);
+}
+
+body.user-body #userSettingsView .user-settings-profile .secondary,
+body.user-body #userSettingsView .user-settings-row > .secondary {
+  width: 104px;
+}
+
+body.user-body #userSettingsView .user-settings-contact-action .secondary {
+  width: 104px;
+  justify-self: end;
+}
+
+body.user-body #userSettingsSecurity {
+  gap: 26px;
+}
+
+body.user-body #userSettingsSecurity .security-card {
+  display: grid;
+  gap: 15px;
+  padding: 24px;
+  border: 2px solid #ffffff;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  background: rgba(34, 43, 58, 0.96);
+}
+
+body.user-body #userSettingsSecurity .security-card-head h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.25rem;
+}
+
+body.user-body #userSettingsSecurity .security-form {
+  width: min(500px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 18px;
+}
+
+body.user-body #userSettingsSecurity .security-field {
+  display: grid;
+  gap: 8px;
+}
+
+body.user-body #userSettingsSecurity .security-field span {
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+body.user-body #userSettingsSecurity .security-field input {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+body.user-body #userSettingsSecurity .security-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+body.user-body #userSettingsSecurity .security-actions .ghost {
+  background: #4f627b;
+  border-color: #4f627b;
+  color: #ffffff;
+}
+
+body.user-body #userSecurity2faEnable {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.62);
+}
+
+body.user-body #userSecurity2faEnable:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+body.user-body #userSecurity2faEnable.is-active {
+  background: #4f627b;
+  border-color: #4f627b;
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+}
+
+body.user-body #userSettingsSecurity .security-2fa-grid {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+}
+
+body.user-body #userSettingsSecurity .security-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+body.user-body #userSettingsSecurity .security-check input {
+  width: 20px;
+  height: 20px;
+}
+
+body.user-body #userSettingsNotifications .notifications-card {
+  display: grid;
+  gap: 28px;
+  padding: 24px;
+  border: 2px solid #ffffff;
+  border-radius: 14px;
+  /* box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18); */
+  background: rgba(34, 43, 58, 0.96);
+}
+
+body.user-body #userSettingsNotifications .notifications-card-head h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.25rem;
+}
+
+body.user-body #userSettingsNotifications .notifications-check {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 14px;
+  color: #ffffff;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+body.user-body #userSettingsNotifications .notifications-check input {
+  width: 20px;
+  height: 20px;
+  margin-top: 3px;
+}
+
+body.user-body #userSettingsNotifications .notifications-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+body.user-body #userSettingsNotifications .notifications-actions .ghost {
+  background: #4f627b;
+  border-color: #4f627b;
+  color: #ffffff;
+}
+
+body.user-body .settings-edit-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+}
+
+body.user-body .settings-edit-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 8, 16, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+body.user-body .settings-edit-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(520px, calc(100vw - 32px));
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+  border: 2px solid #ffffff;
+  border-radius: 18px;
+  background: #101722;
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.35);
+}
+
+body.user-body .settings-edit-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
+}
+
+body.user-body .settings-edit-head h3,
+body.user-body .settings-edit-dialog p,
+body.user-body .settings-edit-field span {
+  color: #ffffff;
+  margin: 0;
+}
+
+body.user-body #userSettingsEditDescription {
+  text-align: center;
+}
+
+body.user-body .settings-edit-close {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  font-size: 1.8rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  position: absolute;
+  right: 0;
+}
+
+body.user-body .settings-edit-field {
+  display: grid;
+  gap: 8px;
+}
+
+body.user-body .settings-edit-name-grid .settings-edit-field span {
+  text-align: center;
+}
+
+body.user-body .settings-edit-field input {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+body.user-body .settings-edit-name-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+body.user-body .settings-edit-address-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+body.user-body .settings-edit-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+body.user-body .user-booking-review-modal .settings-edit-dialog {
+  width: min(620px, calc(100vw - 32px));
+}
+
+body.user-body .user-booking-review-modal {
+  z-index: 120;
+}
+
+body.user-body .user-booking-review-message {
+  margin: 0;
+  text-align: center;
+}
+
+body.user-body #userBookingReviewDescription {
+  text-align: center;
+}
+
+body.user-body .user-booking-review-stars {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: -4px 0 0;
+}
+
+body.user-body .user-booking-review-star {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 2rem;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+body.user-body .user-booking-review-star:hover,
+body.user-body .user-booking-review-star:focus-visible {
+  transform: translateY(-1px);
+  outline: none;
+}
+
+body.user-body .user-booking-review-star.is-active {
+  color: #f5c451;
+}
+
+body.user-body .user-booking-review-modal textarea {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #ffffff;
+  color: #0f172a;
+  min-height: 120px;
+  resize: vertical;
+}
+
+body.user-body .user-booking-review-actions {
+  justify-content: flex-end;
+}
+
+body.user-body .settings-edit-actions .secondary,
+body.user-body .settings-edit-actions .ghost {
+  color: #ffffff;
+}
+
+body.user-body #userSettingsEditCancel.secondary {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+body.user-body #userSettingsEditCancel.secondary:hover,
+body.user-body #userSettingsEditSave.ghost:hover {
+  background: #4f627b;
+  border-color: #4f627b;
+  color: #ffffff;
+}
+
+.user-bookings-list {
+  display: grid;
+  gap: 12px;
+}
+
+.user-table-layout {
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 14px;
+  background: #3e434df7;
+  padding: 0;
+  box-shadow: 0 18px 36px rgba(5, 10, 18, 0.24);
+}
+
+.user-bookings-detail {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  /* padding: 16px 0 0; */
+}
+
+.user-table-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  row-gap: 30px;
+  min-height: 0;
+  padding: 15px;
+}
+
+.user-table-layout > .user-table-head,
+.user-table-layout > .user-table-wrap,
+.user-table-layout > .user-table-footer {
+  position: relative;
+  min-width: 0;
+}
+
+.user-table-layout > .user-table-head::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -15px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.user-table-layout > .user-table-footer::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -15px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+body.user-body #userBookingsView .user-table tbody td {
+  color: #ffffff;
+}
+
+.user-bookings-summary-title {
+  margin: 0 0 14px;
+  color: #eaf0fb;
+  font-size: 1.1rem;
+}
+
+.user-table-head-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(0, 0.95fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.user-head-control {
+  position: relative;
+}
+
+.user-head-control input,
+.user-head-control select,
+.user-bookings-export {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid var(--dashboard-control-border);
+  border-radius: 999px;
+  background: var(--dashboard-control-bg);
+  color: var(--dashboard-control-text);
+  font: inherit;
+}
+
+.user-head-control input,
+.user-head-control select {
+  padding: 0 14px 0 40px;
+}
+
+.user-head-control::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  width: 16px;
+  height: 16px;
+  transform: translateY(-50%);
+  opacity: 0.75;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px 16px;
+}
+
+.user-head-control--search::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23556b89' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");
+}
+
+.user-head-control--role::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23556b89' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='8.5' cy='7' r='4'/%3E%3Cpath d='M20 8v6'/%3E%3Cpath d='M23 11h-6'/%3E%3C/svg%3E");
+}
+
+.user-head-control--status::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23556b89' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m12 2 7 4v6c0 5-3.5 9-7 10-3.5-1-7-5-7-10V6l7-4Z'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E");
+}
+
+.user-head-control--date::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23556b89' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M16 2v4'/%3E%3Cpath d='M8 2v4'/%3E%3Cpath d='M3 10h18'/%3E%3C/svg%3E");
+}
+
+.user-head-control select {
+  appearance: none;
+  padding-right: 36px;
+}
+
+.user-head-control select option {
+  background: var(--dashboard-control-bg);
+  color: var(--dashboard-control-text);
+}
+
+.user-bookings-export {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 120px;
+  padding: 0 18px;
+  color: var(--dashboard-control-text);
+}
+
+.user-bookings-export::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 16px 16px;
+  background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23556b89' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v12'/%3E%3Cpath d='m7 8 5-5 5 5'/%3E%3Cpath d='M5 21h14'/%3E%3C/svg%3E\");
+}
+
+.user-table-wrap {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.user-table {
+  width: 100%;
+  min-width: 880px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  overflow: hidden;
+  background: rgba(34, 43, 58, 0.96);
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.user-table th,
+.user-table td {
+  padding: 14px;
+  text-align: left;
+  color: #c8d4e8;
+}
+
+.user-table thead th {
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.user-table thead th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.user-table thead th:last-child {
+  border-top-right-radius: 12px;
+}
+
+.user-booking-summary-card {
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  background: transparent;
+}
+
+.user-booking-summary-card:hover,
+.user-booking-summary-card.is-active {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.user-booking-summary-card td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.user-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.user-booking-summary-reference {
+  color: #eaf0fb;
+  font-weight: 700;
+}
+
+.user-booking-summary-date,
+.user-booking-summary-status,
+.user-booking-summary-vehicle,
+.user-booking-summary-mechanic {
+  font-size: 0.95rem;
+}
+
+.user-booking-summary-vehicle,
+.user-booking-summary-mechanic {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-booking-summary-card .user-booking-status {
+  min-width: 0;
+  width: fit-content;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+}
+
+.user-table-footer {
+  color: #c8d4e8;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.user-table-footer-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #ffffff;
+}
+
+.user-table-footer-meta select {
+  min-height: 38px;
+  border: 1px solid var(--dashboard-control-border);
+  border-radius: 999px;
+  background: var(--dashboard-control-bg);
+  color: var(--dashboard-control-text);
+  padding: 0 14px;
+}
+
+.user-pagination {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-pagination button {
+  min-width: 36px;
+  min-height: 36px;
+  border: 1px solid var(--dashboard-pagination-border);
+  border-radius: 999px;
+  background: var(--dashboard-pagination-bg);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.user-pagination button.active {
+  background: var(--dashboard-pagination-active);
+  border-color: var(--dashboard-pagination-active);
+}
+
+.user-booking-detail:empty {
+  display: none;
+}
+
+body.user-body .user-booking-card {
+  border: 1px solid #ffffff;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #3e434df7;
+  color: #ffffff;
+}
+
+body.user-body .user-booking-card :is(p, li, a, span, div) {
+  color: #ffffff;
+}
+
+body.user-body .user-booking-toolbar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #ffffff;
+  background: transparent;
+}
+
+.user-booking-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.user-booking-status--requested {
+  background: var(--dashboard-badge-blue);
+}
+
+.user-booking-status--accepted {
+  background: var(--dashboard-badge-green);
+}
+
+.user-booking-status--pending {
+  background: var(--dashboard-badge-blue);
+}
+
+.user-booking-status--completed {
+  background: var(--dashboard-badge-green);
+}
+
+.user-booking-status--cancelled,
+.user-booking-status--canceled {
+  background: var(--dashboard-badge-red);
+}
+
+.user-booking-reference {
+  justify-self: center;
+}
+
+body.user-body .user-booking-actions.primary,
+.user-booking-actions {
+  min-width: 92px;
+  border: 0;
+  background: #5a6f90;
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 12px 24px;
+  min-height: 46px;
+  font-weight: 700;
+  box-shadow: none;
+}
+
+.user-booking-actions-wrap {
+  position: relative;
+  justify-self: end;
+}
+
+.user-booking-actions-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  min-width: 220px;
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background: #f3f4f6;
+  box-shadow: 0 18px 32px rgba(0, 0, 0, 0.28);
+  z-index: 20;
+  justify-items: stretch;
+}
+
+.user-booking-actions-item {
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  text-align: center;
+  padding: 10px 12px;
+  font: inherit;
+  font-weight: 800;
+  color: #1e293b;
+  cursor: pointer;
+  width: 100%;
+}
+
+.user-booking-actions-item:hover,
+.user-booking-actions-item:focus-visible {
+  background: rgba(37, 99, 235, 0.22);
+  outline: none;
+}
+
+.user-booking-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+  padding: 20px;
+}
+
+.user-booking-column {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+
+.user-booking-column h4,
+.user-booking-photos-inline h4 {
+  margin: 10px 0 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.user-booking-column p,
+.user-booking-column ul {
+  margin: 0;
+}
+
+.user-booking-column ul {
+  padding-left: 18px;
+}
+
+.user-booking-price {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.user-booking-photos-inline {
+  padding: 0 20px 20px;
+  display: grid;
+  gap: 12px;
+}
+
+.user-booking-receipt-link {
+  border: 0;
+  background: transparent;
+  color: #3b82f6;
+  font: inherit;
+  font-weight: 700;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.user-booking-receipt-link:hover,
+.user-booking-receipt-link:focus-visible {
+  text-decoration: underline;
+  outline: none;
+}
+
+.user-booking-photo-grid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  justify-items: center;
+}
+
+.user-booking-photo-grid img {
+  width: 50%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 980px) {
+  .user-bookings-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .user-table-head-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .user-table {
+    min-width: 720px;
+  }
+
+  .user-table-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.user-booking-empty,
+.user-booking-photos-inline p {
+  margin: 0;
+}
+
+.user-booking-empty-row td {
+  padding: 18px 14px;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .bookings-section--resolution {
+  padding: 0 20px 20px;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .user-resolution-card,
+body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-detail,
+body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-case,
+body.user-body :is(#userBookingsView, #userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-sidebar-card {
+  border: 0;
+  border-radius: 24px;
+  background: rgba(34, 43, 58, 0.96);
+  color: #eaf0fb;
+}
+
+body.user-body .user-resolution-card {
+  /* grid removed */
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .user-resolution-card {
+  overflow: hidden;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .user-resolution-card-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-weight: 700;
+  color: #ffffff;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table {
+  display: grid;
+  padding: 18px;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-head,
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 20px;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-head {
+  color: rgba(234, 240, 251, 0.82);
+  font-weight: 700;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-row > span {
+  color: #ffffff;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-link {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #5a6f90;
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 10px 18px;
+  min-height: 42px;
+  font-weight: 700;
+  cursor: pointer;
+  justify-self: center;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-detail,
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case-view {
+  display: grid;
+  gap: 18px;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-detail {
+  padding: 20px;
+  background: rgba(34, 43, 58, 0.96);
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-detail-head h3 {
+  margin: 0;
+  color: #ffffff;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case-copy {
+    margin: 0;
+    color: rgba(234, 240, 251, 0.82);
+    line-height: 1.55;
+    text-align: left;
+  }
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-back {
+  border: 0;
+  background: #5a6f90;
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 12px 24px;
+  min-height: 46px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-field {
+  display: grid;
+  gap: 10px;
+  padding: 20px;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-field label,
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-sidebar-row strong {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-field select,
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-compose textarea {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  background: #ffffff;
+  color: #171c24;
+  padding: 14px 16px;
+  font: inherit;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-notice {
+  margin: 0 20px 20px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: rgba(182, 139, 23, 0.32);
+  color: #ffe08a;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) #userResolutionGoToCase {
+  margin: 0 20px 20px;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-complaint {
+  display: grid;
+  gap: 14px;
+  margin: 0 20px 20px;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-complaint-copy {
+  margin: 0;
+  color: #eaf0fb;
+  line-height: 1.55;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) #userResolutionComplaintInput {
+  width: 100%;
+  min-height: 120px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  background: #ffffff;
+  color: #171c24;
+  padding: 14px 16px;
+  font: inherit;
+  resize: vertical;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-complaint-actions {
+  display: flex;
+  justify-content: center;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-complaint-footer {
+  display: flex;
+  justify-content: flex-start;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) #userResolutionComplaintAttachBtn.secondary {
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
+}
+
+body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .primary {
+  border: 0;
+  background: var(--dashboard-action-bg);
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 12px 24px;
+  min-height: 46px;
+  font-weight: 700;
+  box-shadow: none;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case-view {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.9fr);
+  grid-template-areas:
+    "intro sidebar"
+    "case sidebar";
+  gap: 24px;
+  align-items: start;
+}
+
+body.user-body #userResolutionCaseView .mechanic-resolution-case-intro {
+  /* grid removed */
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case {
+  grid-area: case;
+  padding: 0;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-sidebar {
+  grid-area: sidebar;
+  align-self: start;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-thread {
+  display: grid;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message {
+  display: grid;
+  gap: 6px;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message.is-customer {
+  justify-items: end;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message.is-customer .mechanic-resolution-message-row {
+  flex-direction: row-reverse;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  flex: 0 0 40px;
+  display: grid;
+  place-items: center;
+  background: #d5def7;
+  color: #334085;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 999px;
+    display: block;
+  }
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message-content {
+  display: grid;
+  gap: 6px;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message.is-customer .mechanic-resolution-message-content {
+  justify-items: end;
+  text-align: right;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-bubble {
+  max-width: 80%;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #eaf0fb;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message.is-customer .mechanic-resolution-bubble {
+  background: rgba(37, 99, 235, 0.25);
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-message-meta {
+  /* color: rgba(234, 240, 251, 0.62); */
+  font-size: 0.85rem;
+}
+
+body.user-body #userResolutionCaseView .mechanic-resolution-detail-head {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+}
+
+body.user-body #userResolutionCaseView .mechanic-resolution-detail-head h3 {
+  text-align: left;
+  font-size: 1.2rem;
+}
+
+body.user-body #userResolutionDetailTitle {
+  flex: 1;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+body.user-body #userResolutionCaseView .mechanic-resolution-case-copy {
+  max-width: 680px;
+  margin: 0 0 20px;
+  justify-self: start;
+  text-align: left;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-compose {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-compose-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) #userResolutionSendBtn {
+  order: 2;
+  margin-left: auto;
+  border-radius: 8px;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) #userResolutionCaseBackBtn {
+  order: 1;
+  margin-right: 0;
+  border-radius: 8px;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-sidebar-card {
+  padding: 20px;
+  display: grid;
+  gap: 14px;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-sidebar-card h4 {
+  margin: 0;
+  color: #ffffff;
+}
+
+body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-sidebar-row {
+  display: grid;
+  gap: 4px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-sidebar-row {
+  display: grid;
+  gap: 4px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-sidebar-row strong,
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-sidebar-row span {
+  text-align: left;
+}
+
+@media (max-width: 900px) {
+  body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-case-view {
+    grid-template-columns: 1fr;
+  }
+
+  body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-head,
+  body.user-body :is(#userBookingsView, #userResolutionView) .mechanic-resolution-table-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+body.user-body #userAccountView .settings-header h2,
+body.user-body #userAccountView .settings-row h4,
+body.user-body #userAccountView .settings-meta h4 {
+  color: #eaf0fb;
+}
+
+body.user-body #userResolutionView .settings-header h2,
+body.user-body #userResolutionView .settings-header p {
+  color: #eaf0fb;
+}
+
+body.user-body #userResolutionView .user-resolution-layout {
+  display: grid;
+  grid-template-rows: auto auto;
+  gap: 25px;
+}
+
+body.user-body .user-resolution-card {
+  /* grid removed */
+}
+
+body.user-body .user-resolution-detail-view {
+  /* display: grid; */
+  gap: 20px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view {
+  /* grid removed */
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-detail-card {
+  /* grid removed */
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-areas:
+    "title title"
+    "card sidebar";
+  gap: 24px;
+  align-items: start;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-case-intro {
+  /* grid removed */
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-detail-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose textarea {
+  flex: 1;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-detail-head h3 {
+  margin: 0;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-detail-images {
+  display: flex;
+  gap: 8px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-image-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-image-btn img {
+  width: 24px;
+  height: 24px;
+  opacity: 0.7;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-image-btn:hover img {
+  opacity: 1;
+}
+
+body.user-body .user-resolution-layout .user-resolution-card {
+  border: 0;
+  border-radius: 22px;
+  background: #3e434df7;
+  overflow: hidden;
+}
+
+body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .user-resolution-card,
+body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-detail,
+body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-case,
+body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-sidebar-card {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  background: #3e434df7;
+  gap: 20px;
+  border: 0;
+  box-shadow: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+body.user-body #userResolutionMessageView.user-resolution-detail-view .user-resolution-card,
+body.user-body #userResolutionCaseView.user-resolution-detail-view .user-resolution-card,
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-case {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-sidebar-card {
+    border: 0;
+    background: rgba(34, 43, 58, 0.96);
+    box-shadow: none;
+  }
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-detail-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.85fr);
+  grid-template-areas:
+    "title title"
+    "main sidebar";
+  gap: 24px;
+  align-items: start;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .title-resolution-case {
+  grid-area: title;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view #userResolutionCaseStatusBadge {
+  display: inline-flex;
+  justify-content: center;
+  align-self: flex-start;
+  padding: 10px 16px;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view #userResolutionCaseStatusBadge.is-general {
+  color: #ffffff;
+  background: #2f7d4f;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view #userResolutionCaseStatusBadge.is-complaint {
+  color: #ffffff;
+  background: #c84d5d;
+}
+
+body.user-body #userResolutionCaseView .settings-card.user-CaseView {
+  background: #3e434df7;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+  padding: 20px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-main {
+  grid-area: main;
+  display: grid;
+  gap: 20px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-case-copy {
+  max-width: none;
+  margin: 0;
+  color: rgba(234, 240, 251, 0.82);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-thread {
+  display: grid;
+  gap: 18px;
+  margin-top: 0;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-message-row {
+  width: 100%;
+  gap: 14px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-bubble {
+  width: 100%;
+  max-width: none;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1b1f28;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-message.is-customer .mechanic-resolution-bubble {
+  background: #eceff4;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-message {
+  width: 100%;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-message-content {
+  width: 100%;
+  min-width: 0;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-message.is-customer .mechanic-resolution-message-row {
+  flex-direction: row-reverse;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-message.is-customer .mechanic-resolution-message-content {
+  justify-items: start;
+  align-items: flex-start;
+  text-align: left;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose {
+  display: grid;
+  gap: 12px;
+  margin-top: 0;
+  justify-items: start;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose textarea {
+  min-height: 140px;
+  max-width: 640px;
+  width: 100%;
+  flex: none;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose-actions {
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-sidebar {
+  grid-area: sidebar;
+  align-self: start;
+  /* background: #0d1220; */
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-sidebar-card {
+  background: #0d1220;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0;
+  padding: 18px 20px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-sidebar-card h4 {
+  margin: 0 0 8px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose {
+  display: grid;
+  gap: 12px;
+  margin-top: 0;
+  justify-items: start;
+  align-items: start;
+  max-width: 640px;
+  width: 100%;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-main {
+  padding-top: 2px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-thread {
+  padding-bottom: 4px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose textarea {
+  width: 100%;
+  min-height: 150px;
+  max-width: 640px;
+  flex: none;
+  resize: vertical;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose-attachments {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view #userResolutionCaseAttachBtn.secondary {
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  min-height: 36px;
+  width: fit-content;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view #userResolutionCaseBackBtn.mechanic-resolution-back {
+  background: var(--dashboard-action-bg);
+  border-color: var(--dashboard-action-bg);
+  color: #ffffff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  min-height: 36px;
+  width: fit-content;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 140px));
+  gap: 10px;
+  align-items: start;
+  margin-top: 0;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose-empty {
+  color: rgba(234, 240, 251, 0.72);
+  font-size: 0.9rem;
+  margin-top: 2px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose-file {
+  display: grid;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 14px;
+  background: rgba(13, 18, 32, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #eaf0fb;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose-file img {
+  width: 100%;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose-file-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 96px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #eaf0fb;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-compose-file span {
+  display: block;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-message-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-message-attachment {
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 12px;
+  background: rgba(13, 18, 32, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #eaf0fb;
+  max-width: 180px;
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-message-attachment img {
+  width: 160px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-resolution-message-attachment a {
+  color: var(--dashboard-link-color);
+  text-decoration: none;
+  word-break: break-word;
+}
+
+@media (max-width: 980px) {
+  body.user-body #userResolutionCaseView.user-resolution-detail-view .mechanic-detail-card {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "title"
+      "main"
+      "sidebar";
+  }
+}
+
+body.user-body .user-resolution-card h3 {
+  margin: 0;
+  padding: 18px 22px;
+  font-size: 1.05rem;
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.user-body .user-resolution-card .user-resolution-card-body {
+  padding: 22px;
+  display: grid;
+  gap: 18px;
+}
+
+body.user-body .user-resolution-card .mechanic-resolution-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 18px;
+}
+
+body.user-body .user-resolution-card .mechanic-resolution-tab {
+  min-height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: var(--dashboard-tab-bg);
+  color: var(--dashboard-tab-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+body.user-body .user-resolution-card .mechanic-resolution-tab.is-active {
+  background: rgba(34, 43, 58, 0.96);
+  color: #ffffff;
+  border-color: var(--dashboard-tab-active-border);
+}
+
+body.user-body .user-resolution-card .mechanic-resolution-table {
+  display: grid;
+  gap: 12px;
+}
+
+body.user-body .user-resolution-card .mechanic-resolution-table-head,
+body.user-body .user-resolution-card .mechanic-resolution-table-row {
+  display: grid;
+  grid-template-columns: 150px 150px 160px minmax(0, 1fr) 80px;
+  gap: 16px;
+  align-items: center;
+}
+
+body.user-body .user-resolution-card .mechanic-resolution-table-head {
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 1.02rem;
+  justify-items: center;
+  text-align: center;
+}
+
+body.user-body .user-resolution-card .mechanic-resolution-table-head > span {
+  color: #ffffff;
+  font-weight: 800;
+}
+
+body.user-body .user-resolution-card .mechanic-resolution-table-row {
+  min-height: 56px;
+  padding: 12px 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+body.user-body .user-resolution-card .mechanic-resolution-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: start;
+  padding: 7px 12px;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+body.user-body .user-resolution-card .mechanic-resolution-status.is-general {
+  background: #2f7d4f !important;
+}
+
+body.user-body .user-resolution-card .mechanic-resolution-status.is-complaint {
+  background: #c84d5d !important;
+}
+
+body.user-body .user-resolution-card .mechanic-resolution-link {
+  border: 0;
+  background: transparent;
+  color: #1e93f2;
+  font: inherit;
+  cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  body.user-body .user-resolution-card .mechanic-resolution-table-head,
+  body.user-body .user-resolution-card .mechanic-resolution-table-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.user-account-card {
+  display: grid;
+  min-height: auto;
+  height: auto;
+}
+
+body.user-body #userAccountView .settings-card.user-account-card {
+  background: #3e434df7;
+}
+
+body.user-body #userResolutionView .user-resolution-layout {
+  /* background: #3e434df7; */
+  box-shadow: none;
+  /* padding: 20px; */
+  border-radius: 22px;
+}
+
+body.user-body #userAccountView {
+  min-height: auto;
+}
+
+body.user-body #userAccountView > .settings-card.user-account-card {
+  min-height: calc(100dvh - var(--general-header-height, 72px) - 140px);
+  height: calc(100dvh - var(--general-header-height, 72px) - 140px);
+}
+
+body.user-body #userAccountView .user-account-layout {
+  min-height: 100%;
+  height: 100%;
+  padding: 20px;
+}
+
+.user-account-layout {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+  align-content: stretch;
+}
+
+body.user-body #userAccountView .user-settings-panel-head {
+  display: none;
+}
+
+body.user-body #userAccountView .user-settings-panel {
+  display: grid;
+  gap: 22px;
+  align-content: stretch;
+  align-items: start;
+  min-height: 100%;
+}
+
+body.user-body #userAccountView .user-settings-panel-head .account-section--welcome {
+  display: grid;
+}
+
+.account-section--status {
+  border-top: 3px solid #ffffff;
+  padding-top: 14px;
+}
+
+.account-section--role .settings-row {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.account-section--integration {
+  border-top: 3px solid #ffffff;
+  padding-top: 14px;
+}
+
+body.user-body #userAccountView .user-account-status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 6px 18px;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+  background: #5a6f90;
+  width: fit-content;
+}
+
+body.user-body #userAccountView .user-account-status-pill[data-status="active"] {
+  background: #37c66c;
+}
+
+body.user-body #userAccountView .user-account-status-pill[data-status="pending"] {
+  background: #5a6f90;
+}
+
+body.user-body #userAccountView .user-account-status-pill[data-status="inactive"],
+body.user-body #userAccountView .user-account-status-pill[data-status="disabled"],
+body.user-body #userAccountView .user-account-status-pill[data-status="suspended"] {
+  background: #d84f5f;
+}
+
+body.user-body #userAccountView .settings-header p,
+body.user-body #userAccountView .settings-row p,
+body.user-body #userAccountView .account-section p,
+body.user-body #userAccountView .account-section h4,
+body.user-body #userAccountView .account-section span {
+  color: #ffffff;
+}
+
+body.user-body #userAccountView .account-section h4,
+body.user-body #userAccountView .settings-profile h4 {
+  font-size: 1.6rem;
+  text-transform: none;
+  letter-spacing: normal;
+  opacity: 1;
+}
+
+body.user-body #userAccountView .account-section p,
+body.user-body #userAccountView .settings-profile p {
+  font-size: 1.05rem;
+  font-weight: 500;
+  line-height: 1.4;
+  opacity: 0.92;
+}
+
+body.user-body #userAccountView .settings-meta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto;
+  gap: 10px;
+  justify-items: stretch;
+  text-align: left;
+  width: 100%;
+  min-width: 0;
+}
+
+body.user-body #userAccountView .settings-profile,
+body.user-body #userAccountView .account-section > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto;
+  gap: 10px;
+}
+
+body.user-body #userAccountView .user-full-name-grid,
+body.user-body #userSettingsView .user-full-name-grid {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+body.user-body #userAccountView .user-full-name-grid {
+  width: 100%;
+}
+
+body.user-body #userAccountView .user-full-name-row,
+body.user-body #userSettingsView .user-full-name-row {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  column-gap: 14px;
+  align-items: baseline;
+  width: 100%;
+  min-width: 0;
+}
+
+body.user-body #userAccountView .user-full-name-row .account-field-label,
+body.user-body #userAccountView .user-full-name-row .account-field-value,
+body.user-body #userSettingsView .user-full-name-row .account-field-label,
+body.user-body #userSettingsView .user-full-name-row .account-field-value {
+  font-size: 1.3rem;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+body.user-body #userAccountView .user-full-name-row .account-field-label,
+body.user-body #userSettingsView .user-full-name-row .account-field-label {
+  width: auto;
+  margin-right: 0;
+  padding-right: 0;
+  border-right: 0;
+}
+
+body.user-body #userAccountView .settings-divider {
+  height: 3px;
+  background: #ffffff;
+}
+
+body.user-body #userAccountView .account-field-label,
+body.user-body #userAccountView .account-field-value {
+  display: inline-block;
+  vertical-align: top;
+}
+
+body.user-body #userAccountView .account-field-label {
+  width: 110px;
+  padding-right: 12px;
+  margin-right: 12px;
+  border-right: 2px solid rgba(255, 255, 255, 0.72);
+}
+
+body.user-body #userAccountView .settings-row {
+  border-bottom: 3px solid #ffffff;
+  padding-bottom: 14px;
+}
+
+body.user-body #userAccountView .settings-avatar {
+  background: #cfd6fb;
+  color: #44528d;
+}
+
+body.user-body #userAccountView .settings-avatar-lg {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+}
+
+@media (max-width: 980px) {
+  body.user-body #userAccountView > .settings-card.user-account-card {
+    min-height: auto;
+    height: auto;
+  }
+
+  body.user-body #userAccountView .settings-card {
+    padding: 20px;
+  }
+}
+
+body.user-body #userDashboardView .settings-header h2,
+body.user-body #userDashboardView .settings-header p,
+body.user-body #userDashboardView .user-section-title,
+body.user-body #userDashboardView .user-verify-title {
+  color: #eaf0fb;
+  text-align: center;
+}
+
+body.user-body #userDashboardView .user-section-title {
+  font-size: 1.5rem;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+body.user-body #userDashboardView .user-add-vehicle-help {
+  margin: -2px 0 0;
+  text-align: center;
+  color: #c8d4e8;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+body.user-body #userDashboardView .user-quick-quote-intro {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  margin: 6px 0 16px;
+  text-align: center;
+}
+
+body.user-body #userDashboardView .user-quick-quote-intro .user-section-title {
+  margin: 0;
+}
+
+body.user-body #userDashboardView .user-quick-quote-lead {
+  margin: 0;
+  max-width: 52ch;
+  color: #c8d4e8;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+body.user-body #userDashboardView .user-quick-quote label {
+  text-align: center;
+}
+
+body.user-body #userDashboardView .user-quick-quote .primary,
+body.user-body #userDashboardView #userQuickQuoteBtn {
+  justify-self: center;
+  margin-top: 8px;
+}
+
+body.user-body #userDashboardView .dashboard-section--quote {
+  padding: 4px 0 10px;
+}
+
+body.user-body #userDashboardView .user-panel-head h2 {
+  text-align: left;
+  color: #ffffff;
+  margin-left: 10px;
+}
+
+body.user-body #userDashboardView .user-panel-head p {
+  text-align: right;
+  color: #c8d4e8;
+}
+
+#userDashboardView .user-welcome-corner {
+  margin: 0;
+}
+
+.user-welcome-corner-wrap {
+  display: grid;
+  gap: 4px;
+  justify-items: end;
+}
+
+.user-welcome-corner-subtitle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #a9b6cb;
+}
+
+body.user-body #userDashboardView .settings-divider {
+  height: 3px;
+  background: #ffffff;
+}
+
+body.user-body #userDashboardView .user-verify-text,
+body.user-body #userDashboardView .user-car-meta span,
+body.user-body #userDashboardView .form-error {
+  color: #ffffff;
+}
+
+body.user-body #userDashboardView .form-error {
+  font-size: 1rem;
+  line-height: 1.45;
+  font-weight: 600;
+}
+
+body.user-body #userDashboardView .user-car-meta span {
+  color: #0f172a;
+}
+
+body.user-body #userDashboardView .user-quick-quote label {
+  color: #ffffff;
+}
+
+body.user-body #userSettingsView .settings-panel {
+  grid-area: panel;
+}
+
+
+body.user-body #userDashboardView .user-car-summary,
+body.user-body #userDashboardView .user-verify-card,
+body.user-body #userDashboardView .user-add-vehicle input,
+body.user-body #userDashboardView .user-quick-quote input,
+body.user-body #userDashboardView .user-quick-quote select {
+  border-color: rgba(15, 23, 42, 0.18);
+}
+
+body.user-body #userDashboardView .user-car-summary,
+body.user-body #userDashboardView .user-verify-card {
+  /* background: rgba(255, 255, 255, 0.03); */
+  border-color: #ffffff;
+  color: #eaf0fb;
+}
+
+body.user-body #userDashboardView .user-add-vehicle input,
+body.user-body #userDashboardView .user-quick-quote input,
+body.user-body #userDashboardView .user-quick-quote select {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+body.user-body #userDashboardView .user-add-vehicle input::placeholder,
+body.user-body #userDashboardView .user-quick-quote input::placeholder {
+  color: #6b7280;
+}
+
+.user-dashboard-card .user-section-title {
+  margin: 0 0 10px;
+  font-size: 1.15rem;
+  color: #0f172a;
+  text-align: center;
+}
+
+.user-dashboard-card {
+  display: block;
+}
+
+#userPage .user-dashboard-layout {
+  display: grid;
+  gap: 14px;
+  min-height: 100%;
+  align-self: stretch;
+  grid-template-rows: auto;
+  align-content: start;
+  color: #ffffff;
+}
+
+#userDashboardView .user-dashboard-layout > .settings-divider {
+  height: 3px;
+  background: #ffffff;
+  width: 100%;
+}
+
+.user-panel {
+      display: grid;
+      gap: 14px;
+      background: transparent;
+      border: 0;
+      border-radius: var(--dashboard-panel-radius);
+      box-shadow: none;
+      padding: 0px;
+      align-self: start;
+}
+
+.car-panel {
+  display: grid;
+  gap: 14px;
+  background: #3e434df7;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 14px;
+}
+
+#userDashboardView .user-dashboard-layout > .user-panel:last-child {
+  align-self: start;
+}
+
+.dashboard-section--add-form {
+  width: min(360px, 100%);
+  margin: 0 auto;
+}
+
+#userDashboardView .car-panel > .dashboard-section--add-form {
+  display: contents;
+}
+
+#userDashboardView .car-panel > .dashboard-section--add-form .user-add-vehicle {
+  display: contents;
+}
+
+#userDashboardView .car-panel > .dashboard-section--add-form .user-add-vehicle input {
+  width: min(360px, 100%);
+  justify-self: center;
+}
+
+#userDashboardView .car-panel > .dashboard-section--add-form .user-add-vehicle button {
+  justify-self: center;
+}
+
+#userDashboardView .car-panel > .dashboard-section--add-form .form-error {
+  justify-self: center;
+  text-align: center;
+}
+
+#userDashboardView .car-panel > .dashboard-section--quote {
+  display: contents;
+}
+
+#userDashboardView .car-panel > .dashboard-section--quote .user-quick-quote {
+  display: contents;
+}
+
+#userDashboardView .car-panel > .dashboard-section--quote .user-quick-quote label {
+  display: grid;
+  gap: 8px;
+  width: min(360px, 100%);
+  justify-self: center;
+}
+
+#userDashboardView .car-panel > .dashboard-section--quote .user-quick-quote button {
+  justify-self: center;
+}
+
+#userDashboardView .car-panel > .dashboard-section--quote .user-verify-card {
+  justify-self: stretch;
+}
+
+#userDashboardView .dashboard-section--welcome,
+#userVehicleView .vehicle-section--welcome,
+#userVehicleView .user-vehicle-layout > .settings-divider,
+#userBookingsView .bookings-section--welcome,
+#userBookingsView .bookings-section--divider,
+#userResolutionView .resolution-section--welcome,
+#userResolutionView .resolution-section--divider,
+#userSettingsView .settings-section--welcome,
+#userSettingsView .settings-section--divider {
+  display: none;
+}
+
+.user-vehicle-layout {
+  grid-template-areas:
+    "heading"
+    "meta"
+    "cards";
+}
+
+.user-bookings-layout,
+.user-resolution-layout {
+  grid-template-areas:
+    "card";
+}
+
+.user-car-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.user-empty-state {
+  display: grid;
+  gap: 6px;
+  padding: 18px;
+  border: 1px dashed rgba(255, 255, 255, 0.24);
+  border-radius: 12px;
+  color: #c8d4e8;
+}
+
+.user-empty-state strong {
+  color: #eaf0fb;
+}
+
+.user-car-summary {
+  border: 1px solid #ffffff;
+  border-radius: 10px;
+  padding: 14px;
+  display: grid;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.user-car-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.user-car-headline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.user-car-title-block {
+  display: grid;
+  gap: 2px;
+}
+
+.user-car-title-block strong {
+  color: #eaf0fb;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.user-car-title-block span {
+  color: #eaf0fb;
+  font-size: 0.9rem;
+  line-height: 1.15;
+  opacity: 0.94;
+}
+
+.user-car-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.user-car-star,
+.user-car-menu {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.user-car-star.is-favorite {
+  color: #facc15;
+}
+
+.user-car-menu-wrap {
+  position: relative;
+}
+
+.user-car-menu-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  min-width: 116px;
+  padding: 8px 0;
+  border-radius: 12px;
+  background: #f6f7fb;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  box-shadow: 0 16px 32px rgba(2, 6, 23, 0.28);
+  display: grid;
+  z-index: 10;
+}
+
+.user-car-menu-panel button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 10px 16px;
+  color: #0f172a;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.user-car-menu-panel button:hover {
+  background: rgba(10, 98, 208, 0.08);
+}
+
+.user-car-menu-panel button.danger {
+  color: #dc2626;
+}
+
+.user-reg-badge {
+  background: #fde047;
+  color: #111827;
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.user-car-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.user-car-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 0.82rem;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.user-car-meta span i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-style: normal;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.user-car-status {
+  display: grid;
+  gap: 10px;
+}
+
+.user-car-status-item {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-car-status-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 3px solid #1f8c56;
+  color: #dcefe2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.user-car-status-item strong {
+  display: block;
+  color: #63c185;
+  font-size: 1.05rem;
+}
+
+.user-car-status-item p {
+  margin: 2px 0 0;
+  color: #eaf0fb;
+  font-weight: 500;
+}
+
+.user-car-status-arrow {
+  color: #63c185;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.user-add-vehicle {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  width: 100%;
+}
+
+.user-add-vehicle input {
+  width: 100%;
+  border: 1px solid rgba(15, 23, 42, 0.2);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+#userAddVehicleBtn {
+  justify-self: center;
+  min-width: 140px;
+  padding: 12px 22px;
+  border: 1px solid #5a6f90;
+  border-radius: 10pxx;
+  background: #5a6f90;
+  color: #ffffff;
+}
+
+#userAddVehicleBtn:hover {
+  background: #506480;
+  border-color: #506480;
+}
+
+.user-vehicle-card {
+  display: block;
+  background: #3e434df7;
+  box-shadow: none;
+}
+
+body.user-body #userVehicleView .settings-card.user-vehicle-card {
+  background: #3e434df7;
+  box-shadow: none;
+}
+
+.user-vehicle-layout {
+  display: grid;
+  grid-template-areas:
+    "heading"
+    "meta"
+    "cards";
+  gap: 30px;
+  padding: 20px;
+}
+
+body.user-body #userVehicleView .settings-divider {
+  height: 3px;
+  background: #ffffff;
+}
+
+body.user-body #userVehicleView .settings-header h2,
+body.user-body #userVehicleView .settings-header p,
+body.user-body #userVehicleView .user-welcome-corner,
+body.user-body #userVehicleView .user-welcome-corner-subtitle,
+body.user-body #userVehicleView .user-vehicle-info-copy strong,
+body.user-body #userVehicleView .user-vehicle-info-copy p,
+body.user-body #userVehicleView .user-vehicle-info-arrow,
+body.user-body #userVehicleView .user-vehicle-dropdown-btn,
+body.user-body #userVehicleView .user-vehicle-dropdown-arrow {
+  color: #ffffff;
+}
+
+body.user-body #userVehicleView .user-reg-badge {
+  color: #000000;
+}
+
+.user-vehicle-heading {
+  grid-area: heading;
+  position: relative;
+  border: 1px solid #ffffff;
+  border-radius: 14px;
+  width: 100%;
+  max-height: none;
+  height: 400px;
+  padding: 12px;
+}
+
+.user-vehicle-heading-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 20px;
+  min-height: 72px;
+}
+
+.user-vehicle-title-button {
+  margin: 0;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  color: #f7fbff;
+  font-size: clamp(2.1rem, 3.1vw, 2.8rem);
+  line-height: 1.05;
+  text-transform: uppercase;
+  min-width: 0;
+  align-self: center;
+}
+
+.user-vehicle-dropdown-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 0;
+  justify-self: start;
+  align-self: center;
+}
+
+.user-reg-badge {
+  align-self: center;
+  font-size: 1.1rem;
+  padding: 10px 16px;
+}
+
+.user-vehicle-dropdown-arrow {
+  display: inline-block;
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+
+.user-vehicle-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 420px;
+  max-width: min(420px, calc(100vw - 48px));
+  background: #f6f7fb;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 18px 36px rgba(2, 6, 23, 0.24);
+  overflow: hidden;
+  z-index: 20;
+}
+
+.user-vehicle-dropdown-item {
+  width: 100%;
+  appearance: none;
+  border: 0;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  background: #f6f7fb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.user-vehicle-dropdown-item:last-child {
+  border-bottom: 0;
+}
+
+.user-vehicle-dropdown-item:hover {
+  background: #eef3fb;
+}
+
+.user-vehicle-dropdown-title {
+  color: #0f172a;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.user-vehicle-pills {
+  grid-area: meta;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-height: 25%;
+  margin: 0px 0px 0px;
+  align-items: center;
+}
+
+.user-vehicle-pills span {
+  border: 1px solid #ffffff;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+body.user-body #userVehicleView .user-vehicle-pills span,
+body.user-body #userVehicleView .user-vehicle-pills span i {
+  color: #0f172a;
+}
+
+.user-vehicle-pills span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.user-vehicle-pills span i {
+  font-style: normal;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.user-vehicle-cards {
+  grid-area: cards;
+  display: grid;
+  margin: 0 0 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.user-vehicle-info-card {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #eaf0fb;
+  padding: 18px;
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-vehicle-info-card.is-mot {
+  border-color: rgba(103, 232, 154, 0.55);
+}
+
+.user-vehicle-info-card.is-tax {
+  border-color: rgba(251, 146, 60, 0.55);
+}
+
+.user-vehicle-info-card.is-mileage,
+.user-vehicle-info-card.is-details {
+  border-color: rgba(96, 165, 250, 0.42);
+}
+
+.user-vehicle-info-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 3px solid currentColor;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.user-vehicle-info-copy strong {
+  display: block;
+  color: #f8fbff;
+  font-size: 1.05rem;
+}
+
+.user-vehicle-info-copy p {
+  margin: 4px 0 0;
+  color: #c8d4e8;
+}
+
+.user-vehicle-info-card.is-mot .user-vehicle-info-icon,
+.user-vehicle-info-card.is-mot .user-vehicle-info-arrow,
+.user-vehicle-info-card.is-mot .user-vehicle-info-copy strong {
+  color: #63c185;
+}
+
+.user-vehicle-info-card.is-tax .user-vehicle-info-icon,
+.user-vehicle-info-card.is-tax .user-vehicle-info-arrow,
+.user-vehicle-info-card.is-tax .user-vehicle-info-copy strong {
+  color: #fb923c;
+}
+
+.user-vehicle-info-card.is-mileage .user-vehicle-info-icon,
+.user-vehicle-info-card.is-mileage .user-vehicle-info-arrow,
+.user-vehicle-info-card.is-details .user-vehicle-info-icon,
+.user-vehicle-info-card.is-details .user-vehicle-info-arrow {
+  color: #60a5fa;
+}
+
+.user-vehicle-info-arrow {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.user-vehicle-card > * + * {
+  margin-top: 8px;
+}
+
+.user-vehicle-heading {
+  border: 1px solid #ffffff;
+  border-radius: 14px;
+  width: 100%;
+  max-height: none;
+  height: auto;
+  padding: 12px;
+  background: rgba(34, 43, 58, 0.96);
+  box-shadow: 0 18px 36px rgba(5, 10, 18, 0.24);
+}
+
+.user-vehicle-heading h2 {
+  margin: 0;
+  color: #f7fbff;
+  font-size: clamp(2rem, 3vw, 3rem);
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.user-vehicle-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.user-vehicle-dropdown {
+  position: relative;
+}
+
+.user-vehicle-dropdown-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.user-vehicle-dropdown-arrow {
+  display: inline-block;
+}
+
+.user-vehicle-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 420px;
+  max-width: min(420px, calc(100vw - 48px));
+  background: #f6f7fb;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 18px 36px rgba(2, 6, 23, 0.24);
+  overflow: hidden;
+  z-index: 20;
+}
+
+.user-vehicle-dropdown-item {
+  width: 100%;
+  appearance: none;
+  border: 0;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  background: #f6f7fb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.user-vehicle-dropdown-item:last-child {
+  border-bottom: 0;
+}
+
+.user-vehicle-dropdown-item:hover {
+  background: #eef3fb;
+}
+
+.user-vehicle-dropdown-title {
+  color: #0f172a;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.user-vehicle-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-height: 25%;
+  margin: 0px 0px 00px;
+  align-items: center;
+}
+
+.user-vehicle-pills span {
+  border: 1px solid #ffffff;
+  border-radius: 999px;
+  padding: 8px 14px;
+  color: #eaf0fb;
+}
+
+.user-vehicle-nickname {
+  border-radius: 999px;
+  padding-inline: 18px;
+}
+
+.user-vehicle-cards {
+  display: grid;
+  margin: 0 0 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.user-vehicle-info-card {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  color: #eaf0fb;
+  padding: 18px;
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-vehicle-info-card.is-mot {
+  border-color: rgba(103, 232, 154, 0.55);
+  }
+
+.user-vehicle-info-card.is-tax {
+  border-color: rgba(251, 146, 60, 0.55);
+}
+
+.user-vehicle-info-card.is-mileage,
+.user-vehicle-info-card.is-details {
+  border-color: rgba(96, 165, 250, 0.42);
+}
+
+.user-vehicle-info-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 3px solid currentColor;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.user-vehicle-info-copy strong {
+  display: block;
+  color: #f8fbff;
+  font-size: 1.05rem;
+}
+
+.user-vehicle-info-copy p {
+  margin: 4px 0 0;
+  color: #c8d4e8;
+}
+
+.user-vehicle-info-card.is-mot .user-vehicle-info-icon,
+.user-vehicle-info-card.is-mot .user-vehicle-info-arrow,
+.user-vehicle-info-card.is-mot .user-vehicle-info-copy strong {
+  color: #63c185;
+}
+
+.user-vehicle-info-card.is-tax .user-vehicle-info-icon,
+.user-vehicle-info-card.is-tax .user-vehicle-info-arrow,
+.user-vehicle-info-card.is-tax .user-vehicle-info-copy strong {
+  color: #fb923c;
+}
+
+.user-vehicle-info-card.is-mileage .user-vehicle-info-icon,
+.user-vehicle-info-card.is-mileage .user-vehicle-info-arrow,
+.user-vehicle-info-card.is-details .user-vehicle-info-icon,
+.user-vehicle-info-card.is-details .user-vehicle-info-arrow {
+  color: #60a5fa;
+}
+
+.user-vehicle-info-arrow {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.user-verify-card {
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 12px;
+  padding: 10px 14px;
+  text-align: center;
+}
+
+.user-verify-title {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.user-verify-text {
+  margin: 0;
+  color: #64748b;
+}
+
+.user-quick-quote {
+  display: grid;
+  gap: 10px;
+  width: min(360px, 100%);
+  margin: 0 auto;
+}
+
+.user-quick-quote label {
+  display: grid;
+  gap: 6px;
+  color: #334155;
+  font-weight: 600;
+}
+
+.user-quick-quote input,
+.user-quick-quote select {
+  border: 1px solid rgba(15, 23, 42, 0.18);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.user-quick-quote select,
+.user-quick-quote select option {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.user-quick-quote .primary {
+  margin-top: 4px;
+  justify-self: center;
+}
+
+#userQuickQuoteBtn {
+  min-width: 140px;
+  padding: 12px 22px;
+  border: 1px solid var(--dashboard-action-bg);
+  border-radius: 10pxpx;
+  background: var(--dashboard-action-bg);
+  color: #ffffff;
+}
+
+#userQuickQuoteBtn:hover {
+  background: #506480;
+  border-color: #506480;
+}
+
+@media (max-width: 980px) {
+  .user-car-list {
+    grid-template-columns: 1fr;
+  }
+
+  .user-vehicle-dropdown-menu {
+    left: 0;
+    right: auto;
+    width: min(100%, 420px);
+  }
+
+  .user-vehicle-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .user-booking-grid,
+  .user-booking-photo-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .user-booking-toolbar {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
+  .user-booking-reference {
+    justify-self: start;
+  }
+
+  .user-add-vehicle {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Responsive matrix for user dashboard */
+@media (max-width: 1100px) and (min-width: 769px) {
+  #userPage.mainLayout {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  #userPage .rail-base {
+    width: 180px;
+    min-width: 180px;
+    min-height: auto;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  #userPage .mainRail {
+    width: 180px;
+    min-width: 180px;
+    padding: 14px 12px 16px;
+    justify-items: stretch;
+    align-content: start;
+  }
+
+  #userPage .mainRail:hover {
+    width: 180px;
+  }
+
+  #userPage .mainRail .rail-brand {
+    width: 100%;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    justify-self: center;
+    justify-content: center;
+    padding: 0;
+    margin-top: 10px;
+  }
+
+  #userPage .mainRail .rail-nav {
+    position: static;
+    top: auto;
+    grid-auto-flow: row;
+    grid-auto-columns: unset;
+    grid-template-columns: 1fr;
+    align-content: start;
+    gap: 10px;
+    overflow: visible;
+    padding: 8px 0 0;
+    justify-items: stretch;
+  }
+
+  #userPage .mainRail .rail-item {
+    width: 100%;
+    height: 48px;
+    min-height: 48px;
+    border-radius: 12px;
+  }
+
+  #userPage .mainRail .rail-footer {
+    display: grid;
+  }
+}
+
+@media (max-width: 768px) {
+  body.user-body .main-header.general-header .customer-header-menu {
+    display: none !important;
+  }
+
+  .user-header-menu-toggle {
+    display: inline-grid;
+    gap: 5px;
+    width: 42px;
+    height: 42px;
+    place-content: center;
+    margin-left: auto;
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+    cursor: pointer;
+  }
+
+  .user-header-menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+  }
+
+  body.user-body .main-header.general-header {
+    padding: 12px 16px;
+    background: #11151d;
+    border-radius: 0;
+  }
+
+  body.user-body .main-header.general-header .body-content {
+    width: 100%;
+  }
+
+  body.user-body .main-header.general-header .main-brand span {
+    display: block;
+  }
+
+  #userPage.mainLayout {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  body.user-mobile-menu-open {
+    overflow: hidden;
+  }
+
+  body.user-body .page-shell-content {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  #userPage .rail-base {
+    display: none !important;
+  }
+
+  #userPage .user-rail-toggle {
+    display: none !important;
+  }
+
+  .user-mobile-topbar {
+    display: none;
+  }
+
+  .user-mobile-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 800;
+  }
+
+  .user-mobile-logo {
+    display: inline-grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #102033;
+    font-size: 0.86rem;
+    font-weight: 900;
+  }
+
+  .user-mobile-menu-toggle,
+  .user-mobile-menu-close {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: #ffffff;
+    cursor: pointer;
+  }
+
+  .user-mobile-menu-toggle {
+    display: inline-grid;
+    gap: 5px;
+    width: 42px;
+    height: 42px;
+    place-content: center;
+  }
+
+  .user-mobile-menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+  }
+
+  .user-mobile-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+    background: rgba(7, 12, 21, 0.55);
+    z-index: 80;
+    transition: opacity 0.2s ease;
+  }
+
+  .user-mobile-menu-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .user-mobile-menu {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 90;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    width: min(82vw, 250px);
+    padding: 18px;
+    background: #ffffff;
+    color: #0f172a;
+    transform: translateX(-104%);
+    transition: transform 0.22s ease;
+    box-shadow: 24px 0 60px rgba(0, 0, 0, 0.24);
+  }
+
+  .user-mobile-menu.is-open {
+    transform: translateX(0);
+  }
+
+  .user-mobile-menu-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 22px;
+  }
+
+  .user-mobile-menu-close {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: #111827;
+    font-size: 1.4rem;
+    line-height: 1;
+  }
+
+  .user-mobile-menu-nav {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+  }
+
+  .user-mobile-menu-link,
+  .user-mobile-signout {
+    appearance: none;
+    border: 0;
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 14px;
+    background: transparent;
+    color: #0f172a;
+    text-align: left;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .user-mobile-menu-link.active {
+    background: #111827;
+    color: #ffffff;
+    border-radius: 8px;
+  }
+
+  .user-mobile-signout {
+    border-top: 1px solid rgba(15, 23, 42, 0.12);
+    color: #0f172a;
+  }
+
+  .user-mobile-back-btn {
+    margin-top: 12px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: #eef2f7;
+  }
+
+  #userPage .mainSection {
+    border-left: 2px solid #ffffff;
+    border-radius: 0 0 0px 0px;
+  }
+
+  body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-table-head {
+    display: none;
+  }
+
+}
+
+@media (max-width: 768px) {
+  body.user-body #userResolutionView .user-resolution-layout {
+    gap: 16px;
+  }
+
+  body.user-body #userResolutionView > .user-resolution-card {
+    width: min(100%, 720px);
+    margin-inline: auto;
+    justify-self: center;
+  }
+
+  body.user-body .user-resolution-card h3 {
+    text-align: center;
+  }
+
+  body.user-body .user-resolution-card .user-resolution-card-body {
+    justify-items: center;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-table {
+    width: 100%;
+    justify-items: center;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-table {
+    width: 100%;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-tabs {
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+    width: min(100%, 620px);
+    justify-self: center;
+    margin-inline: auto;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-tab {
+    width: 100%;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-table-head,
+  body.user-body .user-resolution-card .mechanic-resolution-table-row {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-status,
+  body.user-body .user-resolution-card .mechanic-resolution-link {
+    justify-self: center;
+  }
+
+  .user-settings-layout {
+    grid-template-columns: 1fr;
+  }
+
+  body.user-body #userSettingsView .user-settings-panel-head {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  body.user-body #userSettingsView .user-settings-tabs {
+    justify-self: center;
+    flex-wrap: wrap;
+  }
+
+  body.user-body .main-header.general-header {
+    padding: 14px 16px;
+  }
+
+  body.user-body .main-header.general-header .header-content {
+    width: 100%;
+  }
+
+  #userPage.mainLayout {
+    width: 100%;
+  }
+
+  body.user-body .main-header.general-header .main-brand {
+    gap: 10px;
+    align-items: center;
+  }
+
+  body.user-body .main-header.general-header .main-brand > span.main-logo {
+    display: inline-grid;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    flex: 0 0 40px;
+  }
+
+  body.user-body .main-header.general-header .main-brand > div {
+    display: grid;
+    gap: 0;
+  }
+
+  body.user-body .main-header.general-header .main-brand > div strong {
+    font-size: 1rem;
+    line-height: 1.1;
+  }
+
+  body.user-body .main-header.general-header .main-brand > div span {
+    display: block;
+    font-size: 0.86rem;
+    line-height: 1.1;
+  }
+
+  #userPage .mainSection > .user-dashboard-hero {
+    border-radius: 0;
+  }
+
+  body.user-body .page-shell-content {
+    padding: 16px 16px 0 16px;
+    /* padding-left: 16px; */
+    /* padding-right: 16px; */
+  }
+
+  #userPage .rail-base {
+    position: static;
+    width: 100%;
+    min-width: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 15px 15px 0 0;
+  }
+
+  #userPage.mainLayout {
+    grid-template-columns: 1fr;
+  }
+
+  #userPage .mainRail {
+    width: 100%;
+  }
+
+  #userPage .mainRail .rail-nav {
+    position: static;
+    top: auto;
+    left: auto;
+    width: 100%;
+    z-index: auto;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(110px, 1fr);
+    overflow-x: auto;
+    padding: 0 0 4px;
+  }
+
+  #userPage .mainRail .rail-footer {
+    display: none;
+  }
+
+  body.user-body .user-content .settings-card {
+        padding: 16px;
+      gap: 12px;
+      border-radius: 12px;
+  }
+
+  body.user-body #userAccountView .account-field-label {
+    width: 92px;
+    padding-right: 8px;
+    margin-right: 8px;
+  }
+
+  body.user-body #userAccountView .account-field-value,
+  body.user-body #userAccountView .account-field-label {
+    white-space: nowrap;
+  }
+
+  body.user-body #userAccountView #userSettingsAddress,
+  body.user-body #userSettingsView #userSettingsAddressValueSettings {
+    display: block;
+    max-width: 100%;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    overflow-wrap: anywhere;
+  }
+
+  body.user-body #userAccountView #userSettingsAddress .account-field-label,
+  body.user-body #userAccountView #userSettingsAddress .account-field-value,
+  body.user-body #userSettingsView #userSettingsAddressValueSettings .account-field-label,
+  body.user-body #userSettingsView #userSettingsAddressValueSettings .account-field-value {
+    display: inline;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  body.user-body #userAccountView #userSettingsAddress .account-field-value,
+  body.user-body #userSettingsView #userSettingsAddressValueSettings .account-field-value {
+    word-break: break-word;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-item {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-label {
+    width: 84px;
+    flex: 0 0 84px;
+    margin-right: 8px;
+    padding-right: 8px;
+    font-size: 0.92rem;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-copy {
+    flex-direction: row;
+    align-items: center;
+    min-width: 0;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-copy p {
+    font-size: 0.92rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    overflow-wrap: normal;
+  }
+
+  body.user-body #userAccountView .settings-divider {
+    width: calc(100%);
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (max-width: 425px) {
+  body.user-body #userResolutionView .user-resolution-layout {
+    gap: 14px;
+  }
+
+  body.user-body #userResolutionView > .user-resolution-card {
+    width: min(100%, 680px);
+    margin-inline: auto;
+    justify-self: center;
+  }
+
+  body.user-body .user-resolution-card h3 {
+    text-align: center;
+  }
+
+  body.user-body .user-resolution-card .user-resolution-card-body {
+    padding: 14px;
+    justify-items: center;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-table {
+    width: 100%;
+    justify-items: center;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-table {
+    width: 100%;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-tabs {
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+    gap: 10px;
+    width: 100%;
+    justify-self: center;
+    margin-inline: auto;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-tab {
+    width: 100%;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-table-head,
+  body.user-body .user-resolution-card .mechanic-resolution-table-row {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: 8px;
+    width: 100%;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-table-row {
+    padding-top: 16px;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-table-row > * {
+    justify-self: center;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-status,
+  body.user-body .user-resolution-card .mechanic-resolution-link {
+    justify-self: center;
+    text-align: center;
+  }
+
+  body.user-body .user-resolution-card .mechanic-resolution-link {
+    display: block;
+    margin: 0 auto;
+  }
+
+  body.user-body .main-header.general-header {
+    padding: 12px;
+  }
+
+  body.user-body .main-header.general-header .main-brand {
+    gap: 8px;
+  }
+
+  body.user-body .main-header.general-header .main-brand strong {
+    font-size: 1rem;
+  }
+
+  #userPage .mainRail .rail-nav {
+    grid-auto-columns: minmax(100px, 1fr);
+    gap: 4px;
+  }
+
+  #userPage .mainRail .rail-item {
+    font-size: 0.8rem;
+    padding: 8px 8px;
+  }
+
+  .user-reg-badge {
+    font-size: 0.66rem;
+    padding: 2px 6px;
+  }
+
+  .user-dashboard-card .user-section-title {
+    font-size: 1rem;
+  }
+
+  #userPage .mainSection > .user-dashboard-hero {
+    border-radius: 0;
+  }
+
+  #userPage .user-dashboard-hero {
+    padding: 8px 10px;
+  }
+
+  #userPage .user-dashboard-hero .settings-header {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  #userPage .user-dashboard-hero .settings-header .settings-header-aside {
+    align-self: flex-end;
+    justify-content: flex-end;
+    text-align: right;
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  #userPage .user-dashboard-hero-copy {
+    width: auto;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  #userPage .user-dashboard-hero .settings-header-copy {
+    min-width: 0;
+    width: 100%;
+  }
+
+  #userPage .user-dashboard-hero .settings-header-copy h3 {
+    font-size: 0.88rem;
+    line-height: 1.05;
+  }
+
+  #userPage .user-dashboard-hero .settings-header-copy p {
+    font-size: 0.8rem;
+    line-height: 1.05;
+  }
+
+  #userPage .user-dashboard-hero .settings-header .settings-header-aside h2,
+  #userPage .user-dashboard-hero #userDashboardHeroName,
+  #userPage .user-dashboard-hero #userDashboardHeroRole {
+    white-space: nowrap;
+  }
+
+  #userPage .user-dashboard-hero .admin-profile-avatar {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+  }
+
+  #userPage .user-dashboard-hero .settings-header-copy {
+    min-width: 0;
+    width: 100%;
+  }
+
+  #userPage .user-dashboard-layout {
+    gap: 10px;
+  }
+
+  .user-panel {
+    gap: 10px;
+  }
+
+  .car-panel {
+    padding: 12px;
+  }
+
+  body.user-body #userBookingsView .user-bookings-layout {
+    gap: 12px;
+  }
+
+  body.user-body #userBookingsView .user-table-layout {
+    padding: 12px;
+    row-gap: 16px;
+  }
+
+  body.user-body #userBookingsView .user-table-head-filters {
+    gap: 8px;
+  }
+
+  body.user-body #userBookingsView .user-head-control input,
+  body.user-body #userBookingsView .user-head-control select,
+  body.user-body #userBookingsView .user-bookings-export {
+    min-height: 38px;
+    font-size: 0.9rem;
+  }
+
+  body.user-body #userBookingsView .user-head-control input,
+  body.user-body #userBookingsView .user-head-control select {
+    padding-left: 38px;
+    padding-right: 12px;
+  }
+
+  body.user-body #userBookingsView .user-table {
+    min-width: 560px;
+  }
+
+  body.user-body #userBookingsView .user-table th,
+  body.user-body #userBookingsView .user-table td {
+    padding: 12px 10px;
+    font-size: 0.88rem;
+  }
+
+  body.user-body #userBookingsView .user-table-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  body.user-body #userBookingsView .user-table-footer-meta {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  body.user-body #userBookingsView .user-pagination {
+    flex-wrap: wrap;
+  }
+
+  .dashboard-section--add-form,
+  #userDashboardView .car-panel > .dashboard-section--quote .user-quick-quote label {
+    width: 100%;
+  }
+
+  #userDashboardView .car-panel > .dashboard-section--add-form .user-add-vehicle input,
+  #userDashboardView .car-panel > .dashboard-section--quote .user-quick-quote input,
+  #userDashboardView .car-panel > .dashboard-section--quote .user-quick-quote select {
+    width: 100%;
+  }
+
+  .user-quick-quote .primary,
+  .user-add-vehicle .primary {
+    width: 100%;
+  }
+
+  body.user-body #userAccountView .user-account-layout {
+    padding: 0px;
+    gap: 18px;
+    min-height: 100%;
+  }
+
+  body.user-body #userAccountView .user-settings-panel,
+  body.user-body #userAccountView .settings-meta,
+  body.user-body #userAccountView .account-section > div {
+    min-width: 0;
+  }
+
+  body.user-body #userAccountView .settings-card.user-account-card {
+    height: 100%;
+  }
+
+  body.user-body #userAccountView .user-settings-panel-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  body.user-body #userAccountView .user-settings-panel {
+    gap: 16px;
+    height: 100%;
+  }
+
+  body.user-body #userAccountView .user-account-panel > .settings-photo-row,
+  body.user-body #userAccountView .settings-photo-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    padding-bottom: 4px;
+  }
+
+  body.user-body #userAccountView .user-account-panel > .settings-photo-row .settings-avatar-lg,
+  body.user-body #userAccountView .settings-photo-row .settings-avatar-lg {
+    display: grid !important;
+    place-items: center !important;
+    align-self: center !important;
+    justify-self: center !important;
+    margin-inline: auto !important;
+    color: #ffffff !important;
+    background: #cfd6fb;
+    text-align: center;
+    width: 170px;
+    height: 170px;
+  }
+
+  body.user-body #userAccountView .settings-profile,
+  body.user-body #userAccountView .settings-profile {
+    justify-items: stretch;
+    text-align: left;
+  }
+
+  body.user-body #userAccountView .settings-profile {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    width: 100%;
+    min-width: 0;
+  }
+
+body.user-body #userAccountView .user-full-name-grid {
+  width: 100%;
+  min-width: 0;
+  justify-items: stretch;
+  text-align: left;
+}
+
+  body.user-body #userAccountView .settings-profile h4,
+  body.user-body #userAccountView .settings-profile h4 {
+    width: 100%;
+    margin: 0;
+    text-align: center;
+  }
+
+  body.user-body #userAccountView .account-section h4 {
+    margin-bottom: 10px;
+    font-size: 1.8rem;
+    text-align: center;
+  }
+
+  body.user-body #userAccountView .account-section p {
+    font-size: 0.92rem;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  body.user-body #userAccountView .user-full-name-row {
+    /* grid-template-columns: 82px minmax(0, 1fr); */
+    column-gap: 8px;
+    align-items: center;
+    gap: 0;
+  }
+
+  body.user-body #userAccountView .user-full-name-row .account-field-label,
+  body.user-body #userAccountView .user-full-name-row .account-field-value {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    overflow-wrap: normal;
+    font-size: 1.20rem;
+    line-height: 1.2;
+  }
+
+  body.user-body #userAccountView .user-full-name-row .account-field-label {
+    width: auto;
+    margin-right: 0;
+    padding-right: 0;
+    font-size: 1.2rem;
+  }
+
+  body.user-body #userAccountView .account-section--contacts > div {
+    display: grid;
+    gap: 8px;
+    justify-items: center;
+    text-align: center;
+  }
+
+  body.user-body #userAccountView .account-field-label {
+    width: 84px;
+    padding-right: 6px;
+    margin-right: 6px;
+  }
+
+  body.user-body #userAccountView .account-section--contacts .account-field-label,
+  body.user-body #userAccountView .account-section--contacts .account-field-value {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-right: 0;
+    white-space: normal;
+    text-align: center;
+  }
+
+  body.user-body #userAccountView .account-section--contacts .account-field-label {
+    margin-bottom: 2px;
+  }
+
+  body.user-body #userAccountView .account-section--contacts .account-field-value {
+    font-size: 1.02rem;
+    line-height: 1.35;
+    margin-bottom: 6px;
+  }
+
+  body.user-body #userAccountView #userSettingsAddress {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  body.user-body #userAccountView #userSettingsAddress .account-field-label,
+  body.user-body #userAccountView #userSettingsAddress .account-field-value {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-right: 0;
+    white-space: normal;
+    text-align: center;
+  }
+
+  body.user-body #userAccountView #userSettingsAddress .account-field-label {
+    margin-bottom: 2px;
+  }
+
+  body.user-body #userAccountView #userSettingsAddress .account-field-value {
+    font-size: 1.02rem;
+    line-height: 1.35;
+  }
+
+  body.user-body #userAccountView .account-section--role,
+  body.user-body #userAccountView .account-section--status,
+  body.user-body #userAccountView .account-section--integration {
+    justify-items: center;
+    text-align: center;
+  }
+
+  body.user-body #userAccountView .account-section--role > div,
+  body.user-body #userAccountView .account-section--status > div,
+  body.user-body #userAccountView .account-section--integration > div {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  body.user-body #userAccountView .account-section--status .user-account-status-pill {
+    justify-self: center;
+  }
+
+  body.user-body #userAccountView .settings-row > div p {
+    margin-bottom: 6px;
+  }
+
+  body.user-body #userSettingsView .user-settings-layout {
+    padding: 12px;
+    gap: 16px;
+  }
+
+  body.user-body #userSettingsView .user-settings-panel-head {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  body.user-body #userSettingsPanelTitle {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  body.user-body #userSettingsView .user-settings-tabs {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  body.user-body #userSettingsView .user-settings-tab-link {
+    width: 100%;
+    text-align: center;
+  }
+
+  body.user-body #userSettingsView .user-settings-photo-row {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 12px;
+  }
+
+  body.user-body #userSettingsView .settings-avatar-lg {
+    width: 170px;
+    height: 170px;
+  }
+
+  body.user-body #userSettingsView .user-settings-photo-row .ghost,
+  body.user-body #userSettingsView .user-settings-profile .secondary,
+  body.user-body #userSettingsView .user-settings-row > .secondary {
+    width: min(220px, 100%);
+    justify-self: center;
+  }
+
+  body.user-body #userSettingsView .user-settings-profile,
+  body.user-body #userSettingsView .user-settings-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  body.user-body #userSettingsView .user-settings-accordion-summary {
+    justify-content: center;
+    text-align: center;
+  }
+
+  body.user-body #userSettingsView .user-settings-accordion-summary h4 {
+    text-align: center;
+  }
+
+  body.user-body #userSettingsView .user-settings-row > div {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-list {
+    gap: 12px;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-item {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 8px;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-copy {
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-action {
+    justify-items: center;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-action .secondary {
+    width: min(220px);
+    justify-self: center;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-label {
+    width: auto;
+    flex: none;
+    margin-right: 0;
+    padding-right: 0;
+    border-right: 0;
+    white-space: normal;
+    text-align: center;
+    font-size: 1.8rem;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-copy p {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    text-align: center;
+  }
+
+  body.user-body #userSettingsView .user-settings-contact-action {
+    justify-items: center;
+  }
+
+  body.user-body #userSettingsView .account-section h4,
+  body.user-body #userSettingsView .settings-meta h4,
+  body.user-body #userSettingsView .user-settings-profile h4,
+  body.user-body #userSettingsView .user-settings-row h4 {
+    font-size: 1.8rem;
+    text-align: center;
+    margin-bottom: 15px;
+  }
+
+  body.user-body #userSettingsView .account-section p,
+  body.user-body #userSettingsView .settings-meta p,
+  body.user-body #userSettingsView .user-settings-profile p,
+  body.user-body #userSettingsView .user-settings-row p,
+body.user-body #userSettingsView .user-settings-contact-copy p {
+    font-size: 1rem;
+    line-height: 1.35;
+    color: #c8d4e8;
+  }
+}
+
+@media (max-width: 480px) {
+  body.user-body .page-shell-content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  #userPage .mainSection {
+    min-width: 0;
+  }
+
+  body.user-body #userAccountView #userSettingsAddress,
+  body.user-body #userSettingsView #userSettingsAddressValueSettings {
+    font-size: 0.78rem;
+  }
+
+  #userPage .user-dashboard-hero {
+    padding: 8px;
+  }
+
+  #userPage .user-dashboard-hero .settings-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+  }
+
+  #userPage .user-dashboard-hero .settings-header-copy,
+  #userPage .user-dashboard-hero .settings-header .settings-header-aside,
+  #userPage .user-dashboard-hero-copy {
+    width: auto;
+    max-width: none;
+  }
+
+  #userPage .user-dashboard-hero .settings-header .settings-header-aside {
+    justify-self: end;
+    align-self: center;
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  #userPage .user-dashboard-hero .user-dashboard-hero-copy {
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  #userPage .user-dashboard-hero .settings-header-copy h3 {
+    font-size: 1.2rem;
+  }
+
+  #userPage .user-dashboard-hero .settings-header-copy p {
+    font-size: 0.78rem;
+    line-height: 1.15;
+    white-space: normal;
+  }
+
+  #userPage .user-dashboard-hero .admin-profile-avatar {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+  }
+
+  #userDashboardView .user-panel-head {
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  #userDashboardView .user-panel-head h2,
+  #userDashboardView .user-panel-head p {
+    width: 100%;
+    margin-left: 0;
+    text-align: center;
+    white-space: normal;
+  }
+
+  body.user-body #userDashboardView .user-panel-head h2,
+  body.user-body #userDashboardView .user-panel-head p {
+    margin-left: 0;
+    text-align: center;
+    width: 100%;
+    color: #ffffff;
+  }
+
+  body.user-body #userDashboardView .user-panel-head p {
+    color: #c8d4e8;
+  }
+
+  #userPage .user-dashboard-layout,
+  .user-panel,
+  .car-panel,
+  .user-car-summary,
+  .user-car-top,
+  .user-car-headline,
+  .user-car-status-item,
+  .user-quick-quote,
+  .user-verify-card {
+    min-width: 0;
+  }
+
+  .user-car-top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .user-car-summary {
+    padding: 12px;
+  }
+
+  .user-car-actions {
+    justify-content: flex-end;
+    align-self: flex-end;
+  }
+
+  .user-car-status-item {
+    grid-template-columns: 32px minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+
+  .user-car-status-arrow {
+    font-size: 1.4rem;
+  }
+
+  .user-car-title-block strong {
+    font-size: 1.1rem;
+    overflow-wrap: anywhere;
+  }
+
+  .user-car-title-block span,
+  .user-add-vehicle-help,
+  .user-quick-quote-lead,
+  .user-verify-text {
+    overflow-wrap: anywhere;
+  }
+
+  #userDashboardView .car-panel > .dashboard-section--quote .user-quick-quote label {
+    width: 100%;
+  }
+}
+
+@media (max-width: 375px) {
+  body.user-body .user-content .settings-card {
+      padding: 12px;
+    }
+
+  .user-car-title-block strong {
+    font-size: 1.1rem;
+  }
+
+  .user-car-meta span {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+  }
+}
+
+@media (max-width: 320px) {
+  body.user-body .main-header.general-header .main-brand strong {
+    font-size: 0.92rem;
+  }
+
+    #userPage .mainRail .rail-item {
+      font-size: 0.74rem;
+      padding: 7px 6px;
+    }
+
+  .user-dashboard-card .user-section-title {
+    font-size: 0.95rem;
+  }
+}
+
+/* Global light mode for all user dashboard sections */
+body.user-body.user-light-mode #userPage .mainSection {
+  background: #e8edf5;
+}
+
+body.user-body.user-light-mode #userPage :is(
+  .settings-card,
+  .user-table-layout,
+  .user-booking-detail,
+  .user-resolution-card,
+  .mechanic-resolution-sidebar-card,
+  .mechanic-detail-card,
+  .user-verify-card
+) {
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.14);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  color: #0f172a;
+}
+
+body.user-body.user-light-mode #userPage :is(
+  #userDashboardView,
+  #userAccountView,
+  #userVehicleView,
+  #userBookingsView,
+  #userResolutionView,
+  #userSettingsView
+) :is(h1, h2, h3, h4, p, span, strong, label, th, td, li, small) {
+  color: #0f172a;
+  background: transparent;
+}
+
+body.user-body.user-light-mode #userSettingsSecurity :is(
+  h1, h2, h3, h4, p, span, strong, label, th, td, li, small
+),
+body.user-body.user-light-mode #userSettingsNotifications :is(
+  h1, h2, h3, h4, p, span, strong, label, th, td, li, small
+) {
+  color: #ffffff !important;
+}
+
+body.user-body.user-light-mode #userPage :is(input, textarea, select) {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: rgba(100, 116, 139, 0.35);
+}
+
+body.user-body.user-light-mode #userPage :is(input, textarea)::placeholder {
+  color: #64748b;
+}
+
+body.user-body.user-light-mode #userPage .user-table-wrap table thead th {
+  background: #edf2f7;
+  color: #0f172a;
+}
+
+body.user-body.user-light-mode #userPage .user-table-wrap table tbody tr {
+  background: #ffffff;
+}
+
+body.user-body.user-light-mode #userPage .user-table-wrap table tbody tr td {
+  color: #334155;
+  border-color: rgba(148, 163, 184, 0.25);
+}
+
+body.user-body.user-light-mode #userPage :is(
+  .settings-divider,
+  .user-table-footer::before,
+  .user-table-head::after
+) {
+  background: rgba(71, 85, 105, 0.28);
+}
+
+/* Keep vehicle summary card text white in light mode */
+body.user-body.user-light-mode #userVehicleView .user-vehicle-info-card,
+body.user-body.user-light-mode #userVehicleView .user-vehicle-info-copy strong,
+body.user-body.user-light-mode #userVehicleView .user-vehicle-info-copy p,
+body.user-body.user-light-mode #userVehicleView .user-vehicle-info-arrow {
+  color: #ffffff !important;
+}
+
+/* Keep dashboard car cards in original dark style; only car panel changes in light mode */
+body.user-body.user-light-mode #userDashboardView .car-panel {
+  background: #f8fafc;
+  border-color: rgba(71, 85, 105, 0.2);
+}
+
+body.user-body.user-light-mode #userDashboardView .user-car-summary {
+  background: rgba(34, 43, 58, 0.96);
+  border-color: #ffffff;
+}
+
+body.user-body.user-light-mode #userDashboardView .user-car-summary :is(
+  strong,
+  span,
+  p,
+  li,
+  small
+) {
+  color: #eaf0fb !important;
+}
+
+body.user-body.user-light-mode #userDashboardView .user-car-meta span,
+body.user-body.user-light-mode #userDashboardView .user-car-meta span i {
+  background: #5a6f90;
+  border-color: #5a6f90;
+  color: #ffffff !important;
+}
+
+body.user-body.user-light-mode #userDashboardView .settings-divider,
+body.user-body.user-light-mode #userDashboardView .user-dashboard-layout > .settings-divider {
+  background: #ffffff !important;
+}
+
+body.user-body.user-light-mode #userAccountView .settings-divider,
+body.user-body.user-light-mode #userAccountView .user-settings-panel > .settings-divider {
+  background: #000000 !important;
+}
+
+body.user-body.user-light-mode #userSettingsView .settings-divider,
+body.user-body.user-light-mode #userSettingsView .user-settings-layout > .settings-divider {
+  background: rgba(71, 85, 105, 0.28) !important;
+}
+
+body.user-body.user-light-mode #userAccountView .account-section--status,
+body.user-body.user-light-mode #userAccountView .account-section--integration {
+  border-top-color: #000000 !important;
+}
+
+body.user-body.user-light-mode #userAccountView .settings-row {
+  border-bottom-color: #000000 !important;
+}
+
+
+

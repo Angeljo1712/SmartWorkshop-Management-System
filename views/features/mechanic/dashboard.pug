@@ -1,0 +1,826 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - Mechanic Dashboard"
+  - var bodyClass = "mechanic-body app-shell-body"
+
+block head
+  link(rel="stylesheet", href="/css/features/dashboard/dashboard-shell.css")
+  link(rel="stylesheet", href="/css/features/mechanic/dashboard.css")
+  link(rel="stylesheet", href="/vendor/leaflet/leaflet.css")
+  script(src="/vendor/leaflet/leaflet.js")
+
+block content
+  header.main-header.general-header
+    .body-content
+      a.main-brand(href="/")
+        span.main-logo SW
+        div
+          strong SmartWorkshop
+          span Vehicle Service Marketplace
+      .mechanic-header-menu
+        button.mechanic-header-menu-btn(type="button" aria-expanded="false")
+          span.mechanic-header-first-name Account
+          span.mechanic-header-menu-arrow ▾
+        .mechanic-header-menu-panel.is-hidden
+          button.mechanic-header-menu-item(type="button" data-target-view="dashboard") Dashboard
+          button.mechanic-header-menu-item(type="button" data-target-view="account") Account
+          button.mechanic-header-menu-item(type="button" data-target-view="booking-information") Booking information
+          button.mechanic-header-menu-item(type="button" data-target-view="resolution") Resolution center
+          button.mechanic-header-menu-item(type="button" data-target-view="payments") Payments
+          button.mechanic-header-menu-item(type="button" data-target-view="profile") Your profile
+          button.mechanic-header-menu-item(type="button" data-target-view="edit-profile") Edit Profile
+          button.mechanic-header-menu-item(type="button" data-target-view="certifications") Certification
+          button.mechanic-header-menu-item(type="button" data-target-view="tax") Tax information
+          button.mechanic-header-menu-item(type="button" data-target-view="documents") Document
+          button.mechanic-header-menu-item(type="button" data-target-view="types") Type of work covered
+          button.mechanic-header-menu-item(type="button" data-target-view="settings") Settings
+          button.mechanic-header-menu-item(type="button" data-action="logout") Logout
+      button.mechanic-header-menu-toggle#mechanicHeaderMobileMenuToggle(type="button" aria-label="Open menu" aria-expanded="false")
+        span
+        span
+        span
+
+  main.primari-shell
+    .page-shell-content
+      section.mainLayout.mechanic-layout#mechanicPage
+        .mechanic-mobile-menu-backdrop#mechanicMobileMenuBackdrop
+        aside.mechanic-mobile-menu#mechanicMobileMenu(aria-hidden="true")
+          .mechanic-mobile-menu-head
+            span.mechanic-mobile-name#mechanicMobileMenuName Account
+          nav.mechanic-mobile-menu-nav
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="dashboard") Dashboard
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="account") Account
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="booking-information") Booking information
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="resolution") Resolution center
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="payments") Payments
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="profile") Profile
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="edit-profile") Edit Profile
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="certifications") Certification
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="tax") Tax information
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="documents") Document
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="types") Type of work covered
+            button.mechanic-mobile-menu-link.rail-nav-link(type="button" data-view="settings") Settings
+          button.mechanic-mobile-signout#mechanicMobileLogoutBtn(type="button") Logout
+        aside.mainRail.rail-base
+          .rail-brand
+            span.logo SW
+          nav.rail-nav
+            button.rail-nav-link.rail-item(type="button" data-view="dashboard")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  rect(x="3" y="3" width="7" height="7" rx="1")
+                  rect(x="14" y="3" width="7" height="7" rx="1")
+                  rect(x="3" y="14" width="7" height="7" rx="1")
+                  rect(x="14" y="14" width="7" height="7" rx="1")
+              span.rail-text Dashboard
+            button.rail-nav-link.rail-item(type="button" data-view="account")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  circle(cx="12" cy="8" r="4")
+                  path(d="M5 20a7 7 0 0 1 14 0")
+              span.rail-text Account
+            button.rail-nav-link.rail-item(type="button" data-view="booking-information")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  rect(x="3" y="4" width="18" height="16" rx="2")
+                  path(d="M7 8h10")
+                  path(d="M7 12h10")
+                  path(d="M7 16h6")
+              span.rail-text Booking information
+            button.rail-nav-link.rail-item(type="button" data-view="resolution")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  circle(cx="12" cy="8" r="4")
+                  path(d="M5 20a7 7 0 0 1 14 0")
+              span.rail-text Resolution center
+            button.rail-nav-link.rail-item(type="button" data-view="payments")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  path(d="M4 7h16")
+                  path(d="M4 12h16")
+                  path(d="M4 17h10")
+                  circle(cx="17" cy="17" r="2")
+              span.rail-text Payments
+            button.rail-nav-link.rail-item(type="button" data-view="profile")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  circle(cx="12" cy="8" r="4")
+                  path(d="M5 20a7 7 0 0 1 14 0")
+              span.rail-text Profile
+            button.rail-nav-link.rail-item(type="button" data-view="edit-profile")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  path(d="M12 20h9")
+                  path(d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z")
+              span.rail-text Edit Profile
+            button.rail-nav-link.rail-item(type="button" data-view="certifications")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  path(d="M12 3l7 4v5c0 4.5-2.8 7.7-7 9-4.2-1.3-7-4.5-7-9V7z")
+                  path(d="M9 12l2 2 4-4")
+              span.rail-text Certification
+            button.rail-nav-link.rail-item(type="button" data-view="tax")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  path(d="M4 6h16")
+                  path(d="M7 3v6")
+                  path(d="M17 3v6")
+                  rect(x="4" y="6" width="16" height="14" rx="2")
+                  path(d="M8 12h8")
+              span.rail-text Tax information
+            button.rail-nav-link.rail-item(type="button" data-view="documents")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  path(d="M8 3h6l5 5v13H8z")
+                  path(d="M14 3v5h5")
+                  path(d="M10 13h6")
+                  path(d="M10 17h6")
+              span.rail-text Document
+            button.rail-nav-link.rail-item(type="button" data-view="types")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  path(d="M4 7h10")
+                  path(d="M4 12h16")
+                  path(d="M4 17h12")
+                  circle(cx="17" cy="7" r="2")
+                  circle(cx="9" cy="17" r="2")
+              span.rail-text Type of work covered
+            button.rail-nav-link.rail-item(type="button" data-view="settings")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  circle(cx="12" cy="12" r="3")
+                  path(d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 0 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.2a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3h.1a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8v.1a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.5 1z")
+              span.rail-text Settings
+          .rail-footer
+            button.rail-nav-link.rail-item#mechanicBackBtn(type="button")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  path(d="M15 18l-6-6 6-6")
+              span.rail-text Back
+            button.rail-nav-link.rail-item#mechanicLogoutBtn(type="button")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  path(d="M15 18l-6-6 6-6")
+              span.rail-text Sign out
+        button.mechanic-rail-toggle#mechanicRailToggle(type="button" aria-label="Collapse sidebar" aria-expanded="true")
+          svg(viewBox="0 0 24 24" aria-hidden="true")
+            rect(x="4" y="4" width="6" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6")
+            rect(x="12" y="4" width="8" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6")
+            path(d="M11 12h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round")
+            path(d="M13.5 10.5 16 12l-2.5 1.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round")
+
+        section.mainSection
+          .mechanic-dashboard-hero
+            .settings-header
+              .settings-header-copy
+                h3#mechanicHeroSectionTitle Dashboard
+                p#mechanicHeroSectionSubtitle General information
+              .settings-header-aside
+                .mechanic-dashboard-hero-copy
+                  .admin-profile-avatar#mechanicDashboardHeroAvatar ME
+                  div
+                    h2 Welcome
+                    p#mechanicDashboardHeroName Mechanic
+                    p#mechanicDashboardHeroRole MECHANIC
+  
+          .mechanicContent
+            section.mechanic-content#mechanicDashboardView
+              .mechanic-dashboard-layout
+                .mechanic-panel
+                  .settings-header.mechanic-panel-head
+                    h2 Review of Activity
+                    p Review your current activity at a glance.
+                  p#mechanicDashboardOffersStatus.mechanic-status-note.is-hidden
+                  p#mechanicDashboardInfoRequestSecondary.mechanic-dashboard-info-note.is-hidden
+                  .mechanic-panel-card
+                    .mechanic-overview-metrics
+                      article.mechanic-overview-metric
+                        h3 Eligible bookings
+                        strong#mechanicDashboardAssignedCount 0
+                        p Matching bookings available to review.
+                      article.mechanic-overview-metric
+                        h3 Pending response
+                        strong#mechanicDashboardRequestedCount 0
+                        p Booking offers waiting for your decision.
+                      article.mechanic-overview-metric
+                        h3 Accepted offers
+                        strong#mechanicDashboardAcceptedCount 0
+                        p Offers you already accepted.
+                      article.mechanic-overview-metric
+                        h3 Open cases
+                        strong#mechanicDashboardOpenCasesCount 0
+                        p Active resolution cases across your bookings.
+                .mechanic-panel
+                  .settings-header.mechanic-panel-head
+                    h3 Available bookings
+                    p Latest matching bookings.
+                  p#mechanicDashboardRecentStatus.mechanic-status-note.is-hidden
+                  .mechanic-panel-card
+                    .mechanic-overview-bookings
+                      #mechanicDashboardRecentBookings.mechanic-overview-booking-list
+                        p.mechanic-overview-empty No matching bookings available.
+
+            section.mechanic-content.is-hidden#mechanicBookingInformationView
+              .mechanic-dashboard-layout
+                p#mechanicBookingInformationStatus.mechanic-status-note.is-hidden
+                .mechanic-table-layout
+                  .mechanic-table-head
+                    .mechanic-table-head-filters
+                      .mechanic-head-control.mechanic-head-control--search
+                        input#mechanicBookingsSearch(type="search" placeholder="Search")
+                      .mechanic-head-control.mechanic-head-control--status
+                        select#mechanicBookingsStatusFilter
+                          option(value="all") Status
+                      .mechanic-head-control.mechanic-head-control--date
+                        select#mechanicBookingsDateFilter
+                          option(value="all") All time
+                          option(value="30d") Last 30 days
+                          option(value="90d") Last 90 days
+                          option(value="365d") Last year
+                      button.mechanic-bookings-export(type="button") Export
+                  .mechanic-table-wrap
+                    table.mechanic-table
+                      thead
+                          tr
+                            th Reference
+                            th Status
+                            th Customer
+                            th Vehicle
+                            th Sent
+                      tbody#mechanicBookingsList
+                  .mechanic-table-footer
+                    .mechanic-table-footer-meta
+                      label(for="mechanicBookingsRowsPerPage") Rows per page
+                      select#mechanicBookingsRowsPerPage
+                        option(value="10" selected) 10
+                        option(value="20") 20
+                        option(value="50") 50
+                      span#mechanicBookingsFooterCount No bookings
+                    .mechanic-pagination#mechanicBookingsPagination
+                #mechanicBookingDetail.mechanic-booking-detail
+    
+            section.mechanic-content.is-hidden#mechanicResolutionCenterView
+              .settings-card.mechanic-dashboard-card
+                .mechanic-resolution-layout#mechanicResolutionOverview
+                  .mechanic-resolution-card
+                    h3 Current cases
+                    .mechanic-resolution-card-body
+                      .mechanic-resolution-tabs
+                        button.mechanic-resolution-tab.is-active(type="button" data-mechanic-resolution-filter="all") All
+                        button.mechanic-resolution-tab(type="button" data-mechanic-resolution-filter="complaint") Complaint
+                        button.mechanic-resolution-tab(type="button" data-mechanic-resolution-filter="general") General
+                      .mechanic-resolution-table#mechanicResolutionCasesTable
+                        .mechanic-resolution-table-head
+                          span Status
+                          span Reference
+                          span Updated at
+                          span Subject
+                          span
+                  .mechanic-resolution-card
+                    h3 Your bookings
+                    .mechanic-resolution-card-body
+                      p.mechanic-resolution-copy Need to contact your customer, or have a problem that needs resolving? Select the relevant booking below to get started:
+                      #mechanicResolutionBookings
+                  .settings-card.mechanic-caseView.is-hidden#mechanicResolutionCaseView
+                    .mechanic-detail-card.mechanic-resolution-case
+                      .mechanic-resolution-thread
+                        .mechanic-resolution-thread-title
+                          span#mechanicResolutionCaseTitle General Enquiry
+                        p.mechanic-resolution-thread-copy You can use this page to discuss your booking with your customer. Your messages will be sent directly to the customer, and you will receive an email whenever there's an update.
+                        #mechanicResolutionMessages
+                        .mechanic-resolution-compose
+                          textarea#mechanicResolutionMessageInput(placeholder="Add a new message here")
+                          .mechanic-resolution-compose-actions
+                            .mechanic-resolution-compose-actions-right
+                              button.primary#mechanicResolutionSendBtn(type="button") Send message
+                              label.secondary#mechanicResolutionCaseAttachBtn(for="mechanicResolutionCaseAttachmentInput") Attach file(s)
+                              input#mechanicResolutionCaseAttachmentInput.is-hidden(type="file" multiple accept="image/*,application/pdf")
+                              .mechanic-resolution-compose-preview#mechanicResolutionCaseAttachmentPreview
+                      aside.mechanic-resolution-sidebar
+                        .mechanic-resolution-sidebar-card
+                          h4#mechanicResolutionSidebarTitle Current status of booking #16334274
+                          .mechanic-resolution-sidebar-row
+                            strong Customer
+                            span#mechanicResolutionSidebarCustomer -
+                          .mechanic-resolution-sidebar-row
+                            strong Car
+                            span#mechanicResolutionSidebarCar -
+                          .mechanic-resolution-sidebar-row
+                            strong Address
+                            span#mechanicResolutionSidebarAddress -
+                          .mechanic-resolution-sidebar-row
+                            strong Work
+                            span#mechanicResolutionSidebarWork -
+                          .mechanic-resolution-sidebar-row
+                            strong Arrival Time
+                            span#mechanicResolutionSidebarArrivalTime -
+                          .mechanic-resolution-sidebar-row
+                            strong Parts
+                            span#mechanicResolutionSidebarParts -
+                          .mechanic-resolution-sidebar-row
+                            strong Total Price
+                            span#mechanicResolutionSidebarTotal -
+                    button.mechanic-resolution-back#mechanicResolutionCaseBackBtn(type="button") Back
+                .mechanic-resolution-detail.is-hidden#mechanicResolutionMessageView
+                  .mechanic-resolution-detail-head
+                    h3#mechanicResolutionDetailTitle Message customer regarding Booking #16334274
+                  .mechanic-resolution-card
+                    .mechanic-resolution-card-body
+                      label.mechanic-resolution-field(for="mechanicResolutionIssue")
+                        span Please select your issue from the list below:
+                        select#mechanicResolutionIssue
+                          option(value="general") Message customer
+                          option(value="complaint") Complaint
+                      .mechanic-resolution-notice#mechanicResolutionNotice You already have an open dialog for this issue type.
+                      button.primary#mechanicResolutionGoToCase(type="button") Go to case
+                  .mechanic-resolution-card
+                    h3#mechanicResolutionCaseListTitle Resolution cases already created for booking #16334274
+                    .mechanic-resolution-card-body
+                      .mechanic-resolution-table#mechanicResolutionBookingCasesTable
+                        .mechanic-resolution-table-head
+                          span Status
+                          span Reference
+                          span Updated at
+                          span Subject
+                          span
+                  button.mechanic-resolution-back(type="button" id="mechanicResolutionBackBtn") Back
+            section.mechanic-content.is-hidden#mechanicProcedureView
+              .settings-card.mechanic-dashboard-card
+                .settings-header
+                  div
+                    h2 Procedure
+                    p Review your mechanic procedures and workflow.
+    
+            section.mechanic-content.is-hidden#mechanicPaymentsView
+                p#mechanicPaymentsStatus.mechanic-status-note.is-hidden
+                .mechanic-table-layout
+                  .mechanic-table-head
+                    .mechanic-table-head-filters
+                      .mechanic-head-control.mechanic-head-control--search
+                        input#mechanicPaymentsSearch(type="search" placeholder="Search")
+                      .mechanic-head-control.mechanic-head-control--status
+                        select#mechanicPaymentsStatusFilter
+                          option(value="all") Status
+                      .mechanic-head-control.mechanic-head-control--date
+                        select#mechanicPaymentsDateFilter
+                          option(value="all") All time
+                          option(value="30d") Last 30 days
+                          option(value="90d") Last 90 days
+                          option(value="365d") Last year
+                      button.mechanic-payments-export(type="button") Export
+                  .mechanic-table-wrap
+                    table.mechanic-table
+                      thead
+                        tr
+                          th Reference
+                          th Payment status
+                          th Customer
+                          th Payment method
+                          th Payment number
+                          th Total
+                          th Created
+                      tbody#mechanicPaymentsList
+                  .mechanic-table-footer
+                    .mechanic-table-footer-meta
+                      label(for="mechanicPaymentsRowsPerPage") Rows per page
+                      select#mechanicPaymentsRowsPerPage
+                        option(value="10" selected) 10
+                        option(value="20") 20
+                        option(value="50") 50
+                      span#mechanicPaymentsFooterCount No payments
+                    .mechanic-pagination#mechanicPaymentsPagination
+                #mechanicPaymentDetail.mechanic-booking-detail
+    
+            section.mechanic-content.is-hidden#mechanicProfileView
+              .settings-card.mechanic-dashboard-card
+                .mechanic-profile-layout
+                  aside.mechanic-profile-sidebar
+                    .mechanic-profile-avatar-card
+                      .mechanic-profile-avatar#mechanicProfileAvatar 🔧
+                    .mechanic-profile-info-card
+                      ul
+                        li#mechanicProfileExperience 5 years professional experience
+                        li#mechanicProfileActiveSince Active since February 2026
+                        li#mechanicProfileJobsCompleted 0 jobs completed
+                    .mechanic-profile-info-card
+                      h4 Qualifications
+                      ul#mechanicProfileQualifications
+                        li NVQ Level 3 Qualified
+                    .mechanic-profile-info-card
+                      h4 Accreditations
+                      ul#mechanicProfileAccreditations
+                        li No accreditations added yet
+                    .mechanic-profile-info-card
+                      h4 Memberships
+                      ul#mechanicProfileMemberships
+                        li No memberships added yet
+    
+                  section.mechanic-profile-main
+                    h1#mechanicProfileHeading Angel G
+                    .mechanic-profile-tabs
+                      button.active(type="button") Area Covered
+                    .mechanic-profile-coverage
+                      .mechanic-profile-coverage-item
+                        strong Base location
+                        span#mechanicProfileBaseLocation Surrey
+                      .mechanic-profile-coverage-item
+                        strong Postcode
+                        span#mechanicProfilePostcode -
+                      .mechanic-profile-coverage-item
+                        strong Coverage radius
+                        span#mechanicProfileRadius 5 miles
+                      .mechanic-profile-coverage-item
+                        strong Service type
+                        span#mechanicProfileServiceType Mobile mechanic
+                    .mechanic-profile-map
+                      #mechanicProfileMap(data-geoapify-key=(geoapify && geoapify.apiKey) || "" data-geoapify-style=(geoapify && geoapify.mapStyle) || "osm-carto")
+                    .mechanic-profile-reviews-card
+                      h3 Reviews
+                      #mechanicProfileReviewsList
+                        p.mechanic-profile-reviews-empty No reviews yet.
+                      #mechanicProfileReviewsPagination.mechanic-profile-reviews-pagination
+    
+            section.mechanic-content.is-hidden#mechanicEditProfileView
+              form.settings-card.mechanic-dashboard-card.mechanic-edit-profile-layout#mechanicEditProfileForm
+                .mechanic-edit-profile-card.mechanic-edit-profile-card--skills
+                  h3 Technical skills
+                  label
+                    span Years as a mechanic
+                    input#mechanicEditYears(type="number" min="0")
+                  .mechanic-work-history-section
+                    span.mechanic-edit-profile-section-label Work history
+                    .mechanic-work-history-view.is-hidden#mechanicWorkHistoryView
+                      p#mechanicWorkHistoryText
+                      button.secondary.mechanic-work-history-edit#mechanicWorkHistoryEditBtn(type="button") Edit
+                    textarea#mechanicEditWorkHistory(rows="5")
+    
+                .mechanic-edit-profile-card.mechanic-edit-profile-card--coverage
+                  h3 Address and coverage
+                  p.mechanic-edit-profile-section-label Contact address
+                  .field-grid
+                    .mechanic-edit-inline-field
+                      span Address line 1
+                      input#mechanicEditContactLine1(type="text")
+                    .mechanic-edit-inline-field
+                      span Address line 2
+                      input#mechanicEditContactLine2(type="text")
+                  .field-grid
+                    .mechanic-edit-inline-field
+                      span City
+                      input#mechanicEditContactCity(type="text")
+                    .mechanic-edit-inline-field
+                      span Postcode
+                      input#mechanicEditContactPostcode(type="text")
+    
+                  p.mechanic-edit-profile-section-label Premises address
+                  label.checkbox.mechanic-edit-profile-checkbox
+                    input#mechanicEditSameAddress(type="checkbox")
+                    span Same as contact address
+                  .mechanic-edit-premises-fields#mechanicEditPremisesFields
+                    .field-grid
+                      .mechanic-edit-inline-field
+                        span Address line 1
+                        input#mechanicEditPremisesLine1(type="text")
+                      .mechanic-edit-inline-field
+                        span Address line 2
+                        input#mechanicEditPremisesLine2(type="text")
+                    .field-grid
+                      .mechanic-edit-inline-field
+                        span City
+                        input#mechanicEditPremisesCity(type="text")
+                      .mechanic-edit-inline-field
+                        span Postcode
+                        input#mechanicEditPremisesPostcode(type="text")
+                  .mechanic-edit-inline-field
+                    span Travel radius
+                    input#mechanicEditTravelRadius(type="number" min="0")
+    
+                .mechanic-edit-profile-card.mechanic-edit-profile-card--fulfilment
+                  h3 How do you fulfil your bookings? (Select all that apply)
+                  label.checkbox.mechanic-edit-profile-checkbox
+                    input#mechanicEditMobileService(type="checkbox")
+                    span Mobile mechanic service
+                  label.checkbox.mechanic-edit-profile-checkbox
+                    input#mechanicEditCustomerDropoff(type="checkbox")
+                    span Customer drop off
+                  label.checkbox.mechanic-edit-profile-checkbox
+                    input#mechanicEditCollectionDelivery(type="checkbox")
+                    span Collection and delivery
+    
+                .mechanic-edit-profile-actions
+                  p.form-error#mechanicEditProfileError(role="alert" aria-live="polite")
+                  button.primary.mechanic-edit-profile-submit(type="submit") Save
+    
+            section.mechanic-content.is-hidden#mechanicAccountView
+              .settings-card.mechanic-dashboard-card.mechanic-account-card
+                .mechanic-account-layout
+                  .user-account-panel
+                    .settings-photo-row
+                      .settings-avatar.settings-avatar-lg#mechanicAccountAvatarSecondary AG
+                    .settings-divider
+                    .settings-profile
+                      .settings-meta
+                        h4 Name
+                        div#mechanicAccountName.mechanic-full-name-grid
+                    .settings-divider
+                    .settings-row
+                      div
+                        h4 Contacts Details
+                        p#mechanicAccountPhoneSecondary Phone: -
+                        p#mechanicAccountEmailSecondary Email: mechanic@smartworkshop.local
+                        p#mechanicAccountUsernameSecondary Username: -
+                        p#mechanicAccountAddressSecondary Contact address: -
+                        p#mechanicAccountPremisesAddressSecondary.is-hidden Premises address: -
+                    .settings-row
+                      div
+                        h4 Role
+                        p#mechanicAccountRoleSecondary MECHANIC
+                    .settings-row
+                      div
+                        h4 Account status
+                        p#mechanicAccountStatusSecondary.mechanic-account-status-pill(data-status="pending") Pending
+                    .settings-row
+                      div
+                        h4 Integration
+                        p No integrations connected
+                  .user-settings-panel-head
+    
+            section.mechanic-content.is-hidden#mechanicCertificationsView
+              .settings-card.mechanic-dashboard-card
+                .settings-header
+                  div
+                    h2 Certification
+                    p Review and manage your certifications.
+                .mechanic-certifications-layout
+                  .mechanic-cert-card
+                    h3 Qualifications
+                    p.mechanic-cert-copy Qualifications show that you're a trained, professional automotive technician.
+                    ul.mechanic-cert-list#mechanicCertQualificationsList
+                    .mechanic-cert-entry
+                      label(for="mechanicCertificationQualification") Add qualification
+                      .mechanic-cert-entry-actions
+                        select#mechanicCertificationQualification(name="qualification")
+                          option(value="" selected disabled) Select one
+                          option NVQ Level 1
+                          option NVQ Level 2
+                          option NVQ Level 3
+                          option City & Guilds Level 1
+                          option City & Guilds Level 2
+                          option City & Guilds Level 3
+                          option Other Qualification
+                          option EV/HEV Qualification/Training
+                        button.primary.mechanic-cert-action#mechanicCertificationQualificationAdd(type="button") Add qualification
+                  .mechanic-cert-card
+                    h3 Accreditations
+                    p.mechanic-cert-copy Accreditations show that your training is up to the standards of an approved body such as the Institute of the Motor Industry.
+                    ul.mechanic-cert-list#mechanicCertAccreditationsList
+                    .mechanic-cert-entry
+                      label(for="mechanicCertificationAccreditation") Add accreditation
+                      .mechanic-cert-entry-actions
+                        select#mechanicCertificationAccreditation(name="accreditation")
+                          option(value="" selected disabled) Select accreditation
+                          option ATA Level 2
+                          option ATA Level 3
+                          option ATA Level 4
+                          option Other Accreditation
+                          option IRTEC Accredited / Qualified Technician
+                          option IMI Level 3 Electric/Hybrid Vehicle Repair & Replacement (1000V)
+                        button.primary.mechanic-cert-action#mechanicCertificationAccreditationAdd(type="button") Add accreditation
+                  .mechanic-cert-card
+                    h3 Memberships
+                    p.mechanic-cert-copy Memberships can give customers confidence that you're committed to being an active part of the motor industry.
+                    ul.mechanic-cert-list#mechanicCertMembershipsList
+                    .mechanic-cert-entry
+                      label(for="mechanicCertificationMembership") Add membership
+                      .mechanic-cert-entry-actions
+                        select#mechanicCertificationMembership(name="membership")
+                          option(value="" selected disabled) Select membership
+                          option RMIF
+                          option IMI
+                          option Other Membership
+                          option RAC Approved Garage
+                          option Autofirst Network
+                        button.primary.mechanic-cert-action#mechanicCertificationMembershipAdd(type="button") Add membership
+                  .mechanic-cert-actions
+                    p.mechanic-cert-status#mechanicCertStatus.is-hidden(role="status" aria-live="polite")
+                    button.primary#mechanicCertSaveBtn(type="button") Save
+    
+            section.mechanic-content.is-hidden#mechanicTaxView
+              .settings-card.mechanic-dashboard-card
+                .settings-header
+                  div
+                    h2 Tax information
+                    p Review your tax details.
+                .mechanic-tax-layout
+                  .mechanic-tax-card
+                    h3 Tax Information
+                    .mechanic-tax-body
+                      label(for="mechanicTaxVat") VAT number
+                      input#mechanicTaxVat(type="text" value="")
+                      p.mechanic-tax-status#mechanicTaxStatus.is-hidden(role="status" aria-live="polite")
+                  .mechanic-tax-actions
+                    button.primary#mechanicTaxSaveBtn(type="button") Save
+    
+            section.mechanic-content.is-hidden#mechanicDocumentsView
+              .settings-card.mechanic-dashboard-card
+                .settings-header
+                  div
+                    h2 Document
+                    p Review your uploaded documents.
+                .mechanic-documents-layout
+                  .mechanic-documents-copy
+                    p In order to be a part of the SmartWorkshop network we require that you are a qualified mechanic holding full trade and public liability insurance.
+                    p Please upload proof of the following:
+                    ul
+                      li Public liability insurance
+                      li Trade insurance
+                      li Your mechanic qualifications
+                  p#mechanicDocumentsInfoRequestSecondary.mechanic-documents-request-note.is-hidden
+                  .mechanic-documents-card
+                    h3 Upload document(s)
+                    form.mechanic-documents-body#mechanicDocumentsUploadForm(method="post" action="/mechanic/documents/upload" enctype="multipart/form-data")
+                      input(type="hidden" name="email" id="mechanicDocumentsUploadEmail")
+                      input#mechanicDocumentsUpload(type="file" name="documents" multiple accept=".pdf")
+                      .mechanic-documents-upload-list#mechanicDocumentsUploadList
+                      p.mechanic-documents-upload-status#mechanicDocumentsUploadStatus
+                      button.primary(type="submit") Submit
+    
+            section.mechanic-content.is-hidden#mechanicPreferencesView
+              .settings-card.mechanic-dashboard-card
+                .settings-header
+                  div
+                    h2 Preferences
+                    p Manage your mechanic preferences.
+    
+            section.mechanic-content.is-hidden#mechanicTypesView
+              .settings-card.mechanic-dashboard-card
+                .settings-header
+                  div
+                    h2 Type of work covered
+                    p Review the work types you cover.
+                .mechanic-types-layout
+                  .mechanic-types-copy
+                    h3 Types of work covered
+                    p Please indicate any repairs/work you do or do not cover in the list below. Click or tap a category to expand.
+                    p SmartWorkshop assumes you take on all types of work by default, so please uncheck any item you do not cover. Any changes you make will affect future jobs we offer you.
+                    p
+                      strong Important note:
+                      |  Any items you de-select from the list below will result in SmartWorkshop no longer offering you that type of work. You can re-select at any time.
+                  .mechanic-types-card
+                    #mechanicTypesTree
+                    .mechanic-types-actions
+                      p#mechanicTypesStatus
+                      button.primary#mechanicTypesSaveBtn(type="button") Save changes
+    
+            section.mechanic-content.is-hidden#mechanicSettingsView
+              .settings-card.mechanic-dashboard-card
+                .mechanic-settings-layout
+                  .mechanic-settings-panel-head
+                    h2#mechanicSettingsPanelTitle General
+                    .mechanic-settings-tabs
+                      button.mechanic-settings-tab-link.active(type="button" data-mechanic-settings-subview="general") General
+                      button.mechanic-settings-tab-link(type="button" data-mechanic-settings-subview="notifications") Notifications
+                      button.mechanic-settings-tab-link(type="button" data-mechanic-settings-subview="security") Login & security
+                  .mechanic-settings-panel
+                    section.mechanic-settings-subview#mechanicSettingsGeneral
+                      .mechanic-settings-photo-row
+                        .settings-avatar.settings-avatar-lg#mechanicSettingsAvatarSettings ME
+                        input.file-input#mechanicSettingsPhotoInput(type="file" accept="image/*")
+                        button.ghost#mechanicSettingsPhotoButton(type="button") Update
+                      .settings-divider
+                      details.mechanic-settings-accordion.mechanic-settings-accordion--full-name#mechanicSettingsFullNameAccordion(open)
+                        summary.mechanic-settings-accordion-summary
+                          h4 Full name
+                        .mechanic-settings-profile.mechanic-settings-accordion-content
+                          .settings-meta
+                            div#mechanicSettingsFullName.mechanic-full-name-grid
+                          button.secondary(type="button" data-mechanic-settings-field="full_name") Update
+                      .settings-divider
+                      details.mechanic-settings-accordion.mechanic-settings-accordion--contacts#mechanicSettingsContactsAccordion(open)
+                        summary.mechanic-settings-accordion-summary
+                          h4 Contacts Details
+                        .mechanic-settings-row.mechanic-settings-accordion-content
+                          div
+                            .mechanic-settings-contact-list
+                              .mechanic-settings-contact-item
+                                .mechanic-settings-contact-copy
+                                  span.mechanic-settings-contact-label Phone
+                                  p#mechanicSettingsPhone -
+                                button.secondary(type="button" data-mechanic-settings-field="phone") Update
+                              .mechanic-settings-contact-item
+                                .mechanic-settings-contact-copy
+                                  span.mechanic-settings-contact-label Username
+                                  p#mechanicSettingsUsername -
+                                button.secondary(type="button" data-mechanic-settings-field="username") Update
+                              .mechanic-settings-contact-item
+                                .mechanic-settings-contact-copy
+                                  span.mechanic-settings-contact-label Email
+                                  p#mechanicSettingsEmail -
+                                button.secondary(type="button" data-mechanic-settings-field="email") Update
+                              .mechanic-settings-contact-item
+                                .mechanic-settings-contact-copy
+                                  span.mechanic-settings-contact-label Address
+                                  p#mechanicSettingsAddress -
+                                button.secondary(type="button" data-mechanic-settings-field="address") Update
+                      .settings-divider
+                      details.mechanic-settings-accordion.mechanic-settings-accordion--theme#mechanicSettingsThemeAccordion(open)
+                        summary.mechanic-settings-accordion-summary
+                          h4 Theme
+                        .mechanic-settings-row.mechanic-settings-accordion-content
+                          div
+                            p Light mode
+                          button.secondary(type="button") Light mode
+                      .settings-divider  
+                      details.mechanic-settings-accordion.mechanic-settings-accordion--integration#mechanicSettingsIntegrationAccordion(open)
+                        summary.mechanic-settings-accordion-summary
+                          h4 Integration
+                        .mechanic-settings-row.mechanic-settings-accordion-content
+                          div
+                            p No integrations connected
+                          button.secondary(type="button") Connect
+                    section.mechanic-settings-subview.is-hidden#mechanicSettingsNotifications
+                          .notifications-card
+                            .notifications-card-head
+                              h3 Email Preferences
+                            label.notifications-check(for="mechanicNotificationsMarketing")
+                              input#mechanicNotificationsMarketing(type="checkbox")
+                              span Don’t miss out! Subscribe to get special offers/promotions and updates about our services.
+                            .notifications-actions
+                              button.ghost(type="button") Update
+                    section.mechanic-settings-subview.is-hidden#mechanicSettingsSecurity
+                          .security-card
+                            .security-card-head
+                              h3 Change Password
+                            form.security-form#mechanicSecurityPasswordForm
+                              input#mechanicSecurityUsername(type="text" name="username" autocomplete="off" hidden)
+                              label.security-field(for="mechanicSecurityOldPassword")
+                                span Old Password
+                                input#mechanicSecurityOldPassword(type="password" autocomplete="off")
+                              label.security-field(for="mechanicSecurityNewPassword")
+                                span New Password
+                                input#mechanicSecurityNewPassword(type="password" autocomplete="off")
+                              label.security-field(for="mechanicSecurityConfirmPassword")
+                                span Confirm Password
+                                input#mechanicSecurityConfirmPassword(type="password" autocomplete="off")
+                              p.form-error#mechanicSecurityPasswordMessage(role="alert" aria-live="polite")
+                              .security-actions
+                                button.ghost#mechanicSecurityPasswordSubmit(type="submit") Change
+                          .security-card
+                            .security-card-head
+                              h3 Two Factor Authentication
+                            .security-2fa-grid
+                              label.security-check
+                                input#mechanicSecurity2faEmail(type="checkbox")
+                                span Email
+                              label.security-check
+                                input#mechanicSecurity2faSms(type="checkbox")
+                                span SMS
+                            p.form-error#mechanicSecurity2faMessage(role="alert" aria-live="polite")
+                            .security-actions
+                              button.secondary#mechanicSecurity2faEnable(type="button") Save 2FA
+              .settings-edit-modal.is-hidden#mechanicSettingsEditModal
+                .settings-edit-backdrop(data-close-modal)
+                .settings-edit-card
+                  button.settings-edit-close#mechanicSettingsEditClose(type="button" aria-label="Close") ×
+                  .settings-edit-header
+                    h3#mechanicSettingsEditTitle Update field
+                    p#mechanicSettingsEditDescription Update your information.
+                  label.settings-edit-field(for="mechanicSettingsEditInput")
+                    span#mechanicSettingsEditLabel Value
+                    input#mechanicSettingsEditInput(type="text")
+                  .settings-edit-name-grid.is-hidden#mechanicSettingsNameGrid
+                    label.settings-edit-field(for="mechanicSettingsEditFirstName")
+                      span First name
+                      input#mechanicSettingsEditFirstName(type="text")
+                    label.settings-edit-field(for="mechanicSettingsEditMiddleName")
+                      span Middle name
+                      input#mechanicSettingsEditMiddleName(type="text")
+                    label.settings-edit-field(for="mechanicSettingsEditLastName")
+                      span Last name
+                      input#mechanicSettingsEditLastName(type="text")
+                  .settings-edit-address-grid.is-hidden#mechanicSettingsAddressGrid
+                    label.settings-edit-field(for="mechanicSettingsEditAddressLine1")
+                      span Address line 1
+                      input#mechanicSettingsEditAddressLine1(type="text")
+                    label.settings-edit-field(for="mechanicSettingsEditAddressLine2")
+                      span Address line 2
+                      input#mechanicSettingsEditAddressLine2(type="text")
+                    label.settings-edit-field(for="mechanicSettingsEditCity")
+                      span City
+                      input#mechanicSettingsEditCity(type="text")
+                    label.settings-edit-field(for="mechanicSettingsEditPostcode")
+                      span Postcode
+                      input#mechanicSettingsEditPostcode(type="text")
+                  p.form-error#mechanicSettingsEditMessage(role="alert" aria-live="polite")
+                  .settings-edit-actions
+                    button.secondary#mechanicSettingsEditCancel(type="button") Cancel
+                    button.ghost#mechanicSettingsEditSave(type="button") Update
+    
+  include ../../partials/general-footer
+
+append scripts
+  script(src="/js/features/mechanic/dashboard.js")
+
+
+

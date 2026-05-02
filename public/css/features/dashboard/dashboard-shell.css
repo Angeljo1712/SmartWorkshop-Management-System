@@ -1,0 +1,77 @@
+/* Shared dashboard shell: admin, user, mechanic */
+
+body.user-body .primari-shell,
+body.mechanic-body .primari-shell,
+body.admin-body .primari-shell {
+  background: #1f2937;
+}
+
+body.user-body .page-shell-content,
+body.mechanic-body .page-shell-content,
+body.admin-body .page-shell-content {
+  background: #344154;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px 20px 0;
+}
+
+#userPage.mainLayout,
+#mechanicPage.mainLayout,
+#adminPage.mainLayout {
+  min-width: 0;
+  min-height: auto;
+  align-items: stretch;
+}
+
+#userPage .mainSection,
+#mechanicPage .mainSection,
+#adminPage .mainSection {
+  gap: 0;
+}
+
+#userPage .mainSection,
+#mechanicPage .mainSection,
+#adminPage .mainSection,
+#userPage .mainSection h1,
+#userPage .mainSection h2,
+#userPage .mainSection h3,
+#userPage .mainSection h4,
+#mechanicPage .mainSection h1,
+#mechanicPage .mainSection h2,
+#mechanicPage .mainSection h3,
+#mechanicPage .mainSection h4,
+#adminPage .mainSection h1,
+#adminPage .mainSection h2,
+#adminPage .mainSection h3,
+#adminPage .mainSection h4 {
+  color: #ffffff;
+}
+
+@media (max-width: 1100px) {
+  #userPage.mainLayout,
+  #mechanicPage.mainLayout,
+  #adminPage.mainLayout {
+    grid-template-columns: 1fr;
+  }
+
+  #userPage.mainLayout .rail-base,
+  #mechanicPage.mainLayout .rail-base,
+  #adminPage.mainLayout .rail-base {
+    min-height: auto;
+    height: auto;
+    /* grid-template-rows: auto auto auto; */
+  }
+
+  body.user-body .page-shell-content,
+  body.mechanic-body .page-shell-content,
+  body.admin-body .page-shell-content {
+    padding: 20px 20px 0 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  body.user-body .page-shell-content,
+  body.mechanic-body .page-shell-content,
+  body.admin-body .page-shell-content {
+    padding: px;
+  }
+}

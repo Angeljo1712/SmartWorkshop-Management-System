@@ -1,0 +1,419 @@
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { pool } = require("../../../shared/config/pool");
+const { env } = require("../../../shared/config/env");
+const { AppError } = require("../../../shared/utils/appError");
+const crypto = require("crypto");
+const {
+  ensureTwoFactorTables,
+  createLoginTwoFactorChallenge,
+  clearLoginTwoFactorChallenge,
+  verifyLoginTwoFactorChallenge
+} = require("../../../shared/infrastructure/security/twoFactor.service");
+const { sendLoginTwoFactorEmail } = require("../../../shared/infrastructure/email/email.service");
+
+const roleToLabel = (role) => {
+  const normalized = String(role || "").toLowerCase();
+  if (normalized === "user") return "CUSTOMER";
+  if (normalized === "mechanic") return "MECHANIC";
+  if (normalized === "admin") return "ADMIN";
+  return String(role || "").toUpperCase();
+};
+const resolveMechanicAvatarUrl = (user) => {
+  return String(user?.avatar_url || "").trim();
+};
+
+const normalizeRole = (role) => String(role || "").trim().toLowerCase();
+
+const createToken = (payload) =>
+  jwt.sign(
+    {
+      userId: payload.id,
+      role: payload.role,
+      roles: payload.roles
+    },
+    env.jwtSecret,
+    {
+      expiresIn: env.jwtExpiresIn
+    }
+  );
+
+const getUserRoles = async (userId, fallbackRole) => {
+  const [rows] = await pool.query("SELECT role FROM user_roles WHERE user_id = ?", [userId]);
+  const roles = rows.map((row) => row.role);
+  if (roles.length) return roles;
+  if (fallbackRole) return [normalizeRole(fallbackRole)];
+  return [];
+};
+
+let ensureUserProfileMiddleNameColumnPromise = null;
+
+const ensureUserProfileMiddleNameColumn = async () => {
+  if (!ensureUserProfileMiddleNameColumnPromise) {
+    ensureUserProfileMiddleNameColumnPromise = (async () => {
+      const [rows] = await pool.query(
+        `SELECT COLUMN_NAME
+         FROM information_schema.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = 'user_profiles'
+           AND COLUMN_NAME = 'middle_name'`
+      );
+
+      if (!rows.length) {
+        await pool.query("ALTER TABLE user_profiles ADD COLUMN middle_name VARCHAR(120) NULL AFTER name");
+      }
+    })().catch((error) => {
+      ensureUserProfileMiddleNameColumnPromise = null;
+      throw error;
+    });
+  }
+
+  return ensureUserProfileMiddleNameColumnPromise;
+};
+
+const getAuthUserById = async (userId) => {
+  await ensureTwoFactorTables();
+  await ensureUserProfileMiddleNameColumn();
+  const [rows] = await pool.query(
+    `SELECT u.id, BIN_TO_UUID(u.uuid_public) AS uuid_public, u.email, u.username, u.phone, u.password_hash, u.role, u.status, u.last_login_at,
+            p.name, p.middle_name, p.lastname, p.avatar_url,
+            mp.application_status, mp.account_status, mp.info_request_note, mp.info_requested_at,
+            COALESCE(MAX(uss.two_factor_email_enabled), 0) AS two_factor_email_enabled
+     FROM users u
+     LEFT JOIN user_profiles p ON p.user_id = u.id
+     LEFT JOIN mechanic_profiles mp ON mp.user_id = u.id
+     LEFT JOIN user_security_settings uss ON uss.user_id = u.id
+     WHERE u.id = ?`,
+    [userId]
+  );
+  const user = rows[0];
+  if (!user) {
+    throw new AppError("NOT_FOUND", "User not found", 404);
+  }
+  const roles = await getUserRoles(user.id, user.role);
+  const roleLabels = sortRoles(roles.map(roleToLabel));
+  const primaryRole = roleLabels[0] || roleToLabel(user.role);
+  return {
+    user: {
+      id: user.id,
+      uuid_public: user.uuid_public,
+      name: user.name,
+      middle_name: user.middle_name,
+      lastname: user.lastname,
+      email: user.email,
+      username: user.username,
+      phone: user.phone,
+      avatar_url: resolveMechanicAvatarUrl(user),
+      application_status: user.application_status || null,
+      account_status: user.account_status || null,
+      info_request_note: user.info_request_note || "",
+      info_requested_at: user.info_requested_at || null,
+      role: user.role,
+      status: user.status,
+      role_name: primaryRole,
+      roles: roleLabels,
+      last_login_at: user.last_login_at,
+      two_factor_email_enabled: Boolean(user.two_factor_email_enabled)
+    },
+    roleLabels,
+    primaryRole
+  };
+};
+
+const issueAuthResult = async (userId) => {
+  await pool.query("UPDATE users SET last_login_at = NOW() WHERE id = ?", [userId]);
+  const { user, roleLabels, primaryRole } = await getAuthUserById(userId);
+  const token = createToken({ id: user.id, role: primaryRole, roles: roleLabels });
+  return { user, token };
+};
+
+const sortRoles = (roles) => {
+  const priority = ["ADMIN", "MECHANIC", "CUSTOMER"];
+  const unique = Array.from(new Set(roles));
+  return unique.sort((a, b) => priority.indexOf(a) - priority.indexOf(b));
+};
+
+const getTwoFactorReauthWindowHours = (role) => {
+  const label = roleToLabel(role);
+  if (label === "ADMIN") return 0;
+  return Math.max(1, Number(env.twoFactorReauthHours || 24) || 24);
+};
+
+const hasRecentLogin = (lastLoginAt, role) => {
+  if (!lastLoginAt) return false;
+  const lastLoginTime = new Date(lastLoginAt).getTime();
+  if (!Number.isFinite(lastLoginTime)) return false;
+  const reauthHours = getTwoFactorReauthWindowHours(role);
+  if (reauthHours <= 0) return false;
+  const reauthWindowMs = reauthHours * 60 * 60 * 1000;
+  return Date.now() - lastLoginTime < reauthWindowMs;
+};
+
+const splitFullName = (value) => {
+  const parts = String(value || "").trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return { name: "", middle_name: "", lastname: "" };
+  const name = parts.shift();
+  const lastname = parts.pop() || "";
+  const middle_name = parts.join(" ");
+  return { name, middle_name, lastname: lastname || "-" };
+};
+
+const register = async ({ full_name, name, middle_name, lastname, email, password, role }) => {
+  const resolvedName = name || splitFullName(full_name).name;
+  const resolvedMiddleName = middle_name || splitFullName(full_name).middle_name || "";
+  const resolvedLastname = lastname || splitFullName(full_name).lastname;
+  if (!resolvedName || !resolvedLastname || !email || !password) {
+    throw new AppError("VALIDATION_ERROR", "name, lastname, email, password are required", 400);
+  }
+
+  const normalizedRole = normalizeRole(role || "user");
+  const allowedRoles = ["user", "mechanic", "admin"];
+  if (!allowedRoles.includes(normalizedRole)) {
+    throw new AppError("ROLE_INVALID", "Role not supported", 400);
+  }
+
+  const [existing] = await pool.query("SELECT id FROM users WHERE email = ?", [email]);
+  if (existing[0]) {
+    throw new AppError("EMAIL_IN_USE", "Email already registered", 409);
+  }
+
+  await ensureUserProfileMiddleNameColumn();
+  const passwordHash = await bcrypt.hash(password, 10);
+  const status = normalizedRole === "mechanic" ? "pending" : "active";
+  const username = String(email || "").trim().toLowerCase();
+  const [result] = await pool.query(
+    "INSERT INTO users (uuid_public, email, username, password_hash, role, status) VALUES (UUID_TO_BIN(UUID()), ?, ?, ?, ?, ?)",
+    [email, username, passwordHash, normalizedRole, status]
+  );
+  await pool.query("INSERT INTO user_roles (user_id, role) VALUES (?, ?) ON DUPLICATE KEY UPDATE role = role", [
+    result.insertId,
+    normalizedRole
+  ]);
+  await pool.query(
+    "INSERT INTO user_profiles (user_id, name, middle_name, lastname) VALUES (?, ?, ?, ?)",
+    [result.insertId, resolvedName, resolvedMiddleName || null, resolvedLastname]
+  );
+
+  const roleLabel = roleToLabel(normalizedRole);
+  const roles = [roleLabel];
+  const user = {
+    id: result.insertId,
+    name: resolvedName,
+    middle_name: resolvedMiddleName || null,
+    lastname: resolvedLastname,
+    email,
+    username,
+      avatar_url: "",
+    role: normalizedRole,
+    status,
+    role_name: roleLabel,
+    roles
+  };
+
+  const token = createToken({ id: user.id, role: roleLabel, roles });
+  return { user, token };
+};
+
+const login = async ({ email, username, identifier, password }) => {
+  const loginId = String(identifier || email || username || "").trim().toLowerCase();
+  if (!loginId || !password) {
+    throw new AppError("VALIDATION_ERROR", "email or username and password are required", 400);
+  }
+
+  await ensureTwoFactorTables();
+
+  const [rows] = await pool.query(
+    `SELECT u.id, BIN_TO_UUID(u.uuid_public) AS uuid_public, u.email, u.username, u.phone, u.password_hash, u.role, u.status, u.last_login_at,
+            p.name, p.lastname, p.avatar_url,
+            COALESCE(uss.two_factor_email_enabled, 0) AS two_factor_email_enabled
+     FROM users u
+     LEFT JOIN user_profiles p ON p.user_id = u.id
+     LEFT JOIN user_security_settings uss ON uss.user_id = u.id
+     WHERE u.email = ? OR u.username = ?`,
+    [loginId, loginId]
+  );
+
+  const user = rows[0];
+  if (!user) {
+    throw new AppError("AUTH_ACCOUNT_NOT_FOUND", "Account does not exist", 401);
+  }
+
+  const matches = await bcrypt.compare(password, user.password_hash);
+  if (!matches) {
+    throw new AppError("AUTH_PASSWORD_INVALID", "Incorrect password", 401);
+  }
+
+  if (Boolean(user.two_factor_email_enabled)) {
+    if (hasRecentLogin(user.last_login_at, user.role)) {
+      const { user: sessionUser, token } = await issueAuthResult(user.id);
+      return {
+        user: sessionUser,
+        token
+      };
+    }
+
+    const challenge = await createLoginTwoFactorChallenge(user.id);
+    try {
+      await sendLoginTwoFactorEmail({
+        to: user.email,
+        code: challenge.code,
+        expiresMinutes: 10
+      });
+    } catch (error) {
+      await clearLoginTwoFactorChallenge(challenge.challengeToken);
+      throw new AppError("EMAIL_FAILED", "Unable to send verification email. Please try again.", 502);
+    }
+    return {
+      requires_2fa: true,
+      challenge_token: challenge.challengeToken,
+      delivery: "email",
+      message: "Check your email for the verification code."
+    };
+  }
+
+  const { user: sessionUser, token } = await issueAuthResult(user.id);
+  return {
+    user: sessionUser,
+    token
+  };
+};
+
+const resendTwoFactorLoginCode = async ({ challenge_token }) => {
+  await ensureTwoFactorTables();
+
+  const normalizedToken = String(challenge_token || "").trim();
+  if (!normalizedToken) {
+    throw new AppError("VALIDATION_ERROR", "challenge_token is required", 400);
+  }
+
+  const [challengeRows] = await pool.query(
+    `SELECT id, user_id
+     FROM login_two_factor_challenges
+     WHERE challenge_token = ?
+     LIMIT 1`,
+    [normalizedToken]
+  );
+  const challenge = challengeRows[0];
+  if (!challenge) {
+    throw new AppError("INVALID_2FA_CHALLENGE", "Invalid or expired verification code", 400);
+  }
+
+  const [userRows] = await pool.query(
+    `SELECT email
+     FROM users
+     WHERE id = ?
+     LIMIT 1`,
+    [challenge.user_id]
+  );
+  const user = userRows[0];
+  if (!user) {
+    throw new AppError("NOT_FOUND", "User not found", 404);
+  }
+
+  const newChallenge = await createLoginTwoFactorChallenge(challenge.user_id);
+  try {
+    await sendLoginTwoFactorEmail({
+      to: user.email,
+      code: newChallenge.code,
+      expiresMinutes: 10
+    });
+  } catch (error) {
+    await clearLoginTwoFactorChallenge(newChallenge.challengeToken);
+    throw new AppError("EMAIL_FAILED", "Unable to send verification email. Please try again.", 502);
+  }
+
+  await clearLoginTwoFactorChallenge(normalizedToken);
+
+  return {
+    requires_2fa: true,
+    challenge_token: newChallenge.challengeToken,
+    delivery: "email",
+    message: "A new verification code has been sent to your email."
+  };
+};
+
+const verifyTwoFactorLogin = async ({ challenge_token, code }) => {
+  const result = await verifyLoginTwoFactorChallenge({ challengeToken: challenge_token, code });
+  return issueAuthResult(result.user_id);
+};
+
+const checkEmailExists = async (email) => {
+  const normalized = String(email || "").trim().toLowerCase();
+  if (!normalized) {
+    throw new AppError("VALIDATION_ERROR", "email is required", 400);
+  }
+  const [rows] = await pool.query("SELECT id FROM users WHERE email = ?", [normalized]);
+  return { exists: Boolean(rows[0]) };
+};
+
+const requestPasswordReset = async (email) => {
+  if (!email) {
+    throw new AppError("VALIDATION_ERROR", "email is required", 400);
+  }
+
+  const [rows] = await pool.query("SELECT id, email FROM users WHERE email = ?", [email]);
+  const user = rows[0];
+  if (!user) {
+    throw new AppError("NOT_FOUND", "User not found", 404);
+  }
+
+  const token = crypto.randomBytes(24).toString("hex");
+  const expiresAt = new Date(Date.now() + 1000 * 60 * 60);
+
+  await pool.query(
+    "INSERT INTO password_reset_requests (user_id, token, expires_at) VALUES (?, ?, ?)",
+    [user.id, token, expiresAt]
+  );
+
+  return { token, email: user.email, expiresAt };
+};
+
+const resetPassword = async ({ token, password }) => {
+  if (!token || !password) {
+    throw new AppError("VALIDATION_ERROR", "token and password are required", 400);
+  }
+  if (password.length < 10) {
+    throw new AppError("VALIDATION_ERROR", "Password must be at least 10 characters", 400);
+  }
+  if (!/[A-Z]/.test(password)) {
+    throw new AppError("VALIDATION_ERROR", "Password must include an uppercase letter", 400);
+  }
+  if (!/[0-9]/.test(password)) {
+    throw new AppError("VALIDATION_ERROR", "Password must include a number", 400);
+  }
+  if (!/[^A-Za-z0-9]/.test(password)) {
+    throw new AppError("VALIDATION_ERROR", "Password must include a symbol", 400);
+  }
+
+  const [rows] = await pool.query(
+    `SELECT id, user_id, expires_at
+     FROM password_reset_requests
+     WHERE token = ?`,
+    [token]
+  );
+  const request = rows[0];
+  if (!request) {
+    throw new AppError("INVALID_TOKEN", "Invalid or expired token", 400);
+  }
+  if (new Date(request.expires_at).getTime() < Date.now()) {
+    await pool.query("DELETE FROM password_reset_requests WHERE id = ?", [request.id]);
+    throw new AppError("INVALID_TOKEN", "Token expired", 400);
+  }
+
+  const passwordHash = await bcrypt.hash(password, 10);
+  await pool.query("UPDATE users SET password_hash = ? WHERE id = ?", [passwordHash, request.user_id]);
+  await pool.query("DELETE FROM password_reset_requests WHERE id = ?", [request.id]);
+};
+
+module.exports = {
+  register,
+  login,
+  resendTwoFactorLoginCode,
+  verifyTwoFactorLogin,
+  requestPasswordReset,
+  resetPassword,
+  checkEmailExists
+};
+
+
+

@@ -1,0 +1,413 @@
+.mechanic-body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(46, 88, 136, 0.18), transparent 28%),
+    linear-gradient(180deg, #0a101b 0%, #101827 100%);
+  color: #f3f7ff;
+}
+
+.mechanic-shell {
+  width: min(1240px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+.application-layout {
+  width: min(1240px, calc(100% - 48px));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
+  gap: 28px;
+  align-items: start;
+  height: fit-content;
+  position: relative;
+  background: #344154;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 30px;
+}
+
+.application-layout > * {
+  position: relative;
+  z-index: 1;
+}
+
+.mechanic-footer .main-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #f3f7ff;
+}
+
+.mechanic-footer .main-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f3f7ff;
+  font-weight: 800;
+}
+
+.main-brand-subtitle {
+  display: block;
+  color: rgba(243, 247, 255, 0.68);
+  font-size: 0.85rem;
+}
+
+.application-links,
+.mechanic-footer-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.application-links a,
+.mechanic-footer-links a {
+  color: #f3f7ff;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.mechanic-cta-button {
+  background: #1e93f2;
+  color: #ffffff;
+  box-shadow: 0 14px 30px rgba(30, 147, 242, 0.24);
+}
+
+.mechanic-home {
+  display: grid;
+  gap: 44px;
+  padding: 36px 0 56px;
+}
+
+.application-body .page-shell-content {
+  min-height: calc(100vh - 176px);
+  display: grid;
+  align-content: center;
+  padding-top: clamp(24px, 6vh, 50px);
+  padding-bottom: clamp(24px, 6vh, 50px);
+}
+
+.mechanic-stream,
+.mechanic-support {
+  position: relative;
+}
+
+.mechanic-stream .mechanic-shell,
+.mechanic-support .mechanic-shell,
+.mechanic-footer .mechanic-shell {
+  display: grid;
+}
+
+.mechanic-copy-card,
+.mechanic-form,
+.mechanic-feed-card,
+.mechanic-feature-card,
+.mechanic-support-card,
+.mechanic-footer {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(16, 24, 39, 0.9);
+  border-radius: 28px;
+}
+
+.mechanic-copy-card {
+  padding: 34px;
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  align-self: start;
+}
+
+.mechanic-copy-header {
+  display: flex;
+  justify-content: center;
+}
+
+.mechanic-copy-header .main-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #f3f7ff;
+}
+
+.mechanic-copy-header .main-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f3f7ff;
+  font-weight: 800;
+}
+
+.mechanic-copy-header .main-brand-subtitle {
+  display: block;
+}
+
+.mechanic-kicker {
+  color: #77b9ff;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.mechanic-copy-card h1,
+.mechanic-section-head h2 {
+  margin: 0;
+  font-size: clamp(2.4rem, 5vw, 4.1rem);
+  line-height: 0.98;
+}
+
+.mechanic-copy-card p,
+.mechanic-section-head p,
+.mechanic-feed-card p,
+.mechanic-feature-copy p,
+.mechanic-support-card p,
+.mechanic-footer-brand p {
+  margin: 0;
+  color: rgba(243, 247, 255, 0.76);
+  line-height: 1.6;
+}
+
+.mechanic-benefits {
+  display: grid;
+  gap: 6px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.mechanic-benefits li::before,
+.mechanic-feature-copy li::before {
+  content: "—";
+  color: #77b9ff;
+  margin-right: 8px;
+}
+
+.mechanic-hero-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mechanic-stat-card {
+  border-radius: 18px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.05);
+  display: grid;
+  gap: 6px;
+}
+
+.mechanic-stat-card strong {
+  font-size: 1.35rem;
+}
+
+.mechanic-stat-card span {
+  color: rgba(243, 247, 255, 0.68);
+}
+
+.mechanic-form {
+  padding: 28px;
+  display: grid;
+  gap: 14px;
+  align-self: center;
+}
+
+.mechanic-form h2,
+.mechanic-feed-card h3,
+.mechanic-feature-copy h3,
+.mechanic-support-card h3 {
+  margin: 0;
+  color: #ffffff;
+}
+
+.mechanic-form p {
+  margin: 0;
+  color: rgba(243, 247, 255, 0.72);
+}
+
+.mechanic-form .row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.mechanic-form input {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  background: #ffffff;
+  color: #171c24;
+  padding: 0 14px;
+  font: inherit;
+}
+
+.mechanic-section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.mechanic-section-head h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.mechanic-feed-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.mechanic-feed-card,
+.mechanic-support-card {
+  padding: 24px;
+  display: grid;
+  gap: 12px;
+}
+
+.mechanic-feed-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mechanic-feed-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: #1e93f2;
+  color: #ffffff;
+  font-weight: 800;
+}
+
+.mechanic-feature-card {
+  grid-column: 1 / -1;
+  padding: 28px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.9fr);
+  gap: 24px;
+}
+
+.mechanic-feature-copy {
+  display: grid;
+  gap: 14px;
+}
+
+.mechanic-feature-copy ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.mechanic-feature-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.mechanic-mini-post {
+  border-radius: 20px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.05);
+  display: grid;
+  gap: 10px;
+}
+
+.mechanic-mini-post-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.mechanic-mini-post-head strong {
+  color: #ffffff;
+}
+
+.mechanic-mini-post-head span,
+.mechanic-mini-post p {
+  color: rgba(243, 247, 255, 0.7);
+  margin: 0;
+}
+
+.mechanic-support-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.mechanic-footer {
+  margin-top: 8px;
+  padding: 28px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent;
+}
+
+.mechanic-footer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 24px;
+  align-items: center;
+}
+
+.mechanic-footer-brand {
+  display: grid;
+  gap: 14px;
+}
+
+.mechanic-footer-brand p {
+  max-width: 480px;
+}
+
+@media (max-width: 1024px) {
+  .application-layout,
+  .mechanic-feature-card,
+  .mechanic-support-grid,
+  .mechanic-feed-grid,
+  .mechanic-footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mechanic-section-head {
+    align-items: start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 720px) {
+  .mechanic-shell,
+  .main-header.basic-header .body-content {
+    width: min(1280px, 100%);
+  }
+
+  .main-header.basic-header .body-content {
+    min-height: auto;
+    padding: 16px 0;
+    flex-wrap: wrap;
+  }
+
+  .application-links,
+  .mechanic-footer-links {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .mechanic-form .row,
+  .mechanic-hero-meta {
+    grid-template-columns: 1fr;
+  }
+}

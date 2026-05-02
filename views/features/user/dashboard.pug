@@ -1,0 +1,584 @@
+extends ../../layouts/main
+
+block vars
+  - var title = "SmartWorkshop - User"
+  - var bodyClass = "user-body app-shell-body"
+
+block head
+  link(rel="stylesheet", href="/css/features/dashboard/dashboard-shell.css")
+  link(rel="stylesheet", href="/css/features/user/dashboard.css")
+
+block content
+  header.main-header.general-header
+    .body-content
+      a.main-brand(href="/")
+        span.main-logo SW
+        div
+          strong SmartWorkshop
+          span Vehicle Service Marketplace
+      button.user-header-menu-toggle#userHeaderMobileMenuToggle(type="button" aria-label="Open menu" aria-expanded="false")
+        span
+        span
+        span
+
+  main.primari-shell
+    .page-shell-content
+      section.mainLayout#userPage
+        .user-mobile-menu-backdrop#userMobileMenuBackdrop
+        aside.user-mobile-menu#userMobileMenu(aria-hidden="true")
+          .user-mobile-menu-head
+            span.user-mobile-logo#userMobileMenuName User
+          nav.user-mobile-menu-nav
+            button.user-mobile-menu-link.user-nav-link.active(type="button" data-view="dashboard") Dashboard
+            button.user-mobile-menu-link.user-nav-link(type="button" data-view="account") Account
+            button.user-mobile-menu-link.user-nav-link(type="button" data-view="bookings") Bookings
+            button.user-mobile-menu-link.user-nav-link(type="button" data-view="vehicle") Vehicle
+            button.user-mobile-menu-link.user-nav-link(type="button" data-view="resolution") Resolution center
+            button.user-mobile-menu-link.user-nav-link(type="button" data-view="settings") Settings
+          button.user-mobile-back-btn#userMobileRoleBackBtn(type="button" data-role-back="true" hidden) Back
+          button.user-mobile-signout#userMobileLogoutBtn(type="button") Log out
+        aside.mainRail.rail-base
+          .rail-brand
+            span.logo SW
+          nav.rail-nav
+            button.rail-nav-link.rail-item.user-nav-link.active(type="button" data-view="dashboard")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  rect(x="3" y="3" width="8" height="8" rx="1")
+                  rect(x="13" y="3" width="8" height="5" rx="1")
+                  rect(x="13" y="10" width="8" height="11" rx="1")
+                  rect(x="3" y="13" width="8" height="8" rx="1")
+              span.rail-text Dashboard
+            button.rail-nav-link.rail-item.user-nav-link(type="button" data-view="account")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  circle(cx="12" cy="8" r="4")
+                  path(d="M5 20a7 7 0 0 1 14 0")
+              span.rail-text Account
+            button.rail-nav-link.rail-item.user-nav-link(type="button" data-view="bookings")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  path(d="M3 7h18")
+                  path(d="M8 3v4")
+                  path(d="M16 3v4")
+                  rect(x="3" y="7" width="18" height="14" rx="2")
+              span.rail-text Bookings
+            button.rail-nav-link.rail-item.user-nav-link(type="button" data-view="vehicle")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  path(d="M5 16l1.5-5A2 2 0 0 1 8.4 9h7.2a2 2 0 0 1 1.9 2l1.5 5")
+                  path(d="M4 16h16v3a1 1 0 0 1-1 1h-1v-2H6v2H5a1 1 0 0 1-1-1z")
+                  circle(cx="7.5" cy="16.5" r="1")
+                  circle(cx="16.5" cy="16.5" r="1")
+              span.rail-text Vehicle
+            button.rail-nav-link.rail-item.user-nav-link(type="button" data-view="resolution")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  circle(cx="12" cy="8" r="4")
+                  path(d="M5 20a7 7 0 0 1 14 0")
+              span.rail-text Resolution center
+            button.rail-nav-link.rail-item.user-nav-link(type="button" data-view="settings")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  circle(cx="12" cy="12" r="3")
+                  path(d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 0 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.2a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3h.1a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.2a1.6 1.6 0 0 0 1 1.5h.1a1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8v.1a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.2a1.6 1.6 0 0 0-1.5 1z")
+              span.rail-text Settings
+          .rail-footer
+            button.rail-nav-link.rail-item#userRailRoleBackBtn(type="button" data-role-back="true" hidden)
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  path(d="M15 18l-6-6 6-6")
+              span.rail-text Back
+            button.rail-nav-link.rail-item#userLogoutBtn(type="button")
+              span.rail-icon(aria-hidden="true")
+                svg(viewBox="0 0 24 24")
+                  path(d="M15 18l-6-6 6-6")
+              span.rail-text Log out
+        button.user-rail-toggle#userRailToggle(type="button" aria-label="Collapse sidebar" aria-expanded="true")
+          svg(viewBox="0 0 24 24" aria-hidden="true")
+            rect(x="4" y="4" width="6" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6")
+            rect(x="12" y="4" width="8" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6")
+            path(d="M11 12h4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round")
+            path(d="M13.5 10.5 16 12l-2.5 1.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round")
+        section.mainSection
+          .user-dashboard-hero
+            .settings-header
+              .settings-header-copy
+                h3#userHeroSectionTitle Dashboard
+                p#userHeroSectionSubtitle General information
+              .settings-header-aside
+                .user-dashboard-hero-copy
+                  .admin-profile-avatar#userDashboardHeroAvatar UU
+                  div
+                    h2 Welcome
+                    p#userDashboardHeroName User
+                    p#userDashboardHeroRole CUSTOMER
+          .user-content
+            section.user-view#userDashboardView
+              .user-dashboard-layout
+                .user-panel
+                  .car-panel
+                    .settings-header.user-panel-head
+                      h2 Your Cars
+                      p Save up to 50 vehicles in your account.
+                    .user-car-list#userCarList
+                      .user-car-summary
+                        .user-car-top
+                          span.user-reg-badge KL05USC
+                          strong COROLLA COLOUR COL-N VVTI
+                        .user-car-meta
+                          span Petrol
+                          span 21 years old
+                          span 39,580 miles
+                        .user-car-status
+                          p Your MOT is valid · Due in 28 weeks
+                          p Taxed · Due in 24 weeks
+
+                .settings-divider
+
+                .user-panel
+                  .car-panel
+                    h3.user-section-title Add a vehicle
+                    p.user-add-vehicle-help Add your car registration to keep MOT, tax, and mileage details in one place.
+                    .dashboard-section.dashboard-section--add-form
+                      .user-add-vehicle
+                        input#userDashboardCarReg(type="text" placeholder="Enter Car Reg")
+                        button.primary#userAddVehicleBtn(type="button") Add vehicle
+                      p.form-error#userDashboardCarError(role="alert" aria-live="polite")
+
+                .settings-divider
+
+                .user-panel
+                  .car-panel
+                    .user-quick-quote-intro
+                      h3.user-section-title Reserve your service in under 2 minutes
+                      p.user-quick-quote-lead Choose your vehicle, pick a service, and book now.
+                    .dashboard-section.dashboard-section--quote
+                      .user-quick-quote
+                        label
+                          | Vehicle Registration
+                          input#userQuickQuoteReg(type="text" placeholder="Enter Car Reg" value="")
+                        label
+                          | Postcode
+                          input(type="text" placeholder="Enter Your Postcode")
+                        label
+                          | Services
+                          select#userQuickQuoteProduct
+                            option(value="" selected) Select a service
+                            option(value="repair") Repairs
+                            option(value="diagnostics") Diagnostics
+                            option(value="service") Servicing & MOT
+                            option(value="tyres") Tyres
+                            option(value="inspection") Pre-purchase inspections
+                        button.primary#userQuickQuoteBtn(type="button") Book now
+                      .user-verify-card
+                        h3.user-verify-title Need help with your next booking?
+                        p.user-verify-text Review your vehicles, compare options, and book now when you're ready.
+  
+            section.user-view.is-hidden#userAccountView
+                .settings-card.user-account-card
+                  .user-account-layout
+                    .user-settings-panel-head
+
+                    .user-settings-panel
+                      .account-section.account-section--avatar
+                        .settings-photo-row
+                          .settings-avatar.settings-avatar-lg#userSettingsAvatar AG
+
+                      .settings-divider
+    
+                      .account-section.account-section--profile
+                        .settings-profile
+                          .settings-meta
+                            h4 Full Name
+                            div#userSettingsName.user-full-name-grid
+                            span#userSettingsRoleBadge.is-hidden CUSTOMER
+
+                      .settings-divider
+    
+                      .account-section.account-section--contacts
+                        div
+                          h4 Contacts Details
+                          p#userSettingsPhone Phone: -
+                          p#userSettingsEmailDetail Email: admin@smartworkshop.local
+                          p#userSettingsUsername Username: -
+                          p#userSettingsAddress Address: -
+
+                      .settings-divider
+    
+                      .account-section.account-section--role
+                        div
+                          h4 Role
+                          p#userSettingsRole ADMIN
+
+                      .account-section.account-section--status
+                        div
+                          h4 Account status
+                          p#userSettingsStatus.user-account-status-pill(data-status="pending") Pending
+    
+                      .account-section.account-section--integration
+                        div
+                          h4 Integration
+                          p No integrations connected
+  
+  
+            section.user-view.is-hidden#userVehicleView
+                .settings-card.user-vehicle-card
+                  .user-vehicle-layout
+                    .dashboard-section.dashboard-section--welcome.vehicle-section--welcome
+                      .settings-header
+                        div
+                          h2 Welcome back
+                          p.user-welcome-name User
+                        .user-welcome-corner-wrap
+                          h2.user-welcome-corner Vehicle
+                          p.user-welcome-corner-subtitle Information related to your vehicles
+  
+                    .settings-divider
+  
+                    .user-vehicle-heading
+                      .user-vehicle-heading-top
+                        button#userVehicleTitle.user-vehicle-title-button(type="button" aria-label="Select vehicle") RENAULT CLIO RENAULTSPORT NAV TROPHY A
+                        span.user-reg-badge#userVehicleRegBadge BP67XRZ
+                        button#userVehicleDropdownBtn.user-vehicle-dropdown-btn(type="button" aria-label="Open vehicle list")
+                      .user-vehicle-dropdown-menu.is-hidden#userVehicleDropdownMenu
+  
+                    .user-vehicle-pills
+                      span#userVehicleFuel Pill Petrol
+                      span#userVehicleAge Pill 8 years old
+                      span#userVehicleMileage Pill 13,126 miles
+  
+                    .user-vehicle-cards
+                      .user-vehicle-info-card.is-mot
+                        .user-vehicle-info-icon △
+                        .user-vehicle-info-copy
+                          strong Your MOT is valid
+                          p#userVehicleMotStatus Due in 6 months
+                        .user-vehicle-info-arrow ›
+                      .user-vehicle-info-card.is-tax
+                        .user-vehicle-info-icon ✓
+                        .user-vehicle-info-copy
+                          strong Your Tax is valid
+                          p#userVehicleTaxStatus Due in 8 months
+                        .user-vehicle-info-arrow ›
+                      .user-vehicle-info-card.is-mileage
+                        .user-vehicle-info-icon ⦿
+                        .user-vehicle-info-copy
+                          strong Mileage at last MOT
+                          p#userVehicleMileageStatus 13,126 miles
+                        .user-vehicle-info-arrow ›
+                      .user-vehicle-info-card.is-details
+                        .user-vehicle-info-icon car
+                        .user-vehicle-info-copy
+                          strong Vehicle Details
+                          p View your vehicle's information
+                        .user-vehicle-info-arrow ›
+  
+            section.user-view.is-hidden#userBookingsView
+                .user-bookings-layout
+                  .user-table-layout
+                    .user-table-head
+                      .user-table-head-filters
+                        .user-head-control.user-head-control--search
+                          input#userBookingsSearch(type="search" placeholder="Search")
+                        .user-head-control.user-head-control--role
+                          select#userBookingsTypeFilter
+                            option(value="all") Type
+                        .user-head-control.user-head-control--status
+                          select#userBookingsStatusFilter
+                            option(value="all") Status
+                        .user-head-control.user-head-control--date
+                          select#userBookingsDateFilter
+                            option(value="all") All time
+                            option(value="30d") Last 30 days
+                            option(value="90d") Last 90 days
+                            option(value="365d") Last year
+                    .user-table-wrap
+                      table.user-table
+                        thead
+                          tr
+                            th Reference
+                            th Status
+                            th Vehicle
+                            th Mechanic
+                            th Created
+                        tbody#userBookingsList
+                    .user-table-footer
+                      .user-table-footer-meta
+                        label(for="userBookingsRowsPerPage") Rows per page
+                        select#userBookingsRowsPerPage
+                          option(value="10" selected) 10
+                          option(value="20") 20
+                          option(value="50") 50
+                        span#userBookingsFooterCount No bookings
+                      .user-pagination#userBookingsPagination
+                  .user-bookings-detail
+                    #userBookingDetail.user-booking-detail
+  
+            section.user-view.is-hidden#userResolutionView
+                .user-resolution-layout
+                  #userResolutionMessageView.user-resolution-detail-view
+                    .mechanic-resolution-detail
+                      .mechanic-resolution-detail-head
+                        button.mechanic-resolution-back#userResolutionBackBtn(type="button") Back
+                        h3#userResolutionDetailTitle Resolution Center
+                      .user-resolution-card
+                        .mechanic-resolution-field
+                          label(for="userResolutionIssue") Please select your issue from the list below:
+                          select#userResolutionIssue
+                            option(value="message_mechanic" data-case-type="general" selected) Message my mechanic
+                            option(value="mechanic_late" data-case-type="complaint") My mechanic is late
+                            option(value="workmanship_problem" data-case-type="complaint") Problem with workmanship
+                            option(value="charged_more_than_agreed" data-case-type="complaint") I've been charged more than agreed
+                            option(value="charged_for_unagreed_work" data-case-type="complaint") I've been charged for work that I didn't agree to
+                            option(value="mechanic_cancelled" data-case-type="complaint") Mechanic has cancelled my booking
+                            option(value="other_problem" data-case-type="complaint") Other problem
+                        p.mechanic-resolution-notice#userResolutionNotice No case has been created for this booking yet.
+                        button.primary#userResolutionGoToCase(type="button") Go to case
+                        .mechanic-resolution-complaint.is-hidden#userResolutionComplaintComposer
+                          p.mechanic-resolution-complaint-copy#userResolutionComplaintCopy
+                          textarea#userResolutionComplaintInput(rows="5" placeholder="Write your message here")
+                        .mechanic-resolution-complaint-actions
+                          button.primary#userResolutionComplaintSendBtn(type="button") Send
+                        .mechanic-resolution-complaint-footer
+                          button.secondary#userResolutionComplaintAttachBtn(type="button") Attach file(s)
+                        input#userResolutionComplaintAttachmentInput.is-hidden(type="file" multiple accept="image/*,application/pdf")
+                        .mechanic-resolution-compose-preview#userResolutionComplaintAttachmentPreview
+                  .user-resolution-card
+                    h3 Current cases
+                    .mechanic-resolution-tabs
+                      button.mechanic-resolution-tab.is-active(type="button" data-user-resolution-filter="all") All
+                      button.mechanic-resolution-tab(type="button" data-user-resolution-filter="complaint") Complaint
+                      button.mechanic-resolution-tab(type="button" data-user-resolution-filter="general") General
+                    .mechanic-resolution-table
+                      .mechanic-resolution-table-head
+                        span Status
+                        span Reference
+                        span Updated at
+                        span Subject
+                        span
+                      #userResolutionCasesTable
+                  #userResolutionCaseView.user-resolution-detail-view.is-hidden
+                    .settings-card.user-CaseView
+                      .mechanic-detail-card
+                        .mechanic-resolution-main
+                          span#userResolutionCaseStatusBadge
+                          p.mechanic-resolution-case-copy.is-hidden#userResolutionCaseCopy You can use this page to discuss your booking with your mechanic. Your messages will be sent directly to the mechanic, and you will receive an email whenever there's an update.
+                          .mechanic-resolution-thread#userResolutionMessages
+                          .mechanic-resolution-compose
+                            textarea#userResolutionMessageInput(rows="5" placeholder="Add a new message here")
+                            .mechanic-resolution-compose-actions
+                              button.mechanic-resolution-back#userResolutionCaseBackBtn(type="button") Back
+                              button.primary#userResolutionSendBtn(type="button") Send message
+                            .mechanic-resolution-compose-attachments
+                              button.secondary#userResolutionCaseAttachBtn(type="button") Attach file(s)
+                              input#userResolutionCaseAttachmentInput.is-hidden(type="file" multiple accept="image/*,application/pdf")
+                              .mechanic-resolution-compose-preview#userResolutionCaseAttachmentPreview
+                        aside.mechanic-resolution-sidebar
+                          .mechanic-resolution-sidebar-card
+                            h4#userResolutionSidebarTitle Current status of booking
+                            .mechanic-resolution-sidebar-row
+                              strong Mechanic
+                              span#userResolutionSidebarMechanic -
+                            .mechanic-resolution-sidebar-row
+                              strong Car
+                              span#userResolutionSidebarCar -
+                            .mechanic-resolution-sidebar-row
+                              strong Arrival Time
+                              span#userResolutionSidebarArrivalTime -
+                            .mechanic-resolution-sidebar-row
+                              strong Address
+                              span#userResolutionSidebarAddress -
+                            .mechanic-resolution-sidebar-row
+                              strong Work
+                              span#userResolutionSidebarWork -
+                            .mechanic-resolution-sidebar-row
+                              strong Parts
+                              span#userResolutionSidebarParts -
+                            .mechanic-resolution-sidebar-row
+                              strong Total Price
+                              span#userResolutionSidebarTotal -
+   
+            section.user-view.is-hidden#userSettingsView
+              .user-settings-layout
+                .user-settings-panel-head
+                  h2#userSettingsPanelTitle General
+                  .user-settings-tabs
+                    button.user-settings-tab-link.active(type="button" data-subview="general") General
+                    button.user-settings-tab-link(type="button" data-subview="notifications") Notifications
+                    button.user-settings-tab-link(type="button" data-subview="security") Login & security
+
+                .user-settings-panel
+                      section.user-settings-subview#userSettingsGeneral
+                        .user-settings-photo-row
+                          .settings-avatar.settings-avatar-lg#userSettingsAvatarSettings AG
+                          button.ghost#userSettingsPhotoButton(type="button") Update
+                          input.file-input#userSettingsPhotoInput(type="file" accept="image/*")
+
+                        .settings-divider
+
+                        details.user-settings-accordion.user-settings-accordion--full-name#userSettingsFullNameAccordion(open)
+                          summary.user-settings-accordion-summary
+                            h4 Full name
+                          .user-settings-profile.user-settings-accordion-content
+                            .settings-meta
+                              div#userSettingsNameSettings.user-full-name-grid
+                            button.secondary(type="button" data-settings-field="full_name") Update
+
+                        .settings-divider
+
+                        details.user-settings-accordion.user-settings-accordion--contacts#userSettingsContactsAccordion(open)
+                          summary.user-settings-accordion-summary
+                            h4 Contacts Details
+                          .user-settings-row.user-settings-accordion-content
+                            div
+                              .user-settings-contact-list
+                                .user-settings-contact-item
+                                  .user-settings-contact-copy
+                                    span.user-settings-contact-label Phone
+                                    p#userSettingsPhoneValueSettings -
+                                  .user-settings-contact-action
+                                    button.secondary(type="button" data-settings-field="phone") Update
+                                .user-settings-contact-item
+                                  .user-settings-contact-copy
+                                    span.user-settings-contact-label Username
+                                    p#userSettingsUsernameValueSettings -
+                                  .user-settings-contact-action
+                                    button.secondary(type="button" data-settings-field="username") Update
+                                .user-settings-contact-item
+                                  .user-settings-contact-copy
+                                    span.user-settings-contact-label Email
+                                    p#userSettingsEmailValueSettings -
+                                  .user-settings-contact-action
+                                    button.secondary(type="button" data-settings-field="email") Update
+                                .user-settings-contact-item
+                                  .user-settings-contact-copy
+                                    span.user-settings-contact-label Address
+                                    p#userSettingsAddressValueSettings -
+                                  .user-settings-contact-action
+                                    button.secondary(type="button" data-settings-field="address") Update
+
+                        .settings-divider
+
+                        details.user-settings-accordion.user-settings-accordion--theme#userSettingsThemeAccordion(open)
+                          summary.user-settings-accordion-summary
+                            h4 Theme
+                          .user-settings-row.user-settings-accordion-content
+                            div
+                              p#userSettingsThemeValue Dark mode
+                            button.secondary#userSettingsThemeBtn(type="button") Light mode
+
+                        .settings-divider
+
+                        details.user-settings-accordion.user-settings-accordion--integration#userSettingsIntegrationAccordion(open)
+                          summary.user-settings-accordion-summary
+                            h4 Integration
+                          .user-settings-row.user-settings-accordion-content
+                            div
+                              p No integrations connected
+                            button.secondary(type="button") Connect
+
+                      section.user-settings-subview.is-hidden#userSettingsNotifications
+                        .notifications-card
+                          .notifications-card-head
+                            h3 Email Preferences
+                          label.notifications-check(for="userNotificationsMarketing")
+                            input#userNotificationsMarketing(type="checkbox")
+                            span Don't miss out! Subscribe to get special offers/promotions and updates about our services.
+                          .notifications-actions
+                            button.ghost(type="button") Update
+
+                      section.user-settings-subview.is-hidden#userSettingsSecurity
+                        .security-card
+                          .security-card-head
+                            h3 Change Password
+                          form.security-form#userSecurityPasswordForm
+                            label.security-field(for="userSecurityOldPassword")
+                              span Old Password
+                              input#userSecurityOldPassword(type="password" autocomplete="current-password")
+                            label.security-field(for="userSecurityNewPassword")
+                              span New Password
+                              input#userSecurityNewPassword(type="password" autocomplete="new-password")
+                            label.security-field(for="userSecurityConfirmPassword")
+                              span Confirm Password
+                              input#userSecurityConfirmPassword(type="password" autocomplete="new-password")
+                            p.form-error#userSecurityPasswordMessage(role="alert" aria-live="polite")
+                            .security-actions
+                              button.ghost#userSecurityPasswordSubmit(type="submit") Change
+
+                        .security-card
+                          .security-card-head
+                            h3 Two Factor Authentication
+                          .security-2fa-grid
+                            label.security-check
+                              input#userSecurity2faEmail(type="checkbox")
+                              span Email
+                            label.security-check
+                              input#userSecurity2faSms(type="checkbox")
+                              span SMS
+                          p.form-error#userSecurity2faMessage(role="alert" aria-live="polite")
+                          .security-actions
+                            button.secondary#userSecurity2faEnable(type="button") Save 2FA
+                .settings-edit-modal.is-hidden#userSettingsEditModal
+                  .settings-edit-backdrop(data-close-modal="true")
+                  .settings-edit-dialog(role="dialog" aria-modal="true" aria-labelledby="userSettingsEditTitle")
+                    .settings-edit-head
+                      h3#userSettingsEditTitle Update field
+                    p#userSettingsEditDescription Update your information.
+                    label.settings-edit-field(for="userSettingsEditInput")
+                      span#userSettingsEditLabel Value
+                      input#userSettingsEditInput(type="text")
+                    .settings-edit-name-grid.is-hidden#userSettingsNameGrid
+                      label.settings-edit-field(for="userSettingsEditFirstName")
+                        span First name
+                        input#userSettingsEditFirstName(type="text")
+                      label.settings-edit-field(for="userSettingsEditMiddleName")
+                        span Middle name
+                        input#userSettingsEditMiddleName(type="text")
+                      label.settings-edit-field(for="userSettingsEditLastName")
+                        span Last name
+                        input#userSettingsEditLastName(type="text")
+                    .settings-edit-address-grid.is-hidden#userSettingsAddressGrid
+                      label.settings-edit-field(for="userSettingsEditAddressLine1")
+                        span Address line 1
+                        input#userSettingsEditAddressLine1(type="text")
+                      label.settings-edit-field(for="userSettingsEditAddressLine2")
+                        span Address line 2
+                        input#userSettingsEditAddressLine2(type="text")
+                      label.settings-edit-field(for="userSettingsEditCity")
+                        span City
+                        input#userSettingsEditCity(type="text")
+                      label.settings-edit-field(for="userSettingsEditPostcode")
+                        span PostCode
+                        input#userSettingsEditPostcode(type="text")
+                    p.form-error#userSettingsEditMessage(role="alert" aria-live="polite")
+                    .settings-edit-actions
+                      button.secondary#userSettingsEditCancel(type="button") Cancel
+                      button.ghost#userSettingsEditSave(type="button") Update
+                .settings-edit-modal.user-booking-review-modal.is-hidden#userBookingReviewModal
+                  .settings-edit-backdrop(data-user-booking-review-close="true")
+                  .settings-edit-dialog(role="dialog" aria-modal="true" aria-labelledby="userBookingReviewTitle")
+                    .settings-edit-head
+                      h3#userBookingReviewTitle Rate mechanic
+                      button.settings-edit-close(type="button" data-user-booking-review-close="true" aria-label="Close review modal") ×
+                    p#userBookingReviewDescription Share your experience with the mechanic.
+                    p.form-error#userBookingReviewMessage(role="alert" aria-live="polite")
+                    .user-booking-review-stars(role="radiogroup" aria-label="Mechanic rating")
+                      each star in [1, 2, 3, 4, 5]
+                        button.user-booking-review-star(type="button" data-user-booking-review-star=star aria-pressed="false" aria-label=`${star} star${star === 1 ? '' : 's'}`) ★
+                    label.settings-edit-field(for="userBookingReviewComment")
+                      span Comment
+                      textarea#userBookingReviewComment(rows="4" placeholder="Write your review")
+                    .settings-edit-actions.user-booking-review-actions
+                      button.secondary#userBookingReviewCancel(type="button") Cancel
+                      button.ghost#userBookingReviewSave(type="button") Save review
+  include ../../partials/general-footer
+
+append scripts
+  script(src="/js/features/user/dashboard.js")
+
+
+
+
+
+
