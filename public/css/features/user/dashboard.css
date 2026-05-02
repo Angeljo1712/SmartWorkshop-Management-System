@@ -2643,7 +2643,6 @@ body.user-body #userAccountView .user-account-status-pill[data-status="suspended
 
 body.user-body #userAccountView .settings-header p,
 body.user-body #userAccountView .settings-row p,
-body.user-body #userAccountView .settings-meta p,
 body.user-body #userAccountView .account-section p,
 body.user-body #userAccountView .account-section h4,
 body.user-body #userAccountView .account-section span {
@@ -2651,7 +2650,7 @@ body.user-body #userAccountView .account-section span {
 }
 
 body.user-body #userAccountView .account-section h4,
-body.user-body #userAccountView .settings-meta h4 {
+body.user-body #userAccountView .settings-profile h4 {
   font-size: 1.6rem;
   text-transform: none;
   letter-spacing: normal;
@@ -2659,16 +2658,29 @@ body.user-body #userAccountView .settings-meta h4 {
 }
 
 body.user-body #userAccountView .account-section p,
-body.user-body #userAccountView .settings-meta p {
+body.user-body #userAccountView .settings-profile p {
   font-size: 1.05rem;
   font-weight: 500;
   line-height: 1.4;
   opacity: 0.92;
 }
 
-body.user-body #userAccountView .settings-meta,
+body.user-body #userAccountView .settings-meta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto;
+  gap: 10px;
+  justify-items: stretch;
+  text-align: left;
+  width: 100%;
+  min-width: 0;
+}
+
+body.user-body #userAccountView .settings-profile,
 body.user-body #userAccountView .account-section > div {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto;
   gap: 10px;
 }
 
@@ -2677,6 +2689,10 @@ body.user-body #userSettingsView .user-full-name-grid {
   display: grid;
   gap: 4px;
   min-width: 0;
+}
+
+body.user-body #userAccountView .user-full-name-grid {
+  width: 100%;
 }
 
 body.user-body #userAccountView .user-full-name-row,
@@ -4240,7 +4256,7 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
   }
 
   body.user-body #userAccountView .settings-divider {
-    width: calc(100% - 20px);
+    width: calc(100%);
     margin-left: auto;
     margin-right: auto;
   }
@@ -4416,8 +4432,8 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
   }
 
   body.user-body #userAccountView .user-account-layout {
-    padding: 12px;
-    gap: 16px;
+    padding: 0px;
+    gap: 18px;
     min-height: 100%;
   }
 
@@ -4442,13 +4458,61 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
     height: 100%;
   }
 
-  body.user-body #userAccountView .settings-avatar-lg {
-    width: 96px;
-    height: 96px;
+  body.user-body #userAccountView .user-account-panel > .settings-photo-row,
+  body.user-body #userAccountView .settings-photo-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    padding-bottom: 4px;
+  }
+
+  body.user-body #userAccountView .user-account-panel > .settings-photo-row .settings-avatar-lg,
+  body.user-body #userAccountView .settings-photo-row .settings-avatar-lg {
+    display: grid !important;
+    place-items: center !important;
+    align-self: center !important;
+    justify-self: center !important;
+    margin-inline: auto !important;
+    color: #ffffff !important;
+    background: #cfd6fb;
+    text-align: center;
+    width: 170px;
+    height: 170px;
+  }
+
+  body.user-body #userAccountView .settings-profile,
+  body.user-body #userAccountView .settings-profile {
+    justify-items: stretch;
+    text-align: left;
+  }
+
+  body.user-body #userAccountView .settings-profile {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    width: 100%;
+    min-width: 0;
+  }
+
+body.user-body #userAccountView .user-full-name-grid {
+  width: 100%;
+  min-width: 0;
+  justify-items: stretch;
+  text-align: left;
+}
+
+  body.user-body #userAccountView .settings-profile h4,
+  body.user-body #userAccountView .settings-profile h4 {
+    width: 100%;
+    margin: 0;
+    text-align: center;
   }
 
   body.user-body #userAccountView .account-section h4 {
-    font-size: 1rem;
+    margin-bottom: 10px;
+    font-size: 1.8rem;
+    text-align: center;
   }
 
   body.user-body #userAccountView .account-section p {
@@ -4478,17 +4542,93 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
     width: auto;
     margin-right: 0;
     padding-right: 0;
+    font-size: 1.2rem;
   }
 
   body.user-body #userAccountView .account-section--contacts > div {
     display: grid;
     gap: 8px;
+    justify-items: center;
+    text-align: center;
   }
 
   body.user-body #userAccountView .account-field-label {
     width: 84px;
     padding-right: 6px;
     margin-right: 6px;
+  }
+
+  body.user-body #userAccountView .account-section--contacts .account-field-label,
+  body.user-body #userAccountView .account-section--contacts .account-field-value {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-right: 0;
+    white-space: normal;
+    text-align: center;
+  }
+
+  body.user-body #userAccountView .account-section--contacts .account-field-label {
+    margin-bottom: 2px;
+  }
+
+  body.user-body #userAccountView .account-section--contacts .account-field-value {
+    font-size: 1.02rem;
+    line-height: 1.35;
+    margin-bottom: 6px;
+  }
+
+  body.user-body #userAccountView #userSettingsAddress {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  body.user-body #userAccountView #userSettingsAddress .account-field-label,
+  body.user-body #userAccountView #userSettingsAddress .account-field-value {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-right: 0;
+    white-space: normal;
+    text-align: center;
+  }
+
+  body.user-body #userAccountView #userSettingsAddress .account-field-label {
+    margin-bottom: 2px;
+  }
+
+  body.user-body #userAccountView #userSettingsAddress .account-field-value {
+    font-size: 1.02rem;
+    line-height: 1.35;
+  }
+
+  body.user-body #userAccountView .account-section--role,
+  body.user-body #userAccountView .account-section--status,
+  body.user-body #userAccountView .account-section--integration {
+    justify-items: center;
+    text-align: center;
+  }
+
+  body.user-body #userAccountView .account-section--role > div,
+  body.user-body #userAccountView .account-section--status > div,
+  body.user-body #userAccountView .account-section--integration > div {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  body.user-body #userAccountView .account-section--status .user-account-status-pill {
+    justify-self: center;
+  }
+
+  body.user-body #userAccountView .settings-row > div p {
+    margin-bottom: 6px;
   }
 
   body.user-body #userSettingsView .user-settings-layout {
