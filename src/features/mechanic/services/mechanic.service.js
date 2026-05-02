@@ -8,7 +8,6 @@ const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
 const resolveMechanicAvatarUrl = (user) => {
-  if (String(user?.role || "").toLowerCase() === "mechanic") return "";
   return String(user?.avatar_url || "").trim();
 };
 

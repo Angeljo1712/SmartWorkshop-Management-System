@@ -494,6 +494,7 @@ body.user-body #userSettingsView.user-view {
   display: grid;
   min-height: 100%;
   height: auto;
+  border-radius: 15px;
 }
 
 .user-settings-layout {
@@ -516,6 +517,50 @@ body.user-body #userSettingsView .user-settings-subview {
   align-content: start;
   align-items: start;
   grid-template-columns: minmax(0, 1fr);
+}
+
+body.user-body #userSettingsView .user-settings-accordion {
+  display: grid;
+  gap: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+body.user-body #userSettingsView .user-settings-accordion > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+body.user-body #userSettingsView .user-settings-accordion > summary::-webkit-details-marker {
+  display: none;
+}
+
+body.user-body #userSettingsView .user-settings-accordion-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+body.user-body #userSettingsView .user-settings-accordion-summary h4 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: normal;
+  opacity: 1;
+}
+
+body.user-body #userSettingsView .user-settings-accordion-content {
+  display: grid;
+  gap: 0;
+  padding-top: 12px;
+}
+
+body.user-body #userSettingsView .user-settings-accordion:not([open]) .user-settings-accordion-content {
+  display: none;
 }
 
 body.user-body #userSettingsView .user-settings-panel-head {
@@ -4017,7 +4062,7 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
 
   #userPage .mainSection {
     border-left: 2px solid #ffffff;
-    border-radius: 0 0 14px 14px;
+    border-radius: 0 0 0px 0px;
   }
 
   body.user-body :is(#userResolutionView, #userResolutionMessageView, #userResolutionCaseView) .mechanic-resolution-table-head {
@@ -4497,6 +4542,15 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
     gap: 12px;
   }
 
+  body.user-body #userSettingsView .user-settings-accordion-summary {
+    justify-content: center;
+    text-align: center;
+  }
+
+  body.user-body #userSettingsView .user-settings-accordion-summary h4 {
+    text-align: center;
+  }
+
   body.user-body #userSettingsView .user-settings-row > div {
     display: grid;
     justify-items: center;
@@ -4616,7 +4670,7 @@ body.user-body #userSettingsView .user-settings-contact-copy p {
   }
 
   #userPage .user-dashboard-hero .settings-header-copy h3 {
-    font-size: 0.95rem;
+    font-size: 1.2rem;
   }
 
   #userPage .user-dashboard-hero .settings-header-copy p {

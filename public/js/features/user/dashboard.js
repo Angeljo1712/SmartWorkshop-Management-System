@@ -36,6 +36,8 @@ if (userPage) {
   const userSettingsUsernameValueSettings = document.getElementById("userSettingsUsernameValueSettings");
   const userSettingsEmailValueSettings = document.getElementById("userSettingsEmailValueSettings");
   const userSettingsAddressValueSettings = document.getElementById("userSettingsAddressValueSettings");
+  const userSettingsThemeAccordion = document.getElementById("userSettingsThemeAccordion");
+  const userSettingsIntegrationAccordion = document.getElementById("userSettingsIntegrationAccordion");
   const userSettingsEditButtons = document.querySelectorAll("[data-settings-field]");
   const userSettingsEditModal = document.getElementById("userSettingsEditModal");
   const userSettingsEditTitle = document.getElementById("userSettingsEditTitle");
@@ -75,8 +77,11 @@ if (userPage) {
   const userSettingsContactMessage = document.getElementById("userSettingsContactMessage");
   const userSettingsThemeValue = document.getElementById("userSettingsThemeValue");
   const userSettingsThemeBtn = document.getElementById("userSettingsThemeBtn");
+  const userSettingsFullNameAccordion = document.getElementById("userSettingsFullNameAccordion");
+  const userSettingsContactsAccordion = document.getElementById("userSettingsContactsAccordion");
   const USER_THEME_STORAGE_KEY = "sw_user_theme";
   const USER_RAIL_STORAGE_KEY = "sw_user_rail_collapsed";
+  const userSettingsMobileAccordionQuery = window.matchMedia("(max-width: 425px)");
   const setUserLabeledText = (el, label, value) => {
     if (!el) return;
     el.innerHTML = `<span class="account-field-label">${escapeHtml(label)}</span><span class="account-field-value">${escapeHtml(value || "-")}</span>`;
@@ -129,6 +134,13 @@ if (userPage) {
     };
     el.dataset.status = labelMap[normalized] ? normalized : "pending";
     el.textContent = labelMap[normalized] || "Pending";
+  };
+  const syncUserSettingsAccordions = () => {
+    const isMobile = userSettingsMobileAccordionQuery.matches;
+    [userSettingsFullNameAccordion, userSettingsContactsAccordion, userSettingsThemeAccordion, userSettingsIntegrationAccordion].forEach((accordion) => {
+      if (!accordion) return;
+      accordion.open = !isMobile;
+    });
   };
   const settingsSubnavLinks = document.querySelectorAll(".user-settings-tab-link");
   const userSettingsPanelTitle = document.getElementById("userSettingsPanelTitle");
@@ -2113,6 +2125,9 @@ if (userPage) {
         view === "notifications" ? "Notifications" : view === "security" ? "Login & security" : "General";
     }
   };
+
+  syncUserSettingsAccordions();
+  userSettingsMobileAccordionQuery.addEventListener?.("change", syncUserSettingsAccordions);
 
   setUserResolutionSubview("overview");
 

@@ -689,48 +689,56 @@ block content
                         input.file-input#mechanicSettingsPhotoInput(type="file" accept="image/*")
                         button.ghost#mechanicSettingsPhotoButton(type="button") Update
                       .settings-divider
-                      .mechanic-settings-profile
-                        .settings-meta
+                      details.mechanic-settings-accordion.mechanic-settings-accordion--full-name#mechanicSettingsFullNameAccordion(open)
+                        summary.mechanic-settings-accordion-summary
                           h4 Full name
-                          div#mechanicSettingsFullName.mechanic-full-name-grid
-                        button.secondary(type="button" data-mechanic-settings-field="full_name") Update
+                        .mechanic-settings-profile.mechanic-settings-accordion-content
+                          .settings-meta
+                            div#mechanicSettingsFullName.mechanic-full-name-grid
+                          button.secondary(type="button" data-mechanic-settings-field="full_name") Update
                       .settings-divider
-                      .mechanic-settings-row
-                        div
+                      details.mechanic-settings-accordion.mechanic-settings-accordion--contacts#mechanicSettingsContactsAccordion(open)
+                        summary.mechanic-settings-accordion-summary
                           h4 Contacts Details
-                          .mechanic-settings-contact-list
-                            .mechanic-settings-contact-item
-                              .mechanic-settings-contact-copy
-                                span.mechanic-settings-contact-label Phone
-                                p#mechanicSettingsPhone -
-                              button.secondary(type="button" data-mechanic-settings-field="phone") Update
-                            .mechanic-settings-contact-item
-                              .mechanic-settings-contact-copy
-                                span.mechanic-settings-contact-label Username
-                                p#mechanicSettingsUsername -
-                              button.secondary(type="button" data-mechanic-settings-field="username") Update
-                            .mechanic-settings-contact-item
-                              .mechanic-settings-contact-copy
-                                span.mechanic-settings-contact-label Email
-                                p#mechanicSettingsEmail -
-                              button.secondary(type="button" data-mechanic-settings-field="email") Update
-                            .mechanic-settings-contact-item
-                              .mechanic-settings-contact-copy
-                                span.mechanic-settings-contact-label Address
-                                p#mechanicSettingsAddress -
-                              button.secondary(type="button" data-mechanic-settings-field="address") Update
+                        .mechanic-settings-row.mechanic-settings-accordion-content
+                          div
+                            .mechanic-settings-contact-list
+                              .mechanic-settings-contact-item
+                                .mechanic-settings-contact-copy
+                                  span.mechanic-settings-contact-label Phone
+                                  p#mechanicSettingsPhone -
+                                button.secondary(type="button" data-mechanic-settings-field="phone") Update
+                              .mechanic-settings-contact-item
+                                .mechanic-settings-contact-copy
+                                  span.mechanic-settings-contact-label Username
+                                  p#mechanicSettingsUsername -
+                                button.secondary(type="button" data-mechanic-settings-field="username") Update
+                              .mechanic-settings-contact-item
+                                .mechanic-settings-contact-copy
+                                  span.mechanic-settings-contact-label Email
+                                  p#mechanicSettingsEmail -
+                                button.secondary(type="button" data-mechanic-settings-field="email") Update
+                              .mechanic-settings-contact-item
+                                .mechanic-settings-contact-copy
+                                  span.mechanic-settings-contact-label Address
+                                  p#mechanicSettingsAddress -
+                                button.secondary(type="button" data-mechanic-settings-field="address") Update
                       .settings-divider
-                      .mechanic-settings-row
-                        div
+                      details.mechanic-settings-accordion.mechanic-settings-accordion--theme#mechanicSettingsThemeAccordion(open)
+                        summary.mechanic-settings-accordion-summary
                           h4 Theme
-                          p Light mode
-                        button.secondary(type="button") Light mode
+                        .mechanic-settings-row.mechanic-settings-accordion-content
+                          div
+                            p Light mode
+                          button.secondary(type="button") Light mode
                       .settings-divider  
-                      .mechanic-settings-row
-                        div
+                      details.mechanic-settings-accordion.mechanic-settings-accordion--integration#mechanicSettingsIntegrationAccordion(open)
+                        summary.mechanic-settings-accordion-summary
                           h4 Integration
-                          p No integrations connected
-                        button.secondary(type="button") Connect
+                        .mechanic-settings-row.mechanic-settings-accordion-content
+                          div
+                            p No integrations connected
+                          button.secondary(type="button") Connect
                     section.mechanic-settings-subview.is-hidden#mechanicSettingsNotifications
                           .notifications-card
                             .notifications-card-head

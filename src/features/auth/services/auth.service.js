@@ -20,7 +20,6 @@ const roleToLabel = (role) => {
   return String(role || "").toUpperCase();
 };
 const resolveMechanicAvatarUrl = (user) => {
-  if (String(user?.role || "").toLowerCase() === "mechanic") return "";
   return String(user?.avatar_url || "").trim();
 };
 

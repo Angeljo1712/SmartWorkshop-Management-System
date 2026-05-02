@@ -162,6 +162,10 @@ if (mechanicDashboard) {
   const mechanicSettingsEditCity = document.getElementById("mechanicSettingsEditCity");
   const mechanicSettingsEditPostcode = document.getElementById("mechanicSettingsEditPostcode");
   const mechanicSettingsEditMessage = document.getElementById("mechanicSettingsEditMessage");
+  const mechanicSettingsFullNameAccordion = document.getElementById("mechanicSettingsFullNameAccordion");
+  const mechanicSettingsContactsAccordion = document.getElementById("mechanicSettingsContactsAccordion");
+  const mechanicSettingsThemeAccordion = document.getElementById("mechanicSettingsThemeAccordion");
+  const mechanicSettingsIntegrationAccordion = document.getElementById("mechanicSettingsIntegrationAccordion");
   const mechanicSecurityUsername = document.getElementById("mechanicSecurityUsername");
   const mechanicResolutionOverview = document.getElementById("mechanicResolutionOverview");
   const mechanicResolutionFilterTabs = mechanicDashboard.querySelectorAll("[data-mechanic-resolution-filter]");
@@ -228,12 +232,14 @@ if (mechanicDashboard) {
   let pendingResolutionBookingId = null;
   let pendingResolutionCaseId = null;
   const pendingMechanicResolutionCaseAttachments = new Map();
+  const mechanicSettingsMobileAccordionQuery = window.matchMedia("(max-width: 425px)");
   const formatDate = window.SWApp?.formatShortDate || ((value) => String(value || "-"));
   const formatCurrency = window.SWApp?.formatCurrency || ((value) => String(value || "0"));
   const escapeHtml = window.SWApp?.escapeHtml || ((value) => String(value ?? ""));
   const getInitials = window.SWApp?.getInitials || ((name) => String(name || "ME"));
   const getMechanicFallbackAvatarUrl = (user) => {
-    return "";
+    const avatarUrl = String(user?.avatar_url || "").trim();
+    return avatarUrl;
   };
   const formatBookingReference = (value) => String(Number(value) || 0).padStart(8, "0");
   const formatResolutionReference = (value, bookingId) => {
@@ -268,6 +274,18 @@ if (mechanicDashboard) {
       return;
     }
     el.textContent = initials;
+  };
+  const syncMechanicSettingsAccordions = () => {
+    const isMobile = mechanicSettingsMobileAccordionQuery.matches;
+    [
+      mechanicSettingsFullNameAccordion,
+      mechanicSettingsContactsAccordion,
+      mechanicSettingsThemeAccordion,
+      mechanicSettingsIntegrationAccordion
+    ].forEach((accordion) => {
+      if (!accordion) return;
+      accordion.open = !isMobile;
+    });
   };
   const formatMechanicAddressText = (value) => {
     if (value === null || value === undefined) return "";
@@ -2661,6 +2679,9 @@ if (mechanicDashboard) {
     });
   });
 
+  syncMechanicSettingsAccordions();
+  mechanicSettingsMobileAccordionQuery.addEventListener?.("change", syncMechanicSettingsAccordions);
+
   mechanicSettingsPhotoButton?.addEventListener("click", () => {
     mechanicSettingsPhotoInput?.click();
   });
@@ -2673,20 +2694,18 @@ if (mechanicDashboard) {
     formData.append("avatar", file);
 
     try {
-      const response = await fetch("/api/users/me/avatar", {
+      await apiAuth("/api/users/me/avatar", mechanicToken, {
         method: "POST",
-        headers: { Authorization: `Bearer ${mechanicToken}` },
         body: formData
       });
-      const payload = await response.json();
-      if (!response.ok) throw payload;
-      setStoredAuthValue("userProfile", JSON.stringify(payload));
-      const displayName = [payload?.name, payload?.middle_name, payload?.lastname].filter(Boolean).join(" ") || payload?.email || "Mechanic";
-      setAvatar(mechanicDashboardHeroAvatar, getInitials(displayName), payload?.avatar_url);
-      setAvatar(mechanicAccountAvatar, getInitials(displayName), payload?.avatar_url);
-      setAvatar(mechanicAccountAvatarSecondary, getInitials(displayName), payload?.avatar_url);
-      setAvatar(mechanicSettingsAvatarSettings, getInitials(displayName), payload?.avatar_url);
-      setAvatar(mechanicProfileAvatar, getInitials(displayName), payload?.avatar_url);
+      const refreshedProfile = await apiAuth("/api/users/me", mechanicToken);
+      setStoredAuthValue("userProfile", JSON.stringify(refreshedProfile));
+      const displayName = [refreshedProfile?.name, refreshedProfile?.middle_name, refreshedProfile?.lastname].filter(Boolean).join(" ") || refreshedProfile?.email || "Mechanic";
+      setAvatar(mechanicDashboardHeroAvatar, getInitials(displayName), refreshedProfile?.avatar_url);
+      setAvatar(mechanicAccountAvatar, getInitials(displayName), refreshedProfile?.avatar_url);
+      setAvatar(mechanicAccountAvatarSecondary, getInitials(displayName), refreshedProfile?.avatar_url);
+      setAvatar(mechanicSettingsAvatarSettings, getInitials(displayName), refreshedProfile?.avatar_url);
+      setAvatar(mechanicProfileAvatar, getInitials(displayName), refreshedProfile?.avatar_url);
     } catch (err) {
       window.alert(err?.error?.message || err?.message || "Unable to upload this image.");
     } finally {

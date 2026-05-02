@@ -417,58 +417,66 @@ block content
 
                         .settings-divider
 
-                        .user-settings-profile
-                          .settings-meta
-                            h4 Full name:
-                            div#userSettingsNameSettings.user-full-name-grid
-                          button.secondary(type="button" data-settings-field="full_name") Update
+                        details.user-settings-accordion.user-settings-accordion--full-name#userSettingsFullNameAccordion(open)
+                          summary.user-settings-accordion-summary
+                            h4 Full name
+                          .user-settings-profile.user-settings-accordion-content
+                            .settings-meta
+                              div#userSettingsNameSettings.user-full-name-grid
+                            button.secondary(type="button" data-settings-field="full_name") Update
 
                         .settings-divider
 
-                        .user-settings-row
-                          div
+                        details.user-settings-accordion.user-settings-accordion--contacts#userSettingsContactsAccordion(open)
+                          summary.user-settings-accordion-summary
                             h4 Contacts Details
-                            .user-settings-contact-list
-                              .user-settings-contact-item
-                                .user-settings-contact-copy
-                                  span.user-settings-contact-label Phone
-                                  p#userSettingsPhoneValueSettings -
-                                .user-settings-contact-action
-                                  button.secondary(type="button" data-settings-field="phone") Update
-                              .user-settings-contact-item
-                                .user-settings-contact-copy
-                                  span.user-settings-contact-label Username
-                                  p#userSettingsUsernameValueSettings -
-                                .user-settings-contact-action
-                                  button.secondary(type="button" data-settings-field="username") Update
-                              .user-settings-contact-item
-                                .user-settings-contact-copy
-                                  span.user-settings-contact-label Email
-                                  p#userSettingsEmailValueSettings -
-                                .user-settings-contact-action
-                                  button.secondary(type="button" data-settings-field="email") Update
-                              .user-settings-contact-item
-                                .user-settings-contact-copy
-                                  span.user-settings-contact-label Address
-                                  p#userSettingsAddressValueSettings -
-                                .user-settings-contact-action
-                                  button.secondary(type="button" data-settings-field="address") Update
+                          .user-settings-row.user-settings-accordion-content
+                            div
+                              .user-settings-contact-list
+                                .user-settings-contact-item
+                                  .user-settings-contact-copy
+                                    span.user-settings-contact-label Phone
+                                    p#userSettingsPhoneValueSettings -
+                                  .user-settings-contact-action
+                                    button.secondary(type="button" data-settings-field="phone") Update
+                                .user-settings-contact-item
+                                  .user-settings-contact-copy
+                                    span.user-settings-contact-label Username
+                                    p#userSettingsUsernameValueSettings -
+                                  .user-settings-contact-action
+                                    button.secondary(type="button" data-settings-field="username") Update
+                                .user-settings-contact-item
+                                  .user-settings-contact-copy
+                                    span.user-settings-contact-label Email
+                                    p#userSettingsEmailValueSettings -
+                                  .user-settings-contact-action
+                                    button.secondary(type="button" data-settings-field="email") Update
+                                .user-settings-contact-item
+                                  .user-settings-contact-copy
+                                    span.user-settings-contact-label Address
+                                    p#userSettingsAddressValueSettings -
+                                  .user-settings-contact-action
+                                    button.secondary(type="button" data-settings-field="address") Update
 
                         .settings-divider
 
-                        .user-settings-row
-                          div
+                        details.user-settings-accordion.user-settings-accordion--theme#userSettingsThemeAccordion(open)
+                          summary.user-settings-accordion-summary
                             h4 Theme
-                            p#userSettingsThemeValue Dark mode
-                          button.secondary#userSettingsThemeBtn(type="button") Light mode
+                          .user-settings-row.user-settings-accordion-content
+                            div
+                              p#userSettingsThemeValue Dark mode
+                            button.secondary#userSettingsThemeBtn(type="button") Light mode
 
                         .settings-divider
 
-                        .user-settings-row
-                          div
+                        details.user-settings-accordion.user-settings-accordion--integration#userSettingsIntegrationAccordion(open)
+                          summary.user-settings-accordion-summary
                             h4 Integration
-                            p No integrations connected
-                          button.secondary(type="button") Connect
+                          .user-settings-row.user-settings-accordion-content
+                            div
+                              p No integrations connected
+                            button.secondary(type="button") Connect
 
                       section.user-settings-subview.is-hidden#userSettingsNotifications
                         .notifications-card
