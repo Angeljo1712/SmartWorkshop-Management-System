@@ -4522,7 +4522,7 @@ body.user-body #userAccountView .user-full-name-grid {
   }
 
   body.user-body #userAccountView .user-full-name-row {
-    grid-template-columns: 82px minmax(0, 1fr);
+    /* grid-template-columns: 82px minmax(0, 1fr); */
     column-gap: 8px;
     align-items: center;
     gap: 0;
@@ -4534,7 +4534,7 @@ body.user-body #userAccountView .user-full-name-grid {
     overflow: hidden;
     text-overflow: ellipsis;
     overflow-wrap: normal;
-    font-size: 0.88rem;
+    font-size: 1.20rem;
     line-height: 1.2;
   }
 
