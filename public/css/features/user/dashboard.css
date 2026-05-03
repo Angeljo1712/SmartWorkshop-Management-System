@@ -251,7 +251,7 @@ body.user-body .main-header.general-header {
   justify-items: stretch;
   grid-template-rows: auto minmax(0, 1fr) auto;
   align-content: start;
-  gap: 10px;
+  gap: 11px;
 }
 
 #userPage .mainRail:hover {
@@ -359,7 +359,7 @@ body.user-body .main-header.general-header {
 
 #userPage .mainRail.is-collapsed .rail-brand {
   justify-content: center;
-  padding-bottom: 8px;
+  padding-bottom: 10px;
   width: 100%;
 }
 
