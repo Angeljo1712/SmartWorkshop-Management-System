@@ -2564,21 +2564,21 @@ body.user-body #userAccountView {
 
 body.user-body #userAccountView > .settings-card.user-account-card {
   min-height: calc(100dvh - var(--general-header-height, 72px) - 140px);
-  height: calc(100dvh - var(--general-header-height, 72px) - 140px);
+  height: auto;
 }
 
 body.user-body #userAccountView .user-account-layout {
-  min-height: 100%;
-  height: 100%;
+  min-height: 0;
+  height: auto;
   padding: 20px;
 }
 
 .user-account-layout {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
   gap: 20px;
   align-items: start;
-  align-content: stretch;
+  align-content: start;
 }
 
 body.user-body #userAccountView .user-settings-panel-head {
@@ -2588,9 +2588,9 @@ body.user-body #userAccountView .user-settings-panel-head {
 body.user-body #userAccountView .user-settings-panel {
   display: grid;
   gap: 22px;
-  align-content: stretch;
+  align-content: start;
   align-items: start;
-  min-height: 100%;
+  min-height: 0;
 }
 
 body.user-body #userAccountView .user-settings-panel-head .account-section--welcome {
@@ -2831,7 +2831,7 @@ body.user-body #userDashboardView .user-panel-head h2 {
 
 body.user-body #userDashboardView .user-panel-head p {
   text-align: right;
-  color: #c8d4e8;
+  color: #ffffff;
 }
 
 #userDashboardView .user-welcome-corner {
@@ -4559,7 +4559,8 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
   body.user-body #userAccountView .user-account-layout {
     padding: 0px;
     gap: 18px;
-    min-height: 100%;
+    min-height: auto;
+    height: auto;
   }
 
   body.user-body #userAccountView .user-settings-panel,
@@ -4569,7 +4570,9 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
   }
 
   body.user-body #userAccountView .settings-card.user-account-card {
-    height: 100%;
+    min-height: auto;
+    height: auto;
+    overflow: visible;
   }
 
   body.user-body #userAccountView .user-settings-panel-head {
@@ -4580,7 +4583,8 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
 
   body.user-body #userAccountView .user-settings-panel {
     gap: 16px;
-    height: 100%;
+    min-height: auto;
+    height: auto;
   }
 
   body.user-body #userAccountView .user-account-panel > .settings-photo-row,

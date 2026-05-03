@@ -3,3 +3,6 @@ node_modules/
 .env.staging
 .DS_Store
 coverage/
+database/staging-backup*.sql
+database/staging-volume-migration.sql
+storage/uploads/
