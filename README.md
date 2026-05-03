@@ -94,11 +94,22 @@ The following screenshots illustrate the main interfaces of the completed protot
 | Admin Dashboard | `docs/screenshots/admin-dashboard.png` |
 | Resolution Centre | `docs/screenshots/resolution-center.png` |
 
-Example Markdown format for displaying a screenshot directly in GitHub:
+### Rendered Screenshots
 
-```md
+#### Home Page
 ![Home Page](docs/screenshots/home.png)
-```
+
+#### Customer Dashboard
+![Customer Dashboard](docs/screenshots/customer-dashboard.png)
+
+#### Mechanic Dashboard
+![Mechanic Dashboard](docs/screenshots/mechanic-dashboard.png)
+
+#### Admin Dashboard
+![Admin Dashboard](docs/screenshots/admin-dashboard.png)
+
+#### Resolution Centre
+![Resolution Centre](docs/screenshots/resolution-center.png)
 
 ---
 
