@@ -155,21 +155,16 @@ const collapseRepeatedNameParts = (value) => {
 
   if (!tokens.length) return "";
 
-  let changed = true;
-  while (changed) {
-    changed = false;
-    for (let size = Math.floor(tokens.length / 2); size >= 1; size -= 1) {
-      const tail = tokens.slice(-size).join(" ").toLowerCase();
-      const previous = tokens.slice(-size * 2, -size).join(" ").toLowerCase();
-      if (tail && tail === previous) {
-        tokens.splice(tokens.length - size * 2, size);
-        changed = true;
-        break;
-      }
+  const collapsed = [];
+  tokens.forEach((token) => {
+    const previous = collapsed[collapsed.length - 1];
+    if (previous && previous.toLowerCase() === token.toLowerCase()) {
+      return;
     }
-  }
+    collapsed.push(token);
+  });
 
-  return tokens.join(" ").trim();
+  return collapsed.join(" ").trim();
 };
 
 const buildDisplayName = ({ name, middle_name, lastname, full_name, email }, fallback = "User") => {
@@ -280,6 +275,7 @@ const listApplications = async () => {
             p.name,
             p.middle_name,
             p.lastname,
+            p.avatar_url,
             mp.application_type,
             mp.business_type,
             mp.lead_postcode,
@@ -300,6 +296,7 @@ const listApplications = async () => {
   return rows.map((row) => ({
     user_id: row.id,
     full_name: buildDisplayName(row, row.email),
+    avatar_url: row.avatar_url || "",
     email: row.email,
     phone: row.phone || "",
     created_at: row.created_at,

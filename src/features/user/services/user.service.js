@@ -48,21 +48,16 @@ const collapseRepeatedNameParts = (value) => {
 
   if (!tokens.length) return "";
 
-  let changed = true;
-  while (changed) {
-    changed = false;
-    for (let size = Math.floor(tokens.length / 2); size >= 1; size -= 1) {
-      const tail = tokens.slice(-size).join(" ").toLowerCase();
-      const previous = tokens.slice(-size * 2, -size).join(" ").toLowerCase();
-      if (tail && tail === previous) {
-        tokens.splice(tokens.length - size * 2, size);
-        changed = true;
-        break;
-      }
+  const collapsed = [];
+  tokens.forEach((token) => {
+    const previous = collapsed[collapsed.length - 1];
+    if (previous && previous.toLowerCase() === token.toLowerCase()) {
+      return;
     }
-  }
+    collapsed.push(token);
+  });
 
-  return tokens.join(" ").trim();
+  return collapsed.join(" ").trim();
 };
 
 const buildDisplayName = ({ name, middle_name, lastname, full_name, email }, fallback = "User") => {
@@ -361,9 +356,9 @@ const updateUserSecuritySettings = async (userId, { two_factor_email_enabled }) 
 };
 
 const resolveNames = (payload) => {
-  const name = String(payload.name || "").trim();
-  const middleName = String(payload.middle_name || "").trim();
-  let lastname = String(payload.lastname || "").trim();
+  const name = collapseRepeatedNameParts(String(payload.name || "").trim());
+  const middleName = collapseRepeatedNameParts(String(payload.middle_name || "").trim());
+  let lastname = collapseRepeatedNameParts(String(payload.lastname || "").trim());
   if (lastname && middleName) {
     const escapedMiddle = middleName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const repeatedMiddlePattern = new RegExp(`^(?:${escapedMiddle})(?:\\s+${escapedMiddle})+\\s*`, "i");
@@ -382,11 +377,11 @@ const resolveNames = (payload) => {
     const parts = String(payload.full_name).trim().split(/\s+/).filter(Boolean);
     const firstName = parts.shift() || "";
     const lastName = parts.pop() || "";
-    const resolvedMiddleName = parts.join(" ").trim();
+    const resolvedMiddleName = collapseRepeatedNameParts(parts.join(" ").trim());
     return {
-      name: firstName,
+      name: collapseRepeatedNameParts(firstName),
       middle_name: resolvedMiddleName || null,
-      lastname: lastName || null
+      lastname: collapseRepeatedNameParts(lastName) || null
     };
   }
   return { name: null, middle_name: null, lastname: null };

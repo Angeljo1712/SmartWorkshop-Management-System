@@ -88,9 +88,9 @@ if (userPage) {
   };
   const renderUserFullNameRows = (el, user) => {
     if (!el) return;
-    const firstName = String(user?.name || "").trim();
-    const middleName = String(user?.middle_name || "").trim();
-    const lastName = String(user?.lastname || "").trim();
+    const firstName = collapseRepeatedNameParts(String(user?.name || "").trim());
+    const middleName = collapseRepeatedNameParts(String(user?.middle_name || "").trim());
+    const lastName = collapseRepeatedNameParts(String(user?.lastname || "").trim());
     const rows = [
       ["First name", firstName],
       ["Middle name", middleName],
@@ -106,6 +106,25 @@ if (userPage) {
         `
       )
       .join("");
+  };
+  const collapseRepeatedNameParts = (value) => {
+    const tokens = String(value || "")
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+
+    if (!tokens.length) return "";
+
+    const collapsed = [];
+    tokens.forEach((token) => {
+      const previous = collapsed[collapsed.length - 1];
+      if (previous && previous.toLowerCase() === token.toLowerCase()) {
+        return;
+      }
+      collapsed.push(token);
+    });
+
+    return collapsed.join(" ").trim();
   };
   const cleanUserLastName = (lastName, middleName = "") => {
     let value = String(lastName || "").trim();
@@ -357,10 +376,10 @@ if (userPage) {
   };
 
   const setUserHeader = (user) => {
-    const joinedName = [user?.name, user?.middle_name, user?.lastname].filter(Boolean).join(" ").trim();
-    const displayName = user?.full_name || joinedName || user?.email || "User";
+    const joinedName = collapseRepeatedNameParts([user?.name, user?.middle_name, user?.lastname].filter(Boolean).join(" ").trim());
+    const displayName = collapseRepeatedNameParts(user?.full_name || joinedName || user?.email || "User");
     const firstName = String(user?.name || displayName || "User").trim().split(/\s+/)[0];
-    const lastnameParts = String(user?.lastname || "").trim().split(/\s+/).filter(Boolean);
+    const lastnameParts = collapseRepeatedNameParts(String(user?.lastname || "").trim()).split(/\s+/).filter(Boolean);
     const heroLastName = lastnameParts.length ? lastnameParts[0] : "";
     const heroDisplayName = [firstName, heroLastName].filter(Boolean).join(" ").trim() || firstName || displayName;
     const roles = Array.isArray(user?.roles) && user.roles.length ? user.roles : [user?.role_name || "CUSTOMER"];
@@ -456,7 +475,7 @@ if (userPage) {
       label: "Full name",
       description: "Update the full name shown in your profile.",
       type: "text",
-      getValue: (user) => user?.full_name || [user?.name, user?.middle_name, user?.lastname].filter(Boolean).join(" ").trim(),
+      getValue: (user) => user?.full_name || collapseRepeatedNameParts([user?.name, user?.middle_name, user?.lastname].filter(Boolean).join(" ").trim()),
       isNameField: true
     },
     phone: {
@@ -516,8 +535,8 @@ if (userPage) {
       userSettingsEditInput.parentElement.classList.add("is-hidden");
     }
     if (config.isNameField) {
-      if (userSettingsEditFirstName) userSettingsEditFirstName.value = profileData?.name || "";
-      if (userSettingsEditMiddleName) userSettingsEditMiddleName.value = profileData?.middle_name || "";
+      if (userSettingsEditFirstName) userSettingsEditFirstName.value = collapseRepeatedNameParts(profileData?.name || "");
+      if (userSettingsEditMiddleName) userSettingsEditMiddleName.value = collapseRepeatedNameParts(profileData?.middle_name || "");
       if (userSettingsEditLastName) userSettingsEditLastName.value = cleanUserLastName(profileData?.lastname || "", profileData?.middle_name || "");
     } else if (config.isAddressField) {
       const addressDetails = profileData?.address_details || (typeof profileData?.address === "object" && profileData.address ? profileData.address : {});

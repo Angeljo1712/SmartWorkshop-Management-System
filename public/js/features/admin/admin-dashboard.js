@@ -318,21 +318,16 @@ if (adminPage) {
 
     if (!tokens.length) return "";
 
-    let changed = true;
-    while (changed) {
-      changed = false;
-      for (let size = Math.floor(tokens.length / 2); size >= 1; size -= 1) {
-        const tail = tokens.slice(-size).join(" ").toLowerCase();
-        const previous = tokens.slice(-size * 2, -size).join(" ").toLowerCase();
-        if (tail && tail === previous) {
-          tokens.splice(tokens.length - size * 2, size);
-          changed = true;
-          break;
-        }
+    const collapsed = [];
+    tokens.forEach((token) => {
+      const previous = collapsed[collapsed.length - 1];
+      if (previous && previous.toLowerCase() === token.toLowerCase()) {
+        return;
       }
-    }
+      collapsed.push(token);
+    });
 
-    return tokens.join(" ").trim();
+    return collapsed.join(" ").trim();
   };
 
   const buildDisplayName = (user, fallback = "Admin") => {
@@ -427,6 +422,17 @@ if (adminPage) {
     return String(value).trim();
   };
 
+  const resolveAvatarUrl = (value) => {
+    const url = String(value || "").trim();
+    if (!url) return "";
+    if (/^(https?:|data:|blob:|\/)/i.test(url)) return url;
+    if (url.startsWith("storage/")) return `/${url.replace(/^storage\//, "")}`;
+    if (url.startsWith("uploads/")) return `/${url}`;
+    if (url.startsWith("avatars/")) return `/uploads/${url}`;
+    if (/^[^/\\]+\.(png|jpe?g|gif|webp|svg)$/i.test(url)) return `/uploads/avatars/${url}`;
+    return url;
+  };
+
   const setAdminHeader = (user) => {
     const displayName = buildDisplayName(user, "Admin");
     const heroFirstName = String(user?.name || displayName || "Admin").trim().split(/\s+/)[0];
@@ -461,11 +467,14 @@ if (adminPage) {
     const setAdminAvatar = (el, fallbackInitials, url) => {
       if (!el) return;
       el.innerHTML = "";
-      if (url) {
-        const resolvedUrl = String(url).startsWith("/uploads") ? String(url) : url;
+      const resolvedUrl = resolveAvatarUrl(url);
+      if (resolvedUrl) {
         const img = document.createElement("img");
         img.src = resolvedUrl;
         img.alt = "";
+        img.addEventListener("error", () => {
+          el.textContent = fallbackInitials;
+        });
         el.appendChild(img);
         return;
       }
@@ -650,14 +659,10 @@ if (adminPage) {
     return options[index % options.length];
   };
   const getAvatarUrl = (user) => {
-    const avatarUrl = String(user?.avatar_url || "").trim();
-    if (!avatarUrl) return "";
-    return avatarUrl.startsWith("/uploads") ? avatarUrl : avatarUrl;
+    return resolveAvatarUrl(user?.avatar_url);
   };
   const resolveAdminUploadUrl = (url) => {
-    const value = String(url || "").trim();
-    if (!value) return "";
-    return value.startsWith("/uploads") ? value : value;
+    return resolveAvatarUrl(url);
   };
   const getLocation = (user) => {
     const fullAddress = String(user?.address || "").trim();
@@ -1732,6 +1737,7 @@ if (adminPage) {
             const applicationStatusClass = String(applicationStatus).toLowerCase().replace(/\s+/g, "-");
             const accountStatusClass = String(accountStatus).toLowerCase().replace(/\s+/g, "-");
             const avatarUrl = getAvatarUrl(item);
+            const avatarFallbackHtml = escapeHtml(getInitials(item.full_name || item.email || ""));
             const applicationId = String(item.user_id || item.id || item.email || item.full_name || "");
             const isChecked = selectedAdminApplications.has(applicationId);
             const userId = String(item.user_id || "");
@@ -1755,7 +1761,7 @@ if (adminPage) {
               </td>
               <td>
                 <div class="user-cell">
-                  <div class="avatar">${avatarUrl ? `<img src="${escapeHtml(avatarUrl)}" alt="" />` : escapeHtml(getInitials(item.full_name || item.email || ""))}</div>
+                  <div class="avatar">${avatarUrl ? `<img src="${escapeHtml(avatarUrl)}" alt="" onerror="this.onerror=null;this.parentElement.textContent='${avatarFallbackHtml}'" />` : avatarFallbackHtml}</div>
                   <div class="user-meta">
                   <strong>${escapeHtml(item.full_name)}</strong>
                   <span>${escapeHtml(item.email)}</span>
@@ -2642,6 +2648,7 @@ if (adminPage) {
       const avatarUrl = getAvatarUrl(user);
       const statusClass = String(status).toLowerCase().replace(/\s+/g, "-");
       const fullName = buildDisplayName(user, user.email || "Unknown user");
+      const avatarFallbackHtml = escapeHtml(getInitials(fullName));
       const nameParts = fullName.split(/\s+/).filter(Boolean);
       const firstName = nameParts[0] || "";
       const middleName = user.middle_name || (nameParts.length > 2 ? nameParts.slice(1, -1).join(" ") : "");
@@ -2670,7 +2677,7 @@ if (adminPage) {
         <td>
           <div class="user-cell">
             <div class="avatar">
-              ${avatarUrl ? `<img src="${escapeHtml(avatarUrl)}" alt="" />` : escapeHtml(getInitials(displayName))}
+              ${avatarUrl ? `<img src="${escapeHtml(avatarUrl)}" alt="" onerror="this.onerror=null;this.parentElement.textContent='${avatarFallbackHtml}'" />` : avatarFallbackHtml}
             </div>
             <div class="user-meta">
               <strong>${fullNameHtml}</strong>
