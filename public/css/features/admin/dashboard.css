@@ -32,7 +32,7 @@ body.admin-body .primari-shell {
   min-height: 0;
   height: auto;
   align-self: stretch;
-  background: #0d1220;
+  background: rgba(9, 13, 21, 0.96);
   border: 2px solid #ffffff;
   border-left: 0;
   border-bottom: 0;
@@ -628,24 +628,24 @@ body.admin-body .admin-mobile-menu-backdrop {
 #adminPage .admin-content .admin-user-layout {
       display: grid !important;
       grid-template-columns: minmax(0, 1fr) !important;
-      grid-template-rows: minmax(0, 1fr) !important;
+      grid-template-rows: auto !important;
       gap: 10px;
       background: transparent;
       border: none;
       padding: 0;
       min-height: 0;
-      height: 100%;
+      height: auto;
       align-self: stretch;
     }
 
 #adminPage .admin-table-layout {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
-      grid-template-rows: auto minmax(0, 1fr) auto auto;
+      grid-template-rows: auto auto auto auto;
       row-gap: 30px;
       column-gap: 0;
       min-height: 0;
-      height: 100%;
+      height: auto;
       /* padding: 15px; */
     }
 
@@ -1071,6 +1071,22 @@ body.admin-body .admin-mobile-menu-backdrop {
       padding: 0;
       background: #3e434df7;
     }
+
+#adminPage #adminBookingsView,
+#adminPage #adminBookingsView .admin-user-layout,
+#adminPage #adminBookingsView .admin-table-layout {
+  min-height: 0;
+  height: auto;
+}
+
+#adminPage #adminBookingsView .admin-table-layout {
+  align-content: start;
+  background: rgba(9, 13, 21, 0.96);
+}
+
+#adminPage #adminBookingsView .admin-table-footer {
+  background: #3e434df7;
+}
 
 #adminPage #adminApplicationsView .admin-table-wrap {
       padding: 0;
