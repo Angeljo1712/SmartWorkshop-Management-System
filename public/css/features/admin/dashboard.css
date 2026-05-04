@@ -3087,21 +3087,21 @@ body.admin-body .admin-edit-menu button:disabled {
 }
 
 #adminPage .admin-settings-card {
-  min-height: calc(100vh - var(--general-header-height, 71px) - 110px);
-  height: calc(100vh - var(--general-header-height, 71px) - 110px);
+  min-height: 0;
+  height: auto;
   align-items: start;
   align-content: start;
 }
 
 #adminPage .admin-settings-layout {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
   grid-template-columns: minmax(0, 1fr);
   gap: 14px;
   align-items: start;
   align-content: start;
-  min-height: 100%;
-  height: 100%;
+  min-height: 0;
+  height: auto;
 }
 
 #adminPage .admin-settings-topbar {
@@ -3121,7 +3121,7 @@ body.admin-body .admin-edit-menu button:disabled {
 body.admin-body #adminSettingsView .settings-panel {
   display: grid;
   min-height: 0;
-  height: 100%;
+  height: auto;
   align-content: stretch;
 }
 
@@ -3130,12 +3130,12 @@ body.admin-body #adminSettingsView .settings-subview {
   gap: 14px;
   align-content: start;
   min-height: 0;
-  height: 100%;
+  height: auto;
 }
 
 #adminPage #adminSettingsView > .settings-card.admin-settings-card {
-  min-height: calc(100vh - var(--general-header-height, 71px) - 110px);
-  height: calc(100vh - var(--general-header-height, 71px) - 110px);
+  min-height: 0;
+  height: auto;
 }
 
 body.admin-body #adminSettingsView .settings-subnav {
@@ -3321,7 +3321,8 @@ body.admin-body #adminSettingsView .settings-contact-heading {
 }
 
 body.admin-body #adminSettingsView .settings-contact-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
   min-height: 44px;
@@ -3358,21 +3359,14 @@ body.admin-body #adminSettingsView .settings-contact-copy p {
   font-size: 1.2rem;
   line-height: 1.35;
   min-width: 0;
-  white-space: nowrap;
+  white-space: normal;
   overflow: visible;
   text-overflow: clip;
   flex: 1 1 auto;
 }
 
 body.admin-body #adminSettingsView .settings-contact-actions {
-  display: grid;
-  gap: 14px;
-  align-content: start;
-  justify-items: end;
-  width: 104px;
-  align-self: start;
-  justify-self: end;
-  padding-top: 50px;
+  display: none;
 }
 
 body.admin-body #adminSettingsView .settings-contact-actions .secondary {
@@ -3381,7 +3375,8 @@ body.admin-body #adminSettingsView .settings-contact-actions .secondary {
 }
 
 body.admin-body #adminSettingsView .settings-contact-action-mobile {
-  display: none;
+  display: inline-flex;
+  justify-self: end;
 }
 
 body.admin-body #adminSettingsSecurity {

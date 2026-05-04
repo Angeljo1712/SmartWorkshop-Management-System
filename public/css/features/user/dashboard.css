@@ -270,7 +270,7 @@ body.user-body .main-header.general-header {
   justify-self: center;
   gap: 0;
   padding: 0;
-  margin-top: 10px;
+  margin-top: 9.5px;
 }
 
 #userPage .mainRail .rail-brand .logo {
@@ -289,7 +289,7 @@ body.user-body .main-header.general-header {
   align-self: start;
   justify-items: stretch;
   gap: 10px;
-  padding: 8px 0 0;
+  padding: 9px 0 0;
   overflow: visible;
 }
 
@@ -323,8 +323,8 @@ body.user-body .main-header.general-header {
 }
 
 #userPage .mainRail .rail-item.active {
-  background: linear-gradient(90deg, #090d15 0%, #090d15 calc(100% + 20px), transparent calc(100% + 20px));
-  border-color: rgba(15, 23, 42, 0.08);
+  background: #090d15;
+  border-color: transparent;
   color: #ffffff;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
   border-top-right-radius: 0;
@@ -354,7 +354,7 @@ body.user-body .main-header.general-header {
   padding: 14px 10px 16px;
   justify-items: center;
   grid-template-rows: auto minmax(0, 1fr) auto;
-  gap: 5px;
+  gap: 4.5px;
 }
 
 #userPage .mainRail.is-collapsed .rail-brand {
@@ -396,10 +396,8 @@ body.user-body .main-header.general-header {
   bottom: 0;
   left: 0;
   right: -22px;
-  background: linear-gradient(90deg, #090d15 0%, #090d15 calc(100% + 20px), transparent calc(100% + 20px));
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
-  border-radius: 14px;
+  background: #090d15;
+  border-radius: 14px 0px 0px 14px;
   z-index: -1;
 }
 
@@ -3857,7 +3855,7 @@ body.user-body #userVehicleView .user-vehicle-pills span i {
     align-content: start;
     gap: 10px;
     overflow: visible;
-    padding: 8px 0 0;
+    padding: 8.5px 0 0;
     justify-items: stretch;
   }
 
