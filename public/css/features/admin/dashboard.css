@@ -431,6 +431,26 @@ body.admin-body .admin-mobile-menu-backdrop {
   gap: 12px;
 }
 
+#adminPage .admin-dashboard-hero-copy .admin-profile-avatar {
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  min-height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  flex: 0 0 56px;
+}
+
+#adminPage .admin-dashboard-hero-copy .admin-profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+}
+
 #adminPage .admin-dashboard-hero .settings-header h2,
 #adminPage .admin-dashboard-hero .settings-header h3 {
   color: #1b2430;
@@ -3196,6 +3216,9 @@ body.admin-body #adminSettingsView .settings-photo-row {
   min-height: 0;
   padding: 0;
   border: 0;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
 }
 
 body.admin-body #adminSettingsView .settings-photo-row .ghost,
@@ -3209,7 +3232,8 @@ body.admin-body #adminSettingsView .secondary {
 body.admin-body #adminSettingsView .settings-avatar {
   width: 140px;
   height: 140px;
-  border-radius: 66px;
+  border-radius: 50%;
+  aspect-ratio: 1 / 1;
   background: #cfd6fb;
   color: #44528d;
   font-size: 2rem;
@@ -3220,10 +3244,15 @@ body.admin-body #adminSettingsView .settings-avatar {
 }
 
 body.admin-body #adminSettingsView .settings-avatar img {
-  width: 100%;
-  height: 100%;
+  width: 140px;
+  height: 140px;
   object-fit: cover;
   display: block;
+  border-radius: 50%;
+}
+
+body.admin-body #adminSettingsView .settings-avatar.settings-avatar-lg {
+  border-radius: 50%;
 }
 
 body.admin-body #adminSettingsView .settings-profile,
