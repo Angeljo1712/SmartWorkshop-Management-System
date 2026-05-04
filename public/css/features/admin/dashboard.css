@@ -56,6 +56,7 @@ body.admin-body .primari-shell {
   height: 100%;
   align-self: stretch;
   color: #ffffff;
+  background: rgba(9, 13, 21, 0.96);
 }
 
 #adminPage .admin-content * {
@@ -138,7 +139,7 @@ body.admin-body .primari-shell {
   align-self: start;
   justify-items: stretch;
   gap: 20px;
-  padding-top: 12px;
+  padding-top: 12.5px;
 }
 
 #adminPage .mainRail .rail-item {
@@ -252,7 +253,7 @@ body.admin-body .primari-shell {
   min-width: 70px;
   padding: 14px 10px 16px;
   justify-items: center;
-  gap: 5px;
+  gap: 5.5px;
 }
 
 #adminPage .mainRail.is-collapsed .rail-brand {
@@ -3012,7 +3013,7 @@ body.admin-body .admin-edit-menu button:disabled {
 #adminPage .admin-account-layout .admin-profile-avatar {
   width: 140px;
   height: 140px;
-  border-radius: 36px;
+  border-radius: 99px;
   background: #cfd6fb;
   color: #44528d;
   font-size: 2rem;
