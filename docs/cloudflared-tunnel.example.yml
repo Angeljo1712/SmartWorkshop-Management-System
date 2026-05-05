@@ -1,7 +1,0 @@
-tunnel: smartworkshop-dev
-credentials-file: C:\Users\YOUR_USER\.cloudflared\smartworkshop-dev.json
-
-ingress:
-  - hostname: app.example.com
-    service: http://localhost:3000
-  - service: http_status:404
